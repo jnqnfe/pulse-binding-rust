@@ -1,0 +1,19 @@
+[package]
+name = "libpulse-binding"
+version = "1.0.0"
+authors = ["Lyndon Brown"]
+license = "LGPL-2.1"
+readme = "README.md"
+description = """
+A Rust language binding for the PulseAudio libpulse library.
+"""
+keywords = ["binding", "pulse", "pulseaudio", "audio"]
+
+[dependencies]
+libc = "0.2"
+libpulse-sys = { path = "../pulse-sys", version = "1.0" }
+
+[features]
+default = []
+#include pa_encoding_from_string function, symbol for which might be missing
+pa_encoding_from_string = ["libpulse-sys/pa_encoding_from_string"]

@@ -1,0 +1,17 @@
+[package]
+name = "libpulse-simple-sys"
+version = "1.0.0"
+authors = ["Lyndon Brown"]
+license = "LGPL-2.1"
+description = """
+A Rust language linking library for the PulseAudio libpulse-simple library.
+"""
+keywords = ["sys", "pulse", "pulseaudio", "pulse-simple", "audio"]
+links = "pulse-simple"
+build = "build.rs"
+
+[dependencies]
+libpulse-sys = { path = "../pulse-sys", version = "1.0" }
+
+[features]
+

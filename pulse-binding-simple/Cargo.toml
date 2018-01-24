@@ -1,0 +1,18 @@
+[package]
+name = "libpulse-simple-binding"
+version = "1.0.0"
+authors = ["Lyndon Brown"]
+license = "LGPL-2.1"
+readme = "README.md"
+description = """
+A Rust language binding for the PulseAudio libpulse-simple library.
+"""
+keywords = ["binding", "pulse", "pulseaudio", "pulse-simple", "audio"]
+
+[dependencies]
+libpulse-binding = { path = "../pulse-binding", version = "1.0" }
+libpulse-sys = { path = "../pulse-sys", version = "1.0" }
+libpulse-simple-sys = { path = "../pulse-sys-simple", version = "1.0" }
+
+[features]
+
