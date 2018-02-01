@@ -3,8 +3,6 @@ libpulse_simple_binding
 
 A Rust language binding for the PulseAudio libpulse-simple library.
 
-[Documentation](https://doc.rust-lang.org/libpulse_simple_binding)
-
 ## Usage
 
 Add this to your `Cargo.toml`:

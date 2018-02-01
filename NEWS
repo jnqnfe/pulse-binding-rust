@@ -3,6 +3,7 @@ Changes between 1.0.0 and 1.0.1:
 
  * Fixed toml file license string "LGPL-2.1" => "LGPL-2.1+"
  * Fixed toml file missing author email address
+ * Removed obsolete readme doc links
 
 Version 1.0:
 ---------------

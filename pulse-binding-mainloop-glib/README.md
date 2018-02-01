@@ -3,8 +3,6 @@ libpulse_glib_binding
 
 A Rust language binding for the PulseAudio libpulse-mainloop-glib library.
 
-[Documentation](https://doc.rust-lang.org/libpulse_glib_binding)
-
 ## Usage
 
 Add this to your `Cargo.toml`:
