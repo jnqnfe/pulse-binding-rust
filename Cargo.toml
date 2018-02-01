@@ -1,7 +1,7 @@
 [package]
 name = "workspace"
 version = "0.0.0"
-authors = ["Lyndon Brown"]
+authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 readme = "README.md"
 description = """
 Dummy bin crate - Acts as a workspace, and groups all crates together (as dependencies) for building in one go.
