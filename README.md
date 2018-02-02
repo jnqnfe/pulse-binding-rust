@@ -41,8 +41,8 @@ being copied from those files. These bindings may be considered derivative works
 PulseAudio license. PulseAudio itself is licensed under LGPL version 2.1+. These bindings, as
 specified above, are under that same license.
 
-The logo images files are a combined derivative of the Rust programming language icon, with a core
-element of the PulseAudio icon.
+The logo image files are a combined derivative of the Rust programming language icon and the
+PulseAudio icon, taking core elements from each.
 
 Source Code Contents
 ====================
