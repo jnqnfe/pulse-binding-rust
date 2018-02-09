@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-sys"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 description = """
@@ -17,3 +17,6 @@ libc = "0.2"
 default = []
 #include pa_encoding_from_string function, symbol for which might be missing
 pa_encoding_from_string = []
+
+[badges]
+travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
