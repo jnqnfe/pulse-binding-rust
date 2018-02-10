@@ -1,3 +1,15 @@
+Changes between 1.0.2 and 1.0.3:
+---------------
+
+ * [pulse-binding] Added `From` methods for transmuting between certain introspection structs and
+   their `sys` counterparts. (They are identical, and only duplicated in the binding to add
+   documentation.
+
+Changes between 1.0.1 and 1.0.2:
+---------------
+
+ * Added travis badge to individual crates
+
 Changes between 1.0.0 and 1.0.1:
 ---------------
 

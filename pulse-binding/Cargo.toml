@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-binding"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
