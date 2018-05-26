@@ -256,7 +256,7 @@ impl Context {
     /// Instantiate a new connection context with an abstract mainloop API and an application name,
     /// and specify the initial client property list.
     pub fn new_with_proplist(mainloop_api: &mut ::mainloop::api::MainloopApi, name: &str,
-        proplist: &mut ::proplist::Proplist) -> Option<Self>
+        proplist: &::proplist::Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

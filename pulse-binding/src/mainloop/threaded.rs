@@ -248,7 +248,7 @@
 //!     let mut context = pulse::context::Context::new_with_proplist(
 //!         mainloop.get_api(),
 //!         "FooAppContext",
-//!         &mut proplist
+//!         &proplist
 //!         ).unwrap();
 //!
 //!     context.set_state_callback(Some((context_state_change_cb,
