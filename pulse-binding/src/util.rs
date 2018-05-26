@@ -33,7 +33,7 @@ use std::ptr::null_mut;
 /// }
 /// ```
 #[inline]
-pub fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>) -> (Option<T>, *mut c_void) {
+pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>) -> (Option<T>, *mut c_void) {
     match cb {
         Some((f, d)) => (Some(f), d),
         None => (None, null_mut::<c_void>()),

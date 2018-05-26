@@ -1,7 +1,9 @@
 Changes between 1.0.5 and ???:
 ---------------
 
+ [pulse-binding] (1.0.5 => ???)
 
+ * Privatised utils::unwrap_optional_callback function
 
 Changes between 1.0.4d and 1.0.5:
 ---------------
