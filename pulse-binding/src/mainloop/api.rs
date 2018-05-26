@@ -30,8 +30,8 @@ pub use capi::pa_mainloop_api as ApiInternal;
 pub trait MainloopInternalType {}
 
 /// This enables generic type enforcement with MainloopInner objects, and describes mandatory
-/// accessors for the internal pointers, allowing allowing access to these pointers across the
-/// generic implementations to work.
+/// accessors for the internal pointers, allowing access to these pointers across the generic
+/// implementations to work.
 pub trait MainloopInnerType {
     type I: MainloopInternalType;
 
