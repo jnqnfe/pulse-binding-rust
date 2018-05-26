@@ -6,6 +6,7 @@ Changes between 1.0.5 and ???:
  * Privatised the `from_raw` method of various objects, having become aware of the more granular
    `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
    callbacks are still available.
+ * Also privatised inner pointer attributes of structs in a few places on the same basis.
  * Privatised utils::unwrap_optional_callback function
 
  [pulse-simple-binding] (1.0.5 => ???)
