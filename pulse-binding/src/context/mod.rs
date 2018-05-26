@@ -271,7 +271,7 @@ impl Context {
 
     /// Create a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
     /// pointer.
-    pub fn from_raw(ptr: *mut ContextInternal) -> Self {
+    pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: false }
     }

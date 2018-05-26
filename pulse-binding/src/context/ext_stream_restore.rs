@@ -72,7 +72,7 @@ pub type SubscribeCb = extern "C" fn(c: *mut ContextInternal,
 impl StreamRestore {
     /// Create a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
-    pub fn from_raw(context: *mut ContextInternal) -> Self {
+    fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, weak: false }
     }
 

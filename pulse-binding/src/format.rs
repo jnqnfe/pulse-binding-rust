@@ -178,7 +178,7 @@ impl<'a> Info<'a> {
     }
 
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
-    pub fn from_raw(ptr: *mut InfoInternal) -> Self {
+    pub(crate) fn from_raw(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         unsafe { Self { ptr: &mut *ptr, weak: false } }
     }

@@ -38,7 +38,7 @@ pub type NotifyCb = extern "C" fn(o: *mut OperationInternal, userdata: *mut c_vo
 impl Operation {
     /// Create a new `Operation` from an existing [`OperationInternal`](enum.OperationInternal.html)
     /// pointer.
-    pub fn from_raw(ptr: *mut OperationInternal) -> Self {
+    pub(crate) fn from_raw(ptr: *mut OperationInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: false }
     }

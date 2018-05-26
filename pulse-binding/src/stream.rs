@@ -639,7 +639,7 @@ impl Stream {
     }
 
     /// Create a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
-    pub fn from_raw(ptr: *mut StreamInternal) -> Self {
+    fn from_raw(ptr: *mut StreamInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: false }
     }

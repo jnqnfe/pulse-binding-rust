@@ -43,7 +43,7 @@ pub type TimeEventDestroyCb = extern "C" fn(a: *mut capi::pa_mainloop_api,
 impl<T> TimeEvent<T>
     where T: MainloopInnerType
 {
-    pub fn from_raw(ptr: *mut TimeEventInternal, mainloop_inner: Rc<T>) -> Self {
+    pub(crate) fn from_raw(ptr: *mut TimeEventInternal, mainloop_inner: Rc<T>) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner }
     }

@@ -3,6 +3,9 @@ Changes between 1.0.5 and ???:
 
  [pulse-binding] (1.0.5 => ???)
 
+ * Privatised the `from_raw` method of various objects, having become aware of the more granular
+   `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
+   callbacks are still available.
  * Privatised utils::unwrap_optional_callback function
 
  [pulse-simple-binding] (1.0.5 => ???)

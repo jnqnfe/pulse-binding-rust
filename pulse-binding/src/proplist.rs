@@ -203,7 +203,7 @@ impl Proplist {
 
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
     /// pointer.
-    pub fn from_raw(ptr: *mut ProplistInternal) -> Self {
+    pub(crate) fn from_raw(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: false }
     }

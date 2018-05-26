@@ -276,7 +276,7 @@ impl Context {
 impl Introspector {
     /// Create a new `Introspector` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
-    pub fn from_raw(context: *mut ContextInternal) -> Self {
+    fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, weak: false }
     }
 
