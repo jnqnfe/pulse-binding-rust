@@ -152,7 +152,7 @@ impl Context {
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
-        proplist: &mut ::proplist::Proplist, cb: Option<(ContextPlaySampleCb, *mut c_void)>
+        proplist: &::proplist::Proplist, cb: Option<(ContextPlaySampleCb, *mut c_void)>
         ) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextPlaySampleCb>(cb);
