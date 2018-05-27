@@ -45,6 +45,6 @@ extern "C" {
     pub fn pa_operation_ref(o: *mut pa_operation) -> *mut pa_operation;
     pub fn pa_operation_unref(o: *mut pa_operation);
     pub fn pa_operation_cancel(o: *mut pa_operation);
-    pub fn pa_operation_get_state(o: *mut pa_operation) -> pa_operation_state_t;
+    pub fn pa_operation_get_state(o: *const pa_operation) -> pa_operation_state_t;
     pub fn pa_operation_set_state_callback(o: *mut pa_operation, cb: pa_operation_notify_cb_t, userdata: *mut c_void);
 }

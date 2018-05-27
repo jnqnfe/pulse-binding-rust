@@ -14,6 +14,14 @@ Changes between 1.0.5 and ???:
 
  * Privatised SimpleInternal
 
+ [pulse-sys] (1.0.5 => ???)
+
+ * Various functions have been changed to take immutable const pointers.
+   There are numerous functions in the C API which take mutable pointers to objects where there is
+   no intention to actually mutate those objects. Patches have been sent in to the PA project to
+   correct many of these cases. There is no point in waiting for those to be accepted, so the
+   change has been reflected in the C API description in the sys crate.
+
 Changes between 1.0.4d and 1.0.5:
 ---------------
 

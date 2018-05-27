@@ -164,7 +164,7 @@ extern "C" {
     pub fn pa_cvolume_scale(v: *mut pa_cvolume, max: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_scale_mask(v: *mut pa_cvolume, max: pa_volume_t, cm: *const ::channelmap::pa_channel_map, mask: ::channelmap::pa_channel_position_mask_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_set_position(cv: *mut pa_cvolume, map: *const ::channelmap::pa_channel_map, t: ::channelmap::pa_channel_position_t, v: pa_volume_t) -> *mut pa_cvolume;
-    pub fn pa_cvolume_get_position(cv: *mut pa_cvolume, map: *const ::channelmap::pa_channel_map, t: ::channelmap::pa_channel_position_t) -> pa_volume_t;
+    pub fn pa_cvolume_get_position(cv: *const pa_cvolume, map: *const ::channelmap::pa_channel_map, t: ::channelmap::pa_channel_position_t) -> pa_volume_t;
     pub fn pa_cvolume_merge(dest: *mut pa_cvolume, a: *const pa_cvolume, b: *const pa_cvolume) -> *mut pa_cvolume;
     pub fn pa_cvolume_inc_clamp(v: *mut pa_cvolume, inc: pa_volume_t, limit: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_inc(v: *mut pa_cvolume, inc: pa_volume_t) -> *mut pa_cvolume;

@@ -324,19 +324,19 @@ extern "C" {
     pub fn pa_proplist_setp(p: *mut pa_proplist, pair: *const c_char) -> i32;
     pub fn pa_proplist_setf(p: *mut pa_proplist, key: *const c_char, format: *const c_char, ...) -> i32;
     pub fn pa_proplist_set(p: *mut pa_proplist, key: *const c_char, data: *const c_void, nbytes: usize) -> i32;
-    pub fn pa_proplist_gets(p: *mut pa_proplist, key: *const c_char) -> *const c_char;
-    pub fn pa_proplist_get(p: *mut pa_proplist, key: *const c_char, data: *mut *const c_void, nbytes: *mut usize) -> i32;
+    pub fn pa_proplist_gets(p: *const pa_proplist, key: *const c_char) -> *const c_char;
+    pub fn pa_proplist_get(p: *const pa_proplist, key: *const c_char, data: *mut *const c_void, nbytes: *mut usize) -> i32;
     pub fn pa_proplist_update(p: *mut pa_proplist, mode: pa_update_mode_t, other: *const pa_proplist);
     pub fn pa_proplist_unset(p: *mut pa_proplist, key: *const c_char) -> i32;
     pub fn pa_proplist_unset_many(p: *mut pa_proplist, keys: *const *const c_char) -> i32;
-    pub fn pa_proplist_iterate(p: *mut pa_proplist, state: *mut *mut c_void) -> *const c_char;
-    pub fn pa_proplist_to_string(p: *mut pa_proplist) -> *mut c_char;
-    pub fn pa_proplist_to_string_sep(p: *mut pa_proplist, sep: *const c_char) -> *mut c_char;
+    pub fn pa_proplist_iterate(p: *const pa_proplist, state: *mut *mut c_void) -> *const c_char;
+    pub fn pa_proplist_to_string(p: *const pa_proplist) -> *mut c_char;
+    pub fn pa_proplist_to_string_sep(p: *const pa_proplist, sep: *const c_char) -> *mut c_char;
     pub fn pa_proplist_from_string(s: *const c_char) -> *mut pa_proplist;
-    pub fn pa_proplist_contains(p: *mut pa_proplist, key: *const c_char) -> i32;
+    pub fn pa_proplist_contains(p: *const pa_proplist, key: *const c_char) -> i32;
     pub fn pa_proplist_clear(p: *mut pa_proplist);
     pub fn pa_proplist_copy(p: *const pa_proplist) -> *mut pa_proplist;
-    pub fn pa_proplist_size(p: *mut pa_proplist) -> u32;
-    pub fn pa_proplist_isempty(p: *mut pa_proplist) -> i32;
-    pub fn pa_proplist_equal(a: *mut pa_proplist, b: *mut pa_proplist) -> i32;
+    pub fn pa_proplist_size(p: *const pa_proplist) -> u32;
+    pub fn pa_proplist_isempty(p: *const pa_proplist) -> i32;
+    pub fn pa_proplist_equal(a: *const pa_proplist, b: *const pa_proplist) -> i32;
 }

@@ -88,14 +88,14 @@ pub type pa_context_event_cb_t = Option<extern "C" fn(c: *mut pa_context, name: 
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_context_new(mainloop: *mut ::mainloop::api::pa_mainloop_api, name: *const c_char) -> *mut pa_context;
-    pub fn pa_context_new_with_proplist(mainloop: *mut ::mainloop::api::pa_mainloop_api, name: *const c_char, proplist: *mut ::proplist::pa_proplist) -> *mut pa_context;
+    pub fn pa_context_new_with_proplist(mainloop: *mut ::mainloop::api::pa_mainloop_api, name: *const c_char, proplist: *const ::proplist::pa_proplist) -> *mut pa_context;
     pub fn pa_context_unref(c: *mut pa_context);
     pub fn pa_context_ref(c: *mut pa_context) -> *mut pa_context;
     pub fn pa_context_set_state_callback(c: *mut pa_context, cb: pa_context_notify_cb_t, userdata: *mut c_void);
     pub fn pa_context_set_event_callback(p: *mut pa_context, cb: pa_context_event_cb_t, userdata: *mut c_void);
     pub fn pa_context_errno(c: *mut pa_context) -> i32;
     pub fn pa_context_is_pending(c: *mut pa_context) -> i32;
-    pub fn pa_context_get_state(c: *mut pa_context) -> pa_context_state_t;
+    pub fn pa_context_get_state(c: *const pa_context) -> pa_context_state_t;
     pub fn pa_context_connect(c: *mut pa_context, server: *const c_char, flags: pa_context_flags_t, api: *const ::def::pa_spawn_api) -> i32;
     pub fn pa_context_disconnect(c: *mut pa_context);
     pub fn pa_context_drain(c: *mut pa_context, cb: pa_context_notify_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
@@ -105,9 +105,9 @@ extern "C" {
     pub fn pa_context_is_local(c: *mut pa_context) -> i32;
     pub fn pa_context_set_name(c: *mut pa_context, name: *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
     pub fn pa_context_get_server(c: *mut pa_context) -> *const c_char;
-    pub fn pa_context_get_protocol_version(c: *mut pa_context) -> u32;
-    pub fn pa_context_get_server_protocol_version(c: *mut pa_context) -> u32; 
-    pub fn pa_context_proplist_update(c: *mut pa_context, mode: ::proplist::pa_update_mode_t, p: *mut ::proplist::pa_proplist, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_context_get_protocol_version(c: *const pa_context) -> u32;
+    pub fn pa_context_get_server_protocol_version(c: *mut pa_context) -> u32;
+    pub fn pa_context_proplist_update(c: *mut pa_context, mode: ::proplist::pa_update_mode_t, p: *const ::proplist::pa_proplist, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
     pub fn pa_context_proplist_remove(c: *mut pa_context, keys: *const *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
     pub fn pa_context_get_index(s: *mut pa_context) -> u32;
     pub fn pa_context_rttime_new(c: *mut pa_context, usec: ::sample::pa_usec_t, cb: pa_time_event_cb_t, userdata: *mut c_void) -> *mut pa_time_event;
