@@ -326,7 +326,7 @@ impl Proplist {
     pub fn iterate(&self) -> Option<String> {
         let mut state: *mut c_void = null_mut::<c_void>();
         let key_ptr = unsafe { capi::pa_proplist_iterate(self.ptr, &mut state as *mut *mut c_void) };
-        if state.is_null() {
+        if key_ptr.is_null() {
             return None;
         }
         // We assume key_ptr will never be null at this point

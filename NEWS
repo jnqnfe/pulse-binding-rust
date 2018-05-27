@@ -1,7 +1,11 @@
 Changes between 1.0.4d and ???:
 ---------------
 
+ [pulse-binding] (1.0.3 => ???)
 
+ * Fixed infinite loop bug in Proplist::iterate. I mis-read the documentation, it's the return value
+   from the C function call that will be NULL when it reaches the end of the list, not the state
+   variable.
 
 Changes between 1.0.3 and 1.0.4d:
 ---------------
