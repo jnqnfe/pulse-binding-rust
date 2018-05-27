@@ -11,6 +11,7 @@ Changes between 1.0.4d and ???:
       always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
     - Implemented proper iterator symantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
+ * CVolume: make self for is_[muted|norm] immutable
 
  [pulse-simple-binding] (1.0.2 => ???)
 

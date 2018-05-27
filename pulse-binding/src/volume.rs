@@ -280,12 +280,12 @@ impl CVolume {
     }
 
     /// Returns `true` if all channels are muted
-    pub fn is_muted(&mut self) -> bool {
+    pub fn is_muted(&self) -> bool {
         self.channels_equal_to(VOLUME_MUTED)
     }
 
     /// Returns `true` if all channels are at normal volume level
-    pub fn is_norm(&mut self) -> bool {
+    pub fn is_norm(&self) -> bool {
         self.channels_equal_to(VOLUME_NORM)
     }
 
