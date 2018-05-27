@@ -46,7 +46,7 @@ pub struct Info {
 
 /// A wrapper object providing device manager routines to a context.
 pub struct DeviceManager {
-    pub context: *mut ContextInternal,
+    context: *mut ContextInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
