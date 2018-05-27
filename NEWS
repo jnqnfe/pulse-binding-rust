@@ -1,8 +1,10 @@
 Changes between 1.0.3 and 1.0.4d:
 ---------------
 
+(no crate version changes, project only)
+
  * Use explicit test script for Travis, rather than relying on default, to ensure that the `--all`
-   flag is passed to `cargo test`, which I though was already done, but seems not from the logs and
+   flag is passed to `cargo test`, which I thought was already done, but seems not from the logs and
    thus tests were not actually being done.
  * Fix Travis failures - add missing libpulse-mainloop-glib0 dependency to test environment.
  * Properly fix Travis tests - add pulseaudio dependency and get it started in test environment.
@@ -12,7 +14,7 @@ Changes between 1.0.2 and 1.0.3:
 
  * [pulse-binding] Added `From` methods for transmuting between certain introspection structs and
    their `sys` counterparts. (They are identical, and only duplicated in the binding to add
-   documentation.
+   documentation).
 
 Changes between 1.0.1 and 1.0.2:
 ---------------
