@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-simple-sys"
-version = "1.0.2"
+version = "1.1.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 description = """
@@ -11,7 +11,7 @@ links = "pulse-simple"
 build = "build.rs"
 
 [dependencies]
-libpulse-sys = { path = "../pulse-sys", version = "1.0" }
+libpulse-sys = { path = "../pulse-sys", version = "1.1" }
 
 [features]
 

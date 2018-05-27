@@ -1,7 +1,7 @@
 Changes between 1.0.5 and 1.1.0:
 ---------------
 
- [pulse-binding] (1.0.5 => 1.1.0)
+ [pulse-binding]
 
  * Privatised the `from_raw` method of various objects, having become aware of the more granular
    `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
@@ -16,17 +16,22 @@ Changes between 1.0.5 and 1.1.0:
    change in the wrapped pointer), we should reflect mutability needs of the operation being
    performed on the underlying C objects.
 
- [pulse-simple-binding] (1.0.5 => 1.1.0)
+ [pulse-simple-binding]
 
  * Privatised SimpleInternal
 
- [pulse-sys] (1.0.5 => 1.1.0)
+ [pulse-sys]
 
  * Various functions have been changed to take immutable const pointers.
    There are numerous functions in the C API which take mutable pointers to objects where there is
    no intention to actually mutate those objects. Patches have been sent in to the PA project to
    correct many of these cases. There is no point in waiting for those to be accepted, so the
    change has been reflected in the C API description in the sys crate.
+
+ [pulse-simple-sys, libpulse-mainloop-glib-sys, libpulse-glib-binding]
+
+ * Update dependencies to v1.1.x, ensuring users of crates do not end up with a mixture of v1.0 and
+   v1.1 of the same crates.
 
 Changes between 1.0.4d and 1.0.5:
 ---------------
