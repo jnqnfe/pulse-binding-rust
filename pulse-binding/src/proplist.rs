@@ -137,7 +137,7 @@ pub mod properties {
 /// values. This acts as a safe Rust wrapper for the actual C object.
 pub struct Proplist {
     /// The actual C object.
-    pub ptr: *mut ProplistInternal,
+    pub(crate) ptr: *mut ProplistInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
