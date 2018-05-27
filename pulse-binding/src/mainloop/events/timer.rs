@@ -50,7 +50,7 @@ impl<T> TimeEvent<T>
 
     /// Needed to support
     /// [`::context::Context::rttime_restart`](../../../context/struct.Context.html#method.rttime_restart).
-    pub fn get_ptr(&self) -> *mut TimeEventInternal {
+    pub(crate) fn get_ptr(&self) -> *mut TimeEventInternal {
         self.ptr
     }
 

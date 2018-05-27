@@ -8,6 +8,7 @@ Changes between 1.0.5 and ???:
    callbacks are still available.
  * Also privatised inner pointer attributes of structs in a few places on the same basis.
  * Privatised utils::unwrap_optional_callback function
+ * Privatised timer event get_ptr method
 
  [pulse-simple-binding] (1.0.5 => ???)
 
