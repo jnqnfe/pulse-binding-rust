@@ -1,7 +1,7 @@
-Changes between 1.0.4d and ???:
+Changes between 1.0.4d and 1.0.5:
 ---------------
 
- [pulse-binding] (1.0.3 => ???)
+ [pulse-binding] (1.0.3 => 1.0.5)
 
  * Fixed and simplified Proplist iteration
     - Fixed infinite loop bug: I mis-read the documentation, it's the return value from the C
@@ -15,9 +15,13 @@ Changes between 1.0.4d and ???:
  * Stream: fix double option wrapping of callback fn ptr with write methods
  * Stream: combine write_ext_free free_cb_data param with free_cb as tuple, as done elsewhere
 
- [pulse-simple-binding] (1.0.2 => ???)
+ [pulse-simple-binding] (1.0.2 => 1.0.5)
 
  * Enabled pulse-simple doc test
+
+ [pulse-sys] (1.0.2 => 1.0.5)
+
+ * Minor, non-functional consistency fix only
 
 Changes between 1.0.3 and 1.0.4d:
 ---------------
