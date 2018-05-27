@@ -146,13 +146,13 @@ pub struct Proplist {
 /// [`iterate`](struct.Proplist.html#method.iterate) method.
 pub struct Iterator {
     /// The actual C proplist object.
-    ptr: *mut ProplistInternal,
+    ptr: *const ProplistInternal,
     /// State tracker, used by underlying C function
     state: *mut c_void,
 }
 
 impl Iterator {
-    pub fn new(pl: *mut ProplistInternal) -> Self {
+    pub fn new(pl: *const ProplistInternal) -> Self {
         Self { ptr: pl, state: null_mut::<c_void>() }
     }
 }
