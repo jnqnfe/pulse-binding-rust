@@ -452,7 +452,7 @@ impl Context {
     /// [`new_with_proplist`](#method.new_with_proplist) as possible instead a posteriori with this
     /// function, since that information may then be used to route streams of the client to the
     /// right device.
-    pub fn proplist_update(&self, mode: ::proplist::UpdateMode, p: &mut ::proplist::Proplist,
+    pub fn proplist_update(&self, mode: ::proplist::UpdateMode, p: &::proplist::Proplist,
         cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation>
     {
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr, Some(cb.0), cb.1) };
