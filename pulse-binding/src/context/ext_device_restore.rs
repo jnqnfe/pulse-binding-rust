@@ -39,7 +39,7 @@ pub struct Info {
 
 /// A wrapper object providing device restore routines to a context.
 pub struct DeviceRestore {
-    pub context: *mut ContextInternal,
+    context: *mut ContextInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
