@@ -142,6 +142,19 @@ pub struct Proplist {
     weak: bool,
 }
 
+/// Used for keeping state for the [`iterate`](struct.Proplist.html#method.iterate) method
+pub struct IteratorState {
+    inner: *mut c_void,
+}
+
+impl Default for IteratorState {
+    fn default() -> Self { Self { inner: null_mut::<c_void>() } }
+}
+
+impl IteratorState {
+    pub fn new() -> Self { Default::default() }
+}
+
 impl Proplist {
     /// Allocate a property list.
     pub fn new() -> Option<Self> {
@@ -318,14 +331,24 @@ impl Proplist {
     /// iteration through the list, with the exception of deleting the current entry. The keys in
     /// the property list do not have any particular order.
     ///
-    /// ```rust,ignore
-    /// while let Some(key) = my_props.iterate() {
+    /// ```rust
+    /// # extern crate libpulse_binding as pulse;
+    /// # use pulse::proplist::{Proplist, IteratorState};
+    /// #
+    /// # fn main() {
+    /// #     let mut my_props = Proplist::new().unwrap();
+    /// #     my_props.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp").unwrap();
+    /// #
+    /// let mut pl_iter_state = IteratorState::new();
+    /// while let Some(key) = my_props.iterate(&mut pl_iter_state) {
     ///     //do something with it
+    ///     println!("key: {}", key);
     /// }
+    /// # }
     /// ```
-    pub fn iterate(&self) -> Option<String> {
-        let mut state: *mut c_void = null_mut::<c_void>();
-        let key_ptr = unsafe { capi::pa_proplist_iterate(self.ptr, &mut state as *mut *mut c_void) };
+    pub fn iterate(&self, state: &mut IteratorState) -> Option<String> {
+        let state_actual = &mut state.inner as *mut *mut c_void;
+        let key_ptr = unsafe { capi::pa_proplist_iterate(self.ptr, state_actual) };
         if key_ptr.is_null() {
             return None;
         }

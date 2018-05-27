@@ -6,6 +6,10 @@ Changes between 1.0.4d and ???:
  * Fixed infinite loop bug in Proplist::iterate. I mis-read the documentation, it's the return value
    from the C function call that will be NULL when it reaches the end of the list, not the state
    variable.
+ * Fixed use of Proplist::iterate. The state tracking variable used for the underlying C function
+   cannot be hidden within the iterate function, it causes an infinite loop of returning the first
+   entry. I don't know wtf I was thinking. Calling this method now require providing a state
+   tracking object.
 
 Changes between 1.0.3 and 1.0.4d:
 ---------------
