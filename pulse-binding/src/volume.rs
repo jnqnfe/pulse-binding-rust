@@ -589,7 +589,7 @@ impl CVolume {
     /// map includes a specific position by calling [`::channelmap::Map::has_position`].
     ///
     /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
-    pub fn get_position(&mut self, map: &::channelmap::Map, t: ::channelmap::Position) -> Volume {
+    pub fn get_position(&self, map: &::channelmap::Map, t: ::channelmap::Position) -> Volume {
         unsafe { capi::pa_cvolume_get_position(std::mem::transmute(self), std::mem::transmute(map),
             t.into()) }
     }
