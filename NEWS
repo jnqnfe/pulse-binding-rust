@@ -9,6 +9,8 @@ Changes between 1.0.5 and ???:
  * Also privatised inner pointer attributes of structs in a few places on the same basis.
  * Privatised utils::unwrap_optional_callback function
  * Privatised timer event get_ptr method
+ * As described below, a number of C function declarations in the sys crates now take certain object
+   pointers immutably now. A small number of functions in the binding have been similarly updated.
 
  [pulse-simple-binding] (1.0.5 => ???)
 
