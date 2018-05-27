@@ -51,10 +51,14 @@
 //! The first step before using the sound system is to connect to the server. This is normally done
 //! this way:
 //!
-//! ```rust,ignore
+//! ```rust
+//! # extern crate libpulse_binding as pulse;
+//! # extern crate libpulse_simple_binding as psimple;
+//! #
 //! use psimple::Simple;
 //! use pulse::stream::Direction;
 //!
+//! # fn main() {
 //! let spec = pulse::sample::Spec {
 //!     format: pulse::sample::SAMPLE_S16NE,
 //!     channels: 2,
@@ -72,6 +76,7 @@
 //!     None,                // Use default channel map
 //!     None                 // Use default buffering attributes
 //! ).unwrap();
+//! # }
 //! ```
 //!
 //! # Transferring data

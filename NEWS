@@ -12,6 +12,10 @@ Changes between 1.0.4d and ???:
     - Implemented proper iterator symantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
 
+ [pulse-simple-binding] (1.0.2 => ???)
+
+ * Enabled pulse-simple doc test
+
 Changes between 1.0.3 and 1.0.4d:
 ---------------
 
