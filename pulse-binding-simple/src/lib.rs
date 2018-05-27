@@ -118,7 +118,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null;
 
-pub use capi::pa_simple as SimpleInternal;
+use capi::pa_simple as SimpleInternal;
 
 /// An opaque simple connection object.
 /// This acts as a safe Rust wrapper for the actual C object.

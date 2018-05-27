@@ -5,6 +5,10 @@ Changes between 1.0.5 and ???:
 
  * Privatised utils::unwrap_optional_callback function
 
+ [pulse-simple-binding] (1.0.5 => ???)
+
+ * Privatised SimpleInternal
+
 Changes between 1.0.4d and 1.0.5:
 ---------------
 
