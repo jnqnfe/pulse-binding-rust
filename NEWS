@@ -1,7 +1,7 @@
-Changes between 1.0.5 and ???:
+Changes between 1.0.5 and 1.1.0:
 ---------------
 
- [pulse-binding] (1.0.5 => ???)
+ [pulse-binding] (1.0.5 => 1.1.0)
 
  * Privatised the `from_raw` method of various objects, having become aware of the more granular
    `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
@@ -16,11 +16,11 @@ Changes between 1.0.5 and ???:
    change in the wrapped pointer), we should reflect mutability needs of the operation being
    performed on the underlying C objects.
 
- [pulse-simple-binding] (1.0.5 => ???)
+ [pulse-simple-binding] (1.0.5 => 1.1.0)
 
  * Privatised SimpleInternal
 
- [pulse-sys] (1.0.5 => ???)
+ [pulse-sys] (1.0.5 => 1.1.0)
 
  * Various functions have been changed to take immutable const pointers.
    There are numerous functions in the C API which take mutable pointers to objects where there is
