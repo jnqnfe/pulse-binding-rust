@@ -156,7 +156,7 @@ pub use capi::pa_context as ContextInternal;
 /// This acts as a safe Rust wrapper for the actual C object.
 pub struct Context {
     /// The actual C object.
-    pub ptr: *mut ContextInternal,
+    pub(crate) ptr: *mut ContextInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
