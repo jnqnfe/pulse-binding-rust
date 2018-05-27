@@ -79,7 +79,7 @@ impl DeviceRestore {
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
         let ptr = unsafe { capi::pa_ext_device_restore_test(self.context, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -88,7 +88,7 @@ impl DeviceRestore {
     }
 
     /// Subscribe to changes in the device database.
-    pub fn subscribe(&self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
+    pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
@@ -101,12 +101,12 @@ impl DeviceRestore {
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
-    pub fn set_subscribe_cb(&self, cb: (SubscribeCb, *mut c_void)) {
+    pub fn set_subscribe_cb(&mut self, cb: (SubscribeCb, *mut c_void)) {
         unsafe { capi::pa_ext_device_restore_set_subscribe_cb(self.context, Some(cb.0), cb.1); }
     }
 
     /// Read the formats for all present devices from the device database.
-    pub fn read_formats_all(&self, cb: (ReadDevFormatsCb, *mut c_void)
+    pub fn read_formats_all(&mut self, cb: (ReadDevFormatsCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context, Some(cb.0),
@@ -118,7 +118,7 @@ impl DeviceRestore {
     }
 
     /// Read an entry from the device database.
-    pub fn read_formats(&self, type_: ::def::Device, idx: u32, cb: (ReadDevFormatsCb, *mut c_void)
+    pub fn read_formats(&mut self, type_: ::def::Device, idx: u32, cb: (ReadDevFormatsCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, idx,
@@ -130,7 +130,7 @@ impl DeviceRestore {
     }
 
     /// Read an entry from the device database.
-    pub fn save_formats(&self, type_: ::def::Device, idx: u32, formats: &mut [&mut ::format::Info],
+    pub fn save_formats(&mut self, type_: ::def::Device, idx: u32, formats: &mut [&mut ::format::Info],
         cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
     {
         // Capture array of pointers to the above ::format::InfoInternal objects

@@ -285,13 +285,13 @@ impl Context {
     }
 
     /// Set a callback function that is called whenever the context status changes.
-    pub fn set_state_callback(&self, cb: Option<(ContextNotifyCb, *mut c_void)>) {
+    pub fn set_state_callback(&mut self, cb: Option<(ContextNotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextNotifyCb>(cb);
         unsafe { capi::pa_context_set_state_callback(self.ptr, cb_f, cb_d); }
     }
 
     /// Set a callback function that is called whenever a meta/policy control event is received.
-    pub fn set_event_callback(&self, cb: Option<(ContextEventCb, *mut c_void)>) {
+    pub fn set_event_callback(&mut self, cb: Option<(ContextEventCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextEventCb>(cb);
         unsafe { capi::pa_context_set_event_callback(self.ptr, cb_f, cb_d); }
     }
@@ -302,7 +302,7 @@ impl Context {
     }
 
     /// Returns `true` if some data is pending to be written to the connection
-    pub fn is_pending(&self) -> bool {
+    pub fn is_pending(&mut self) -> bool {
         unsafe { capi::pa_context_is_pending(self.ptr) != 0 }
     }
 
@@ -319,7 +319,7 @@ impl Context {
     /// [`flags::NOAUTOSPAWN`](flags/constant.NOAUTOSPAWN.html) set and no specific server is specified
     /// or accessible, a new daemon is spawned. If `api` is not `None`, the functions specified in
     /// the structure are used when forking a new child process.
-    pub fn connect(&self, server: Option<&str>, flags: FlagSet, api: Option<&::def::SpawnApi>
+    pub fn connect(&mut self, server: Option<&str>, flags: FlagSet, api: Option<&::def::SpawnApi>
         ) -> Result<(), i32>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -345,13 +345,13 @@ impl Context {
     }
 
     /// Terminate the context connection immediately.
-    pub fn disconnect(&self) {
+    pub fn disconnect(&mut self) {
         unsafe { capi::pa_context_disconnect(self.ptr); }
     }
 
     /// Drain the context.
     /// If there is nothing to drain, the function returns `None`.
-    pub fn drain(&self, cb: (ContextNotifyCb, *mut c_void)) -> Option<Operation> {
+    pub fn drain(&mut self, cb: (ContextNotifyCb, *mut c_void)) -> Option<Operation> {
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -363,7 +363,7 @@ impl Context {
     ///
     /// The returned operation is unlikely to complete successfully, since the daemon probably died
     /// before returning a success notification.
-    pub fn exit_daemon(&self, cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation> {
+    pub fn exit_daemon(&mut self, cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation> {
         let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -372,7 +372,7 @@ impl Context {
     }
 
     /// Set the name of the default sink.
-    pub fn set_default_sink(&self, name: &str, cb: (ContextSuccessCb, *mut c_void)
+    pub fn set_default_sink(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -386,7 +386,7 @@ impl Context {
     }
 
     /// Set the name of the default source.
-    pub fn set_default_source(&self, name: &str, cb: (ContextSuccessCb, *mut c_void)
+    pub fn set_default_source(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -402,7 +402,7 @@ impl Context {
 
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
     /// instance when no connection has been made yet.
-    pub fn is_local(&self) -> Option<bool> {
+    pub fn is_local(&mut self) -> Option<bool> {
         match unsafe { capi::pa_context_is_local(self.ptr) } {
             1 => Some(true),
             0 => Some(false),
@@ -411,7 +411,7 @@ impl Context {
     }
 
     /// Set a different application name for context on the server.
-    pub fn set_name(&self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation> {
+    pub fn set_name(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
@@ -423,7 +423,7 @@ impl Context {
     }
 
     /// Return the server name this context is connected to.
-    pub fn get_server(&self) -> Option<String> {
+    pub fn get_server(&mut self) -> Option<String> {
         let ptr = unsafe { capi::pa_context_get_server(self.ptr) };
         if ptr.is_null() {
             return None;
@@ -439,7 +439,7 @@ impl Context {
     /// Return the protocol version of the connected server.
     ///
     /// Returns `None` on error.
-    pub fn get_server_protocol_version(&self) -> Option<u32> {
+    pub fn get_server_protocol_version(&mut self) -> Option<u32> {
         match unsafe { capi::pa_context_get_server_protocol_version(self.ptr) } {
             ::def::INVALID_INDEX => None,
             r => Some(r),
@@ -452,7 +452,7 @@ impl Context {
     /// [`new_with_proplist`](#method.new_with_proplist) as possible instead a posteriori with this
     /// function, since that information may then be used to route streams of the client to the
     /// right device.
-    pub fn proplist_update(&self, mode: ::proplist::UpdateMode, p: &::proplist::Proplist,
+    pub fn proplist_update(&mut self, mode: ::proplist::UpdateMode, p: &::proplist::Proplist,
         cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation>
     {
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr, Some(cb.0), cb.1) };
@@ -463,7 +463,7 @@ impl Context {
     }
 
     /// Update the property list of the client, remove entries.
-    pub fn proplist_remove(&self, keys: &[&str], cb: (ContextSuccessCb, *mut c_void)
+    pub fn proplist_remove(&mut self, keys: &[&str], cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -497,7 +497,7 @@ impl Context {
     /// Returns `None` on error.
     ///
     /// [`::introspect::Introspector::get_client_info`]: introspect/struct.Introspector.html#method.get_client_info
-    pub fn get_index(&self) -> Option<u32> {
+    pub fn get_index(&mut self) -> Option<u32> {
         match unsafe { capi::pa_context_get_index(self.ptr) } {
             ::def::INVALID_INDEX => None,
             r => Some(r),
@@ -515,7 +515,7 @@ impl Context {
     ///
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     /// [`::mainloop::api::MainloopApi.time_new`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_new
-    pub fn rttime_new<T>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
+    pub fn rttime_new<T>(&mut self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
         usec: ::sample::Usecs, cb: (TimeEventCb, *mut c_void)) -> Option<TimeEvent<T::MI>>
         where T: ::mainloop::api::Mainloop
     {
@@ -530,7 +530,7 @@ impl Context {
     /// [`::mainloop::api::MainloopApi.time_restart`]).
     ///
     /// [`::mainloop::api::MainloopApi.time_restart`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_restart
-    pub fn rttime_restart<T>(&self, e: &TimeEvent<T::MI>, usec: ::sample::Usecs)
+    pub fn rttime_restart<T>(&mut self, e: &TimeEvent<T::MI>, usec: ::sample::Usecs)
         where T: ::mainloop::api::Mainloop
     {
         unsafe { capi::pa_context_rttime_restart(self.ptr, e.get_ptr(), usec); }
@@ -548,10 +548,10 @@ impl Context {
     /// frame size. This is supposed to be used in a construct such as:
     ///
     /// ```rust,ignore
-    /// let size = stream.get_context().get_tile_size(
-    ///     stream.get_sample_spec().unwrap()).unwrap();
+    /// let ss = stream.get_sample_spec().unwrap();
+    /// let size = stream.get_context().get_tile_size(ss).unwrap();
     /// ```
-    pub fn get_tile_size(&self, ss: &::sample::Spec) -> Option<usize> {
+    pub fn get_tile_size(&mut self, ss: &::sample::Spec) -> Option<usize> {
         // Note: C function doc comments mention possibility of passing in a NULL pointer for ss.
         // We do not allow this, since 
         match unsafe { capi::pa_context_get_tile_size(self.ptr, std::mem::transmute(ss)) } {
@@ -566,7 +566,7 @@ impl Context {
     /// cookie from a custom location. Applications don't usually need to care about the cookie at
     /// all, but if it happens that you know what the authentication cookie is and your application
     /// needs to load it from a non-standard location, feel free to use this function.
-    pub fn load_cookie_from_file(&self, cookie_file_path: &str) -> Result<(), i32> {
+    pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), i32> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_path = CString::new(cookie_file_path.clone()).unwrap();

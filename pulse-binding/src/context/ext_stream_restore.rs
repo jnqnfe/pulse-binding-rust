@@ -84,7 +84,7 @@ impl StreamRestore {
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
         let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -93,7 +93,7 @@ impl StreamRestore {
     }
 
     /// Read all entries from the stream database.
-    pub fn read(&self, cb: (ReadCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn read(&mut self, cb: (ReadCb, *mut c_void)) -> Option<::operation::Operation> {
         let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -102,7 +102,7 @@ impl StreamRestore {
     }
 
     /// Store entries in the stream database.
-    pub fn write(&self, mode: ::proplist::UpdateMode, data: &[&Info], apply_immediately: bool,
+    pub fn write(&mut self, mode: ::proplist::UpdateMode, data: &[&Info], apply_immediately: bool,
         cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
     {
         let ptr = unsafe {
@@ -117,7 +117,7 @@ impl StreamRestore {
     }
 
     /// Delete entries from the stream database.
-    pub fn delete(&self, streams: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
+    pub fn delete(&mut self, streams: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -144,7 +144,7 @@ impl StreamRestore {
     }
 
     /// Subscribe to changes in the stream database.
-    pub fn subscribe(&self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
+    pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
@@ -157,7 +157,7 @@ impl StreamRestore {
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
-    pub fn set_subscribe_cb(&self, cb: (SubscribeCb, *mut c_void)) {
+    pub fn set_subscribe_cb(&mut self, cb: (SubscribeCb, *mut c_void)) {
         unsafe { capi::pa_ext_stream_restore_set_subscribe_cb(self.context, Some(cb.0), cb.1); }
     }
 }

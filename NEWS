@@ -11,6 +11,10 @@ Changes between 1.0.5 and ???:
  * Privatised timer event get_ptr method
  * As described below, a number of C function declarations in the sys crates now take certain object
    pointers immutably now. A small number of functions in the binding have been similarly updated.
+ * Promoted `self` reference to mutable for various methods across context, mainloops, streams,
+   proplist and operation objects. Although our objects in these cases can be used immutably (no
+   change in the wrapped pointer), we should reflect mutability needs of the operation being
+   performed on the underlying C objects.
 
  [pulse-simple-binding] (1.0.5 => ???)
 

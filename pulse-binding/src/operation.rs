@@ -56,7 +56,7 @@ impl Operation {
     /// Beware! This will not necessarily cancel the execution of the operation on the server side.
     /// However it will make sure that the callback associated with this operation will not be
     /// called anymore, effectively disabling the operation from the client side's view.
-    pub fn cancel(&self) {
+    pub fn cancel(&mut self) {
         unsafe { capi::pa_operation_cancel(self.ptr); }
     }
 
@@ -71,7 +71,7 @@ impl Operation {
     /// take a callback that is called when the operation finishes. Registering a state change
     /// callback is mainly useful, if you want to get called back also if the operation gets
     /// cancelled.
-    pub fn set_state_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_state_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_operation_set_state_callback(self.ptr, cb_f, cb_d); }
     }

@@ -76,7 +76,7 @@
 //!     proplist.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp")
 //!         .unwrap();
 //!
-//!     let mainloop = Mainloop::new().unwrap();
+//!     let mut mainloop = Mainloop::new().unwrap();
 //!
 //!     let mut context = pulse::context::Context::new_with_proplist(
 //!         mainloop.get_api(),
@@ -107,7 +107,7 @@
 //!         }
 //!     }
 //!
-//!     let stream = Stream::new(&mut context, "Music", &spec, None).unwrap();
+//!     let mut stream = Stream::new(&mut context, "Music", &spec, None).unwrap();
 //!
 //!     stream.connect_playback(None, None, pulse::stream::flags::START_CORKED,
 //!         None, None).unwrap();
@@ -304,7 +304,7 @@ impl Mainloop {
     /// `timeout` specifies a maximum timeout for the subsequent poll, or `None` for blocking
     /// behaviour. Only positive values should be provided, negative values will have the same
     /// effect as `None`.
-    pub fn prepare(&self, timeout: Option<i32>) -> Result<(), i32> {
+    pub fn prepare(&mut self, timeout: Option<i32>) -> Result<(), i32> {
         let t: i32 = match timeout {
             Some(t) => t ,
             None => -1,
@@ -316,7 +316,7 @@ impl Mainloop {
     }
 
     /// Execute the previously prepared poll.
-    pub fn poll(&self) -> Result<u32, i32> {
+    pub fn poll(&mut self) -> Result<u32, i32> {
         match unsafe { capi::pa_mainloop_poll((*self._inner).ptr) } {
             e if e >= 0 => Ok(e as u32),
             e => Err(e),
@@ -325,7 +325,7 @@ impl Mainloop {
 
     /// Dispatch timeout, io and deferred events from the previously executed poll. On success
     /// returns the number of source dispatched.
-    pub fn dispatch(&self) -> Result<u32, i32> {
+    pub fn dispatch(&mut self) -> Result<u32, i32> {
         match unsafe { capi::pa_mainloop_dispatch((*self._inner).ptr) } {
             e if e >= 0 => Ok(e as u32),
             e => Err(e),
@@ -350,7 +350,7 @@ impl Mainloop {
     ///   in this iteration.
     /// * If exit was requested, returns `InterateResult::Quit` containing quit's retval.
     /// * On error, returns `InterateResult::Err` containing error value.
-    pub fn iterate(&self, block: bool) -> InterateResult {
+    pub fn iterate(&mut self, block: bool) -> InterateResult {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_iterate((*self._inner).ptr, block as i32, &mut retval) } {
             r if r >= 0 => InterateResult::Success(r as u32),
@@ -363,7 +363,7 @@ impl Mainloop {
     /// [`quit`](#method.quit) routine is called.
     ///
     /// On success, returns `Some` containing quit's retval. On error returns `None`.
-    pub fn run(&self) -> Option<i32> {
+    pub fn run(&mut self) -> Option<i32> {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_run((*self._inner).ptr, &mut retval) } {
             r if r >= 0 => Some(r),
@@ -386,17 +386,17 @@ impl Mainloop {
     }
 
     /// Shutdown the main loop with the specified return value
-    pub fn quit(&self, retval: i32) {
+    pub fn quit(&mut self, retval: i32) {
         unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval); }
     }
 
     /// Interrupt a running poll (for threaded systems)
-    pub fn wakeup(&self) {
+    pub fn wakeup(&mut self) {
         unsafe { capi::pa_mainloop_wakeup((*self._inner).ptr); }
     }
 
     /// Change the poll() implementation
-    pub fn set_poll_func(&self, poll_cb: (PollFn, *mut c_void)) {
+    pub fn set_poll_func(&mut self, poll_cb: (PollFn, *mut c_void)) {
         unsafe { capi::pa_mainloop_set_poll_func((*self._inner).ptr, Some(poll_cb.0), poll_cb.1); }
     }
 }

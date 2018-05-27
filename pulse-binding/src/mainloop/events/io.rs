@@ -66,14 +66,14 @@ impl<T> IoEvent<T>
     }
 
     /// Enable or disable IO events on this object.
-    pub fn enable(&self, events: IoEventFlagSet) {
+    pub fn enable(&mut self, events: IoEventFlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
         fn_ptr(self.ptr, events);
     }
 
     /// Set a function that is called when the IO event source is destroyed.
     /// Use this to free the userdata argument if required.
-    pub fn set_destroy(&self, cb: IoEventDestroyCb) {
+    pub fn set_destroy(&mut self, cb: IoEventDestroyCb) {
         let fn_ptr = (*self.owner).get_api().io_set_destroy.unwrap();
         fn_ptr(self.ptr, Some(cb));
     }

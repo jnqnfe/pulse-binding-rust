@@ -226,7 +226,7 @@ impl Proplist {
 
     /// Append a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key. An internal copy is made of the provided string.
-    pub fn sets(&self, key: &str, value: &str) -> Result<(), ()> {
+    pub fn sets(&mut self, key: &str, value: &str) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
@@ -243,7 +243,7 @@ impl Proplist {
     /// This is similar to [`sets`](#method.sets), however here the provided key and value are
     /// combined into a single string, separated by an `=`. An internal copy is made of the provided
     /// string.
-    pub fn setp(&self, pair: &str) -> Result<(), ()> {
+    pub fn setp(&mut self, pair: &str) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_pair = CString::new(pair.clone()).unwrap();
@@ -255,7 +255,7 @@ impl Proplist {
 
     /// Append a new arbitrary data entry to the property list, possibly overwriting an already
     /// existing entry with the same key. An internal copy of the provided data is made.
-    pub fn set(&self, key: &str, data: &[u8]) -> Result<(), ()> {
+    pub fn set(&mut self, key: &str, data: &[u8]) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         //  as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
@@ -305,12 +305,12 @@ impl Proplist {
     }
 
     /// Merge property list "other" into self, adhering to the merge mode specified.
-    pub fn merge(&self, other: &Self, mode: UpdateMode) {
+    pub fn merge(&mut self, other: &Self, mode: UpdateMode) {
         unsafe { capi::pa_proplist_update(self.ptr, mode, other.ptr); }
     }
 
     /// Removes a single entry from the property list, identified by the specified key name.
-    pub fn unset(&self, key: &str) -> Result<(), i32> {
+    pub fn unset(&mut self, key: &str) -> Result<(), i32> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
@@ -324,7 +324,7 @@ impl Proplist {
     ///
     /// Returns `None` on failure, otherwise the number of entries actually removed (which might
     /// even be 0, if there were no matching entries to remove).
-    pub fn unset_many(&self, keys: &[&str]) -> Option<u32> {
+    pub fn unset_many(&mut self, keys: &[&str]) -> Option<u32> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let mut c_keys: Vec<CString> = Vec::with_capacity(keys.len());
@@ -422,7 +422,7 @@ impl Proplist {
     }
 
     /// Remove all entries from the property list object.
-    pub fn clear(&self) {
+    pub fn clear(&mut self) {
         unsafe { capi::pa_proplist_clear(self.ptr); }
     }
 

@@ -55,14 +55,14 @@ impl<T> TimeEvent<T>
     }
 
     /// Restart a running or expired timer event source with a new Unix time.
-    pub fn restart(&self, tv: &timeval) {
+    pub fn restart(&mut self, tv: &timeval) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, tv);
     }
 
     /// Set a function that is called when the timer event source is destroyed.
     /// Use this to free the userdata argument if required.
-    pub fn set_destroy(&self, cb: TimeEventDestroyCb) {
+    pub fn set_destroy(&mut self, cb: TimeEventDestroyCb) {
         let fn_ptr = (*self.owner).get_api().time_set_destroy.unwrap();
         fn_ptr(self.ptr, Some(cb));
     }

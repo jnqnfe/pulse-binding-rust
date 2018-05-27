@@ -70,7 +70,7 @@ impl Event {
 
     /// Set a function that is called when the signal event source is destroyed. Use this to free
     /// the userdata argument if required
-    pub fn signal_set_destroy(&self, callback: DestroyCb) {
+    pub fn signal_set_destroy(&mut self, callback: DestroyCb) {
         unsafe { capi::pa_signal_set_destroy(self.ptr, Some(callback)); }
     }
 }

@@ -101,7 +101,7 @@ pub trait Mainloop {
     fn inner(&self) -> Rc<Self::MI>;
 
     /// Create a new IO event
-    fn new_io_event(&self, fd: i32, events: IoEventFlagSet, cb: (IoEventCb, *mut c_void)
+    fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet, cb: (IoEventCb, *mut c_void)
         ) -> Option<IoEvent<Self::MI>>
     {
         let fn_ptr = self.inner().get_api().io_new.unwrap();
@@ -113,7 +113,7 @@ pub trait Mainloop {
     }
 
     /// Create a new timer event
-    fn new_timer_event(&self, tv: &timeval, cb: (TimeEventCb, *mut c_void)
+    fn new_timer_event(&mut self, tv: &timeval, cb: (TimeEventCb, *mut c_void)
         ) -> Option<TimeEvent<Self::MI>>
     {
         let fn_ptr = self.inner().get_api().time_new.unwrap();
@@ -125,7 +125,9 @@ pub trait Mainloop {
     }
 
     /// Create a new deferred event
-    fn new_deferred_event(&self, cb: (DeferEventCb, *mut c_void)) -> Option<DeferEvent<Self::MI>> {
+    fn new_deferred_event(&mut self, cb: (DeferEventCb, *mut c_void)
+        ) -> Option<DeferEvent<Self::MI>>
+    {
         let fn_ptr = self.inner().get_api().defer_new.unwrap();
         let ptr = fn_ptr(self.inner().get_api(), Some(cb.0), cb.1);
         if ptr.is_null() {
@@ -135,7 +137,7 @@ pub trait Mainloop {
     }
 
     /// Set the userdata pointer held in the api vtable object
-    fn set_api_userdata(&self, userdata: *mut c_void) {
+    fn set_api_userdata(&mut self, userdata: *mut c_void) {
         self.inner().get_api().userdata = userdata;
     }
 
@@ -145,7 +147,7 @@ pub trait Mainloop {
     }
 
     /// Call quit
-    fn quit(&self, retval: i32) {
+    fn quit(&mut self, retval: i32) {
         let fn_ptr = self.inner().get_api().quit.unwrap();
         fn_ptr(self.inner().get_api(), retval);
     }

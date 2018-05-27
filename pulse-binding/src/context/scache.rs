@@ -80,7 +80,7 @@ impl Context {
     /// Remove a sample from the sample cache.
     ///
     /// Returns an operation object which may be used to cancel the operation while it is running.
-    pub fn remove_sample(&self, name: &str, cb: (::context::ContextSuccessCb, *mut c_void)
+    pub fn remove_sample(&mut self, name: &str, cb: (::context::ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -108,7 +108,7 @@ impl Context {
     /// * `userdata`: Userdata to pass to the callback.
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
-    pub fn play_sample(&self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
+    pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -151,9 +151,9 @@ impl Context {
     /// * `userdata`: Userdata to pass to the callback.
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
-    pub fn play_sample_with_proplist(&self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
-        proplist: &::proplist::Proplist, cb: Option<(ContextPlaySampleCb, *mut c_void)>
-        ) -> Option<::operation::Operation>
+    pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
+        volume: ::volume::Volume, proplist: &::proplist::Proplist,
+        cb: Option<(ContextPlaySampleCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextPlaySampleCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a

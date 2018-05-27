@@ -47,14 +47,14 @@ impl<T> DeferEvent<T>
     }
 
     /// Enable or disable a deferred event source temporarily.
-    pub fn enable(&self, b: bool) {
+    pub fn enable(&mut self, b: bool) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, b as i32);
     }
 
     /// Set a function that is called when the deferred event source is destroyed. Use this to free
     /// the userdata argument if required.
-    pub fn set_destroy_cb(&self, cb: DeferEventDestroyCb) {
+    pub fn set_destroy_cb(&mut self, cb: DeferEventDestroyCb) {
         let fn_ptr = (*self.owner).get_api().defer_set_destroy.unwrap();
         fn_ptr(self.ptr, Some(cb));
     }

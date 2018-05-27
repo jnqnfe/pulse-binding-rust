@@ -275,7 +275,7 @@
 //!     }
 //!     context.set_state_callback(None);
 //!
-//!     let stream = pulse::stream::Stream::new(&mut context, "Music", &spec,
+//!     let mut stream = pulse::stream::Stream::new(&mut context, "Music", &spec,
 //!         None).unwrap();
 //!
 //!     stream.set_state_callback(Some((stream_state_change_cb,
@@ -341,7 +341,7 @@
 //!     assert_eq!(false, data.is_null());
 //!     let context = pulse::context::Context::from_raw_weak(context);
 //!     let state = context.get_state();
-//!     let mainloop: &Mainloop = unsafe { transmute(data) };
+//!     let mainloop: &mut Mainloop = unsafe { transmute(data) };
 //!     match state {
 //!         pulse::context::State::Ready |
 //!         pulse::context::State::Failed |
@@ -357,7 +357,7 @@
 //!     assert_eq!(false, data.is_null());
 //!     let stream = pulse::stream::Stream::from_raw_weak(stream);
 //!     let state = stream.get_state();
-//!     let mainloop: &Mainloop = unsafe { transmute(data) };
+//!     let mainloop: &mut Mainloop = unsafe { transmute(data) };
 //!     match state {
 //!         pulse::stream::State::Ready |
 //!         pulse::stream::State::Failed |
@@ -371,7 +371,7 @@
 //! extern "C"
 //! fn drain_cb(_: *mut pulse::stream::StreamInternal, _: i32, data: *mut c_void) {
 //!     assert_eq!(false, data.is_null());
-//!     let mainloop: &Mainloop = unsafe { transmute(data) };
+//!     let mainloop: &mut Mainloop = unsafe { transmute(data) };
 //!     mainloop.signal(false);
 //! }
 //! ```
@@ -450,7 +450,7 @@ impl Mainloop {
     }
 
     /// Start the event loop thread.
-    pub fn start(&self) -> Result<(), i32> {
+    pub fn start(&mut self) -> Result<(), i32> {
         match unsafe { capi::pa_threaded_mainloop_start((*self._inner).ptr) } {
             0 => Ok(()),
             e => Err(e),
@@ -459,7 +459,7 @@ impl Mainloop {
 
     /// Terminate the event loop thread cleanly. Make sure to unlock the mainloop object before
     /// calling this function.
-    pub fn stop(&self) {
+    pub fn stop(&mut self) {
         unsafe { capi::pa_threaded_mainloop_stop((*self._inner).ptr); }
     }
 
@@ -467,12 +467,12 @@ impl Mainloop {
     /// events. You can use this to enforce exclusive access to all objects attached to the event
     /// loop. This lock is recursive. This function may not be called inside the event loop thread.
     /// Events that are dispatched from the event loop thread are executed with this lock held.
-    pub fn lock(&self) {
+    pub fn lock(&mut self) {
         unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
     }
 
     /// Unlock the event loop object, inverse of [`lock`](#method.lock).
-    pub fn unlock(&self) {
+    pub fn unlock(&mut self) {
         unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
     }
 
@@ -482,7 +482,7 @@ impl Mainloop {
     /// to be locked using [`lock`](#method.lock). While waiting the lock will be released.
     /// Immediately before returning it will be acquired again. This function may spuriously wake up
     /// even without [`signal`](#method.signal) being called. You need to make sure to handle that!
-    pub fn wait(&self) {
+    pub fn wait(&mut self) {
         unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
     }
 
@@ -490,7 +490,7 @@ impl Mainloop {
     /// `wait_for_accept` is non-zero, do not return before the signal was accepted by an
     /// [`accept`](#method.accept) call. While waiting for that condition the event loop object is
     /// unlocked.
-    pub fn signal(&self, wait_for_accept: bool) {
+    pub fn signal(&mut self, wait_for_accept: bool) {
         unsafe { capi::pa_threaded_mainloop_signal((*self._inner).ptr, wait_for_accept as i32); }
     }
 
@@ -500,7 +500,7 @@ impl Mainloop {
     /// `true`.
     ///
     /// [`signal`]: #method.signal
-    pub fn accept(&self) {
+    pub fn accept(&mut self) {
         unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }
     }
 
@@ -531,7 +531,7 @@ impl Mainloop {
     }
 
     /// Sets the name of the thread.
-    pub fn set_name(&self, name: &str) {
+    pub fn set_name(&mut self, name: &str) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();

@@ -773,7 +773,7 @@ impl Stream {
     /// ../context/struct.Context.html#method.set_sink_input_volume
     /// [`::context::introspect::Introspector::get_sink_info_by_name`]:
     /// ../context/struct.Context.html#method.get_sink_info_by_name
-    pub fn connect_playback(&self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
+    pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
         flags: FlagSet, volume: Option<&::volume::CVolume>, sync_stream: Option<&mut Self>
         ) -> Result<(), i32>
     {
@@ -816,7 +816,7 @@ impl Stream {
     /// * `dev`: Name of the source to connect to, or `None` for default
     /// * `attr`: Buffering attributes, or `None` for default
     /// * `flags`: Additional flags, or `0` for default
-    pub fn connect_record(&self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
+    pub fn connect_record(&mut self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
         flags: FlagSet) -> Result<(), i32>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -842,7 +842,7 @@ impl Stream {
     }
 
     /// Make this stream a sample upload stream. (See [`::scache`](../context/scache/index.html)).
-    pub fn connect_upload(&self, length: usize) -> Result<(), i32> {
+    pub fn connect_upload(&mut self, length: usize) -> Result<(), i32> {
         match unsafe { capi::pa_stream_connect_upload(self.ptr, length) } {
             0 => Ok(()),
             e => Err(e),
@@ -851,7 +851,7 @@ impl Stream {
 
     /// Finish the sample upload, the stream name will become the sample name.
     /// You cancel a sample upload by issuing [`disconnect`](#method.disconnect).
-    pub fn finish_upload(&self) -> Result<(), i32> {
+    pub fn finish_upload(&mut self) -> Result<(), i32> {
         match unsafe { capi::pa_stream_finish_upload(self.ptr) } {
             0 => Ok(()),
             e => Err(e),
@@ -859,7 +859,7 @@ impl Stream {
     }
 
     /// Disconnect a stream from a source/sink.
-    pub fn disconnect(&self) -> Result<(), i32> {
+    pub fn disconnect(&mut self) -> Result<(), i32> {
         match unsafe { capi::pa_stream_disconnect(self.ptr) } {
             0 => Ok(()),
             e => Err(e),
@@ -899,7 +899,7 @@ impl Stream {
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
     /// [`BufferResult::Null`]: enum.BufferResult.html#Null.v
-    pub fn begin_write(&self, nbytes: Option<usize>) -> Result<BufferResult, i32> {
+    pub fn begin_write(&mut self, nbytes: Option<usize>) -> Result<BufferResult, i32> {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
@@ -922,7 +922,7 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
-    pub fn cancel_write(&self) -> Result<(), i32> {
+    pub fn cancel_write(&mut self) -> Result<(), i32> {
         match unsafe { capi::pa_stream_cancel_write(self.ptr) } {
             0 => Ok(()),
             e => Err(e),
@@ -961,7 +961,7 @@ impl Stream {
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`begin_write`]: #method.begin_write
     /// [`write`]: #method.write
-    pub fn write(&self, data: &[u8], free_cb: Option<::def::FreeCb>, offset: i64, seek: SeekMode
+    pub fn write(&mut self, data: &[u8], free_cb: Option<::def::FreeCb>, offset: i64, seek: SeekMode
         ) -> Result<(), i32>
     {
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
@@ -991,7 +991,7 @@ impl Stream {
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`write`]: #method.write
-    pub fn write_ext_free(&self, data: &[u8], free_cb: Option<(::def::FreeCb, *mut c_void)>,
+    pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(::def::FreeCb, *mut c_void)>,
         offset: i64, seek: SeekMode) -> Result<(), i32>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<::def::FreeCb>(free_cb);
@@ -1029,7 +1029,7 @@ impl Stream {
     /// [`Hole`]: enum.PeekResult.html#Hole.v
     /// [`Data`]: enum.PeekResult.html#Data.v
     /// [`discard`]: #method.discard
-    pub fn peek(&self) -> Result<PeekResult, i32> {
+    pub fn peek(&mut self) -> Result<PeekResult, i32> {
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
         // Note, C function returns an i32, but documentation does not mention any use of it, so we
@@ -1049,7 +1049,7 @@ impl Stream {
     ///
     /// Note: The original C function name used the term `drop`; We instead use `discard` here to
     /// avoid conflict with the Rust `Drop` trait!
-    pub fn discard(&self) -> Result<(), i32> {
+    pub fn discard(&mut self) -> Result<(), i32> {
         match unsafe { capi::pa_stream_drop(self.ptr) } {
             0 => Ok(()),
             e => Err(e),
@@ -1083,7 +1083,7 @@ impl Stream {
     ///
     /// Use this for notification when the playback buffer is empty after playing all the audio in
     /// the buffer. Please note that only one drain operation per stream may be issued at a time.
-    pub fn drain(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn drain(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_f, cb_d) };
         if ptr.is_null() {
@@ -1100,7 +1100,7 @@ impl Stream {
     /// [`get_timing_info`]: #method.get_timing_info
     /// [`get_time`]: #method.get_time
     /// [`get_latency`]: #method.get_latency
-    pub fn update_timing_info(&self, cb: Option<(SuccessCb, *mut c_void)>
+    pub fn update_timing_info(&mut self, cb: Option<(SuccessCb, *mut c_void)>
         ) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
@@ -1112,26 +1112,26 @@ impl Stream {
     }
 
     /// Set the callback function that is called whenever the state of the stream changes.
-    pub fn set_state_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_state_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_state_callback(self.ptr, cb_f, cb_d); }
     }
 
     /// Set the callback function that is called when new data may be written to the stream.
-    pub fn set_write_callback(&self, cb: Option<(RequestCb, *mut c_void)>) {
+    pub fn set_write_callback(&mut self, cb: Option<(RequestCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<RequestCb>(cb);
         unsafe { capi::pa_stream_set_write_callback(self.ptr, cb_f, cb_d); }
     }
 
     /// Set the callback function that is called when new data is available from the stream.
-    pub fn set_read_callback(&self, cb: Option<(RequestCb, *mut c_void)>) {
+    pub fn set_read_callback(&mut self, cb: Option<(RequestCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<RequestCb>(cb);
         unsafe { capi::pa_stream_set_read_callback(self.ptr, cb_f, cb_d); }
     }
 
     /// Set the callback function that is called when a buffer overflow happens. (Only for playback
     /// streams).
-    pub fn set_overflow_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_overflow_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_overflow_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1151,7 +1151,7 @@ impl Stream {
 
     /// Set the callback function that is called when a buffer underflow happens. (Only for playback
     /// streams)
-    pub fn set_underflow_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_underflow_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_underflow_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1159,7 +1159,7 @@ impl Stream {
     /// Set the callback function that is called when the server starts playback after an underrun
     /// or on initial startup. This only informs that audio is flowing again, it is no indication
     /// that audio started to reach the speakers already. (Only for playback streams).
-    pub fn set_started_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_started_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_started_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1168,7 +1168,7 @@ impl Stream {
     /// Useful on [`flags::AUTO_TIMING_UPDATE`] streams only.
     ///
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
-    pub fn set_latency_update_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_latency_update_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_latency_update_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1178,7 +1178,7 @@ impl Stream {
     ///
     /// [`get_device_name`]: #method.get_device_name
     /// [`get_device_index`]: #method.get_device_index
-    pub fn set_moved_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_moved_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_moved_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1190,13 +1190,13 @@ impl Stream {
     ///
     /// [`is_suspended`]: #method.is_suspended
     /// [`set_moved_callback`]: #method.set_moved_callback
-    pub fn set_suspended_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_suspended_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_suspended_callback(self.ptr, cb_f, cb_d); }
     }
 
     /// Set the callback function that is called whenever a meta/policy control event is received.
-    pub fn set_event_callback(&self, cb: Option<(EventCb, *mut c_void)>) {
+    pub fn set_event_callback(&mut self, cb: Option<(EventCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<EventCb>(cb);
         unsafe { capi::pa_stream_set_event_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1207,7 +1207,7 @@ impl Stream {
     /// [`set_moved_callback`] as well.
     ///
     /// [`set_moved_callback`]: #method.set_moved_callback
-    pub fn set_buffer_attr_callback(&self, cb: Option<(NotifyCb, *mut c_void)>) {
+    pub fn set_buffer_attr_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
         unsafe { capi::pa_stream_set_buffer_attr_callback(self.ptr, cb_f, cb_d); }
     }
@@ -1223,7 +1223,7 @@ impl Stream {
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn cork(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn cork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_f, cb_d) };
         if ptr.is_null() {
@@ -1243,7 +1243,7 @@ impl Stream {
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn uncork(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn uncork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_f, cb_d) };
         if ptr.is_null() {
@@ -1256,7 +1256,7 @@ impl Stream {
     ///
     /// This discards any audio data in the buffer. Most of the time you're better off using the
     /// parameter `seek` of [`write`](#method.write) instead of this function.
-    pub fn flush(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn flush(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_f, cb_d) };
         if ptr.is_null() {
@@ -1269,7 +1269,7 @@ impl Stream {
     /// playback streams only.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn prebuf(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn prebuf(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_f, cb_d) };
         if ptr.is_null() {
@@ -1284,7 +1284,7 @@ impl Stream {
     /// Available for playback streams only.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn trigger(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn trigger(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_f, cb_d) };
         if ptr.is_null() {
@@ -1294,7 +1294,7 @@ impl Stream {
     }
 
     /// Rename the stream.
-    pub fn set_name(&self, name: &str, cb: Option<(SuccessCb, *mut c_void)>
+    pub fn set_name(&mut self, name: &str, cb: Option<(SuccessCb, *mut c_void)>
         ) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
@@ -1396,19 +1396,19 @@ impl Stream {
     /// [`update_timing_info`]: #method.update_timing_info
     /// [`write`]: #method.write
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
-    pub fn get_timing_info(&self) -> Option<&::def::TimingInfo> {
+    pub fn get_timing_info(&mut self) -> Option<&::def::TimingInfo> {
         let ptr = unsafe { capi::pa_stream_get_timing_info(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
 
     /// Return a pointer to the stream's sample specification.
-    pub fn get_sample_spec(&self) -> Option<&::sample::Spec> {
+    pub fn get_sample_spec(&mut self) -> Option<&::sample::Spec> {
         let ptr = unsafe { capi::pa_stream_get_sample_spec(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
 
     /// Return a pointer to the stream's channel map.
-    pub fn get_channel_map(&self) -> Option<&::channelmap::Map> {
+    pub fn get_channel_map(&mut self) -> Option<&::channelmap::Map> {
         let ptr = unsafe { capi::pa_stream_get_channel_map(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
@@ -1433,7 +1433,7 @@ impl Stream {
     /// [`connect_record`]: #method.connect_record
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-    pub fn get_buffer_attr(&self) -> Option<&::def::BufferAttr> {
+    pub fn get_buffer_attr(&mut self) -> Option<&::def::BufferAttr> {
         let ptr = unsafe { capi::pa_stream_get_buffer_attr(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
@@ -1447,7 +1447,7 @@ impl Stream {
     ///
     /// [`get_buffer_attr`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-    pub fn set_buffer_attr(&self, attr: &::def::BufferAttr, cb: (SuccessCb, *mut c_void)
+    pub fn set_buffer_attr(&mut self, attr: &::def::BufferAttr, cb: (SuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, std::mem::transmute(attr),
@@ -1465,7 +1465,7 @@ impl Stream {
     ///
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
-    pub fn update_sample_rate(&self, rate: u32, cb: (SuccessCb, *mut c_void)
+    pub fn update_sample_rate(&mut self, rate: u32, cb: (SuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate, Some(cb.0), cb.1) };
@@ -1482,7 +1482,7 @@ impl Stream {
     /// information may be used to route this stream to the right device.
     ///
     /// [`new_with_proplist`]: #method.new_with_proplist
-    pub fn update_proplist(&self, mode: ::proplist::UpdateMode, plist: &mut ::proplist::Proplist,
+    pub fn update_proplist(&mut self, mode: ::proplist::UpdateMode, plist: &mut ::proplist::Proplist,
         cb: (SuccessCb, *mut c_void)) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, plist.ptr, Some(cb.0),
@@ -1494,7 +1494,7 @@ impl Stream {
     }
 
     /// Update the property list of the sink input/source output of this stream, remove entries.
-    pub fn proplist_remove(&self, keys: &[&str], cb: (SuccessCb, *mut c_void)
+    pub fn proplist_remove(&mut self, keys: &[&str], cb: (SuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1524,7 +1524,7 @@ impl Stream {
     /// For record streams connected to a monitor source: monitor only a very specific sink input of
     /// the sink. This function needs to be called before [`connect_record`](#method.connect_record)
     /// is called.
-    pub fn set_monitor_stream(&self, sink_input_idx: u32) -> Result<(), i32> {
+    pub fn set_monitor_stream(&mut self, sink_input_idx: u32) -> Result<(), i32> {
         match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_idx) } {
             0 => Ok(()),
             e => Err(e),

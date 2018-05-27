@@ -453,7 +453,7 @@ impl Introspector {
     /// Set the volume of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_volume_by_index(&self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_sink_volume_by_index(&mut self, idx: u32, volume: &::volume::CVolume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -468,7 +468,7 @@ impl Introspector {
     /// Set the volume of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_volume_by_name(&self, name: &str, volume: &::volume::CVolume,
+    pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::CVolume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -486,7 +486,7 @@ impl Introspector {
     /// Set the mute switch of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_mute_by_index(&self, idx: u32, mute: bool,
+    pub fn set_sink_mute_by_index(&mut self, idx: u32, mute: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -501,7 +501,7 @@ impl Introspector {
     /// Set the mute switch of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_mute_by_name(&self, name: &str, mute: bool,
+    pub fn set_sink_mute_by_name(&mut self, name: &str, mute: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -519,7 +519,7 @@ impl Introspector {
     /// Suspend/Resume a sink.
     /// 
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn suspend_sink_by_name(&self, sink_name: &str, suspend: bool,
+    pub fn suspend_sink_by_name(&mut self, sink_name: &str, suspend: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -538,7 +538,7 @@ impl Introspector {
     ///
     /// If `idx` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
     /// be suspended. Returns `None` on error, i.e. invalid arguments or state.
-    pub fn suspend_sink_by_index(&self, idx: u32, suspend: bool,
+    pub fn suspend_sink_by_index(&mut self, idx: u32, suspend: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -553,7 +553,7 @@ impl Introspector {
     /// Change the profile of a sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_port_by_index(&self, idx: u32, port: &str,
+    pub fn set_sink_port_by_index(&mut self, idx: u32, port: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -571,7 +571,7 @@ impl Introspector {
     /// Change the profile of a sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_port_by_name(&self, name: &str, port: &str,
+    pub fn set_sink_port_by_name(&mut self, name: &str, port: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -745,7 +745,7 @@ impl Introspector {
     /// Set the volume of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_volume_by_index(&self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_source_volume_by_index(&mut self, idx: u32, volume: &::volume::CVolume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -760,7 +760,7 @@ impl Introspector {
     /// Set the volume of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_volume_by_name(&self, name: &str, volume: &::volume::CVolume,
+    pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::CVolume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -778,7 +778,7 @@ impl Introspector {
     /// Set the mute switch of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_mute_by_index(&self, idx: u32, mute: bool,
+    pub fn set_source_mute_by_index(&mut self, idx: u32, mute: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -793,7 +793,7 @@ impl Introspector {
     /// Set the mute switch of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_mute_by_name(&self, name: &str, mute: bool,
+    pub fn set_source_mute_by_name(&mut self, name: &str, mute: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -811,7 +811,7 @@ impl Introspector {
     /// Suspend/Resume a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn suspend_source_by_name(&self, name: &str, suspend: bool,
+    pub fn suspend_source_by_name(&mut self, name: &str, suspend: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -830,7 +830,7 @@ impl Introspector {
     ///
     /// If `idx` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
     /// will be suspended. Returns `None` on error, i.e. invalid arguments or state.
-    pub fn suspend_source_by_index(&self, idx: u32, suspend: bool,
+    pub fn suspend_source_by_index(&mut self, idx: u32, suspend: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -845,7 +845,7 @@ impl Introspector {
     /// Change the profile of a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_port_by_index(&self, idx: u32, port: &str,
+    pub fn set_source_port_by_index(&mut self, idx: u32, port: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -863,7 +863,7 @@ impl Introspector {
     /// Change the profile of a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_port_by_name(&self, name: &str, port: &str,
+    pub fn set_source_port_by_name(&mut self, name: &str, port: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1017,7 +1017,7 @@ impl Introspector {
     /// Load a module.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn load_module(&self, name: &str, argument: &str, cb: (ContextIndexCb, *mut c_void)
+    pub fn load_module(&mut self, name: &str, argument: &str, cb: (ContextIndexCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1035,7 +1035,7 @@ impl Introspector {
     /// Unload a module.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn unload_module(&self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
+    pub fn unload_module(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_context_unload_module(self.context, idx, Some(cb.0), cb.1) };
@@ -1115,7 +1115,7 @@ impl Introspector {
     /// Kill a client.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn kill_client(&self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
+    pub fn kill_client(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_context_kill_client(self.context, idx, Some(cb.0), cb.1) };
@@ -1275,7 +1275,7 @@ impl Introspector {
     /// Change the profile of a card.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_card_profile_by_index(&self, idx: u32, profile: &str,
+    pub fn set_card_profile_by_index(&mut self, idx: u32, profile: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1293,7 +1293,7 @@ impl Introspector {
     /// Change the profile of a card.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_card_profile_by_name(&self, name: &str, profile: &str,
+    pub fn set_card_profile_by_name(&mut self, name: &str, profile: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1312,7 +1312,7 @@ impl Introspector {
     /// Set the latency offset of a port.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_port_latency_offset(&self, card_name: &str, port_name: &str, offset: i64,
+    pub fn set_port_latency_offset(&mut self, card_name: &str, port_name: &str, offset: i64,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1431,7 +1431,7 @@ impl Introspector {
     /// Move the specified sink input to a different sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_sink_input_by_name(&self, idx: u32, sink_name: &str,
+    pub fn move_sink_input_by_name(&mut self, idx: u32, sink_name: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1450,7 +1450,7 @@ impl Introspector {
     /// Move the specified sink input to a different sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_sink_input_by_index(&self, idx: u32, sink_idx: u32,
+    pub fn move_sink_input_by_index(&mut self, idx: u32, sink_idx: u32,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1465,7 +1465,7 @@ impl Introspector {
     /// Set the volume of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_input_volume(&self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_sink_input_volume(&mut self, idx: u32, volume: &::volume::CVolume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1480,7 +1480,7 @@ impl Introspector {
     /// Set the mute switch of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_input_mute(&self, idx: u32, mute: bool,
+    pub fn set_sink_input_mute(&mut self, idx: u32, mute: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1495,7 +1495,7 @@ impl Introspector {
     /// Kill a sink input.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn kill_sink_input(&self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
+    pub fn kill_sink_input(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_context_kill_sink_input(self.context, idx, Some(cb.0), cb.1) };
@@ -1609,7 +1609,7 @@ impl Introspector {
     /// Move the specified source output to a different source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_source_output_by_name(&self, idx: u32, source_name: &str,
+    pub fn move_source_output_by_name(&mut self, idx: u32, source_name: &str,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1627,7 +1627,7 @@ impl Introspector {
     /// Move the specified source output to a different source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_source_output_by_index(&self, idx: u32, source_idx: u32,
+    pub fn move_source_output_by_index(&mut self, idx: u32, source_idx: u32,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1642,7 +1642,7 @@ impl Introspector {
     /// Set the volume of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_output_volume(&self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_source_output_volume(&mut self, idx: u32, volume: &::volume::CVolume,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1657,7 +1657,7 @@ impl Introspector {
     /// Set the mute switch of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_output_mute(&self, idx: u32, mute: bool,
+    pub fn set_source_output_mute(&mut self, idx: u32, mute: bool,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1672,7 +1672,7 @@ impl Introspector {
     /// Kill a source output.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn kill_source_output(&self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
+    pub fn kill_source_output(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_context_kill_source_output(self.context, idx, Some(cb.0), cb.1) };

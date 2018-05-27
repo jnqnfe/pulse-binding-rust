@@ -85,7 +85,7 @@ impl DeviceManager {
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
         let ptr = unsafe { capi::pa_ext_device_manager_test(self.context, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -94,7 +94,7 @@ impl DeviceManager {
     }
 
     /// Read all entries from the device database.
-    pub fn read(&self, cb: (ReadCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn read(&mut self, cb: (ReadCb, *mut c_void)) -> Option<::operation::Operation> {
         let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
@@ -103,7 +103,7 @@ impl DeviceManager {
     }
 
     /// Sets the description for a device.
-    pub fn set_device_description(&self, device: &str, description: &str,
+    pub fn set_device_description(&mut self, device: &str, description: &str,
         cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -121,7 +121,7 @@ impl DeviceManager {
     }
 
     /// Delete entries from the device database.
-    pub fn delete(&self, devices: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
+    pub fn delete(&mut self, devices: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -148,7 +148,7 @@ impl DeviceManager {
     }
 
     /// Enable the role-based device-priority routing mode.
-    pub fn enable_role_device_priority_routing(&self, enable: bool,
+    pub fn enable_role_device_priority_routing(&mut self, enable: bool,
         cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
     {
         let ptr = unsafe {
@@ -162,7 +162,7 @@ impl DeviceManager {
     }
 
     /// Prefer a given device in the priority list.
-    pub fn reorder_devices_for_role(&self, role: &str, devices: &[&str],
+    pub fn reorder_devices_for_role(&mut self, role: &str, devices: &[&str],
         cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -192,7 +192,7 @@ impl DeviceManager {
     }
 
     /// Subscribe to changes in the device database.
-    pub fn subscribe(&self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
+    pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
@@ -205,7 +205,7 @@ impl DeviceManager {
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
-    pub fn set_subscribe_cb(&self, cb: (SubscribeCb, *mut c_void)) {
+    pub fn set_subscribe_cb(&mut self, cb: (SubscribeCb, *mut c_void)) {
         unsafe { capi::pa_ext_device_manager_set_subscribe_cb(self.context, Some(cb.0), cb.1) };
     }
 }
