@@ -43,7 +43,7 @@ pub struct Info {
 
 /// A wrapper object providing stream restore routines to a context.
 pub struct StreamRestore {
-    pub context: *mut ContextInternal,
+    context: *mut ContextInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
