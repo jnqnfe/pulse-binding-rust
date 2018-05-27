@@ -3,13 +3,14 @@ Changes between 1.0.4d and ???:
 
  [pulse-binding] (1.0.3 => ???)
 
- * Fixed infinite loop bug in Proplist::iterate. I mis-read the documentation, it's the return value
-   from the C function call that will be NULL when it reaches the end of the list, not the state
-   variable.
- * Fixed use of Proplist::iterate. The state tracking variable used for the underlying C function
-   cannot be hidden within the iterate function, it causes an infinite loop of returning the first
-   entry. I don't know wtf I was thinking. Calling this method now require providing a state
-   tracking object.
+ * Fixed and simplified Proplist iteration
+    - Fixed infinite loop bug: I mis-read the documentation, it's the return value from the C
+      function call that will be NULL when it reaches the end of the list, not the state variable.
+    - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
+      cannot be hidden within the iterate function, it causes an infinite loop whereby the function
+      always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
+    - Implemented proper iterator symantics. The `iterate` method was renamed `iter` and now returns
+      an actual Rust Iterator object, which makes iterating much more simple and tidy.
 
 Changes between 1.0.3 and 1.0.4d:
 ---------------

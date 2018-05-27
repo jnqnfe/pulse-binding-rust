@@ -142,17 +142,41 @@ pub struct Proplist {
     weak: bool,
 }
 
-/// Used for keeping state for the [`iterate`](struct.Proplist.html#method.iterate) method
-pub struct IteratorState {
-    inner: *mut c_void,
+/// Proplist iterator, used for iterating over the list's keys. Returned by the
+/// [`iterate`](struct.Proplist.html#method.iterate) method.
+pub struct Iterator {
+    /// The actual C proplist object.
+    ptr: *mut ProplistInternal,
+    /// State tracker, used by underlying C function
+    state: *mut c_void,
 }
 
-impl Default for IteratorState {
-    fn default() -> Self { Self { inner: null_mut::<c_void>() } }
+impl Iterator {
+    pub fn new(pl: *mut ProplistInternal) -> Self {
+        Self { ptr: pl, state: null_mut::<c_void>() }
+    }
 }
 
-impl IteratorState {
-    pub fn new() -> Self { Default::default() }
+impl std::iter::Iterator for Iterator {
+    type Item = String;
+    fn next(&mut self) -> Option<Self::Item> {
+        let state_actual = &mut self.state as *mut *mut c_void;
+        let key_ptr = unsafe { capi::pa_proplist_iterate(self.ptr, state_actual) };
+        if key_ptr.is_null() {
+            return None;
+        }
+        // We assume key_ptr will never be null at this point
+        Some(unsafe { CStr::from_ptr(key_ptr).to_string_lossy().into_owned() })
+    }
+}
+
+impl IntoIterator for Proplist {
+    type Item = String;
+    type IntoIter = Iterator;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
 }
 
 impl Proplist {
@@ -324,36 +348,28 @@ impl Proplist {
         }
     }
 
-    /// Used for iterating through the property list.
+    /// Get an immutable iterator over the list's keys.
     ///
-    /// This function should be called in a loop until it returns `None` which signifies EOL. On
-    /// each loop, the key of an entry is returned. The property list should not be modified during
-    /// iteration through the list, with the exception of deleting the current entry. The keys in
-    /// the property list do not have any particular order.
+    /// The property list should not be modified during iteration through the list, with the
+    /// exception of deleting the current entry. The keys in the property list do not have any
+    /// particular order.
     ///
     /// ```rust
     /// # extern crate libpulse_binding as pulse;
-    /// # use pulse::proplist::{Proplist, IteratorState};
+    /// # use pulse::proplist::Proplist;
     /// #
     /// # fn main() {
     /// #     let mut my_props = Proplist::new().unwrap();
     /// #     my_props.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp").unwrap();
     /// #
-    /// let mut pl_iter_state = IteratorState::new();
-    /// while let Some(key) = my_props.iterate(&mut pl_iter_state) {
+    /// for key in my_props.iter() {
     ///     //do something with it
     ///     println!("key: {}", key);
     /// }
     /// # }
     /// ```
-    pub fn iterate(&self, state: &mut IteratorState) -> Option<String> {
-        let state_actual = &mut state.inner as *mut *mut c_void;
-        let key_ptr = unsafe { capi::pa_proplist_iterate(self.ptr, state_actual) };
-        if key_ptr.is_null() {
-            return None;
-        }
-        // We assume key_ptr will never be null at this point
-        Some(unsafe { CStr::from_ptr(key_ptr).to_string_lossy().into_owned() })
+    pub fn iter(&self) -> Iterator {
+        Iterator::new(self.ptr)
     }
 
     /// Format the property list nicely as a human readable string.
