@@ -12,9 +12,10 @@ Changes between 1.0.3 and 1.0.4d:
 Changes between 1.0.2 and 1.0.3:
 ---------------
 
- * [pulse-binding] Added `From` methods for transmuting between certain introspection structs and
-   their `sys` counterparts. (They are identical, and only duplicated in the binding to add
-   documentation).
+ [pulse-binding] (1.0.2 => 1.0.3)
+
+ * Added `From` methods for transmuting between certain introspection structs and their `sys`
+   counterparts. (They are identical, and only duplicated in the binding to add documentation).
 
 Changes between 1.0.1 and 1.0.2:
 ---------------
