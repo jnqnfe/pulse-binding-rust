@@ -259,7 +259,7 @@ pub use capi::pa_sample_info as SampleInfoInternal;
 
 /// A wrapper object providing introspection routines to a context.
 pub struct Introspector {
-    pub context: *mut super::ContextInternal,
+    context: *mut super::ContextInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
