@@ -974,28 +974,31 @@ impl Stream {
         }
     }
 
-    /// Function does exactly the same as [`write`] with the difference that `free_cb_data` is
-    /// passed to `free_cb` instead of `data`.
+    /// Write some data to the server (for playback streams).
+    ///
+    /// This function does exactly the same as [`write`] with the only difference being that a void
+    /// pointer is provided along with the `free_cb` callback pointer, and this void pointer will be
+    /// passed to the callback instead of the `data` pointer.
     ///
     /// # Params
     ///
     /// * `data`: The data to write. The length must be in multiples of the stream's sample spec
     ///   frame size.
     /// * `free_cb`: A cleanup routine for the data or `None` to request an internal copy of the
-    ///   data.
-    /// * `free_cb_data`: Argument passed to `free_cb` function.
+    ///   data. If provided, the accompanying data pointer will be supplied to the callback.
     /// * `offset`: Offset for seeking. Must be `0` for upload streams.
     /// * `seek`: Seek mode, must be [`SeekMode::Relative`] for upload streams.
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`write`]: #method.write
-    pub fn write_ext_free(&self, data: &[u8], free_cb: Option<::def::FreeCb>,
-        free_cb_data: *mut c_void, offset: i64, seek: SeekMode) -> Result<(), i32>
+    pub fn write_ext_free(&self, data: &[u8], free_cb: Option<(::def::FreeCb, *mut c_void)>,
+        offset: i64, seek: SeekMode) -> Result<(), i32>
     {
+        let (cb_f, cb_d) = unwrap_optional_callback::<::def::FreeCb>(free_cb);
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
         match unsafe { capi::pa_stream_write_ext_free(self.ptr, data.as_ptr() as *const c_void,
-            data.len(), free_cb, free_cb_data, offset, seek.into()) }
+            data.len(), cb_f, cb_d, offset, seek.into()) }
         {
             0 => Ok(()),
             e => Err(e),

@@ -13,6 +13,7 @@ Changes between 1.0.4d and ???:
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
  * CVolume: make self for is_[muted|norm] immutable
  * Stream: fix double option wrapping of callback fn ptr with write methods
+ * Stream: combine write_ext_free free_cb_data param with free_cb as tuple, as done elsewhere
 
  [pulse-simple-binding] (1.0.2 => ???)
 
