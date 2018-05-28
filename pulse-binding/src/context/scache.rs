@@ -145,8 +145,8 @@ impl Context {
     /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
     ///   [`::volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
     ///   side which is a good idea.
-    /// * `proplist`: Property list for this sound. The property list of the cached entry will be
-    ///   merged into this property list.
+    /// * `proplist`: Property list for this sound. The property list of the cached entry will have
+    ///   this merged into it.
     /// * `cb`: Call this function after successfully starting playback, or `None`.
     /// * `userdata`: Userdata to pass to the callback.
     ///
