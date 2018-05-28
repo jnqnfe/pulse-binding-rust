@@ -17,12 +17,14 @@
 
 use std;
 use capi;
+use std::os::raw::c_void;
 use libc::timeval;
 
-pub use capi::pa_free_cb_t as FreeCb;
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;
 pub use capi::pa_device_type_t as Device;
 pub use capi::pa_port_available_t as PortAvailable;
+
+pub type FreeCb = extern "C" fn(p: *mut c_void);
 
 /// Playback and record buffer metrics
 #[repr(C)]

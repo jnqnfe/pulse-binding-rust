@@ -967,7 +967,7 @@ impl Stream {
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
         match unsafe { capi::pa_stream_write(self.ptr, data.as_ptr() as *const c_void, data.len(),
-            free_cb.unwrap_or_default(), offset, seek) }
+            free_cb, offset, seek) }
         {
             0 => Ok(()),
             e => Err(e),
@@ -995,7 +995,7 @@ impl Stream {
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
         match unsafe { capi::pa_stream_write_ext_free(self.ptr, data.as_ptr() as *const c_void,
-            data.len(), free_cb.unwrap_or_default(), free_cb_data, offset, seek.into()) }
+            data.len(), free_cb, free_cb_data, offset, seek.into()) }
         {
             0 => Ok(()),
             e => Err(e),

@@ -12,6 +12,7 @@ Changes between 1.0.4d and ???:
     - Implemented proper iterator symantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
  * CVolume: make self for is_[muted|norm] immutable
+ * Stream: fix double option wrapping of callback fn ptr with write methods
 
  [pulse-simple-binding] (1.0.2 => ???)
 
