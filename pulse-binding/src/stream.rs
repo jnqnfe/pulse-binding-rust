@@ -1215,11 +1215,11 @@ impl Stream {
     /// Pause playback of this stream temporarily.
     ///
     /// Available on both playback and recording streams. The pause operation is executed as
-    /// quickly as possible. If a cork is very quickly followed by an uncork or the other way round,
-    /// this might not actually have any effect on the stream that is output. You can use
-    /// [`is_corked`] to find out whether the stream is currently paused or not. Normally a stream
-    /// will be created in uncorked state. If you pass [`flags::START_CORKED`] as a flag when
-    /// connecting the stream, it will be created in corked state.
+    /// quickly as possible. If a cork is very quickly followed by an uncork, this might not
+    /// actually have any effect on the stream that is output. You can use [`is_corked`] to find out
+    /// whether the stream is currently paused or not. Normally a stream will be created in uncorked
+    /// state. If you pass [`flags::START_CORKED`] as a flag when connecting the stream, it will be
+    /// created in corked state.
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
@@ -1234,8 +1234,15 @@ impl Stream {
 
     /// Resume playback of this stream.
     ///
-    /// Available on both playback and recording streams. The operation is executed as quickly as
-    /// possible.
+    /// Available on both playback and recording streams. The unpause operation is executed as
+    /// quickly as possible. If an uncork is very quickly followed by a cork, this might not
+    /// actually have any effect on the stream that is output. You can use [`is_corked`] to find out
+    /// whether the stream is currently paused or not. Normally a stream will be created in uncorked
+    /// state. If you pass [`flags::START_CORKED`] as a flag when connecting the stream, it will be
+    /// created in corked state.
+    ///
+    /// [`is_corked`]: #method.is_corked
+    /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn uncork(&self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_f, cb_d) };
