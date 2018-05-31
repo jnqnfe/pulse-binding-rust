@@ -20,6 +20,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
+use error::PAErr;
 
 pub use capi::pa_proplist as ProplistInternal;
 pub use capi::pa_update_mode_t as UpdateMode;
@@ -310,13 +311,13 @@ impl Proplist {
     }
 
     /// Removes a single entry from the property list, identified by the specified key name.
-    pub fn unset(&mut self, key: &str) -> Result<(), i32> {
+    pub fn unset(&mut self, key: &str) -> Result<(), PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
         match unsafe { capi::pa_proplist_unset(self.ptr, c_key.as_ptr()) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 

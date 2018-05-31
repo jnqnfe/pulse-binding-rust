@@ -259,6 +259,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use util::unwrap_optional_callback;
+use error::PAErr;
 
 pub use capi::pa_stream as StreamInternal;
 pub use capi::pa_seek_mode_t as SeekMode;
@@ -719,20 +720,20 @@ impl Stream {
     }
 
     /// Return whether or not the sink or source this stream is connected to has been suspended.
-    pub fn is_suspended(&self) -> Result<bool, i32> {
+    pub fn is_suspended(&self) -> Result<bool, PAErr> {
         match unsafe { capi::pa_stream_is_suspended(self.ptr) } {
             0 => Ok(false),
             1 => Ok(true),
-            r => Err(r),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Return whether or not this stream has been corked.
-    pub fn is_corked(&self) -> Result<bool, i32> {
+    pub fn is_corked(&self) -> Result<bool, PAErr> {
         match unsafe { capi::pa_stream_is_corked(self.ptr) } {
             0 => Ok(false),
             1 => Ok(true),
-            r => Err(r),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -776,7 +777,7 @@ impl Stream {
     /// ../context/struct.Context.html#method.get_sink_info_by_name
     pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
         flags: FlagSet, volume: Option<&::volume::CVolume>, sync_stream: Option<&mut Self>
-        ) -> Result<(), i32>
+        ) -> Result<(), PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -807,7 +808,7 @@ impl Stream {
         };
         match r {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -819,7 +820,7 @@ impl Stream {
     /// * `attr`: Buffering attributes, or `None` for default
     /// * `flags`: Additional flags, or `0` for default
     pub fn connect_record(&mut self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
-        flags: FlagSet) -> Result<(), i32>
+        flags: FlagSet) -> Result<(), PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -839,32 +840,32 @@ impl Stream {
 
         match unsafe { capi::pa_stream_connect_record(self.ptr, p_dev, p_attr, flags) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Make this stream a sample upload stream. (See [`::scache`](../context/scache/index.html)).
-    pub fn connect_upload(&mut self, length: usize) -> Result<(), i32> {
+    pub fn connect_upload(&mut self, length: usize) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_connect_upload(self.ptr, length) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Finish the sample upload, the stream name will become the sample name.
     /// You cancel a sample upload by issuing [`disconnect`](#method.disconnect).
-    pub fn finish_upload(&mut self) -> Result<(), i32> {
+    pub fn finish_upload(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_finish_upload(self.ptr) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Disconnect a stream from a source/sink.
-    pub fn disconnect(&mut self) -> Result<(), i32> {
+    pub fn disconnect(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_disconnect(self.ptr) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -901,7 +902,7 @@ impl Stream {
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
     /// [`BufferResult::Null`]: enum.BufferResult.html#Null.v
-    pub fn begin_write(&mut self, nbytes: Option<usize>) -> Result<BufferResult, i32> {
+    pub fn begin_write(&mut self, nbytes: Option<usize>) -> Result<BufferResult, PAErr> {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
@@ -912,7 +913,7 @@ impl Stream {
         match unsafe { capi::pa_stream_begin_write(self.ptr, &mut data_ptr, &mut nbytes_tmp) } {
             0 if data_ptr.is_null() => Ok(BufferResult::Null),
             0 => Ok(BufferResult::Buffer(data_ptr, nbytes_tmp)),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -924,10 +925,10 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
-    pub fn cancel_write(&mut self) -> Result<(), i32> {
+    pub fn cancel_write(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_cancel_write(self.ptr) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -964,7 +965,7 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`write`]: #method.write
     pub fn write(&mut self, data: &[u8], free_cb: Option<::def::FreeCb>, offset: i64, seek: SeekMode
-        ) -> Result<(), i32>
+        ) -> Result<(), PAErr>
     {
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
@@ -974,7 +975,7 @@ impl Stream {
         };
         match r {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -996,7 +997,7 @@ impl Stream {
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`write`]: #method.write
     pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(::def::FreeCb, *mut c_void)>,
-        offset: i64, seek: SeekMode) -> Result<(), i32>
+        offset: i64, seek: SeekMode) -> Result<(), PAErr>
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<::def::FreeCb>(free_cb);
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
@@ -1007,7 +1008,7 @@ impl Stream {
         };
         match r {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -1035,7 +1036,7 @@ impl Stream {
     /// [`Hole`]: enum.PeekResult.html#Hole.v
     /// [`Data`]: enum.PeekResult.html#Data.v
     /// [`discard`]: #method.discard
-    pub fn peek(&mut self) -> Result<PeekResult, i32> {
+    pub fn peek(&mut self) -> Result<PeekResult, PAErr> {
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
         // Note, C function returns an i32, but documentation does not mention any use of it, so we
@@ -1047,7 +1048,7 @@ impl Stream {
                 let slice = unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) };
                 Ok(PeekResult::Data(slice))
             },
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -1057,10 +1058,10 @@ impl Stream {
     ///
     /// Note: The original C function name used the term `drop`; We instead use `discard` here to
     /// avoid conflict with the Rust `Drop` trait!
-    pub fn discard(&mut self) -> Result<(), i32> {
+    pub fn discard(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_drop(self.ptr) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -1349,12 +1350,12 @@ impl Stream {
     /// [`update_timing_info`]: #method.update_timing_info
     /// [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
     /// [`flags::NOT_MONOTONIC`]: flags/constant.NOT_MONOTONIC.html
-    pub fn get_time(&self) -> Result<Option<::sample::Usecs>, i32> {
+    pub fn get_time(&self) -> Result<Option<::sample::Usecs>, PAErr> {
         let mut r_usecs: ::sample::Usecs = 0;
         match unsafe { capi::pa_stream_get_time(self.ptr, &mut r_usecs) } {
             0 => Ok(Some(r_usecs)),
-            e if e == -(::error::Code::NoData as i32) => Ok(None),
-            e => Err(e),
+            e if e == PAErr::from(::error::Code::NoData).0 => Ok(None),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -1373,7 +1374,7 @@ impl Stream {
     ///
     /// [`get_time`]: #method.get_time
     /// [`get_timing_info`]: #method.get_timing_info
-    pub fn get_latency(&self) -> Result<Latency, i32> {
+    pub fn get_latency(&self) -> Result<Latency, PAErr> {
         let mut r_usecs: ::sample::Usecs = 0;
         let mut negative: i32 = 0;
         match unsafe { capi::pa_stream_get_latency(self.ptr, &mut r_usecs, &mut negative) } {
@@ -1383,8 +1384,8 @@ impl Stream {
                     _ => Ok(Latency::Positive(r_usecs)),
                 }
             },
-            e if e == -(::error::Code::NoData as i32) => Ok(Latency::None),
-            e => Err(e),
+            e if e == PAErr::from(::error::Code::NoData).0 => Ok(Latency::None),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -1532,10 +1533,10 @@ impl Stream {
     /// For record streams connected to a monitor source: monitor only a very specific sink input of
     /// the sink. This function needs to be called before [`connect_record`](#method.connect_record)
     /// is called.
-    pub fn set_monitor_stream(&mut self, sink_input_idx: u32) -> Result<(), i32> {
+    pub fn set_monitor_stream(&mut self, sink_input_idx: u32) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_idx) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 

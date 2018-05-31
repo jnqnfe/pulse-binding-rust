@@ -27,6 +27,7 @@ use std;
 use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
+use error::PAErr;
 
 pub use capi::pa_signal_event as EventInternal;
 
@@ -47,10 +48,10 @@ pub type DestroyCb = extern "C" fn(api: *mut capi::pa_mainloop_api, e: *mut Even
 
 impl ::mainloop::api::MainloopApi {
     /// Initialize the UNIX signal subsystem and bind it to the specified main loop
-    pub fn init_signals(&mut self) -> Result<(), i32> {
+    pub fn init_signals(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_signal_init(std::mem::transmute(self)) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 

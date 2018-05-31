@@ -63,20 +63,6 @@
 //! The included main loop implementation is also not thread safe. Take care to make sure event
 //! objects are not manipulated when any other code is using the main loop.
 //!
-//! ## Error Handling
-//!
-//! Many functions in the underlying C API return an `i32` error/success status or in other cases a
-//! `NULL` pointer to indicate failure. Care has been taken in this binding library to more clearly
-//! return `Result` or `Option` variants. For some functions where `Result::Err` is returned on
-//! error, the original `i32` code is returned within it. The [`::error::Code`] enum provides a list
-//! of codes that the `i32` values represent (note that a negative value in the `i32` corresponds to
-//! a positive enum variant).
-//!
-//! An `i32` error code can be turned into a human readable message using [`::error::strerror`].
-//!
-//! For the async mechanism [`::context::Context::errno`] can be used to obtain the error code of
-//! the last failed operation.
-//!
 //! ## Logging
 //!
 //! You can configure different logging parameters for the PulseAudio client libraries. The

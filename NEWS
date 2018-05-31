@@ -1,7 +1,18 @@
 Changes between 1.1.0 and ???:
 ---------------
 
+ [pulse-binding]
 
+ * Tidied up error code handling:
+    - add `PAErr` wrapper for i32 error type, for cleaner interfaces
+    - move `strerror` function to `PAErr` method
+    - rename `sterror` `PAErr` and `Code` methods to `to_string`
+    - convert the error CStr to String for the users, no need to make users do it
+    - add `PAErr` <=> `Code` `From` impls
+
+ [pulse-simple-binding]
+
+ * Tidied up error code handling, per above
 
 Changes between 1.0.5 and 1.1.0:
 ---------------

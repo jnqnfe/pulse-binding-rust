@@ -117,6 +117,7 @@ extern crate libpulse_simple_sys as capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null;
+use pulse::error::PAErr;
 
 use capi::pa_simple as SimpleInternal;
 
@@ -143,7 +144,7 @@ impl Simple {
     pub fn new(server: Option<&str>, name: &str, dir: pulse::stream::Direction,
         dev: Option<&str>, stream_name: &str, ss: &pulse::sample::Spec,
         map: Option<&pulse::channelmap::Map>, attr: Option<&pulse::def::BufferAttr>
-        ) -> Result<Self, i32>
+        ) -> Result<Self, PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -190,7 +191,7 @@ impl Simple {
             )
         };
         if ptr.is_null() {
-            return Err(error);
+            return Err(PAErr(error));
         }
         Ok(Self::from_raw(ptr))
     }
@@ -202,22 +203,22 @@ impl Simple {
     }
 
     /// Write some data to the server.
-    pub fn write(&self, data: &[u8]) -> Result<(), i32> {
+    pub fn write(&self, data: &[u8]) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_write(self.ptr, data.as_ptr() as *mut c_void, data.len(),
             &mut error) }
         {
             0 => Ok(()),
-            _ => Err(error),
+            _ => Err(PAErr(error)),
         }
     }
 
     /// Wait until all data already written is played by the daemon.
-    pub fn drain(&self) -> Result<(), i32> {
+    pub fn drain(&self) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_drain(self.ptr, &mut error) } {
             0 => Ok(()),
-            _ => Err(error),
+            _ => Err(PAErr(error)),
         }
     }
 
@@ -225,13 +226,13 @@ impl Simple {
     ///
     /// This function blocks until `data.len()` amount of data has been received from the server,
     /// or until an error occurs.
-    pub fn read(&self, data: &mut [u8]) -> Result<(), i32> {
+    pub fn read(&self, data: &mut [u8]) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_read(self.ptr, data.as_mut_ptr() as *mut c_void, data.len(),
             &mut error) }
         {
             0 => Ok(()),
-            _ => Err(error),
+            _ => Err(PAErr(error)),
         }
     }
 
@@ -246,11 +247,11 @@ impl Simple {
     }
 
     /// Flush the playback or record buffer. This discards any audio in the buffer.
-    pub fn flush(&self) -> Result<(), i32> {
+    pub fn flush(&self) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_flush(self.ptr, &mut error) } {
             0 => Ok(()),
-            _ => Err(error),
+            _ => Err(PAErr(error)),
         }
     }
 }

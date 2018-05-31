@@ -149,6 +149,7 @@ use std::ptr::{null, null_mut};
 use ::mainloop::events::timer::{TimeEvent, TimeEventCb};
 use ::util::unwrap_optional_callback;
 use ::operation::Operation;
+use error::PAErr;
 
 pub use capi::pa_context as ContextInternal;
 
@@ -294,8 +295,8 @@ impl Context {
     }
 
     /// Returns the error number of the last failed operation
-    pub fn errno(&self) -> i32 {
-        unsafe { capi::pa_context_errno(self.ptr) }
+    pub fn errno(&self) -> PAErr {
+        PAErr(unsafe { capi::pa_context_errno(self.ptr) })
     }
 
     /// Returns `true` if some data is pending to be written to the connection
@@ -317,7 +318,7 @@ impl Context {
     /// or accessible, a new daemon is spawned. If `api` is not `None`, the functions specified in
     /// the structure are used when forking a new child process.
     pub fn connect(&mut self, server: Option<&str>, flags: FlagSet, api: Option<&::def::SpawnApi>
-        ) -> Result<(), i32>
+        ) -> Result<(), PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -337,7 +338,7 @@ impl Context {
 
         match unsafe { capi::pa_context_connect(self.ptr, p_server, flags, p_api) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -564,13 +565,13 @@ impl Context {
     /// cookie from a custom location. Applications don't usually need to care about the cookie at
     /// all, but if it happens that you know what the authentication cookie is and your application
     /// needs to load it from a non-standard location, feel free to use this function.
-    pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), i32> {
+    pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_path = CString::new(cookie_file_path.clone()).unwrap();
         match unsafe { capi::pa_context_load_cookie_from_file(self.ptr, c_path.as_ptr()) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 }

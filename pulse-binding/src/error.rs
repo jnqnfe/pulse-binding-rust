@@ -15,13 +15,19 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
+use std;
 use capi;
 use std::ffi::CStr;
 
-/// These represent the `i32` error codes returned by many of the underlying PulseAudio C functions.
-/// Beware, these enum values are positive values, whilst PA functions return them in negative form,
-/// i.e. the `Invalid` variant here has a value of `3`, while functions returning this error code
-/// return `-3`. This is identical to the enum provided in the PA C API.
+type ErrorInt = i32;
+
+/// A wrapper around integer errors returned by PulseAudio. Can be converted to a `Code` variant for
+/// comparison purposes if desired.
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct PAErr(pub ErrorInt);
+
+/// These represent errors returned by many of the underlying PulseAudio C functions.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Code {
@@ -74,23 +80,74 @@ pub enum Code {
     Busy,
 }
 
-impl Code {
-    /// Convert a Code to a human readable string.
-    pub fn strerror(self) -> Option<&'static CStr> {
-        let ptr = unsafe { capi::pa_strerror(-(self as i32)) };
+impl PAErr {
+    /// Convert an integer error value, as returned by many PA C API functions, to a human readable
+    /// string.
+    pub fn to_string(&self) -> Option<String> {
+        let ptr = unsafe { capi::pa_strerror(self.0) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 }
 
-/// Convert an integer error value, as returned by many PA C API functions, to a human readable
-/// string.
-pub fn strerror(error: i32) -> Option<&'static CStr> {
-    let ptr = unsafe { capi::pa_strerror(error) };
-    if ptr.is_null() {
-        return None;
+impl std::fmt::Display for PAErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self.to_string() {
+            Some(s) => write!(f, "{}", s),
+            None => write!(f, ""),
+        }
     }
-    Some(unsafe { CStr::from_ptr(ptr) })
+}
+
+impl Code {
+    /// Convert a Code to a human readable string.
+    pub fn to_string(self) -> Option<String> {
+        PAErr::from(self).to_string()
+    }
+}
+
+impl From<Code> for PAErr {
+    fn from(c: Code) -> Self {
+        // Error codes are negative, `Code` enum variants are positive
+        PAErr(-(c as ErrorInt))
+    }
+}
+impl From<PAErr> for Code {
+    fn from(e: PAErr) -> Self {
+        // Error codes are negative, `Code` enum variants are positive
+        // Note, avoid transmute - likely different sizes!
+        let abs = -(e.0);
+        match abs {
+            x if x == Code::Ok as ErrorInt => Code::Ok,
+            x if x == Code::Access as ErrorInt => Code::Access,
+            x if x == Code::Command as ErrorInt => Code::Command,
+            x if x == Code::Invalid as ErrorInt => Code::Invalid,
+            x if x == Code::Exist as ErrorInt => Code::Exist,
+            x if x == Code::NoEntity as ErrorInt => Code::NoEntity,
+            x if x == Code::ConnectionRefused as ErrorInt => Code::ConnectionRefused,
+            x if x == Code::Protocol as ErrorInt => Code::Protocol,
+            x if x == Code::Timeout as ErrorInt => Code::Timeout,
+            x if x == Code::AuthKey as ErrorInt => Code::AuthKey,
+            x if x == Code::Internal as ErrorInt => Code::Internal,
+            x if x == Code::ConnectionTerminated as ErrorInt => Code::ConnectionTerminated,
+            x if x == Code::Killed as ErrorInt => Code::Killed,
+            x if x == Code::InvalidServer as ErrorInt => Code::InvalidServer,
+            x if x == Code::ModInitFailed as ErrorInt => Code::ModInitFailed,
+            x if x == Code::BadState as ErrorInt => Code::BadState,
+            x if x == Code::NoData as ErrorInt => Code::NoData,
+            x if x == Code::Version as ErrorInt => Code::Version,
+            x if x == Code::TooLarge as ErrorInt => Code::TooLarge,
+            x if x == Code::NotSupported as ErrorInt => Code::NotSupported,
+            x if x == Code::Unknown as ErrorInt => Code::Unknown,
+            x if x == Code::NoExtension as ErrorInt => Code::NoExtension,
+            x if x == Code::Obsolete as ErrorInt => Code::Obsolete,
+            x if x == Code::NotImplemented as ErrorInt => Code::NotImplemented,
+            x if x == Code::Forked as ErrorInt => Code::Forked,
+            x if x == Code::Io as ErrorInt => Code::Io,
+            x if x == Code::Busy as ErrorInt => Code::Busy,
+            _ => Code::Unknown,
+        }
+    }
 }

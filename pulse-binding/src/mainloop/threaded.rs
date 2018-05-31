@@ -392,6 +392,7 @@ use capi;
 use std::rc::Rc;
 use std::ffi::CString;
 use std::ptr::null_mut;
+use error::PAErr;
 
 pub use capi::pa_threaded_mainloop as MainloopInternal;
 
@@ -450,10 +451,10 @@ impl Mainloop {
     }
 
     /// Start the event loop thread.
-    pub fn start(&mut self) -> Result<(), i32> {
+    pub fn start(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_threaded_mainloop_start((*self._inner).ptr) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 

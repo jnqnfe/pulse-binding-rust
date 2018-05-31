@@ -199,6 +199,7 @@ use std::os::raw::{c_ulong, c_void};
 use std::rc::Rc;
 use std::ptr::null_mut;
 use libc::pollfd;
+use error::PAErr;
 
 pub use capi::pa_mainloop as MainloopInternal;
 
@@ -215,7 +216,7 @@ pub enum InterateResult {
     /// Quit was called, with quit's retval
     Quit(i32),
     /// An error occurred, with error value
-    Err(i32),
+    Err(PAErr),
 }
 
 impl InterateResult {
@@ -304,31 +305,31 @@ impl Mainloop {
     /// `timeout` specifies a maximum timeout for the subsequent poll, or `None` for blocking
     /// behaviour. Only positive values should be provided, negative values will have the same
     /// effect as `None`.
-    pub fn prepare(&mut self, timeout: Option<i32>) -> Result<(), i32> {
+    pub fn prepare(&mut self, timeout: Option<i32>) -> Result<(), PAErr> {
         let t: i32 = match timeout {
             Some(t) => t ,
             None => -1,
         };
         match unsafe { capi::pa_mainloop_prepare((*self._inner).ptr, t) } {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Execute the previously prepared poll.
-    pub fn poll(&mut self) -> Result<u32, i32> {
+    pub fn poll(&mut self) -> Result<u32, PAErr> {
         match unsafe { capi::pa_mainloop_poll((*self._inner).ptr) } {
             e if e >= 0 => Ok(e as u32),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Dispatch timeout, io and deferred events from the previously executed poll. On success
     /// returns the number of source dispatched.
-    pub fn dispatch(&mut self) -> Result<u32, i32> {
+    pub fn dispatch(&mut self) -> Result<u32, PAErr> {
         match unsafe { capi::pa_mainloop_dispatch((*self._inner).ptr) } {
             e if e >= 0 => Ok(e as u32),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -355,7 +356,7 @@ impl Mainloop {
         match unsafe { capi::pa_mainloop_iterate((*self._inner).ptr, block as i32, &mut retval) } {
             r if r >= 0 => InterateResult::Success(r as u32),
             -2 => InterateResult::Quit(retval),
-            r => InterateResult::Err(r),
+            e => InterateResult::Err(PAErr(e)),
         }
     }
 

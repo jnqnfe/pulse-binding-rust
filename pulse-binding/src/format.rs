@@ -29,6 +29,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
+use error::PAErr;
 
 pub use capi::pa_prop_type_t as PropType;
 
@@ -238,13 +239,13 @@ impl<'a> Info<'a> {
     /// [`::sample::Spec`]: ../sample/struct.Spec.html
     /// [`::channelmap::Map`]: ../channelmap/struct.Map.html
     pub fn to_sample_spec(&self, ss: &mut ::sample::Spec, map: &mut ::channelmap::Map
-        ) -> Result<(), i32>
+        ) -> Result<(), PAErr>
     {
         match unsafe { capi::pa_format_info_to_sample_spec(std::mem::transmute(&self.ptr),
             std::mem::transmute(ss), std::mem::transmute(map)) }
         {
             0 => Ok(()),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
@@ -262,7 +263,7 @@ impl<'a> Info<'a> {
     }
 
     /// Gets an integer property.
-    pub fn get_prop_int(&self, key: &str) -> Result<i32, i32> {
+    pub fn get_prop_int(&self, key: &str) -> Result<i32, PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let mut i: i32 = 0;
@@ -271,12 +272,12 @@ impl<'a> Info<'a> {
             c_key.as_ptr(), &mut i) }
         {
             0 => Ok(i),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
     /// Gets an integer range property. On success, returns min-max tuple.
-    pub fn get_prop_int_range(&self, key: &str) -> Result<(i32, i32), i32> {
+    pub fn get_prop_int_range(&self, key: &str) -> Result<(i32, i32), PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let mut min: i32 = 0;
@@ -286,7 +287,7 @@ impl<'a> Info<'a> {
             c_key.as_ptr(), &mut min, &mut max) }
         {
             0 => Ok((min, max)),
-            e => Err(e),
+            e => Err(PAErr(e)),
         }
     }
 
