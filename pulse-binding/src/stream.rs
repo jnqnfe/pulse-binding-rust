@@ -260,6 +260,7 @@ use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use util::unwrap_optional_callback;
 use error::PAErr;
+use timeval::MicroSeconds;
 
 pub use capi::pa_stream as StreamInternal;
 pub use capi::pa_seek_mode_t as SeekMode;
@@ -530,8 +531,8 @@ pub enum PeekResult<'a> {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Latency {
     None,
-    Positive(::sample::Usecs),
-    Negative(::sample::Usecs),
+    Positive(MicroSeconds),
+    Negative(MicroSeconds),
 }
 
 impl Stream {
@@ -1351,9 +1352,9 @@ impl Stream {
     /// [`update_timing_info`]: #method.update_timing_info
     /// [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
     /// [`flags::NOT_MONOTONIC`]: flags/constant.NOT_MONOTONIC.html
-    pub fn get_time(&self) -> Result<Option<::sample::Usecs>, PAErr> {
-        let mut r_usecs: ::sample::Usecs = 0;
-        match unsafe { capi::pa_stream_get_time(self.ptr, &mut r_usecs) } {
+    pub fn get_time(&self) -> Result<Option<MicroSeconds>, PAErr> {
+        let mut r_usecs = MicroSeconds(0);
+        match unsafe { capi::pa_stream_get_time(self.ptr, &mut r_usecs.0) } {
             0 => Ok(Some(r_usecs)),
             e if e == PAErr::from(::error::Code::NoData).0 => Ok(None),
             e => Err(PAErr(e)),
@@ -1376,9 +1377,9 @@ impl Stream {
     /// [`get_time`]: #method.get_time
     /// [`get_timing_info`]: #method.get_timing_info
     pub fn get_latency(&self) -> Result<Latency, PAErr> {
-        let mut r_usecs: ::sample::Usecs = 0;
+        let mut r_usecs = MicroSeconds(0);
         let mut negative: i32 = 0;
-        match unsafe { capi::pa_stream_get_latency(self.ptr, &mut r_usecs, &mut negative) } {
+        match unsafe { capi::pa_stream_get_latency(self.ptr, &mut r_usecs.0, &mut negative) } {
             0 => {
                 match negative {
                     1 => Ok(Latency::Negative(r_usecs)),

@@ -150,6 +150,7 @@ use ::mainloop::events::timer::{TimeEvent, TimeEventCb};
 use ::util::unwrap_optional_callback;
 use ::operation::Operation;
 use error::PAErr;
+use timeval::MicroSeconds;
 
 pub use capi::pa_context as ContextInternal;
 
@@ -515,10 +516,10 @@ impl Context {
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     /// [`::mainloop::api::MainloopApi.time_new`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_new
     pub fn rttime_new<T>(&mut self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
-        usec: ::sample::Usecs, cb: (TimeEventCb, *mut c_void)) -> Option<TimeEvent<T::MI>>
+        time: MicroSeconds, cb: (TimeEventCb, *mut c_void)) -> Option<TimeEvent<T::MI>>
         where T: ::mainloop::api::Mainloop
     {
-        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, usec, Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0, Some(cb.0), cb.1) };
         if ptr.is_null() {
             return None;
         }
@@ -529,10 +530,10 @@ impl Context {
     /// [`::mainloop::api::MainloopApi.time_restart`]).
     ///
     /// [`::mainloop::api::MainloopApi.time_restart`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_restart
-    pub fn rttime_restart<T>(&mut self, e: &TimeEvent<T::MI>, usec: ::sample::Usecs)
+    pub fn rttime_restart<T>(&mut self, e: &TimeEvent<T::MI>, time: MicroSeconds)
         where T: ::mainloop::api::Mainloop
     {
-        unsafe { capi::pa_context_rttime_restart(self.ptr, e.get_ptr(), usec); }
+        unsafe { capi::pa_context_rttime_restart(self.ptr, e.get_ptr(), time.0); }
     }
 
     /// Return the optimal block size for passing around audio buffers.

@@ -16,9 +16,10 @@
 // if not, see <http://www.gnu.org/licenses/>.
 
 use capi;
+use timeval::MicroSeconds;
 
 /// Return the current monotonic system time in usecs, if such a clock is available. If it is not
 /// available this will return the wallclock time instead.
-pub fn now() -> ::sample::Usecs {
-    unsafe { capi::pa_rtclock_now() }
+pub fn now() -> MicroSeconds {
+    MicroSeconds(unsafe { capi::pa_rtclock_now() })
 }

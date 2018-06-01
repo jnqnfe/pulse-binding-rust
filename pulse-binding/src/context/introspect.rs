@@ -239,6 +239,7 @@ use std::ffi::CString;
 use std::ptr::null_mut;
 use super::{Context, ContextInternal, ContextSuccessCb};
 use util::unwrap_optional_callback;
+use timeval::MicroSeconds;
 
 pub use capi::pa_sink_port_info as SinkPortInfoInternal;
 pub use capi::pa_sink_info as SinkInfoInternal;
@@ -357,7 +358,7 @@ pub struct SinkInfo {
     /// The name of the monitor source.
     pub monitor_source_name: *const c_char,
     /// Length of queued audio in the output buffer.
-    pub latency: ::sample::Usecs,
+    pub latency: MicroSeconds,
     /// Driver name.
     pub driver: *const c_char,
     /// Flags.
@@ -365,7 +366,7 @@ pub struct SinkInfo {
     /// Property list.
     pub proplist: *mut ::proplist::ProplistInternal,
     /// The latency this device has been configured to.
-    pub configured_latency: ::sample::Usecs,
+    pub configured_latency: MicroSeconds,
     /// Some kind of "base" volume that refers to unamplified/unattenuated volume in the context of
     /// the output device.
     pub base_volume: ::volume::Volume,
@@ -649,7 +650,7 @@ pub struct SourceInfo {
     /// Name of the owning sink, or `NULL`.
     pub monitor_of_sink_name: *const c_char,
     /// Length of filled record buffer of this source.
-    pub latency: ::sample::Usecs,
+    pub latency: MicroSeconds,
     /// Driver name.
     pub driver: *const c_char,
     /// Flags.
@@ -657,7 +658,7 @@ pub struct SourceInfo {
     /// Property list.
     pub proplist: *mut ::proplist::ProplistInternal,
     /// The latency this device has been configured to.
-    pub configured_latency: ::sample::Usecs,
+    pub configured_latency: MicroSeconds,
     /// Some kind of "base" volume that refers to unamplified/unattenuated volume in the context of
     /// the input device.
     pub base_volume: ::volume::Volume,
@@ -1362,10 +1363,10 @@ pub struct SinkInputInfo {
     pub volume: ::volume::CVolume,
     /// Latency due to buffering in sink input, see
     /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
-    pub buffer_usec: ::sample::Usecs,
+    pub buffer_usec: MicroSeconds,
     /// Latency of the sink device, see
     /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
-    pub sink_usec: ::sample::Usecs,
+    pub sink_usec: MicroSeconds,
     /// The resampling method used by this sink input.
     pub resample_method: *const c_char,
     /// Driver name.
@@ -1537,10 +1538,10 @@ pub struct SourceOutputInfo {
     pub channel_map: ::channelmap::Map,
     /// Latency due to buffering in the source output, see
     /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
-    pub buffer_usec: ::sample::Usecs,
+    pub buffer_usec: MicroSeconds,
     /// Latency of the source device, see [`::def::TimingInfo`](../../def/struct.TimingInfo.html)
     /// for details.
-    pub source_usec: ::sample::Usecs,
+    pub source_usec: MicroSeconds,
     /// The resampling method used by this source output.
     pub resample_method: *const c_char,
     /// Driver name.
@@ -1728,7 +1729,7 @@ pub struct SampleInfo {
     /// The channel map.
     pub channel_map: ::channelmap::Map,
     /// Duration of this entry.
-    pub duration: ::sample::Usecs,
+    pub duration: MicroSeconds,
     /// Length of this sample in bytes.
     pub bytes: u32,
     /// Non-zero when this is a lazy cache entry.

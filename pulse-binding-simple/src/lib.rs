@@ -237,13 +237,13 @@ impl Simple {
     }
 
     /// Return the playback or record latency.
-    pub fn get_latency(&self) -> Option<pulse::sample::Usecs> {
+    pub fn get_latency(&self) -> Option<pulse::timeval::MicroSeconds> {
         let mut error: i32 = 0;
         let ret = unsafe { capi::pa_simple_get_latency(self.ptr, &mut error) };
         if error != 0 {
             return None;
         }
-        Some(ret)
+        Some(pulse::timeval::MicroSeconds(ret))
     }
 
     /// Flush the playback or record buffer. This discards any audio in the buffer.

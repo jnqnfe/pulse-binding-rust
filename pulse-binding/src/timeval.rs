@@ -18,6 +18,7 @@
 use std;
 use capi;
 use std::cmp::Ordering;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 pub use libc::timeval; //Export wanted for use in timer event callbacks, so users don't need to import the libc crate themselves!
 
 /// The number of milliseconds in a second
@@ -38,11 +39,21 @@ pub const NSEC_PER_MSEC: u64 = 1_000_000;
 /// The number of nanoseconds in a microsecond
 pub const NSEC_PER_USEC: u64 = 1000;
 
-/// Invalid time in usec.
-pub const USEC_INVALID: ::sample::Usecs = capi::PA_USEC_INVALID;
+/// Invalid time. Microseconds value representing 'invalid'.
+pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
 
-/// Biggest time in usec.
-pub const USEC_MAX: ::sample::Usecs = capi::PA_USEC_MAX;
+/// Largest valid time value in microseconds (largest integer value is reserved for representing
+/// 'invalid'.
+pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
+
+#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
+pub struct MicroSeconds(pub u64);
+
+impl MicroSeconds {
+    pub fn is_valid(&self) -> bool {
+        *self != USEC_INVALID
+    }
+}
 
 /// Wrapper for `libc::timeval`, providing trait impls
 /// Warning, this must remain directly transmutable with the inner libc::timeval
@@ -87,32 +98,129 @@ impl Timeval {
     }
 
     /// Calculate the difference between the two specified timeval structs.
-    pub fn diff(a: &Self, b: &Self) -> ::sample::Usecs {
-        unsafe { capi::pa_timeval_diff(&a.0, &b.0) }
+    pub fn diff(a: &Self, b: &Self) -> MicroSeconds {
+        MicroSeconds(unsafe { capi::pa_timeval_diff(&a.0, &b.0) })
     }
 
     /// Return the time difference between now and self
-    pub fn age(&self) -> ::sample::Usecs {
-        unsafe { capi::pa_timeval_age(&self.0) }
+    pub fn age(&self) -> MicroSeconds {
+        MicroSeconds(unsafe { capi::pa_timeval_age(&self.0) })
     }
 
     /// Add the specified time in microseconds
-    pub fn add(&mut self, t: ::sample::Usecs) {
-        unsafe { capi::pa_timeval_add(&mut self.0, t); }
+    pub fn add(&mut self, t: MicroSeconds) {
+        unsafe { capi::pa_timeval_add(&mut self.0, t.0); }
     }
 
     /// Subtract the specified time in microseconds
-    pub fn sub(&mut self, t: ::sample::Usecs) {
-        unsafe { capi::pa_timeval_sub(&mut self.0, t); }
+    pub fn sub(&mut self, t: MicroSeconds) {
+        unsafe { capi::pa_timeval_sub(&mut self.0, t.0); }
     }
 
     /// Set the specified usec value
-    pub fn set(&mut self, t: ::sample::Usecs) {
-        unsafe { capi::pa_timeval_store(&mut self.0, t); }
+    pub fn set(&mut self, t: MicroSeconds) {
+        unsafe { capi::pa_timeval_store(&mut self.0, t.0); }
     }
+}
 
-    /// Retrieve the specified usec value
-    pub fn get(&self) -> ::sample::Usecs {
-        unsafe { capi::pa_timeval_load(&self.0) }
+impl From<Timeval> for MicroSeconds {
+    fn from(t: Timeval) -> Self {
+        MicroSeconds(unsafe { capi::pa_timeval_load(&t.0) })
+    }
+}
+impl From<MicroSeconds> for Timeval {
+    fn from(t: MicroSeconds) -> Self {
+        let mut tmp = Timeval(timeval { tv_sec: 0, tv_usec: 0 });
+        tmp.set(t);
+        tmp
+    }
+}
+
+impl MicroSeconds {
+    pub fn checked_add(self, other: Self) -> Option<Self> {
+        self.0.checked_add(other.0).and_then(|i| Some(MicroSeconds(i)))
+    }
+    pub fn checked_sub(self, other: Self) -> Option<Self> {
+        self.0.checked_sub(other.0).and_then(|i| Some(MicroSeconds(i)))
+    }
+    pub fn checked_mul(self, rhs: u32) -> Option<Self> {
+        self.0.checked_mul(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
+    }
+    pub fn checked_div(self, rhs: u32) -> Option<Self> {
+        self.0.checked_div(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
+    }
+    pub fn checked_rem(self, rhs: u32) -> Option<Self> {
+        self.0.checked_rem(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
+    }
+}
+
+impl Add for MicroSeconds {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        MicroSeconds(self.0 + other.0)
+    }
+}
+impl AddAssign for MicroSeconds {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl Sub for MicroSeconds {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        MicroSeconds(self.0 - other.0)
+    }
+}
+impl SubAssign for MicroSeconds {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl Mul<u32> for MicroSeconds {
+    type Output = Self;
+
+    fn mul(self, rhs: u32) -> Self {
+        MicroSeconds(self.0 * rhs as u64)
+    }
+}
+impl MulAssign<u32> for MicroSeconds {
+    fn mul_assign(&mut self, rhs: u32) {
+        *self = *self * rhs;
+    }
+}
+
+impl Div<u32> for MicroSeconds {
+    type Output = Self;
+
+    fn div(self, rhs: u32) -> Self {
+        MicroSeconds(self.0 / rhs as u64)
+    }
+}
+impl DivAssign<u32> for MicroSeconds {
+    fn div_assign(&mut self, rhs: u32) {
+        *self = *self / rhs;
+    }
+}
+
+impl Rem<u32> for MicroSeconds {
+    type Output = Self;
+
+    fn rem(self, rhs: u32) -> Self {
+        MicroSeconds(self.0 % rhs as u64)
+    }
+}
+impl RemAssign<u32> for MicroSeconds {
+    fn rem_assign(&mut self, rhs: u32) {
+        *self = *self % rhs;
+    }
+}
+
+impl std::fmt::Display for MicroSeconds {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} µs", self.0)
     }
 }

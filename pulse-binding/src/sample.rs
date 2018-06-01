@@ -74,6 +74,7 @@ use libc;
 use capi;
 use std::os::raw::c_char;
 use std::ffi::{CStr, CString};
+use timeval::MicroSeconds;
 
 pub use capi::PA_CHANNELS_MAX as CHANNELS_MAX;
 pub use capi::PA_RATE_MAX as RATE_MAX;
@@ -262,14 +263,14 @@ impl Spec {
 
     /// Calculate the time it would take to play a buffer of the specified size.
     /// The return value will always be rounded down for non-integral return values.
-    pub fn bytes_to_usec(&self, length: u64) -> Usecs {
-        unsafe { capi::pa_bytes_to_usec(length, std::mem::transmute(self)) }
+    pub fn bytes_to_usec(&self, length: u64) -> MicroSeconds {
+        MicroSeconds(unsafe { capi::pa_bytes_to_usec(length, std::mem::transmute(self)) })
     }
 
     /// Calculates the size of a buffer required, for playback duration of the time specified.
     /// The return value will always be rounded down for non-integral return values.
-    pub fn usec_to_bytes(&self, t: Usecs) -> usize {
-        unsafe { capi::pa_usec_to_bytes(t, std::mem::transmute(self)) }
+    pub fn usec_to_bytes(&self, t: MicroSeconds) -> usize {
+        unsafe { capi::pa_usec_to_bytes(t.0, std::mem::transmute(self)) }
     }
 
     /// Pretty print a sample type specification to a string
