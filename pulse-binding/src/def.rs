@@ -28,6 +28,7 @@ pub type FreeCb = extern "C" fn(p: *mut c_void);
 
 /// Playback and record buffer metrics
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 pub struct BufferAttr {
     /// Maximum length of the buffer in bytes.
     ///
@@ -144,6 +145,7 @@ pub struct BufferAttr {
 /// [`stream::Stream::flush`]: ../stream/struct.Stream.html#method.flush
 /// [`stream::Stream::get_latency`]: ../stream/struct.Stream.html#method.get_latency
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct TimingInfo {
     /// The system clock time when this timing info structure was current.
     pub timestamp: timeval,

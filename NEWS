@@ -16,6 +16,7 @@ Changes between 1.1.0 and ???:
     - The return type of `begin_write` has been further simplified, ditching the custom
       `BufferResult` object.
     - Minor doc fixes
+ * Derived more common traits for a handful of structs/enums
 
  [pulse-simple-binding]
 

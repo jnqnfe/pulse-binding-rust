@@ -210,6 +210,7 @@ pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
     userdata: *mut c_void) -> i32;
 
 /// Return type for [`Mainloop::iterate`](struct.Mainloop.html#method.iterate).
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum InterateResult {
     /// Success, with number of sources dispatched
     Success(u32),

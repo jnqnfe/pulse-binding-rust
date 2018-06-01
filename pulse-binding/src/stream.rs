@@ -516,6 +516,7 @@ pub type EventCb = extern "C" fn(p: *mut StreamInternal, name: *const c_char,
 
 /// Result type for the [`Stream::Peek`](struct.Stream.html#method.peek) method. See documentation
 /// of the method itself for more information.
+#[derive(Debug)]
 pub enum PeekResult<'a> {
     /// No data (Null data pointer and size of 0 returned by PA).
     Empty,
@@ -526,6 +527,7 @@ pub enum PeekResult<'a> {
 }
 
 /// Result type for [`Stream::get_latency`](struct.Stream.html#method.get_latency).
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Latency {
     None,
     Positive(::sample::Usecs),
