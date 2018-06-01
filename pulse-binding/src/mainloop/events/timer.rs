@@ -20,6 +20,7 @@ use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
 use super::super::api::MainloopInnerType;
+use timeval::Timeval;
 
 pub use capi::pa_time_event as TimeEventInternal;
 
@@ -55,9 +56,9 @@ impl<T> TimeEvent<T>
     }
 
     /// Restart a running or expired timer event source with a new Unix time.
-    pub fn restart(&mut self, tv: &timeval) {
+    pub fn restart(&mut self, tv: &Timeval) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
-        fn_ptr(self.ptr, tv);
+        fn_ptr(self.ptr, &tv.0);
     }
 
     /// Set a function that is called when the timer event source is destroyed.

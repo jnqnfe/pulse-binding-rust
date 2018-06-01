@@ -23,6 +23,7 @@ use libc::timeval;
 use super::events::io::*;
 use super::events::timer::*;
 use super::events::deferred::*;
+use timeval::Timeval;
 
 pub use capi::pa_mainloop_api as ApiInternal;
 
@@ -113,11 +114,11 @@ pub trait Mainloop {
     }
 
     /// Create a new timer event
-    fn new_timer_event(&mut self, tv: &timeval, cb: (TimeEventCb, *mut c_void)
+    fn new_timer_event(&mut self, tv: &Timeval, cb: (TimeEventCb, *mut c_void)
         ) -> Option<TimeEvent<Self::MI>>
     {
         let fn_ptr = self.inner().get_api().time_new.unwrap();
-        let ptr = fn_ptr(self.inner().get_api(), tv, Some(cb.0), cb.1);
+        let ptr = fn_ptr(self.inner().get_api(), &tv.0, Some(cb.0), cb.1);
         if ptr.is_null() {
             return None;
         }

@@ -18,7 +18,7 @@
 use std;
 use capi;
 use std::os::raw::c_void;
-use libc::timeval;
+use timeval::Timeval;
 
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;
 pub use capi::pa_device_type_t as Device;
@@ -148,7 +148,7 @@ pub struct BufferAttr {
 #[derive(Copy, Clone)]
 pub struct TimingInfo {
     /// The system clock time when this timing info structure was current.
-    pub timestamp: timeval,
+    pub timestamp: Timeval,
 
     /// Non-zero if the local and the remote machine have synchronized clocks. If synchronized
     /// clocks are detected `transport_usec` becomes much more reliable. However, the code that
