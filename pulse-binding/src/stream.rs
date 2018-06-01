@@ -525,15 +525,6 @@ pub enum PeekResult<'a> {
     Data(&'a [u8]),
 }
 
-/// Result type for buffers, e.g. as returned by
-/// [`Stream::begin_write`](struct.Stream.html#method.begin_write).
-pub enum BufferResult<'a> {
-    /// Null pointer was returned
-    Null,
-    /// Buffer
-    Buffer(&'a mut [u8]),
-}
-
 /// Result type for [`Stream::get_latency`](struct.Stream.html#method.get_latency).
 pub enum Latency {
     None,
@@ -879,10 +870,10 @@ impl Stream {
     /// This function should be called with `nbytes` set to the number of bytes you want to write,
     /// or `None`, in which case the size will be chosen automatically (which is recommended).
     ///
-    /// Returns either [`BufferResult::Null`], should a null pointer be returned, or a tuple of the
-    /// pointer and the size in bytes that can be written there, which may be less than or equal to
-    /// the `nbytes` requested. Note, the pointer and size can be combined into a mutable slice with
-    /// `std::slice::from_raw_parts_mut`.
+    /// The return value is a `Result` type, with the `Ok` variant wrapping an `Option`. `Err` will
+    /// be returned if PA encountered an error; `Ok(None)` will be  returned if it appeared to be
+    /// successful, but the pointer returned was `NULL`, otherwise the buffer will be returned as
+    /// `Ok(Some(_))`.
     ///
     /// After placing your data in the memory area returned, call [`write`] with a subslice of it,
     /// to actually execute the write. **Note**, the buffer may only be used once, i.e. if you were
@@ -903,8 +894,9 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
-    /// [`BufferResult::Null`]: enum.BufferResult.html#Null.v
-    pub fn begin_write<'a>(&'a mut self, nbytes: Option<usize>) -> Result<BufferResult<'a>, PAErr> {
+    pub fn begin_write<'a>(&'a mut self, nbytes: Option<usize>
+        ) -> Result<Option<&'a mut [u8]>, PAErr>
+    {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
@@ -913,12 +905,12 @@ impl Stream {
             None => std::usize::MAX,
         };
         match unsafe { capi::pa_stream_begin_write(self.ptr, &mut data_ptr, &mut nbytes_tmp) } {
-            0 if data_ptr.is_null() => Ok(BufferResult::Null),
+            0 if data_ptr.is_null() => Ok(None),
             0 => {
                 let slice = unsafe {
                     std::slice::from_raw_parts_mut(data_ptr as *mut u8, nbytes_tmp)
                 };
-                Ok(BufferResult::Buffer(slice))
+                Ok(Some(slice))
             },
             e => Err(PAErr(e)),
         }
