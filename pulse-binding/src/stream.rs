@@ -881,11 +881,11 @@ impl Stream {
     ///
     /// Returns either [`BufferResult::Null`], should a null pointer be returned, or a tuple of the
     /// pointer and the size in bytes that can be written there, which may be less than or equal to
-    /// the `nbytes` requested.
+    /// the `nbytes` requested. Note, the pointer and size can be combined into a mutable slice with
+    /// `std::slice::from_raw_parts_mut`.
     ///
-    /// After placing your data in the memory area returned, call [`write`] with `data` set to an
-    /// address within this memory area and an `nbytes` value that is smaller or equal to what was
-    /// returned by this function, to actually execute the write.
+    /// After placing your data in the memory area returned, call [`write`] with a subslice of it,
+    /// to actually execute the write.
     ///
     /// If you want to cancel a previously called [`begin_write`] without calling [`write`] use
     /// [`cancel_write`].
