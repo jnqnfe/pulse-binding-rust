@@ -904,7 +904,7 @@ impl Stream {
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
     /// [`BufferResult::Null`]: enum.BufferResult.html#Null.v
-    pub fn begin_write(&mut self, nbytes: Option<usize>) -> Result<BufferResult, PAErr> {
+    pub fn begin_write<'a>(&'a mut self, nbytes: Option<usize>) -> Result<BufferResult<'a>, PAErr> {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
@@ -1043,7 +1043,7 @@ impl Stream {
     /// [`Hole`]: enum.PeekResult.html#Hole.v
     /// [`Data`]: enum.PeekResult.html#Data.v
     /// [`discard`]: #method.discard
-    pub fn peek(&mut self) -> Result<PeekResult, PAErr> {
+    pub fn peek<'a>(&'a mut self) -> Result<PeekResult<'a>, PAErr> {
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
         // Note, C function returns an i32, but documentation does not mention any use of it, so we
