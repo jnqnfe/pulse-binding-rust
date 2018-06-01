@@ -893,10 +893,10 @@ impl Stream {
     /// Accessing the memory returned after the following [`write`] or [`cancel_write`] is invalid.
     /// The memory should **not** be explicly freed by the caller.
     ///
-    /// An invocation of [`write`] should follow "quickly" on [`begin_write`]. It is not
-    /// recommended letting an unbounded amount of time pass after calling [`begin_write`] and
-    /// before calling [`write`]. Calling [`begin_write`] twice without calling [`write`] or
-    /// [`cancel_write`] in between will return exactly the same `data` pointer and `nbytes` values.
+    /// An invocation of [`write`] should "quickly" follow a [`begin_write`]. It is not recommended
+    /// letting an unbounded amount of time pass after calling [`begin_write`] and before calling
+    /// [`write`]. Calling [`begin_write`] twice without calling [`write`] or [`cancel_write`] in
+    /// between will return exactly the same `data` pointer and `nbytes` values.
     ///
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
