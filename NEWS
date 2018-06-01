@@ -28,11 +28,6 @@ Changes between 1.0.5 and 1.1.0:
    correct many of these cases. There is no point in waiting for those to be accepted, so the
    change has been reflected in the C API description in the sys crate.
 
- [pulse-simple-sys, libpulse-mainloop-glib-sys, libpulse-glib-binding]
-
- * Update dependencies to v1.1.x, ensuring users of crates do not end up with a mixture of v1.0 and
-   v1.1 of the same crates.
-
 Changes between 1.0.4d and 1.0.5:
 ---------------
 
