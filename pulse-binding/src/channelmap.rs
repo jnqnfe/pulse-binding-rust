@@ -189,6 +189,15 @@ impl Default for Map {
     }
 }
 
+impl PartialEq for Map {
+    fn eq(&self, other: &Self) -> bool {
+        match self.channels == other.channels {
+            true => self.map[..self.channels as usize] == other.map[..other.channels as usize],
+            false => false,
+        }
+    }
+}
+
 /// The maximum length of strings returned by [`Map::print`], as per the underlying C function.
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
