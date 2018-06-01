@@ -1153,10 +1153,10 @@ impl Stream {
     ///
     /// This can be used inside the underflow callback to get information about the current
     /// underflow. (Only for playback streams).
-    pub fn get_underflow_index(&self) -> Option<i64> {
+    pub fn get_underflow_index(&self) -> Option<u64> {
         match unsafe { capi::pa_stream_get_underflow_index(self.ptr) } {
-            -1 => None,
-            r => Some(r),
+            r if r < 0 => None,
+            r => Some(r as u64),
         }
     }
 

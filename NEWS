@@ -32,6 +32,7 @@ Changes between 1.1.0 and ???:
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
    to avoid unecessary conversion, but users most likely would prefer `Strings`s, and there should
    definitely not be a problem with "lossy" utf8 conversion in these cases.
+ * stream: get_underflow_index: return unsigned
 
  [pulse-simple-binding]
 
