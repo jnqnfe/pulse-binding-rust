@@ -17,7 +17,7 @@ Changes between 1.1.0 and ???:
       `BufferResult` object.
     - Minor doc fixes
  * Derived more common traits for a handful of structs/enums
- * Implemented `PartialEq` for `::channelmap::Map`
+ * Implemented `PartialEq` for `::channelmap::Map` and `::volume::CVolume`
 
  [pulse-simple-binding]
 

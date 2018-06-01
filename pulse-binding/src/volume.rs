@@ -108,6 +108,15 @@ pub struct CVolume {
     pub values: [Volume; ::sample::CHANNELS_MAX],
 }
 
+impl PartialEq for CVolume {
+    fn eq(&self, other: &Self) -> bool {
+        match self.channels == other.channels {
+            true => self.values[..self.channels as usize] == other.values[..other.channels as usize],
+            false => false,
+        }
+    }
+}
+
 /// The maximum length of strings returned by [`CVolume::print`], as per the underlying C function.
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
