@@ -305,12 +305,12 @@ pub fn channels_are_valid(channels: u8) -> bool {
 }
 
 /// Returns a descriptive string for the specified sample format.
-pub fn format_to_string(f: Format) -> Option<&'static CStr> {
+pub fn format_to_string(f: Format) -> Option<String> {
     let ptr = unsafe { capi::pa_sample_format_to_string(f.into()) };
     if ptr.is_null() {
         return None;
     }
-    Some(unsafe { CStr::from_ptr(ptr) })
+    Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
 }
 
 /// Parse a sample format text. Inverse of [`format_to_string`](fn.format_to_string.html).
