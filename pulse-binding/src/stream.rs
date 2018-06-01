@@ -527,11 +527,11 @@ pub enum PeekResult<'a> {
 
 /// Result type for buffers, e.g. as returned by
 /// [`Stream::begin_write`](struct.Stream.html#method.begin_write).
-pub enum BufferResult {
+pub enum BufferResult<'a> {
     /// Null pointer was returned
     Null,
-    /// Pointer and length pair
-    Buffer(*mut c_void, usize),
+    /// Buffer
+    Buffer(&'a mut [u8]),
 }
 
 /// Result type for [`Stream::get_latency`](struct.Stream.html#method.get_latency).
@@ -914,7 +914,12 @@ impl Stream {
         };
         match unsafe { capi::pa_stream_begin_write(self.ptr, &mut data_ptr, &mut nbytes_tmp) } {
             0 if data_ptr.is_null() => Ok(BufferResult::Null),
-            0 => Ok(BufferResult::Buffer(data_ptr, nbytes_tmp)),
+            0 => {
+                let slice = unsafe {
+                    std::slice::from_raw_parts_mut(data_ptr as *mut u8, nbytes_tmp)
+                };
+                Ok(BufferResult::Buffer(slice))
+            },
             e => Err(PAErr(e)),
         }
     }
