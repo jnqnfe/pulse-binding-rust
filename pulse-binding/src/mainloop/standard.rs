@@ -365,12 +365,13 @@ impl Mainloop {
     /// Run unlimited iterations of the main loop object until the main loop's
     /// [`quit`](#method.quit) routine is called.
     ///
-    /// On success, returns `Some` containing quit's retval. On error returns `None`.
-    pub fn run(&mut self) -> Option<::def::Retval> {
+    /// On success, returns `Ok` containing quit's return value. On error returns `Err` containing a
+    /// tuple of the error value and quit's return value.
+    pub fn run(&mut self) -> Result<::def::Retval, (PAErr, ::def::Retval)> {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_run((*self._inner).ptr, &mut retval) } {
-            r if r >= 0 => Some(::def::Retval(r)),
-            _ => None,
+            r if r >= 0 => Ok(::def::Retval(retval)),
+            r => Err((PAErr(r), ::def::Retval(retval))),
         }
     }
 

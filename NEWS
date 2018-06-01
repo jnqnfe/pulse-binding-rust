@@ -4,6 +4,9 @@ Changes between 1.1.0 and ???:
  [pulse-binding]
 
  * Fixed lifetime issues with a handful of stream methods.
+ * mainloop/standard: Fixed `run` method's return data. Incorrectly was returning function call
+   result, while claiming in the documentation that this was the quit retval, which wasn't returned
+   at all.
  * Tidied up error code handling:
     - add `PAErr` wrapper for i32 error type, for cleaner interfaces
     - move `strerror` function to `PAErr` method
