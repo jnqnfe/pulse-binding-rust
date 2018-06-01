@@ -118,8 +118,8 @@ impl DeviceRestore {
     }
 
     /// Read an entry from the device database.
-    pub fn read_formats(&mut self, type_: ::def::Device, idx: u32, cb: (ReadDevFormatsCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+    pub fn read_formats(&mut self, type_: ::def::Device, idx: u32,
+        cb: (ReadDevFormatsCb, *mut c_void)) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, idx,
             Some(cb.0), cb.1) };
@@ -130,8 +130,9 @@ impl DeviceRestore {
     }
 
     /// Read an entry from the device database.
-    pub fn save_formats(&mut self, type_: ::def::Device, idx: u32, formats: &mut [&mut ::format::Info],
-        cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
+    pub fn save_formats(&mut self, type_: ::def::Device, idx: u32,
+        formats: &mut [&mut ::format::Info], cb: (::context::ContextSuccessCb, *mut c_void)
+        ) -> Option<::operation::Operation>
     {
         // Capture array of pointers to the above ::format::InfoInternal objects
         let mut format_ptrs: Vec<*mut capi::pa_format_info> = Vec::with_capacity(formats.len());

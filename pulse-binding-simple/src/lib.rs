@@ -142,8 +142,7 @@ impl Simple {
     /// * `attr`: Buffering attributes, or `None` for default.
     pub fn new(server: Option<&str>, name: &str, dir: pulse::stream::Direction,
         dev: Option<&str>, stream_name: &str, ss: &pulse::sample::Spec,
-        map: Option<&pulse::channelmap::Map>,
-        attr: Option<&pulse::def::BufferAttr>
+        map: Option<&pulse::channelmap::Map>, attr: Option<&pulse::def::BufferAttr>
         ) -> Result<Self, i32>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to

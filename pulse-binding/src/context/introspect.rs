@@ -238,7 +238,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null_mut;
 use super::{Context, ContextInternal, ContextSuccessCb};
-use ::util::unwrap_optional_callback;
+use util::unwrap_optional_callback;
 
 pub use capi::pa_sink_port_info as SinkPortInfoInternal;
 pub use capi::pa_sink_info as SinkInfoInternal;
@@ -403,8 +403,8 @@ impl From<SinkInfoInternal> for SinkInfo {
 /// Callback prototype for
 /// [`Introspector::get_sink_info_by_name`](struct.Introspector.html#method.get_sink_info_by_name)
 /// and friends.
-pub type SinkInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const SinkInfoInternal, eol: i32, userdata: *mut c_void);
+pub type SinkInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SinkInfoInternal, eol: i32,
+    userdata: *mut c_void);
 
 impl Introspector {
     /// Get information about a sink by its name.
@@ -430,7 +430,8 @@ impl Introspector {
     pub fn get_sink_info_by_index(&self, idx: u32, cb: (SinkInfoCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
-        let ptr = unsafe { capi::pa_context_get_sink_info_by_index(self.context, idx, Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_get_sink_info_by_index(self.context, idx, Some(cb.0),
+            cb.1) };
         if ptr.is_null() {
             return None;
         }
@@ -694,8 +695,8 @@ impl From<SourceInfoInternal> for SourceInfo {
 /// Callback prototype for
 /// [`Introspector::get_source_info_by_name`](struct.Introspector.html#method.get_source_info_by_name)
 /// and friends.
-pub type SourceInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const SourceInfoInternal, eol: i32, userdata: *mut c_void);
+pub type SourceInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SourceInfoInternal,
+    eol: i32, userdata: *mut c_void);
 
 impl Introspector {
     /// Get information about a source by its name.
@@ -924,8 +925,8 @@ impl From<ServerInfoInternal> for ServerInfo {
 
 /// Callback prototype for
 /// [`Introspector::get_server_info`](struct.Introspector.html#method.get_server_info).
-pub type ServerInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const ServerInfoInternal, userdata: *mut c_void);
+pub type ServerInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const ServerInfoInternal,
+    userdata: *mut c_void);
 
 impl Introspector {
     /// Get some information about the server.
@@ -981,8 +982,8 @@ impl From<ModuleInfoInternal> for ModuleInfo {
 
 /// Callback prototype for
 /// [`Introspector::get_module_info`](struct.Introspector.html#method.get_module_info) and friends.
-pub type ModuleInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const ModuleInfoInternal, eol: i32, userdata: *mut c_void);
+pub type ModuleInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const ModuleInfoInternal,
+    eol: i32, userdata: *mut c_void);
 
 /// Callback prototype for [`Introspector::load_module`](struct.Introspector.html#method.load_module).
 pub type ContextIndexCb = extern "C" fn(c: *mut ContextInternal, idx: u32, userdata: *mut c_void);
@@ -1082,8 +1083,8 @@ impl From<ClientInfoInternal> for ClientInfo {
 
 /// Callback prototype for
 /// [`Introspector::get_client_info`](struct.Introspector.html#method.get_client_info) and friends.
-pub type ClientInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const ClientInfoInternal, eol: i32, userdata: *mut c_void);
+pub type ClientInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const ClientInfoInternal,
+    eol: i32, userdata: *mut c_void);
 
 impl Introspector {
     /// Get information about a client by its index.
@@ -1224,8 +1225,8 @@ impl From<CardInfoInternal> for CardInfo {
 }
 
 /// Callback prototype for `Introspector::get_card_info_...()`
-pub type CardInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const CardInfoInternal, eol: i32, userdata: *mut c_void);
+pub type CardInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const CardInfoInternal, eol: i32,
+    userdata: *mut c_void);
 
 impl Introspector {
     /// Get information about a card by its index.
@@ -1399,8 +1400,8 @@ impl From<SinkInputInfoInternal> for SinkInputInfo {
 /// Callback prototype for
 /// [`Introspector::get_sink_input_info`](struct.Introspector.html#method.get_sink_input_info) and
 /// friends.
-pub type SinkInputInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const SinkInputInfoInternal, eol: i32, userdata: *mut c_void);
+pub type SinkInputInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SinkInputInfoInternal,
+    eol: i32, userdata: *mut c_void);
 
 impl Introspector {
     /// Get some information about a sink input by its index.
@@ -1586,7 +1587,8 @@ impl Introspector {
     pub fn get_source_output_info(&self, idx: u32, cb: (SourceOutputInfoCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
-        let ptr = unsafe { capi::pa_context_get_source_output_info(self.context, idx, Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_get_source_output_info(self.context, idx, Some(cb.0),
+            cb.1) };
         if ptr.is_null() {
             return None;
         }
@@ -1599,7 +1601,8 @@ impl Introspector {
     pub fn get_source_output_info_list(&self, cb: (SourceOutputInfoCb, *mut c_void)
         ) -> Option<::operation::Operation>
     {
-        let ptr = unsafe { capi::pa_context_get_source_output_info_list(self.context, Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_get_source_output_info_list(self.context, Some(cb.0),
+            cb.1) };
         if ptr.is_null() {
             return None;
         }
@@ -1751,8 +1754,8 @@ impl From<SampleInfoInternal> for SampleInfo {
 /// Callback prototype for
 /// [`Introspector::get_sample_info_by_name`](struct.Introspector.html#method.get_sample_info_by_name)
 /// and friends.
-pub type SampleInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const SampleInfoInternal, eol: i32, userdata: *mut c_void);
+pub type SampleInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SampleInfoInternal,
+    eol: i32, userdata: *mut c_void);
 
 impl Introspector {
     /// Get information about a sample by its name.

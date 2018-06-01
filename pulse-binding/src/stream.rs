@@ -258,7 +258,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
-use ::util::unwrap_optional_callback;
+use util::unwrap_optional_callback;
 
 pub use capi::pa_stream as StreamInternal;
 pub use capi::pa_seek_mode_t as SeekMode;
@@ -495,12 +495,10 @@ pub const EVENT_REQUEST_UNCORK: &str = capi::PA_STREAM_EVENT_REQUEST_UNCORK;
 pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
 
 /// A generic callback for operation completion
-pub type SuccessCb = extern "C" fn(s: *mut StreamInternal, success: i32,
-    userdata: *mut c_void);
+pub type SuccessCb = extern "C" fn(s: *mut StreamInternal, success: i32, userdata: *mut c_void);
 
 /// A generic request callback
-pub type RequestCb = extern "C" fn(p: *mut StreamInternal, nbytes: usize,
-    userdata: *mut c_void);
+pub type RequestCb = extern "C" fn(p: *mut StreamInternal, nbytes: usize, userdata: *mut c_void);
 
 /// A generic notification callback
 pub type NotifyCb = extern "C" fn(p: *mut StreamInternal, userdata: *mut c_void);
@@ -566,8 +564,9 @@ impl Stream {
             None => null::<capi::pa_channel_map>(),
         };
 
-        let ptr = unsafe { capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss),
-            p_map) };
+        let ptr = unsafe {
+            capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss), p_map)
+        };
         if ptr.is_null() {
             return None;
         }
@@ -596,8 +595,10 @@ impl Stream {
             None => null::<capi::pa_channel_map>(),
         };
 
-        let ptr = unsafe { capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(),
-            std::mem::transmute(ss), p_map, plist.ptr) };
+        let ptr = unsafe {
+            capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss),
+                p_map, plist.ptr)
+        };
         if ptr.is_null() {
             return None;
         }
@@ -801,9 +802,10 @@ impl Stream {
             None => null::<c_char>(),
         };
 
-        match unsafe { capi::pa_stream_connect_playback(self.ptr, p_dev, p_attr, flags, p_vol,
-            p_sync) }
-        {
+        let r = unsafe {
+            capi::pa_stream_connect_playback(self.ptr, p_dev, p_attr, flags, p_vol, p_sync)
+        };
+        match r {
             0 => Ok(()),
             e => Err(e),
         }
@@ -966,9 +968,11 @@ impl Stream {
     {
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
-        match unsafe { capi::pa_stream_write(self.ptr, data.as_ptr() as *const c_void, data.len(),
-            free_cb, offset, seek) }
-        {
+        let r = unsafe {
+            capi::pa_stream_write(self.ptr, data.as_ptr() as *const c_void, data.len(), free_cb,
+                offset, seek)
+        };
+        match r {
             0 => Ok(()),
             e => Err(e),
         }
@@ -997,9 +1001,11 @@ impl Stream {
         let (cb_f, cb_d) = unwrap_optional_callback::<::def::FreeCb>(free_cb);
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
-        match unsafe { capi::pa_stream_write_ext_free(self.ptr, data.as_ptr() as *const c_void,
-            data.len(), cb_f, cb_d, offset, seek.into()) }
-        {
+        let r = unsafe {
+            capi::pa_stream_write_ext_free(self.ptr, data.as_ptr() as *const c_void, data.len(),
+                cb_f, cb_d, offset, seek.into())
+        };
+        match r {
             0 => Ok(()),
             e => Err(e),
         }
@@ -1037,8 +1043,10 @@ impl Stream {
         match unsafe { capi::pa_stream_peek(self.ptr, &mut data_ptr, &mut nbytes) } {
             0 if data_ptr.is_null() && nbytes == 0 => Ok(PeekResult::Empty),
             0 if data_ptr.is_null() => Ok(PeekResult::Hole(nbytes)),
-            0 => Ok(PeekResult::Data(unsafe { std::slice::from_raw_parts(data_ptr as *const u8,
-                nbytes) })),
+            0 => {
+                let slice = unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) };
+                Ok(PeekResult::Data(slice))
+            },
             e => Err(e),
         }
     }

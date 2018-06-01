@@ -201,16 +201,16 @@ pub fn get_operation(value: EventType) -> Option<Operation> {
 }
 
 /// Subscription event callback prototype
-pub type Callback = extern "C" fn(c: *mut ContextInternal, t: EventType,
-    idx: u32, userdata: *mut c_void);
+pub type Callback = extern "C" fn(c: *mut ContextInternal, t: EventType, idx: u32,
+    userdata: *mut c_void);
 
 impl Context {
     /// Enable event notification.
     /// The `mask` parameter is used to specify which facilities you are interested in being
     /// modified about. Use [`set_subscribe_callback`](#method.set_subscribe_callback) to set the
     /// actual callback that will be called when an event occurs.
-    pub fn subscribe(&mut self, mask: InterestMaskSet,
-        cb: (ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
+    pub fn subscribe(&mut self, mask: InterestMaskSet, cb: (ContextSuccessCb, *mut c_void)
+        ) -> Option<::operation::Operation>
     {
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(cb.0), cb.1) };
         if ptr.is_null() {

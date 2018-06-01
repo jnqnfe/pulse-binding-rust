@@ -63,9 +63,7 @@ impl ::mainloop::api::MainloopApi {
 impl Event {
     /// Create a new UNIX signal event source object
     pub fn new(sig: i32, cb: (SignalCb, *mut c_void)) -> Self {
-        Self {
-            ptr: unsafe { capi::pa_signal_new(sig, Some(cb.0), cb.1) },
-        }
+        Self { ptr: unsafe { capi::pa_signal_new(sig, Some(cb.0), cb.1) }, }
     }
 
     /// Set a function that is called when the signal event source is destroyed. Use this to free

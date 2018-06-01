@@ -74,7 +74,8 @@ use ::util::unwrap_optional_callback;
 ///
 /// [`::context::Context::play_sample_with_proplist`]: ../struct.Context.html#method.play_sample_with_proplist
 /// [`::def::INVALID_INDEX`]: ../../def/constant.INVALID_INDEX.html
-pub type ContextPlaySampleCb = extern "C" fn(c: *mut ContextInternal, idx: u32, userdata: *mut c_void);
+pub type ContextPlaySampleCb = extern "C" fn(c: *mut ContextInternal, idx: u32,
+    userdata: *mut c_void);
 
 impl Context {
     /// Remove a sample from the sample cache.
@@ -86,7 +87,8 @@ impl Context {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(), Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(), Some(cb.0),
+            cb.1) };
         if ptr.is_null() {
             return None;
         }

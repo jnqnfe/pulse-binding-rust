@@ -362,12 +362,14 @@ impl CVolume {
     /// Returns pointer to self.
     pub fn sw_multiply(&mut self, with: Option<&Self>) -> &mut Self {
         match with {
-            Some(with) => unsafe { capi::pa_sw_cvolume_multiply(
-                std::mem::transmute(&self), std::mem::transmute(&self),
-                std::mem::transmute(with)) },
-            None => unsafe { capi::pa_sw_cvolume_multiply(
-                std::mem::transmute(&self), std::mem::transmute(&self),
-                std::mem::transmute(&self)) },
+            Some(with) => unsafe {
+                capi::pa_sw_cvolume_multiply(std::mem::transmute(&self), std::mem::transmute(&self),
+                    std::mem::transmute(with))
+            },
+            None => unsafe {
+                capi::pa_sw_cvolume_multiply(std::mem::transmute(&self), std::mem::transmute(&self),
+                    std::mem::transmute(&self))
+            },
         };
         self
     }
@@ -387,12 +389,14 @@ impl CVolume {
     /// pointer to self.
     pub fn sw_divide(&mut self, with: Option<&Self>) -> &mut Self {
         match with {
-            Some(with) => unsafe { capi::pa_sw_cvolume_divide(
-                std::mem::transmute(&self), std::mem::transmute(&self),
-                std::mem::transmute(with)) },
-            None => unsafe { capi::pa_sw_cvolume_divide(
-                std::mem::transmute(&self), std::mem::transmute(&self),
-                std::mem::transmute(&self)) },
+            Some(with) => unsafe {
+                capi::pa_sw_cvolume_divide(std::mem::transmute(&self), std::mem::transmute(&self),
+                    std::mem::transmute(with))
+            },
+            None => unsafe {
+                capi::pa_sw_cvolume_divide(std::mem::transmute(&self), std::mem::transmute(&self),
+                    std::mem::transmute(&self))
+            },
         };
         self
     }

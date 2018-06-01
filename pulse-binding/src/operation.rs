@@ -18,7 +18,7 @@
 use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
-use ::util::unwrap_optional_callback;
+use util::unwrap_optional_callback;
 
 pub use capi::pa_operation as OperationInternal;
 pub use capi::pa_operation_state_t as State;

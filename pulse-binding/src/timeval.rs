@@ -23,16 +23,16 @@ use libc::timeval;
 pub const MSEC_PER_SEC: ::sample::Usecs = 1000;
 
 /// The number of microseconds in a second
-pub const USEC_PER_SEC: ::sample::Usecs = 1000000;
+pub const USEC_PER_SEC: ::sample::Usecs = 1_000_000;
 
 /// The number of nanoseconds in a second
-pub const NSEC_PER_SEC: u64 = 1000000000;
+pub const NSEC_PER_SEC: u64 = 1_000_000_000;
 
 /// The number of microseconds in a millisecond
 pub const USEC_PER_MSEC: ::sample::Usecs = 1000;
 
 /// The number of nanoseconds in a millisecond
-pub const NSEC_PER_MSEC: u64 = 1000000;
+pub const NSEC_PER_MSEC: u64 = 1_000_000;
 
 /// The number of nanoseconds in a microsecond
 pub const NSEC_PER_USEC: u64 = 1000;

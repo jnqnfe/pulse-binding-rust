@@ -221,8 +221,7 @@ pub mod flags {
 }
 
 /// Generic notification callback prototype
-pub type ContextNotifyCb = extern "C" fn(c: *mut ContextInternal,
-    userdata: *mut c_void);
+pub type ContextNotifyCb = extern "C" fn(c: *mut ContextInternal, userdata: *mut c_void);
 
 /// A generic callback for operation completion
 /// The `success` param with be zero on success, non-zero otherwise.
@@ -232,17 +231,15 @@ pub type ContextSuccessCb = extern "C" fn(c: *mut ContextInternal, success: i32,
 /// A callback for asynchronous meta/policy event messages. The set of defined events can be
 /// extended at any time. Also, server modules may introduce additional message types so make sure
 /// that your callback function ignores messages it doesn't know.
-pub type ContextEventCb = extern "C" fn(c: *mut ContextInternal,
-    name: *const c_char, p: *mut ::proplist::ProplistInternal, userdata: *mut c_void);
+pub type ContextEventCb = extern "C" fn(c: *mut ContextInternal, name: *const c_char,
+    p: *mut ::proplist::ProplistInternal, userdata: *mut c_void);
 
 impl Context {
     /// Instantiate a new connection context with an abstract mainloop API and an application name.
     ///
     /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
     /// specify some initial properties.
-    pub fn new(mainloop_api: &mut ::mainloop::api::MainloopApi,
-        name: &str) -> Option<Self>
-    {
+    pub fn new(mainloop_api: &mut ::mainloop::api::MainloopApi, name: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
@@ -378,7 +375,8 @@ impl Context {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(), Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(), Some(cb.0),
+            cb.1) };
         if ptr.is_null() {
             return None;
         }
@@ -475,7 +473,7 @@ impl Context {
 
         // Capture array of pointers to the above CString values.
         // We also add a NULL pointer entry on the end, as expected by the C function called here.
-        let mut c_key_ptrs: Vec<*const c_char> = Vec::with_capacity(c_keys.len()+1);
+        let mut c_key_ptrs: Vec<*const c_char> = Vec::with_capacity(c_keys.len() + 1);
         for c_key in c_keys {
             c_key_ptrs.push(c_key.as_ptr());
         }

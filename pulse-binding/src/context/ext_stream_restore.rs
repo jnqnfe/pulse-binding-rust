@@ -58,16 +58,14 @@ impl Context {
 }
 
 /// Callback prototype for [`test`](struct.StreamRestore.html#method.test).
-pub type TestCb = extern "C" fn(c: *mut ContextInternal, version: u32,
-    userdata: *mut c_void);
+pub type TestCb = extern "C" fn(c: *mut ContextInternal, version: u32, userdata: *mut c_void);
 
 /// Callback prototype for [`read`](struct.StreamRestore.html#method.read).
-pub type ReadCb = extern "C" fn(c: *mut ContextInternal,
-    info: *const InfoInternal, eol: i32, userdata: *mut c_void);
+pub type ReadCb = extern "C" fn(c: *mut ContextInternal, info: *const InfoInternal, eol: i32,
+    userdata: *mut c_void);
 
 /// Callback prototype for [`set_subscribe_cb`](struct.StreamRestore.html#method.set_subscribe_cb).
-pub type SubscribeCb = extern "C" fn(c: *mut ContextInternal,
-    userdata: *mut c_void);
+pub type SubscribeCb = extern "C" fn(c: *mut ContextInternal, userdata: *mut c_void);
 
 impl StreamRestore {
     /// Create a new `DeviceManager` from an existing
