@@ -885,12 +885,14 @@ impl Stream {
     /// `std::slice::from_raw_parts_mut`.
     ///
     /// After placing your data in the memory area returned, call [`write`] with a subslice of it,
-    /// to actually execute the write.
+    /// to actually execute the write. **Note**, the buffer may only be used once, i.e. if you were
+    /// thinking of getting a large buffer, placing a large chunk of data into it, then perform
+    /// multiple small writes from it, you **cannot** do this. Any attempt at accessing the memory
+    /// returned after the following [`write`] or [`cancel_write`] is invalid.
     ///
     /// If you want to cancel a previously called [`begin_write`] without calling [`write`] use
     /// [`cancel_write`].
     ///
-    /// Accessing the memory returned after the following [`write`] or [`cancel_write`] is invalid.
     /// The memory should **not** be explicly freed by the caller.
     ///
     /// An invocation of [`write`] should "quickly" follow a [`begin_write`]. It is not recommended
