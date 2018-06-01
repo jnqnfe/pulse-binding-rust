@@ -206,9 +206,6 @@ pub struct Spec {
     pub channels: u8,
 }
 
-/// Type for usec specifications (unsigned). Always 64 bit.
-pub type Usecs = capi::sample::pa_usec_t;
-
 /// The maximum length of strings returned by [`Spec::print`](struct.Spec.html#method.print), as per
 /// the underlying C function. Please note that this value can change with any release without
 /// warning and without being considered API or ABI breakage. You should not use this definition

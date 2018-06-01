@@ -21,23 +21,13 @@ use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 pub use libc::timeval; //Export wanted for use in timer event callbacks, so users don't need to import the libc crate themselves!
 
-/// The number of milliseconds in a second
-pub const MSEC_PER_SEC: ::sample::Usecs = 1000;
-
-/// The number of microseconds in a second
-pub const USEC_PER_SEC: ::sample::Usecs = 1_000_000;
-
-/// The number of nanoseconds in a second
-pub const NSEC_PER_SEC: u64 = 1_000_000_000;
-
-/// The number of microseconds in a millisecond
-pub const USEC_PER_MSEC: ::sample::Usecs = 1000;
-
-/// The number of nanoseconds in a millisecond
-pub const NSEC_PER_MSEC: u64 = 1_000_000;
-
-/// The number of nanoseconds in a microsecond
-pub const NSEC_PER_USEC: u64 = 1000;
+// (Copied constants from rust's std/time/duration.rs)
+pub const NANOS_PER_SEC: u32 = 1_000_000_000;
+pub const NANOS_PER_MILLI: u32 = 1_000_000;
+pub const NANOS_PER_MICRO: u32 = 1_000;
+pub const MICROS_PER_SEC: u64 = 1_000_000;
+pub const MICROS_PER_MILLI: u64 = 1_000;
+pub const MILLIS_PER_SEC: u64 = 1_000;
 
 /// Invalid time. Microseconds value representing 'invalid'.
 pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
