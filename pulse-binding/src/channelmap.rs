@@ -357,22 +357,22 @@ impl Map {
     /// Tries to find a well-known channel mapping name for this channel mapping, i.e. "stereo",
     /// "surround-71" and so on. This name can be parsed with
     /// [`new_from_string`](#method.new_from_string).
-    pub fn to_name(&self) -> Option<&'static CStr> {
+    pub fn to_name(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_map_to_name(std::mem::transmute(self)) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Similar to [`to_name`](#method.to_name), but returning prettier, human readable text labels,
     /// i.e. "Stereo", "Surround 7.1" and so on.
-    pub fn to_pretty_name(&self) -> Option<&'static CStr> {
+    pub fn to_pretty_name(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_map_to_pretty_name(std::mem::transmute(self)) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Checks whether or not the specified channel position is available at least once in the map.
