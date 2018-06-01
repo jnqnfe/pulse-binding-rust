@@ -894,7 +894,7 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
-    pub fn begin_write<'a>(&'a mut self, nbytes: Option<usize>
+    pub fn begin_write<'a>(&mut self, nbytes: Option<usize>
         ) -> Result<Option<&'a mut [u8]>, PAErr>
     {
         let mut data_ptr = null_mut::<c_void>();
@@ -1035,7 +1035,7 @@ impl Stream {
     /// [`Hole`]: enum.PeekResult.html#Hole.v
     /// [`Data`]: enum.PeekResult.html#Data.v
     /// [`discard`]: #method.discard
-    pub fn peek<'a>(&'a mut self) -> Result<PeekResult<'a>, PAErr> {
+    pub fn peek<'a>(&mut self) -> Result<PeekResult<'a>, PAErr> {
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
         // Note, C function returns an i32, but documentation does not mention any use of it, so we
@@ -1404,19 +1404,19 @@ impl Stream {
     /// [`update_timing_info`]: #method.update_timing_info
     /// [`write`]: #method.write
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
-    pub fn get_timing_info(&mut self) -> Option<&::def::TimingInfo> {
+    pub fn get_timing_info<'a>(&mut self) -> Option<&'a ::def::TimingInfo> {
         let ptr = unsafe { capi::pa_stream_get_timing_info(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
 
     /// Return a pointer to the stream's sample specification.
-    pub fn get_sample_spec(&mut self) -> Option<&::sample::Spec> {
+    pub fn get_sample_spec<'a>(&mut self) -> Option<&'a ::sample::Spec> {
         let ptr = unsafe { capi::pa_stream_get_sample_spec(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
 
     /// Return a pointer to the stream's channel map.
-    pub fn get_channel_map(&mut self) -> Option<&::channelmap::Map> {
+    pub fn get_channel_map<'a>(&mut self) -> Option<&'a ::channelmap::Map> {
         let ptr = unsafe { capi::pa_stream_get_channel_map(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
@@ -1441,7 +1441,7 @@ impl Stream {
     /// [`connect_record`]: #method.connect_record
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-    pub fn get_buffer_attr(&mut self) -> Option<&::def::BufferAttr> {
+    pub fn get_buffer_attr<'a>(&mut self) -> Option<&'a ::def::BufferAttr> {
         let ptr = unsafe { capi::pa_stream_get_buffer_attr(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }

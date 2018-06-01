@@ -3,6 +3,7 @@ Changes between 1.1.0 and ???:
 
  [pulse-binding]
 
+ * Fixed lifetime issues with a handful of stream methods.
  * Tidied up error code handling:
     - add `PAErr` wrapper for i32 error type, for cleaner interfaces
     - move `strerror` function to `PAErr` method
@@ -11,10 +12,9 @@ Changes between 1.1.0 and ???:
     - add `PAErr` <=> `Code` `From` impls
  * Stream:
     - The buffer given by `begin_write` is now converted to a slice for you, rather than burdening
-      the caller. The lifetime is tied to that of the stream reference.
+      the caller.
     - The return type of `begin_write` has been further simplified, ditching the custom
       `BufferResult` object.
-    - Tied lifetime of `PeekResult` to stream reference
     - Minor doc fixes
 
  [pulse-simple-binding]
