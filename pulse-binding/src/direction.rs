@@ -34,6 +34,6 @@ pub fn is_valid(f: FlagSet) -> bool {
 }
 
 /// Return a textual representation of the direction.
-pub fn to_string(f: FlagSet) -> &'static CStr {
-    unsafe { CStr::from_ptr(capi::pa_direction_to_string(f)) }
+pub fn to_string(f: FlagSet) -> String {
+    unsafe { CStr::from_ptr(capi::pa_direction_to_string(f)).to_string_lossy().into_owned() }
 }
