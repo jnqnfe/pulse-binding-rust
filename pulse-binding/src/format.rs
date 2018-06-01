@@ -103,12 +103,12 @@ pub const PRINT_MAX: usize = capi::PA_FORMAT_INFO_SNPRINT_MAX;
 
 impl Encoding {
     /// Returns a printable string representing the given encoding type.
-    pub fn to_string(e: Self) -> Option<&'static CStr> {
+    pub fn to_string(e: Self) -> Option<String> {
         let ptr = unsafe { capi::pa_encoding_to_string(e.into()) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Converts a string of the form returned by [`to_string`](#method.to_string) back to an
