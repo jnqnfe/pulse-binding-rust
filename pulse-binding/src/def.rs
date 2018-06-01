@@ -145,7 +145,7 @@ pub struct BufferAttr {
 /// [`stream::Stream::flush`]: ../stream/struct.Stream.html#method.flush
 /// [`stream::Stream::get_latency`]: ../stream/struct.Stream.html#method.get_latency
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct TimingInfo {
     /// The system clock time when this timing info structure was current.
     pub timestamp: Timeval,
