@@ -222,7 +222,7 @@ pub struct TimingInfo {
 ///
 /// [`context::Context::connect`]: ../context/struct.Context.html#method.connect
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct SpawnApi {
     /// Is called just before the fork in the parent process.
     pub prefork: Option<extern "C" fn()>,
