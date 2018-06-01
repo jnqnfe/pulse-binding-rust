@@ -19,10 +19,17 @@ Changes between 1.1.0 and ???:
  * Derived more common traits for a handful of structs/enums
  * Implemented `PartialEq` for `::channelmap::Map` and `::volume::CVolume`
  * Removed Copy,Clone derives from def::SpawnApi
+ * Improved time handling:
+    - Added `Timeval` wrapper
+    - Introduced `MicroSeconds` u64 wrapper, replacing use of `::sample::Usecs` (now removed)
+    - Tidied up conversion constants. Note, names (and in some cases types) have changed.
+    - libc::timeval re-exported (primarily for timer event callback use) from `::timeval` instead of
+      `::mainloop::events::timer`
 
  [pulse-simple-binding]
 
  * Tidied up error code handling, per above
+ * Improved time handling, per above
 
 Changes between 1.0.5 and 1.1.0:
 ---------------
