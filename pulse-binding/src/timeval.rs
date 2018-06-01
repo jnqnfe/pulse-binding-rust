@@ -17,7 +17,7 @@
 
 use capi;
 use std::cmp::Ordering;
-use libc::timeval;
+pub use libc::timeval; //Export wanted for use in timer event callbacks, so users don't need to import the libc crate themselves!
 
 /// The number of milliseconds in a second
 pub const MSEC_PER_SEC: ::sample::Usecs = 1000;
