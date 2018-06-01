@@ -25,6 +25,7 @@ Changes between 1.1.0 and ???:
     - Tidied up conversion constants. Note, names (and in some cases types) have changed.
     - libc::timeval re-exported (primarily for timer event callback use) from `::timeval` instead of
       `::mainloop::events::timer`
+ * Added and put to use wrapper for 'quit return values'
 
  [pulse-simple-binding]
 

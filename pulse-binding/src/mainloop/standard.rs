@@ -63,6 +63,7 @@
 //! use pulse::mainloop::standard::Mainloop;
 //! use pulse::stream::Stream;
 //! use pulse::mainloop::standard::InterateResult;
+//! use pulse::def::Retval;
 //!
 //! fn main() {
 //!     let spec = pulse::sample::Spec {
@@ -174,7 +175,7 @@
 //!     }
 //!
 //!     // Clean shutdown
-//!     mainloop.quit(0); // uncertain whether this is necessary
+//!     mainloop.quit(Retval(0)); // uncertain whether this is necessary
 //!     stream.disconnect().unwrap();
 //! }
 //! 
@@ -215,7 +216,7 @@ pub enum InterateResult {
     /// Success, with number of sources dispatched
     Success(u32),
     /// Quit was called, with quit's retval
-    Quit(i32),
+    Quit(::def::Retval),
     /// An error occurred, with error value
     Err(PAErr),
 }
@@ -335,8 +336,8 @@ impl Mainloop {
     }
 
     /// Return the return value as specified with the main loop's [`quit`](#method.quit) routine.
-    pub fn get_retval(&self) -> i32 {
-        unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) }
+    pub fn get_retval(&self) -> ::def::Retval {
+        ::def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
     }
 
     /// Run a single iteration of the main loop.
@@ -356,7 +357,7 @@ impl Mainloop {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_iterate((*self._inner).ptr, block as i32, &mut retval) } {
             r if r >= 0 => InterateResult::Success(r as u32),
-            -2 => InterateResult::Quit(retval),
+            -2 => InterateResult::Quit(::def::Retval(retval)),
             e => InterateResult::Err(PAErr(e)),
         }
     }
@@ -365,10 +366,10 @@ impl Mainloop {
     /// [`quit`](#method.quit) routine is called.
     ///
     /// On success, returns `Some` containing quit's retval. On error returns `None`.
-    pub fn run(&mut self) -> Option<i32> {
+    pub fn run(&mut self) -> Option<::def::Retval> {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_run((*self._inner).ptr, &mut retval) } {
-            r if r >= 0 => Some(r),
+            r if r >= 0 => Some(::def::Retval(r)),
             _ => None,
         }
     }
@@ -388,8 +389,8 @@ impl Mainloop {
     }
 
     /// Shutdown the main loop with the specified return value
-    pub fn quit(&mut self, retval: i32) {
-        unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval); }
+    pub fn quit(&mut self, retval: ::def::Retval) {
+        unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval.0); }
     }
 
     /// Interrupt a running poll (for threaded systems)

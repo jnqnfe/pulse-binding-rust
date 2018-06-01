@@ -148,9 +148,9 @@ pub trait Mainloop {
     }
 
     /// Call quit
-    fn quit(&mut self, retval: i32) {
+    fn quit(&mut self, retval: ::def::Retval) {
         let fn_ptr = self.inner().get_api().quit.unwrap();
-        fn_ptr(self.inner().get_api(), retval);
+        fn_ptr(self.inner().get_api(), retval.0);
     }
 }
 
@@ -196,7 +196,7 @@ pub struct MainloopApi {
         cb: Option<DeferEventDestroyCb>)>,
 
     /// Exit the main loop and return the specified retval
-    pub quit: Option<extern "C" fn(a: *mut MainloopApi, retval: i32)>,
+    pub quit: Option<extern "C" fn(a: *mut MainloopApi, retval: ::def::RetvalActual)>,
 }
 
 pub type MainloopApiOnceCallback = extern "C" fn(m: *mut ApiInternal,

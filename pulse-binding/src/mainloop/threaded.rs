@@ -507,8 +507,8 @@ impl Mainloop {
 
     /// Return the return value as specified with the main loop's `quit` routine (used internally by
     /// threaded mainloop).
-    pub fn get_retval(&self) -> i32 {
-        unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) }
+    pub fn get_retval(&self) -> ::def::Retval {
+        ::def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })
     }
 
     /// Return the main loop abstraction layer vtable for this main loop.
