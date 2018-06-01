@@ -9,6 +9,13 @@ Changes between 1.1.0 and ???:
     - rename `sterror` `PAErr` and `Code` methods to `to_string`
     - convert the error CStr to String for the users, no need to make users do it
     - add `PAErr` <=> `Code` `From` impls
+ * Stream:
+    - The buffer given by `begin_write` is now converted to a slice for you, rather than burdening
+      the caller. The lifetime is tied to that of the stream reference.
+    - The return type of `begin_write` has been further simplified, ditching the custom
+      `BufferResult` object.
+    - Tied lifetime of `PeekResult` to stream reference
+    - Minor doc fixes
 
  [pulse-simple-binding]
 
