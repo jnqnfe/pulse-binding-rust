@@ -216,21 +216,21 @@ impl Position {
     }
 
     /// Return a text label for the specified channel position
-    pub fn to_string(pos: Self) -> Option<&'static CStr> {
+    pub fn to_string(pos: Self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_position_to_string(pos.into()) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Return a human readable text label for the specified channel position.
-    pub fn to_pretty_string(pos: Self) -> Option<&'static CStr> {
+    pub fn to_pretty_string(pos: Self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_position_to_pretty_string(pos.into()) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// The inverse of [`to_string`](#method.to_string).
