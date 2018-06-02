@@ -123,7 +123,7 @@ impl PartialEq for CVolume {
 /// become part of an ABI.
 ///
 /// [`CVolume::print`]: struct.CVolume.html#method.print
-pub const CVOLUME_PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
+const CVOLUME_PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
 
 /// The maximum length of strings returned by [`CVolume::print_db`], as per the underlying C
 /// function. Please note that this value can change with any release without warning and without
@@ -131,7 +131,7 @@ pub const CVOLUME_PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
 /// become part of an ABI.
 ///
 /// [`CVolume::print_db`]: struct.CVolume.html#method.print_db
-pub const CVOLUME_PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
+const CVOLUME_PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
 
 /// The maximum length of strings returned by [`CVolume::print_verbose`], as per the underlying C
 /// function. Please note that this value can change with any release without warning and without
@@ -139,25 +139,25 @@ pub const CVOLUME_PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
 /// become part of an ABI.
 ///
 /// [`CVolume::print_verbose`]: struct.CVolume.html#method.print_verbose
-pub const CVOLUME_PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
+const CVOLUME_PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 
 /// The maximum length of strings returned by [`print`](fn.print.html), as per the underlying C
 /// function. Please note that this value can change with any release without warning and without
 /// being considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
-pub const VOLUME_PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
+const VOLUME_PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
 
 /// The maximum length of strings returned by [`print_db`](fn.print_db.html), as per the underlying
 /// C function. Please note that this value can change with any release without warning and without
 /// being considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
-pub const VOLUME_PRINT_DB_MAX: usize = capi::PA_SW_VOLUME_SNPRINT_DB_MAX;
+const VOLUME_PRINT_DB_MAX: usize = capi::PA_SW_VOLUME_SNPRINT_DB_MAX;
 
 /// The maximum length of strings returned by [`print_verbose`](fn.print_verbose.html), as per the
 /// underlying C function. Please note that this value can change with any release without warning
 /// and without being considered API or ABI breakage. You should not use this definition anywhere
 /// where it might become part of an ABI.
-pub const VOLUME_PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
+const VOLUME_PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
 
 /// Check if volume is valid.
 #[inline(always)]

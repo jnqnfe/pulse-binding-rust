@@ -204,7 +204,7 @@ impl PartialEq for Map {
 /// become part of an ABI.
 ///
 /// [`Map::print`]: struct.Map.html#method.print
-pub const PRINT_MAX: usize = capi::PA_CHANNEL_MAP_SNPRINT_MAX;
+const PRINT_MAX: usize = capi::PA_CHANNEL_MAP_SNPRINT_MAX;
 
 impl Position {
     /// Makes a bit mask from a channel position.

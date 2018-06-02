@@ -99,7 +99,7 @@ pub struct InfoInternal {
 /// become part of an ABI.
 ///
 /// [`Info::print`]: struct.Info.html#method.print
-pub const PRINT_MAX: usize = capi::PA_FORMAT_INFO_SNPRINT_MAX;
+const PRINT_MAX: usize = capi::PA_FORMAT_INFO_SNPRINT_MAX;
 
 impl Encoding {
     /// Returns a printable string representing the given encoding type.

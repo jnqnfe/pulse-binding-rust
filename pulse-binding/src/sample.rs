@@ -210,13 +210,13 @@ pub struct Spec {
 /// the underlying C function. Please note that this value can change with any release without
 /// warning and without being considered API or ABI breakage. You should not use this definition
 /// anywhere where it might become part of an ABI.
-pub const SPEC_PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
+const SPEC_PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
 
 /// The maximum length of strings returned by [`bytes_print`](fn.bytes_print.html), as per the
 /// underlying C function. Please note that this value can change with any release without warning
 /// and without being considered API or ABI breakage. You should not use this definition anywhere
 /// where it might become part of an ABI.
-pub const BYTES_PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
+const BYTES_PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
 
 /// Similar to [`Spec::sample_size`](struct.Spec.html#method.sample_size) but take a sample format
 /// instead of full sample spec.
