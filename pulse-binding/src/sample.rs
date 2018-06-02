@@ -204,12 +204,6 @@ pub struct Spec {
     pub channels: u8,
 }
 
-/// Similar to [`Spec::sample_size`](struct.Spec.html#method.sample_size) but take a sample format
-/// instead of full sample spec.
-pub fn size_of_format(f: Format) -> usize {
-    unsafe { capi::pa_sample_size_of_format(f.into()) }
-}
-
 impl Spec {
     /// Initialize the specified sample spec.
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
@@ -286,23 +280,6 @@ pub fn channels_are_valid(channels: u8) -> bool {
     unsafe { capi::pa_channels_valid(channels) != 0 }
 }
 
-/// Returns a descriptive string for the specified sample format.
-pub fn format_to_string(f: Format) -> Option<String> {
-    let ptr = unsafe { capi::pa_sample_format_to_string(f.into()) };
-    if ptr.is_null() {
-        return None;
-    }
-    Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
-}
-
-/// Parse a sample format text. Inverse of [`format_to_string`](fn.format_to_string.html).
-pub fn parse_format(format: &str) -> Format {
-    // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
-    // as_ptr() giving dangling pointers!
-    let c_format = CString::new(format.clone()).unwrap();
-    unsafe { capi::pa_parse_sample_format(c_format.as_ptr()).into() }
-}
-
 /// Pretty print a byte size value (i.e. "2.5 MiB")
 pub fn bytes_print(bytes: u32) -> String {
     const PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
@@ -313,56 +290,81 @@ pub fn bytes_print(bytes: u32) -> String {
     }
 }
 
-/// Returns `true` when the specified format is little endian, `false` if big endian. Returns
-/// `None` when endianness does not apply to this format, or if unknown.
-pub fn format_is_le(f: Format) -> Option<bool> {
-    match unsafe { capi::pa_sample_format_is_le(f.into()) } {
-        0 => Some(false),
-        1 => Some(true),
-        _ => None,
+impl Format {
+    /// Similar to [`Spec::sample_size`](struct.Spec.html#method.sample_size) but take a sample
+    /// format instead of full sample spec.
+    pub fn size(&self) -> usize {
+        unsafe { capi::pa_sample_size_of_format((*self).into()) }
     }
-}
 
-/// Returns `true` when the specified format is big endian, `false` if little endian. Returns `None`
-/// when endianness does not apply to this format, or if unknown.
-pub fn format_is_be(f: Format) -> Option<bool> {
-    match unsafe { capi::pa_sample_format_is_be(f.into()) } {
-        0 => Some(false),
-        1 => Some(true),
-        _ => None,
+    /// Returns a descriptive string for the specified sample format.
+    pub fn to_string(&self) -> Option<String> {
+        let ptr = unsafe { capi::pa_sample_format_to_string((*self).into()) };
+        if ptr.is_null() {
+            return None;
+        }
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
-}
 
-/// Is format native endian?
-///
-/// Returns `true` when the specified format is native endian, `false` when not. Returns `None` when
-/// endianness does not apply to the specified format, or endianess is unknown.
-#[cfg(target_endian = "big")]
-pub fn format_is_ne(f: Format) -> Option<bool> {
-    format_is_be(f)
-}
-/// Is format native endian?
-///
-/// Returns `true` when the specified format is native endian, `false` when not. Returns `None` when
-/// endianness does not apply to the specified format, or endianess is unknown
-#[cfg(target_endian = "little")]
-pub fn format_is_ne(f: Format) -> Option<bool> {
-    format_is_le(f)
-}
+    /// Parse a sample format text. Inverse of [`to_string`](#method.to_string).
+    pub fn parse(format: &str) -> Self {
+        // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
+        // as_ptr() giving dangling pointers!
+        let c_format = CString::new(format.clone()).unwrap();
+        unsafe { capi::pa_parse_sample_format(c_format.as_ptr()).into() }
+    }
 
-/// Is format reverse of native endian?
-///
-/// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
-/// when endianness does not apply to the specified format, or endianess is unknown.
-#[cfg(target_endian = "big")]
-pub fn format_is_re(f: Format) -> Option<bool> {
-    format_is_le(f)
-}
-/// Is format reverse of native endian?
-///
-/// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
-/// when endianness does not apply to the specified format, or endianess is unknown.
-#[cfg(target_endian = "little")]
-pub fn format_is_re(f: Format) -> Option<bool> {
-    format_is_be(f)
+    /// Returns `true` when the specified format is little endian, `false` if big endian. Returns
+    /// `None` when endianness does not apply to this format, or if unknown.
+    pub fn is_le(&self) -> Option<bool> {
+        match unsafe { capi::pa_sample_format_is_le((*self).into()) } {
+            0 => Some(false),
+            1 => Some(true),
+            _ => None,
+        }
+    }
+
+    /// Returns `true` when the specified format is big endian, `false` if little endian. Returns
+    /// `None` when endianness does not apply to this format, or if unknown.
+    pub fn is_be(&self) -> Option<bool> {
+        match unsafe { capi::pa_sample_format_is_be((*self).into()) } {
+            0 => Some(false),
+            1 => Some(true),
+            _ => None,
+        }
+    }
+
+    /// Is format native endian?
+    ///
+    /// Returns `true` when the specified format is native endian, `false` when not. Returns `None`
+    /// when endianness does not apply to the specified format, or endianess is unknown.
+    #[cfg(target_endian = "big")]
+    pub fn is_ne(&self) -> Option<bool> {
+        Format::is_be(self)
+    }
+    /// Is format native endian?
+    ///
+    /// Returns `true` when the specified format is native endian, `false` when not. Returns `None`
+    /// when endianness does not apply to the specified format, or endianess is unknown
+    #[cfg(target_endian = "little")]
+    pub fn is_ne(&self) -> Option<bool> {
+        Format::is_le(self)
+    }
+
+    /// Is format reverse of native endian?
+    ///
+    /// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
+    /// when endianness does not apply to the specified format, or endianess is unknown.
+    #[cfg(target_endian = "big")]
+    pub fn is_re(&self) -> Option<bool> {
+        Format::is_le(self)
+    }
+    /// Is format reverse of native endian?
+    ///
+    /// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
+    /// when endianness does not apply to the specified format, or endianess is unknown.
+    #[cfg(target_endian = "little")]
+    pub fn is_re(&self) -> Option<bool> {
+        Format::is_be(self)
+    }
 }
