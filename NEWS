@@ -47,6 +47,8 @@ Changes between 1.1.0 and ???:
    definitely not be a problem with "lossy" utf8 conversion in these cases.
  * stream: get_underflow_index: return unsigned
  * Hid string printing length constants, only used interally
+ * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
+   thus more simple, and removed the `Option` result wrapper.
 
  [pulse-simple-binding]
 

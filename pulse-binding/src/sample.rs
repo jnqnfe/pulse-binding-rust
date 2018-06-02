@@ -70,9 +70,7 @@
 //! [`Spec::bytes_to_usec`]: struct.Spec.html#method.bytes_to_usec
 
 use std;
-use libc;
 use capi;
-use std::os::raw::c_char;
 use std::ffi::{CStr, CString};
 use timeval::MicroSeconds;
 
@@ -206,18 +204,6 @@ pub struct Spec {
     pub channels: u8,
 }
 
-/// The maximum length of strings returned by [`Spec::print`](struct.Spec.html#method.print), as per
-/// the underlying C function. Please note that this value can change with any release without
-/// warning and without being considered API or ABI breakage. You should not use this definition
-/// anywhere where it might become part of an ABI.
-const SPEC_PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
-
-/// The maximum length of strings returned by [`bytes_print`](fn.bytes_print.html), as per the
-/// underlying C function. Please note that this value can change with any release without warning
-/// and without being considered API or ABI breakage. You should not use this definition anywhere
-/// where it might become part of an ABI.
-const BYTES_PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
-
 /// Similar to [`Spec::sample_size`](struct.Spec.html#method.sample_size) but take a sample format
 /// instead of full sample spec.
 pub fn size_of_format(f: Format) -> usize {
@@ -271,16 +257,12 @@ impl Spec {
     }
 
     /// Pretty print a sample type specification to a string
-    pub fn print(&self) -> Option<String> {
-        let tmp = unsafe { libc::malloc(SPEC_PRINT_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+    pub fn print(&self) -> String {
+        const PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
+        let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_sample_spec_snprint(tmp, SPEC_PRINT_MAX, std::mem::transmute(self));
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_sample_spec_snprint(tmp.as_mut_ptr(), PRINT_MAX, std::mem::transmute(self));
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 }
@@ -322,16 +304,12 @@ pub fn parse_format(format: &str) -> Format {
 }
 
 /// Pretty print a byte size value (i.e. "2.5 MiB")
-pub fn bytes_print(bytes: u32) -> Option<String> {
-    let tmp = unsafe { libc::malloc(BYTES_PRINT_MAX) as *mut c_char };
-    if tmp.is_null() {
-        return None;
-    }
+pub fn bytes_print(bytes: u32) -> String {
+    const PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
+    let mut tmp = Vec::with_capacity(PRINT_MAX);
     unsafe {
-        capi::pa_bytes_snprint(tmp, BYTES_PRINT_MAX, bytes);
-        let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-        libc::free(tmp as *mut libc::c_void);
-        ret
+        capi::pa_bytes_snprint(tmp.as_mut_ptr(), PRINT_MAX, bytes);
+        CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
     }
 }
 

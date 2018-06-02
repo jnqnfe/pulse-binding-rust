@@ -24,7 +24,6 @@
 //! [`set_encoding`]: struct.Info.html#method.set_encoding
 
 use std;
-use libc;
 use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
@@ -92,14 +91,6 @@ pub struct InfoInternal {
     /// Additional encoding-specific properties such as sample rate, bitrate, etc.
     pub list: *mut ::proplist::ProplistInternal,
 }
-
-/// The maximum length of strings returned by [`Info::print`], as per the underlying C function.
-/// Please note that this value can change with any release without warning and without being
-/// considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-///
-/// [`Info::print`]: struct.Info.html#method.print
-const PRINT_MAX: usize = capi::PA_FORMAT_INFO_SNPRINT_MAX;
 
 impl Encoding {
     /// Returns a printable string representing the given encoding type.
@@ -213,18 +204,13 @@ impl<'a> Info<'a> {
     }
 
     /// Return a human-readable string representing the given format.
-    ///
-    /// Returns `None` on error.
-    pub fn print(&self) -> Option<String> {
-        let tmp = unsafe { libc::malloc(PRINT_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+    pub fn print(&self) -> String {
+        const PRINT_MAX: usize = capi::PA_FORMAT_INFO_SNPRINT_MAX;
+        let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_format_info_snprint(tmp, PRINT_MAX, std::mem::transmute(&self.ptr));
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_format_info_snprint(tmp.as_mut_ptr(), PRINT_MAX,
+                std::mem::transmute(&self.ptr));
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 

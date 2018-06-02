@@ -44,9 +44,7 @@
 //! [`Map::init_extend`]: struct.Map.html#method.init_extend
 
 use std;
-use libc;
 use capi;
-use std::os::raw::c_char;
 use std::ffi::{CStr, CString};
 
 pub use capi::pa_channel_map_def_t as MapDef;
@@ -198,14 +196,6 @@ impl PartialEq for Map {
     }
 }
 
-/// The maximum length of strings returned by [`Map::print`], as per the underlying C function.
-/// Please note that this value can change with any release without warning and without being
-/// considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-///
-/// [`Map::print`]: struct.Map.html#method.print
-const PRINT_MAX: usize = capi::PA_CHANNEL_MAP_SNPRINT_MAX;
-
 impl Position {
     /// Makes a bit mask from a channel position.
     pub fn to_mask(self) -> PositionMask {
@@ -299,16 +289,12 @@ impl Map {
     }
 
     /// Make a human readable string from the map.
-    pub fn print(&self) -> Option<String> {
-        let tmp = unsafe { libc::malloc(PRINT_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+    pub fn print(&self) -> String {
+        const PRINT_MAX: usize = capi::PA_CHANNEL_MAP_SNPRINT_MAX;
+        let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_channel_map_snprint(tmp, PRINT_MAX, std::mem::transmute(self));
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_channel_map_snprint(tmp.as_mut_ptr(), PRINT_MAX, std::mem::transmute(self));
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 

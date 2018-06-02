@@ -69,9 +69,7 @@
 //! [`::def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
 
 use std;
-use libc;
 use capi;
-use std::os::raw::c_char;
 use std::ffi::CStr;
 use std::ptr::null;
 
@@ -231,32 +229,22 @@ impl Volume {
     }
 
     /// Pretty print a volume
-    pub fn print(&self) -> Option<String> {
+    pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
-        let tmp = unsafe { libc::malloc(PRINT_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+        let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_volume_snprint(tmp, PRINT_MAX, self.0);
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_volume_snprint(tmp.as_mut_ptr(), PRINT_MAX, self.0);
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 
     /// Pretty print a volume but show dB values.
-    pub fn print_db(&self) -> Option<String> {
+    pub fn print_db(&self) -> String {
         const PRINT_DB_MAX: usize = capi::PA_SW_VOLUME_SNPRINT_DB_MAX;
-        let tmp = unsafe { libc::malloc(PRINT_DB_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+        let mut tmp = Vec::with_capacity(PRINT_DB_MAX);
         unsafe {
-            capi::pa_sw_volume_snprint_dB(tmp, PRINT_DB_MAX, self.0);
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_sw_volume_snprint_dB(tmp.as_mut_ptr(), PRINT_DB_MAX, self.0);
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 
@@ -264,27 +252,20 @@ impl Volume {
     ///
     /// The volume is printed in several formats: the raw volume value, percentage, and if
     /// `print_db` is true, also the dB value.
-    pub fn print_verbose(&self, print_db: bool) -> Option<String> {
+    pub fn print_verbose(&self, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
-        let tmp = unsafe { libc::malloc(PRINT_VERBOSE_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+        let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
         unsafe {
-            capi::pa_volume_snprint_verbose(tmp, PRINT_VERBOSE_MAX, self.0, print_db as i32);
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_volume_snprint_verbose(tmp.as_mut_ptr(), PRINT_VERBOSE_MAX, self.0,
+                print_db as i32);
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 }
 
 impl std::fmt::Display for Volume {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.print() {
-            Some(s) => write!(f, "{}", &s),
-            None => write!(f, ""),
-        }
+        write!(f, "{}", &self.print())
     }
 }
 
@@ -692,32 +673,23 @@ impl CVolume {
     }
 
     /// Pretty print a volume structure
-    pub fn print(&self) -> Option<String> {
+    pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
-        let tmp = unsafe { libc::malloc(PRINT_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+        let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_cvolume_snprint(tmp, PRINT_MAX, std::mem::transmute(self));
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_cvolume_snprint(tmp.as_mut_ptr(), PRINT_MAX, std::mem::transmute(self));
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 
     /// Pretty print a volume structure but show dB values.
-    pub fn print_db(&self) -> Option<String> {
+    pub fn print_db(&self) -> String {
         const PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
-        let tmp = unsafe { libc::malloc(PRINT_DB_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+        let mut tmp = Vec::with_capacity(PRINT_DB_MAX);
         unsafe {
-            capi::pa_sw_cvolume_snprint_dB(tmp, PRINT_DB_MAX, std::mem::transmute(self));
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            capi::pa_sw_cvolume_snprint_dB(tmp.as_mut_ptr(), PRINT_DB_MAX,
+                std::mem::transmute(self));
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 
@@ -726,9 +698,7 @@ impl CVolume {
     /// The volume for each channel is printed in several formats: the raw volume value,
     /// percentage, and if `print_db` is non-zero, also the dB value. If `map` is provided, the
     /// channel names will be printed.
-    pub fn print_verbose(&self, map: Option<&::channelmap::Map>, print_db: bool
-        ) -> Option<String>
-    {
+    pub fn print_verbose(&self, map: Option<&::channelmap::Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 
         let p_map: *const capi::pa_channel_map = match map {
@@ -736,25 +706,17 @@ impl CVolume {
             None => null::<capi::pa_channel_map>(),
         };
 
-        let tmp = unsafe { libc::malloc(PRINT_VERBOSE_MAX) as *mut c_char };
-        if tmp.is_null() {
-            return None;
-        }
+        let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
         unsafe {
-            capi::pa_cvolume_snprint_verbose(tmp, PRINT_VERBOSE_MAX,
+            capi::pa_cvolume_snprint_verbose(tmp.as_mut_ptr(), PRINT_VERBOSE_MAX,
                 std::mem::transmute(self), p_map, print_db as i32);
-            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-            libc::free(tmp as *mut libc::c_void);
-            ret
+            CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
 }
 
 impl std::fmt::Display for CVolume {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.print() {
-            Some(s) => write!(f, "{}", &s),
-            None => write!(f, ""),
-        }
+        write!(f, "{}", &self.print())
     }
 }

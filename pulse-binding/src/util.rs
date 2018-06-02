@@ -15,9 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-use libc;
 use capi;
-use std::os::raw::{c_char, c_void};
+use std::os::raw::c_void;
 use std::ffi::CStr;
 use std::ptr::null_mut;
 
@@ -43,22 +42,16 @@ pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>) -> (Opti
 macro_rules! fn_string_with_buffer {
     ( $fn_name:ident, $fn_call:ident ) => {
         pub fn $fn_name(l: usize) -> Option<String> {
-            let tmp = unsafe { libc::malloc(l) as *mut c_char };
-            if tmp.is_null() {
-                return None;
-            }
+            let mut tmp = Vec::with_capacity(l);
             unsafe {
                 // Need to check NULL return here because `get_binary_name` function is not
                 // supported on all architectures and so may return NULL, and might as well check
                 // NULL return for other uses anyway.
-                let ptr = capi::$fn_call(tmp, l);
-                if ptr.is_null() {
-                    libc::free(tmp as *mut libc::c_void);
-                    return None;
+                let ptr = capi::$fn_call(tmp.as_mut_ptr(), l);
+                match ptr.is_null() {
+                    true => None,
+                    false => Some(CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()),
                 }
-                let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-                libc::free(tmp as *mut libc::c_void);
-                ret
             }
         }
     };
