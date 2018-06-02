@@ -40,13 +40,14 @@
 //!
 //! # Calculations
 //!
-//! The volumes in PulseAudio are cubic in nature and applications shouldn't perform calculations
-//! with them directly. Instead, they should be converted to and from either dB or a linear scale:
+//! The [`Volume`]s in PulseAudio are cubic in nature and applications should not perform
+//! calculations with them directly. Instead, they should be converted to and from either dB or a
+//! linear scale.
 //!
-//! * dB: [`sw_volume_from_db`], [`sw_volume_to_db`]
-//! * Linear: [`sw_volume_from_linear`], [`sw_volume_to_linear`]
+//! The [`VolumeDB`] type represents decibel (dB) converted values, and [`VolumeLinear`], linear.
+//! The `From` trait has been implemented for your convenience, allowing such convertions.
 //!
-//! For simple multiplication, [`sw_volume_multiply`] and [`CVolume::sw_multiply`] can be used.
+//! For simple multiplication, [`Volume::multiply`] and [`CVolume::sw_multiply`] can be used.
 //!
 //! It's often unknown what scale hardware volumes relate to. Don't use the above functions on sink
 //! and source volumes, unless the sink or source in question has the
@@ -54,15 +55,13 @@
 //! conversion functions are rarely needed anyway, most of the time it's sufficient to treat all
 //! volumes as opaque with a range from [`VOLUME_MUTED`] \(0%) to [`VOLUME_NORM`] \(100%).
 //!
-//! [`Volume`]: type.Volume.html
+//! [`Volume`]: struct.Volume.html
+//! [`VolumeDB`]: struct.VolumeDB.html
+//! [`VolumeLinear`]: struct.VolumeLinear.html
 //! [`CVolume`]: struct.CVolume.html
 //! [`::context::introspect::Introspector::get_sink_info_by_name`]:
 //! ../context/introspect/struct.Introspector.html#method.get_sink_info_by_name
-//! [`sw_volume_from_db`]: fn.sw_volume_from_db.html
-//! [`sw_volume_to_db`]: fn.sw_volume_to_db.html
-//! [`sw_volume_from_linear`]: fn.sw_volume_from_linear.html
-//! [`sw_volume_to_linear`]: fn.sw_volume_to_linear.html
-//! [`sw_volume_multiply`]: fn.sw_volume_multiply.html
+//! [`Volume::multiply`]: struct.Volume.html#method.multiply
 //! [`CVolume::sw_multiply`]: struct.CVolume.html#method.sw_multiply
 //! [`VOLUME_MUTED`]: constant.VOLUME_MUTED.html
 //! [`VOLUME_NORM`]: constant.VOLUME_NORM.html
@@ -76,27 +75,38 @@ use std::os::raw::c_char;
 use std::ffi::CStr;
 use std::ptr::null;
 
-pub use capi::pa_volume_t as Volume;
-pub use capi::PA_VOLUME_NORM as VOLUME_NORM;
-pub use capi::PA_VOLUME_MUTED as VOLUME_MUTED;
-pub use capi::PA_VOLUME_MAX as VOLUME_MAX;
-pub use capi::PA_VOLUME_INVALID as VOLUME_INVALID;
+pub const VOLUME_NORM: Volume = Volume(capi::PA_VOLUME_NORM);
+pub const VOLUME_MUTED: Volume = Volume(capi::PA_VOLUME_MUTED);
+pub const VOLUME_MAX: Volume = Volume(capi::PA_VOLUME_MAX);
+pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 
-/// Volume expressed in dB
-pub type VolumeDB = f64;
+/// Minus Inifinity. This floor value is used / can be used, when using converting between integer
+/// software volume and decibel (dB, floating point) software volume.
+pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY);
 
-/// Recommended maximum volume to show in user facing UIs.
-/// Note: UIs should deal gracefully with volumes greater than this value and not cause feedback
-/// loops etc. - i.e. if the volume is more than this, the UI should not limit it and push the
-/// limited value back to the server.
-#[inline(always)]
-pub fn volume_ui_max() -> Volume {
-    capi::pa_volume_ui_max()
+/// Software volume expressed as an integer
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Volume(pub capi::pa_volume_t);
+
+impl Default for Volume {
+    fn default() -> Self { VOLUME_NORM }
 }
 
-/// This floor value is used as minus infinity when using
-/// [`sw_volume_to_db`](fn.sw_volume_to_db.html) / [`sw_volume_from_db`](fn.sw_volume_from_db.html).
-pub const DECIBEL_MININFTY: VolumeDB = capi::PA_DECIBEL_MININFTY;
+/// Software volume expressed in decibels (dBs)
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub struct VolumeDB(pub f64);
+
+impl Default for VolumeDB {
+    fn default() -> Self { VolumeDB(0.0) }
+}
+
+/// Software volume expressed as linear factor
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub struct VolumeLinear(pub f64);
+
+impl Default for VolumeLinear {
+    fn default() -> Self { VolumeLinear(0.0) }
+}
 
 /// A structure encapsulating a per-channel volume
 #[repr(C)]
@@ -117,142 +127,164 @@ impl PartialEq for CVolume {
     }
 }
 
-/// The maximum length of strings returned by [`CVolume::print`], as per the underlying C function.
-/// Please note that this value can change with any release without warning and without being
-/// considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-///
-/// [`CVolume::print`]: struct.CVolume.html#method.print
-const CVOLUME_PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
-
-/// The maximum length of strings returned by [`CVolume::print_db`], as per the underlying C
-/// function. Please note that this value can change with any release without warning and without
-/// being considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-///
-/// [`CVolume::print_db`]: struct.CVolume.html#method.print_db
-const CVOLUME_PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
-
-/// The maximum length of strings returned by [`CVolume::print_verbose`], as per the underlying C
-/// function. Please note that this value can change with any release without warning and without
-/// being considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-///
-/// [`CVolume::print_verbose`]: struct.CVolume.html#method.print_verbose
-const CVOLUME_PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
-
-/// The maximum length of strings returned by [`print`](fn.print.html), as per the underlying C
-/// function. Please note that this value can change with any release without warning and without
-/// being considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-const VOLUME_PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
-
-/// The maximum length of strings returned by [`print_db`](fn.print_db.html), as per the underlying
-/// C function. Please note that this value can change with any release without warning and without
-/// being considered API or ABI breakage. You should not use this definition anywhere where it might
-/// become part of an ABI.
-const VOLUME_PRINT_DB_MAX: usize = capi::PA_SW_VOLUME_SNPRINT_DB_MAX;
-
-/// The maximum length of strings returned by [`print_verbose`](fn.print_verbose.html), as per the
-/// underlying C function. Please note that this value can change with any release without warning
-/// and without being considered API or ABI breakage. You should not use this definition anywhere
-/// where it might become part of an ABI.
-const VOLUME_PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
-
-/// Check if volume is valid.
-#[inline(always)]
-pub fn volume_is_valid(v: Volume) -> bool {
-    capi::pa_volume_is_valid(v)
-}
-
-/// Clamp volume to the permitted range.
-#[inline(always)]
-pub fn volume_clamp(v: Volume) -> Volume {
-    capi::pa_clamp_volume(v)
-}
-
 /// Convert a decibel value to a volume (amplitude, not power).
 /// This is only valid for software volumes!
-pub fn sw_volume_from_db(f: VolumeDB) -> Volume {
-    unsafe { capi::pa_sw_volume_from_dB(f) }
+impl From<VolumeDB> for Volume {
+    fn from(v: VolumeDB) -> Self {
+        Volume(unsafe { capi::pa_sw_volume_from_dB(v.0) })
+    }
 }
-
 /// Convert a volume to a decibel value (amplitude, not power).
 /// This is only valid for software volumes!
-pub fn sw_volume_to_db(v: Volume) -> VolumeDB {
-    unsafe { capi::pa_sw_volume_to_dB(v) }
+impl From<Volume> for VolumeDB {
+    fn from(v: Volume) -> Self {
+        VolumeDB(unsafe { capi::pa_sw_volume_to_dB(v.0) })
+    }
 }
 
 /// Convert a linear factor to a volume.
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 /// This is only valid for software volumes!
-pub fn sw_volume_from_linear(v: VolumeDB) -> Volume {
-    unsafe { capi::pa_sw_volume_from_linear(v) }
+impl From<VolumeLinear> for Volume {
+    fn from(v: VolumeLinear) -> Self {
+        Volume(unsafe { capi::pa_sw_volume_from_linear(v.0) })
+    }
 }
-
 /// Convert a volume to a linear factor.
 /// This is only valid for software volumes!
-pub fn sw_volume_to_linear(v: Volume) -> VolumeDB {
-    unsafe { capi::pa_sw_volume_to_linear(v) }
+impl From<Volume> for VolumeLinear {
+    fn from(v: Volume) -> Self {
+        VolumeLinear(unsafe { capi::pa_sw_volume_to_linear(v.0) })
+    }
 }
 
-/// Multiply two volume specifications, return the result.
-/// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of multiplication.
+/// Convert a linear factor to a decibel value (amplitude, not power).
+/// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 /// This is only valid for software volumes!
-pub fn sw_volume_multiply(a: Volume, b: Volume) -> Volume {
-    unsafe { capi::pa_sw_volume_multiply(a, b) }
-}
-
-/// Divide two volume specifications, return the result.
-///
-/// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. This is
-/// only valid for software volumes! If a division by zero is tried the result will be `0`.
-pub fn sw_volume_divide(a: Volume, b: Volume) -> Volume {
-    unsafe { capi::pa_sw_volume_divide(a, b) }
-}
-
-/// Pretty print a volume
-pub fn print(v: Volume) -> Option<String> {
-    let tmp = unsafe { libc::malloc(VOLUME_PRINT_MAX) as *mut c_char };
-    if tmp.is_null() {
-        return None;
+impl From<VolumeLinear> for VolumeDB {
+    fn from(v: VolumeLinear) -> Self {
+        VolumeDB::from(Volume::from(v))
     }
-    unsafe {
-        capi::pa_volume_snprint(tmp, VOLUME_PRINT_MAX, v);
-        let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-        libc::free(tmp as *mut libc::c_void);
-        ret
+}
+/// Convert a decibel value (amplitude, not power) to a linear factor.
+/// This is only valid for software volumes!
+impl From<VolumeDB> for VolumeLinear {
+    fn from(v: VolumeDB) -> Self {
+        VolumeLinear::from(Volume::from(v))
     }
 }
 
-/// Pretty print a volume but show dB values.
-pub fn print_db(v: Volume) -> Option<String> {
-    let tmp = unsafe { libc::malloc(VOLUME_PRINT_DB_MAX) as *mut c_char };
-    if tmp.is_null() {
-        return None;
+impl VolumeLinear {
+    pub fn is_muted(&self) -> bool {
+        self.0 <= 0.0
     }
-    unsafe {
-        capi::pa_sw_volume_snprint_dB(tmp, VOLUME_PRINT_DB_MAX, v);
-        let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-        libc::free(tmp as *mut libc::c_void);
-        ret
+
+    pub fn is_normal(&self) -> bool {
+        self.0 == 1.0
     }
 }
 
-/// Pretty print a volume in a verbose way.
-///
-/// The volume is printed in several formats: the raw [`Volume`](type.Volume.html) value,
-/// percentage, and if `print_db` is true, also the dB value.
-pub fn print_verbose(v: Volume, print_db: bool) -> Option<String> {
-    let tmp = unsafe { libc::malloc(VOLUME_PRINT_VERBOSE_MAX) as *mut c_char };
-    if tmp.is_null() {
-        return None;
+impl Volume {
+    pub fn is_muted(&self) -> bool {
+        *self == VOLUME_MUTED
     }
-    unsafe {
-        capi::pa_volume_snprint_verbose(tmp, VOLUME_PRINT_VERBOSE_MAX, v, print_db as i32);
-        let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
-        libc::free(tmp as *mut libc::c_void);
-        ret
+
+    pub fn is_normal(&self) -> bool {
+        *self == VOLUME_NORM
+    }
+
+    pub fn is_max(&self) -> bool {
+        *self == VOLUME_MAX
+    }
+
+    /// Recommended maximum volume to show in user facing UIs.
+    /// Note: UIs should deal gracefully with volumes greater than this value and not cause feedback
+    /// loops etc. - i.e. if the volume is more than this, the UI should not limit it and push the
+    /// limited value back to the server.
+    pub fn ui_max() -> Self {
+        Volume(capi::pa_volume_ui_max())
+    }
+
+    /// Check if volume is valid.
+    pub fn is_valid(&self) -> bool {
+        capi::pa_volume_is_valid(self.0)
+    }
+
+    /// Clamp volume to the permitted range.
+    pub fn clamp(&mut self) {
+        self.0 = capi::pa_clamp_volume(self.0)
+    }
+
+    /// Multiply two software volumes, return the result.
+    /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of multiplication.
+    /// This is only valid for software volumes!
+    pub fn multiply(a: Self, b: Self) -> Self {
+        Volume(unsafe { capi::pa_sw_volume_multiply(a.0, b.0) })
+    }
+
+    /// Divide two software volumes, return the result.
+    ///
+    /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. This is
+    /// only valid for software volumes! If a division by zero is tried the result will be `0`.
+    pub fn divide(a: Self, b: Self) -> Self {
+        Volume(unsafe { capi::pa_sw_volume_divide(a.0, b.0) })
+    }
+
+    /// Pretty print a volume
+    pub fn print(&self) -> Option<String> {
+        const PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
+        let tmp = unsafe { libc::malloc(PRINT_MAX) as *mut c_char };
+        if tmp.is_null() {
+            return None;
+        }
+        unsafe {
+            capi::pa_volume_snprint(tmp, PRINT_MAX, self.0);
+            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
+            libc::free(tmp as *mut libc::c_void);
+            ret
+        }
+    }
+
+    /// Pretty print a volume but show dB values.
+    pub fn print_db(&self) -> Option<String> {
+        const PRINT_DB_MAX: usize = capi::PA_SW_VOLUME_SNPRINT_DB_MAX;
+        let tmp = unsafe { libc::malloc(PRINT_DB_MAX) as *mut c_char };
+        if tmp.is_null() {
+            return None;
+        }
+        unsafe {
+            capi::pa_sw_volume_snprint_dB(tmp, PRINT_DB_MAX, self.0);
+            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
+            libc::free(tmp as *mut libc::c_void);
+            ret
+        }
+    }
+
+    /// Pretty print a volume in a verbose way.
+    ///
+    /// The volume is printed in several formats: the raw volume value, percentage, and if
+    /// `print_db` is true, also the dB value.
+    pub fn print_verbose(&self, print_db: bool) -> Option<String> {
+        const PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
+        let tmp = unsafe { libc::malloc(PRINT_VERBOSE_MAX) as *mut c_char };
+        if tmp.is_null() {
+            return None;
+        }
+        unsafe {
+            capi::pa_volume_snprint_verbose(tmp, PRINT_VERBOSE_MAX, self.0, print_db as i32);
+            let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
+            libc::free(tmp as *mut libc::c_void);
+            ret
+        }
+    }
+}
+
+impl std::fmt::Display for Volume {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self.print() {
+            Some(s) => write!(f, "{}", &s),
+            None => write!(f, ""),
+        }
     }
 }
 
@@ -266,7 +298,7 @@ impl CVolume {
 
     /// Set the volume of the specified number of channels to the supplied volume
     pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
-        unsafe { capi::pa_cvolume_set(std::mem::transmute(&self), channels, v) };
+        unsafe { capi::pa_cvolume_set(std::mem::transmute(&self), channels, v.0) };
         self
     }
 
@@ -300,7 +332,7 @@ impl CVolume {
 
     /// Returns the average volume of all channels
     pub fn avg(&self) -> Volume {
-        unsafe { capi::pa_cvolume_avg(std::mem::transmute(self)) }
+        Volume(unsafe { capi::pa_cvolume_avg(std::mem::transmute(self)) })
     }
 
     /// Returns the average volume of all channels that are included in the specified channel map
@@ -313,13 +345,13 @@ impl CVolume {
         ) -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        unsafe { capi::pa_cvolume_avg_mask(std::mem::transmute(self), std::mem::transmute(cm),
-            mask_actual) }
+        Volume(unsafe { capi::pa_cvolume_avg_mask(std::mem::transmute(self),
+            std::mem::transmute(cm), mask_actual) })
     }
 
     /// Return the maximum volume of all channels.
     pub fn max(&self) -> Volume {
-        unsafe { capi::pa_cvolume_max(std::mem::transmute(self)) }
+        Volume(unsafe { capi::pa_cvolume_max(std::mem::transmute(self)) })
     }
 
     /// Return the maximum volume of all channels that are included in the specified channel map
@@ -332,13 +364,13 @@ impl CVolume {
         ) -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        unsafe { capi::pa_cvolume_max_mask(std::mem::transmute(self), std::mem::transmute(cm),
-            mask_actual) }
+        Volume(unsafe { capi::pa_cvolume_max_mask(std::mem::transmute(self),
+            std::mem::transmute(cm), mask_actual) })
     }
 
     /// Return the minimum volume of all channels.
     pub fn min(&self) -> Volume {
-        unsafe { capi::pa_cvolume_min(std::mem::transmute(self)) }
+        Volume(unsafe { capi::pa_cvolume_min(std::mem::transmute(self)) })
     }
 
     /// Return the minimum volume of all channels that are included in the specified channel map
@@ -351,8 +383,8 @@ impl CVolume {
         ) -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        unsafe { capi::pa_cvolume_min_mask(std::mem::transmute(self), std::mem::transmute(cm),
-            mask_actual) }
+        Volume(unsafe { capi::pa_cvolume_min_mask(std::mem::transmute(self),
+            std::mem::transmute(cm), mask_actual) })
     }
 
     /// Returns `true` when the `CVolume` structure is valid.
@@ -362,7 +394,7 @@ impl CVolume {
 
     /// Returns `true` if the volume of all channels are equal to the specified value.
     pub fn channels_equal_to(&self, v: Volume) -> bool {
-        unsafe { capi::pa_cvolume_channels_equal_to(std::mem::transmute(self), v) != 0 }
+        unsafe { capi::pa_cvolume_channels_equal_to(std::mem::transmute(self), v.0) != 0 }
     }
 
     /// Multiply two per-channel volumes.
@@ -388,7 +420,7 @@ impl CVolume {
     /// This is only valid for software volumes! Returns pointer to self.
     pub fn sw_multiply_scalar(&mut self, with: Volume) -> &mut Self {
         unsafe { capi::pa_sw_cvolume_multiply_scalar(std::mem::transmute(&self),
-            std::mem::transmute(&self), with) };
+            std::mem::transmute(&self), with.0) };
         self
     }
 
@@ -415,7 +447,7 @@ impl CVolume {
     /// This is only valid for software volumes! Returns pointer to self.
     pub fn sw_divide_scalar(&mut self, with: Volume) -> &mut Self {
         unsafe { capi::pa_sw_cvolume_divide_scalar(std::mem::transmute(&self),
-            std::mem::transmute(&self), with) };
+            std::mem::transmute(&self), with.0) };
         self
     }
 
@@ -547,7 +579,7 @@ impl CVolume {
     /// The proportions between the channel volumes are kept.
     /// Returns pointer to self, or `None` on error.
     pub fn scale(&mut self, max: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_scale(std::mem::transmute(&self), max) };
+        let ptr = unsafe { capi::pa_cvolume_scale(std::mem::transmute(&self), max.0) };
         if ptr.is_null() {
             return None;
         }
@@ -567,7 +599,7 @@ impl CVolume {
         mask: Option<::channelmap::PositionMask>) -> Option<&mut Self>
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        let ptr = unsafe { capi::pa_cvolume_scale_mask(std::mem::transmute(&self), max,
+        let ptr = unsafe { capi::pa_cvolume_scale_mask(std::mem::transmute(&self), max.0,
             std::mem::transmute(cm), mask_actual) };
         if ptr.is_null() {
             return None;
@@ -589,7 +621,7 @@ impl CVolume {
         // change needed). We could ignore failure and always return self ptr, but it does not seem
         // ideal to leave callers unaware should they be passing in invalid data.
         let ptr = unsafe { capi::pa_cvolume_set_position(std::mem::transmute(&self),
-            std::mem::transmute(map), t.into(), v) };
+            std::mem::transmute(map), t.into(), v.0) };
         if ptr.is_null() {
             return None;
         }
@@ -603,8 +635,8 @@ impl CVolume {
     ///
     /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     pub fn get_position(&self, map: &::channelmap::Map, t: ::channelmap::Position) -> Volume {
-        unsafe { capi::pa_cvolume_get_position(std::mem::transmute(self), std::mem::transmute(map),
-            t.into()) }
+        Volume(unsafe { capi::pa_cvolume_get_position(std::mem::transmute(self),
+            std::mem::transmute(map), t.into()) })
     }
 
     /// Merges one set of channel volumes with another.
@@ -630,7 +662,7 @@ impl CVolume {
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
     pub fn inc_clamp(&mut self, inc: Volume, limit: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_inc_clamp(std::mem::transmute(&self), inc, limit) };
+        let ptr = unsafe { capi::pa_cvolume_inc_clamp(std::mem::transmute(&self), inc.0, limit.0) };
         if ptr.is_null() {
             return None;
         }
@@ -640,8 +672,8 @@ impl CVolume {
     /// Increase the volume passed in by `inc`.
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
-    pub fn inc(&mut self, inc: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_inc(std::mem::transmute(&self), inc) };
+    pub fn increase(&mut self, inc: Volume) -> Option<&mut Self> {
+        let ptr = unsafe { capi::pa_cvolume_inc(std::mem::transmute(&self), inc.0) };
         if ptr.is_null() {
             return None;
         }
@@ -651,8 +683,8 @@ impl CVolume {
     /// Decrease the volume passed in by `dec`.
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
-    pub fn dec(&mut self, dec: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_dec(std::mem::transmute(&self), dec) };
+    pub fn decrease(&mut self, dec: Volume) -> Option<&mut Self> {
+        let ptr = unsafe { capi::pa_cvolume_dec(std::mem::transmute(&self), dec.0) };
         if ptr.is_null() {
             return None;
         }
@@ -661,12 +693,13 @@ impl CVolume {
 
     /// Pretty print a volume structure
     pub fn print(&self) -> Option<String> {
-        let tmp = unsafe { libc::malloc(CVOLUME_PRINT_MAX) as *mut c_char };
+        const PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
+        let tmp = unsafe { libc::malloc(PRINT_MAX) as *mut c_char };
         if tmp.is_null() {
             return None;
         }
         unsafe {
-            capi::pa_cvolume_snprint(tmp, CVOLUME_PRINT_MAX, std::mem::transmute(self));
+            capi::pa_cvolume_snprint(tmp, PRINT_MAX, std::mem::transmute(self));
             let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
             libc::free(tmp as *mut libc::c_void);
             ret
@@ -675,12 +708,13 @@ impl CVolume {
 
     /// Pretty print a volume structure but show dB values.
     pub fn print_db(&self) -> Option<String> {
-        let tmp = unsafe { libc::malloc(CVOLUME_PRINT_DB_MAX) as *mut c_char };
+        const PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
+        let tmp = unsafe { libc::malloc(PRINT_DB_MAX) as *mut c_char };
         if tmp.is_null() {
             return None;
         }
         unsafe {
-            capi::pa_sw_cvolume_snprint_dB(tmp, CVOLUME_PRINT_DB_MAX, std::mem::transmute(self));
+            capi::pa_sw_cvolume_snprint_dB(tmp, PRINT_DB_MAX, std::mem::transmute(self));
             let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
             libc::free(tmp as *mut libc::c_void);
             ret
@@ -689,25 +723,38 @@ impl CVolume {
 
     /// Pretty print a volume structure in a verbose way.
     ///
-    /// The volume for each channel is printed in several formats: the raw `Volume` value,
+    /// The volume for each channel is printed in several formats: the raw volume value,
     /// percentage, and if `print_db` is non-zero, also the dB value. If `map` is provided, the
     /// channel names will be printed.
-    pub fn print_verbose(&self, map: Option<&::channelmap::Map>, print_db: bool) -> Option<String> {
+    pub fn print_verbose(&self, map: Option<&::channelmap::Map>, print_db: bool
+        ) -> Option<String>
+    {
+        const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
+
         let p_map: *const capi::pa_channel_map = match map {
             Some(map) => unsafe { std::mem::transmute(map) },
             None => null::<capi::pa_channel_map>(),
         };
 
-        let tmp = unsafe { libc::malloc(CVOLUME_PRINT_VERBOSE_MAX) as *mut c_char };
+        let tmp = unsafe { libc::malloc(PRINT_VERBOSE_MAX) as *mut c_char };
         if tmp.is_null() {
             return None;
         }
         unsafe {
-            capi::pa_cvolume_snprint_verbose(tmp, CVOLUME_PRINT_VERBOSE_MAX,
+            capi::pa_cvolume_snprint_verbose(tmp, PRINT_VERBOSE_MAX,
                 std::mem::transmute(self), p_map, print_db as i32);
             let ret = Some(CStr::from_ptr(tmp).to_string_lossy().into_owned());
             libc::free(tmp as *mut libc::c_void);
             ret
+        }
+    }
+}
+
+impl std::fmt::Display for CVolume {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self.print() {
+            Some(s) => write!(f, "{}", &s),
+            None => write!(f, ""),
         }
     }
 }

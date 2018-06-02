@@ -17,6 +17,15 @@ Changes between 1.1.0 and ???:
     - rename `sterror` `PAErr` and `Code` methods to `to_string`
     - convert the error CStr to String for the users, no need to make users do it
     - add `PAErr` <=> `Code` `From` impls
+ * Simplified volume handling:
+    - `Volume` and `VolumeDB` are now wrappers rather than type aliases
+    - Added the `VolumeLinear` wrapper. I had mistakenly taken floating point volumes to all be dB
+      values, but there is actually a distinction between dB and 'linear factor', as per the C API
+      conversion functions. This is now used in linear related convertions, which thus no longer
+      incorrectly portray such values to be dB scale.
+    - Renamed `DECIBEL_MININFTY` to `DECIBEL_MINUS_INFINITY`
+    - CVolume `inc` and `dec` methods renamed to `increase` and `decrease` respectively for clarity,
+      they are not increment/decrement.
  * Stream:
     - The buffer given by `begin_write` is now converted to a slice for you, rather than burdening
       the caller.

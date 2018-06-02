@@ -127,7 +127,7 @@ impl Context {
             None => null::<c_char>(),
         };
 
-        let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume,
+        let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
             cb_f, cb_d) };
         if ptr.is_null() {
             return None;
@@ -172,7 +172,7 @@ impl Context {
         };
 
         let ptr = unsafe {
-            capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume,
+            capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
                 proplist.ptr, cb_f, cb_d)
         };
         if ptr.is_null() {
