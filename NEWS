@@ -56,6 +56,10 @@ Changes between 1.1.0 and ???:
  * Tidied up error code handling, per above
  * Improved time handling, per above
 
+ [pulse-glib-binding]
+
+ * Now returning `get_api` pointer as ref, as done with standard and threaded mainloops
+
 Changes between 1.0.5 and 1.1.0:
 ---------------
 
