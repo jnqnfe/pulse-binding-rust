@@ -140,7 +140,7 @@ impl Mainloop {
     /// This is actually unecessary through this binding. The pointer is retrieved automatically
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
-    pub fn get_api(&self) -> &mut pulse::mainloop::api::MainloopApi {
+    pub fn get_api<'a>(&self) -> &'a mut pulse::mainloop::api::MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
         unsafe { &mut *ptr }

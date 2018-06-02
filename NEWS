@@ -8,6 +8,7 @@ Changes between 1.1.0 and ???:
  [pulse-binding]
 
  * Fixed lifetime issues with a handful of stream methods.
+ * Fixed lifetime issues with `get_api` mainloop method.
  * mainloop/standard: Fixed `run` method's return data. Incorrectly was returning function call
    result, while claiming in the documentation that this was the quit retval, which wasn't returned
    at all.
