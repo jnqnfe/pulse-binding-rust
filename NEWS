@@ -1,6 +1,10 @@
 Changes between 1.1.0 and ???:
 ---------------
 
+ [project]
+
+ * Further licensing clarification
+
  [pulse-binding]
 
  * Fixed lifetime issues with a handful of stream methods.
