@@ -50,7 +50,7 @@ Changes between 1.1.0 and 1.2.0:
  * Hid string printing length constants, only used interally
  * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
    thus more simple, and removed the `Option` result wrapper.
- * Changed several `::sample::Format related functions to methods`
+ * Changed several `::sample::Format` related functions to methods
 
  [pulse-simple-binding]
 
