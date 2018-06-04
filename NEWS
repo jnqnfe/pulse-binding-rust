@@ -3,6 +3,13 @@ Changes between 1.2.2 and ???:
 
  [pulse-binding]
 
+ * Changed handling of callbacks to support closures! Now you can simply supply a closure, instead
+   of an "extern C" function and a raw `c_void` data pointer, in almost any place across the
+   binding's API that takes a callback. (Note, there are a few places that have not been changed:
+   Tackling the mainloop API stuff has been postponed to look at later; same for the stream write
+   method's optional 'free' callback; the `SpawnApi` has no userdata arg and thus cannot be done,
+   which is not a big deal; finally the standard mainloop's function for specifying an alternate
+   'poll' function has been left, at least for now).
  * Volume: Renamed `CVolume` to `ChannelVolumes`
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.

@@ -62,33 +62,33 @@
 //! [`::context::Context::play_sample`]: ../struct.Context.html#method.play_sample
 //! [`::context::Context::remove_sample`]: ../struct.Context.html#method.remove_sample
 
+use std;
 use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null;
-use super::{ContextInternal, Context, ContextSuccessCb};
-use ::util::unwrap_optional_callback;
-
-/// Callback prototype for [`::context::Context::play_sample_with_proplist`].
-/// The `idx` value is the index of the sink input object, or [`::def::INVALID_INDEX`] on failure.
-///
-/// [`::context::Context::play_sample_with_proplist`]: ../struct.Context.html#method.play_sample_with_proplist
-/// [`::def::INVALID_INDEX`]: ../../def/constant.INVALID_INDEX.html
-pub type ContextPlaySampleCb = extern "C" fn(c: *mut ContextInternal, idx: u32,
-    userdata: *mut c_void);
+use super::{ContextInternal, Context};
 
 impl Context {
     /// Remove a sample from the sample cache.
     ///
     /// Returns an operation object which may be used to cancel the operation while it is running.
-    pub fn remove_sample(&mut self, name: &str, cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn remove_sample<F>(&mut self, name: &str, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(), Some(cb.0),
-            cb.1) };
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(),
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -104,14 +104,12 @@ impl Context {
     /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
     ///   [`::volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
     ///   side which is a good idea.
-    /// * `cb`: Call this function after successfully starting playback, or `None`.
-    /// * `userdata`: Userdata to pass to the callback.
+    /// * `callback`: Optional success callback. It must accept a `bool`, which indicates success.
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
@@ -125,8 +123,16 @@ impl Context {
             None => null::<c_char>(),
         };
 
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
-            cb_f, cb_d) };
+            cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -145,15 +151,15 @@ impl Context {
     ///   side which is a good idea.
     /// * `proplist`: Property list for this sound. The property list of the cached entry will have
     ///   this merged into it.
-    /// * `cb`: Call this function after successfully starting playback, or `None`.
-    /// * `userdata`: Userdata to pass to the callback.
+    /// * `callback`: Optional success callback. It must accept an `u32` index value wrapper in a
+    ///   `Result`. The index is the index of the sink input object. `Err` is given instead on
+    ///    failure.
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
         volume: ::volume::Volume, proplist: &::proplist::Proplist,
-        cb: Option<(ContextPlaySampleCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(Result<u32, ()>) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextPlaySampleCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
@@ -167,11 +173,30 @@ impl Context {
             None => null::<c_char>(),
         };
 
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(Result<u32, ()>)> = Box::into_raw(Box::new(f));
+                (Some(play_sample_success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe {
             capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
-                proplist.ptr, cb_f, cb_d)
+                proplist.ptr, cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
+}
+
+/// Proxy for completion success callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn play_sample_success_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(Result<u32, ()>)>) };
+    let index_actual = match index { ::def::INVALID_INDEX => Err(()), i => Ok(i) };
+    callback(index_actual);
 }

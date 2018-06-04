@@ -176,8 +176,7 @@ impl<'a> Info<'a> {
     }
 
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
-    /// This is the 'weak' version, for use in callbacks, which avoids destroying the internal
-    /// object when dropped.
+    /// This is the 'weak' version, which avoids destroying the internal object when dropped.
     pub fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         unsafe { Self { ptr: &mut *ptr, weak: true } }

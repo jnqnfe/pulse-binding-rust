@@ -25,15 +25,7 @@
 //! # Usage
 //!
 //! The introspection routines are exposed as methods on an [`Introspector`] object held by the
-//! [`Context`] object, and can be accessed via the [`Context`] object's [`introspect`] method. For
-//! example:
-//!
-//! ```rust,ignore
-//! let op = my_context.introspect().get_sink_info_by_name(
-//!     "my_sink_name",
-//!     Some(callback_fn, data_ptr)
-//! );
-//! ```
+//! [`Context`] object, and can be accessed via the [`Context`] object's [`introspect`] method.
 //!
 //! # Querying
 //!
@@ -42,15 +34,13 @@
 //! with the desired data.
 //!
 //! Some objects can have multiple instances on the server. When requesting all of these at once,
-//! the callback will be called multiple times, once for each object. When the list has been
-//! exhausted, the callback will be called without an information structure and the `eol` parameter
-//! set to a positive value.
+//! the callback will be called multiple times, each time with an [`ListResult`] variant. It will be
+//! called once for each item in turn, using the `Item` variant, and then once more time with the
+//! `End` variant to signal that the end of the list has been reached. If an error occurs, then
+//! the `Error` variant will be given.
 //!
 //! Note that even if a single object is requested, and not the entire list, the terminating call
 //! will still be made.
-//!
-//! If an error occurs, the callback will be invoked without an information structure and `eol` set
-//! to a negative value.
 //!
 //! Data members in the information structures are only valid during the duration of the callback.
 //! If they are required after the callback is finished, a deep copy of the information structure
@@ -186,6 +176,7 @@
 //! [`::subscribe`]: ../subscribe/index.html
 //!
 //! [`Context`]: ../struct.Context.html
+//! [`ListResult`]: ../../callbacks/enum.ListResult.html
 //! [`Introspector`]: struct.Introspector.html
 //! [`ClientInfo`]: struct.ClientInfo.html
 //! [`ModuleInfo`]: struct.ModuleInfo.html
@@ -237,32 +228,31 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null_mut;
-use super::{Context, ContextInternal, ContextSuccessCb};
-use util::unwrap_optional_callback;
+use super::{Context, ContextInternal};
 use timeval::MicroSeconds;
+use callbacks::ListResult;
 
-pub use capi::pa_sink_port_info as SinkPortInfoInternal;
-pub use capi::pa_sink_info as SinkInfoInternal;
-pub use capi::pa_source_port_info as SourcePortInfoInternal;
-pub use capi::pa_source_info as SourceInfoInternal;
-pub use capi::pa_server_info as ServerInfoInternal;
-pub use capi::pa_module_info as ModuleInfoInternal;
-pub use capi::pa_client_info as ClientInfoInternal;
+use capi::pa_sink_port_info as SinkPortInfoInternal;
+use capi::pa_sink_info as SinkInfoInternal;
+use capi::pa_source_port_info as SourcePortInfoInternal;
+use capi::pa_source_info as SourceInfoInternal;
+use capi::pa_server_info as ServerInfoInternal;
+use capi::pa_module_info as ModuleInfoInternal;
+use capi::pa_client_info as ClientInfoInternal;
 #[allow(deprecated)]
-pub use capi::pa_card_profile_info as CardProfileInfo;
-pub use capi::pa_card_profile_info2 as CardProfileInfo2;
-pub use capi::pa_card_port_info as CardPortInfoInternal;
-pub use capi::pa_card_info as CardInfoInternal;
-pub use capi::pa_sink_input_info as SinkInputInfoInternal;
-pub use capi::pa_source_output_info as SourceOutputInfoInternal;
+use capi::pa_card_profile_info as CardProfileInfo;
+use capi::pa_card_profile_info2 as CardProfileInfo2;
+use capi::pa_card_port_info as CardPortInfoInternal;
+use capi::pa_card_info as CardInfoInternal;
+use capi::pa_sink_input_info as SinkInputInfoInternal;
+use capi::pa_source_output_info as SourceOutputInfoInternal;
+use capi::pa_sample_info as SampleInfoInternal;
+
 pub use capi::pa_stat_info as StatInfo;
-pub use capi::pa_sample_info as SampleInfoInternal;
 
 /// A wrapper object providing introspection routines to a context.
 pub struct Introspector {
     context: *mut super::ContextInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
-    weak: bool,
 }
 
 impl Context {
@@ -278,22 +268,13 @@ impl Introspector {
     /// Create a new `Introspector` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: false }
-    }
-
-    /// Create a new `Introspector` from an existing
-    /// [`ContextInternal`](../struct.ContextInternal.html) pointer. This is the 'weak' version, for
-    /// use in callbacks, which avoids destroying the internal object when dropped.
-    pub fn from_raw_weak(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: true }
+        Self { context: context }
     }
 }
 
 impl Drop for Introspector {
     fn drop(&mut self) {
-        if !self.weak {
-            unsafe { capi::pa_context_unref(self.context) };
-        }
+        unsafe { capi::pa_context_unref(self.context) };
         self.context = null_mut::<super::ContextInternal>();
     }
 }
@@ -389,24 +370,25 @@ impl From<SinkInfoInternal> for SinkInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_sink_info_by_name`](struct.Introspector.html#method.get_sink_info_by_name)
-/// and friends.
-pub type SinkInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SinkInfoInternal, eol: i32,
-    userdata: *mut c_void);
-
 impl Introspector {
     /// Get information about a sink by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_by_name(&self, name: &str, cb: (SinkInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_sink_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SinkInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SinkInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_get_sink_info_by_name(self.context, c_name.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(get_sink_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -414,11 +396,17 @@ impl Introspector {
     /// Get information about a sink by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_by_index(&self, idx: u32, cb: (SinkInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_sink_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SinkInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_sink_info_by_index(self.context, idx, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SinkInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_sink_info_by_index(self.context, index,
+            Some(get_sink_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -426,8 +414,17 @@ impl Introspector {
     /// Get the complete sink list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_list(&self, cb: (SinkInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_sink_info_list(self.context, Some(cb.0), cb.1) };
+    pub fn get_sink_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SinkInfo>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SinkInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_sink_info_list(self.context,
+            Some(get_sink_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -435,12 +432,21 @@ impl Introspector {
     /// Set the volume of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_volume_by_index(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_sink_volume_by_index(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, idx,
-            std::mem::transmute(volume), cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, index,
+            std::mem::transmute(volume), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -448,15 +454,25 @@ impl Introspector {
     /// Set the volume of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_name(self.context, c_name.as_ptr(),
-            std::mem::transmute(volume), cb_f, cb_d) };
+            std::mem::transmute(volume), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -464,12 +480,21 @@ impl Introspector {
     /// Set the mute switch of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_mute_by_index(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_sink_mute_by_index(&mut self, index: u32, mute: bool,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_sink_mute_by_index(self.context, idx, mute as i32,
-            cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_sink_mute_by_index(self.context, index, mute as i32,
+            cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -477,15 +502,25 @@ impl Introspector {
     /// Set the mute switch of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_mute_by_name(&mut self, name: &str, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_name(self.context, c_name.as_ptr(),
-            mute as i32, cb_f, cb_d) };
+            mute as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -493,29 +528,48 @@ impl Introspector {
     /// Suspend/Resume a sink.
     /// 
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_sink_by_name(&mut self, sink_name: &str, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(sink_name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_suspend_sink_by_name(self.context, c_name.as_ptr(),
-            suspend as i32, cb_f, cb_d) };
+            suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Suspend/Resume a sink.
     ///
-    /// If `idx` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
+    /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
     /// be suspended. Returns `None` on error, i.e. invalid arguments or state.
-    pub fn suspend_sink_by_index(&mut self, idx: u32, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn suspend_sink_by_index(&mut self, index: u32, suspend: bool,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_suspend_sink_by_index(self.context, idx, suspend as i32,
-            cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_suspend_sink_by_index(self.context, index,
+            suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -523,15 +577,25 @@ impl Introspector {
     /// Change the profile of a sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_port_by_index(&mut self, idx: u32, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_sink_port_by_index(&mut self, index: u32, port: &str,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_port = CString::new(port.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_set_sink_port_by_index(self.context, idx,
-            c_port.as_ptr(), cb_f, cb_d) };
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_sink_port_by_index(self.context, index,
+            c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -539,18 +603,52 @@ impl Introspector {
     /// Change the profile of a sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_port_by_name(&mut self, name: &str, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let c_port = CString::new(port.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_sink_port_by_name(self.context, c_name.as_ptr(),
-            c_port.as_ptr(), cb_f, cb_d) };
+            c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get sink info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_sink_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const SinkInfo>)>)
+            };
+            callback(ListResult::Item(i as *const SinkInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SinkInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
 
@@ -645,24 +743,25 @@ impl From<SourceInfoInternal> for SourceInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_source_info_by_name`](struct.Introspector.html#method.get_source_info_by_name)
-/// and friends.
-pub type SourceInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SourceInfoInternal,
-    eol: i32, userdata: *mut c_void);
-
 impl Introspector {
     /// Get information about a source by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_source_info_by_name(&self, name: &str, cb: (SourceInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_source_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SourceInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SourceInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_get_source_info_by_name(self.context, c_name.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(get_source_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -670,11 +769,17 @@ impl Introspector {
     /// Get information about a source by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_source_info_by_index(&self, idx: u32, cb: (SourceInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_source_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SourceInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_source_info_by_index(self.context, idx, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SourceInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_source_info_by_index(self.context, index,
+            Some(get_source_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -682,8 +787,17 @@ impl Introspector {
     /// Get the complete source list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_source_info_list(&self, cb: (SourceInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_source_info_list(self.context, Some(cb.0), cb.1) };
+    pub fn get_source_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SourceInfo>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SourceInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_source_info_list(self.context,
+            Some(get_source_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -691,12 +805,21 @@ impl Introspector {
     /// Set the volume of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_volume_by_index(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_source_volume_by_index(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, idx,
-            std::mem::transmute(volume), cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, index,
+            std::mem::transmute(volume), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -704,15 +827,25 @@ impl Introspector {
     /// Set the volume of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context, c_name.as_ptr(),
-            std::mem::transmute(volume), cb_f, cb_d) };
+            std::mem::transmute(volume), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -720,12 +853,21 @@ impl Introspector {
     /// Set the mute switch of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_mute_by_index(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_source_mute_by_index(&mut self, index: u32, mute: bool,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_source_mute_by_index(self.context, idx, mute as i32,
-            cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_source_mute_by_index(self.context, index,
+            mute as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -733,15 +875,25 @@ impl Introspector {
     /// Set the mute switch of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_mute_by_name(&mut self, name: &str, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_source_mute_by_name(self.context, c_name.as_ptr(),
-            mute as i32, cb_f, cb_d) };
+            mute as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -749,29 +901,48 @@ impl Introspector {
     /// Suspend/Resume a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_source_by_name(&mut self, name: &str, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_suspend_source_by_name(self.context, c_name.as_ptr(),
-            suspend as i32, cb_f, cb_d) };
+            suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Suspend/Resume a source.
     ///
-    /// If `idx` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
+    /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
     /// will be suspended. Returns `None` on error, i.e. invalid arguments or state.
-    pub fn suspend_source_by_index(&mut self, idx: u32, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn suspend_source_by_index(&mut self, index: u32, suspend: bool,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_suspend_source_by_index(self.context, idx,
-            suspend as i32, cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_suspend_source_by_index(self.context, index,
+            suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -779,15 +950,25 @@ impl Introspector {
     /// Change the profile of a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_port_by_index(&mut self, idx: u32, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_source_port_by_index(&mut self, index: u32, port: &str,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_port = CString::new(port.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_set_source_port_by_index(self.context, idx,
-            c_port.as_ptr(), cb_f, cb_d) };
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_source_port_by_index(self.context, index,
+            c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -795,18 +976,52 @@ impl Introspector {
     /// Change the profile of a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_port_by_name(&mut self, name: &str, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let c_port = CString::new(port.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_source_port_by_name(self.context, c_name.as_ptr(),
-            c_port.as_ptr(), cb_f, cb_d) };
+            c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get source info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_source_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceInfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const SourceInfo>)>)
+            };
+            callback(ListResult::Item(i as *const SourceInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SourceInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
 
@@ -846,20 +1061,36 @@ impl From<ServerInfoInternal> for ServerInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_server_info`](struct.Introspector.html#method.get_server_info).
-pub type ServerInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const ServerInfoInternal,
-    userdata: *mut c_void);
-
 impl Introspector {
     /// Get some information about the server.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_server_info(&self, cb: (ServerInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_server_info(self.context, Some(cb.0), cb.1) };
+    pub fn get_server_info<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(*const ServerInfo) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(*const ServerInfo)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_server_info(self.context,
+            Some(get_server_info_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
+}
+
+/// Proxy for get server info callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn get_server_info_cb_proxy(_: *mut ContextInternal, i: *const ServerInfoInternal,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null() && !i.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(*const ServerInfo)>) };
+    callback(i as *const ServerInfo);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -893,22 +1124,21 @@ impl From<ModuleInfoInternal> for ModuleInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_module_info`](struct.Introspector.html#method.get_module_info) and friends.
-pub type ModuleInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const ModuleInfoInternal,
-    eol: i32, userdata: *mut c_void);
-
-/// Callback prototype for [`Introspector::load_module`](struct.Introspector.html#method.load_module).
-pub type ContextIndexCb = extern "C" fn(c: *mut ContextInternal, idx: u32, userdata: *mut c_void);
-
 impl Introspector {
     /// Get some information about a module by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_module_info(&self, idx: u32, cb: (ModuleInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_module_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const ModuleInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_module_info(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const ModuleInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_module_info(self.context, index,
+            Some(mod_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -916,24 +1146,41 @@ impl Introspector {
     /// Get the complete list of currently loaded modules.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_module_info_list(&self, cb: (ModuleInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_module_info_list(self.context, Some(cb.0), cb.1) };
+    pub fn get_module_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const ModuleInfo>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const ModuleInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_module_info_list(self.context,
+            Some(mod_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Load a module.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn load_module(&mut self, name: &str, argument: &str, cb: (ContextIndexCb, *mut c_void)
+    /// Returns `None` on error, i.e. invalid arguments or state. The callback is provided with the
+    /// index.
+    pub fn load_module<F>(&mut self, name: &str, argument: &str, callback: F
         ) -> ::operation::Operation
+        where F: FnMut(u32) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let c_arg = CString::new(argument.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(u32)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_load_module(self.context, c_name.as_ptr(),
-            c_arg.as_ptr(), Some(cb.0), cb.1) };
+            c_arg.as_ptr(), Some(context_index_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -941,13 +1188,55 @@ impl Introspector {
     /// Unload a module.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn unload_module(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn unload_module<F>(&mut self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_context_unload_module(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_unload_module(self.context, index,
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
+}
+
+/// Proxy for get module info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const ModuleInfo>)>)
+            };
+            callback(ListResult::Item(i as *const ModuleInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const ModuleInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
+    }
+}
+
+/// Proxy for context index callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(u32)>) };
+    callback(index);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -978,19 +1267,21 @@ impl From<ClientInfoInternal> for ClientInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_client_info`](struct.Introspector.html#method.get_client_info) and friends.
-pub type ClientInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const ClientInfoInternal,
-    eol: i32, userdata: *mut c_void);
-
 impl Introspector {
     /// Get information about a client by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_client_info(&self, idx: u32, cb: (ClientInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_client_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const ClientInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_client_info(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const ClientInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_client_info(self.context, index,
+            Some(get_client_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -998,8 +1289,17 @@ impl Introspector {
     /// Get the complete client list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_client_info_list(&self, cb: (ClientInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_client_info_list(self.context, Some(cb.0), cb.1) };
+    pub fn get_client_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const ClientInfo>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const ClientInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_client_info_list(self.context,
+            Some(get_client_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1007,12 +1307,44 @@ impl Introspector {
     /// Kill a client.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn kill_client(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn kill_client<F>(&mut self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_context_kill_client(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_kill_client(self.context, index,
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get sink info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const ClientInfo>)>)
+            };
+            callback(ListResult::Item(i as *const ClientInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const ClientInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
 
@@ -1101,19 +1433,21 @@ impl From<CardInfoInternal> for CardInfo {
     }
 }
 
-/// Callback prototype for `Introspector::get_card_info_...()`
-pub type CardInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const CardInfoInternal, eol: i32,
-    userdata: *mut c_void);
-
 impl Introspector {
     /// Get information about a card by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_card_info_by_index(&self, idx: u32, cb: (CardInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_card_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const CardInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_card_info_by_index(self.context, idx,
-            Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const CardInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_card_info_by_index(self.context, index,
+            Some(get_card_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1121,14 +1455,21 @@ impl Introspector {
     /// Get information about a card by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_card_info_by_name(&self, name: &str, cb: (CardInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_card_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const CardInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const CardInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_get_card_info_by_name(self.context, c_name.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(get_card_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1136,8 +1477,17 @@ impl Introspector {
     /// Get the complete card list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_card_info_list(&self, cb: (CardInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_card_info_list(self.context, Some(cb.0), cb.1) };
+    pub fn get_card_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const CardInfo>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const CardInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_card_info_list(self.context,
+            Some(get_card_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1145,15 +1495,25 @@ impl Introspector {
     /// Change the profile of a card.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_card_profile_by_index(&mut self, idx: u32, profile: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_card_profile_by_index(&mut self, index: u32, profile: &str,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_profile = CString::new(profile.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_set_card_profile_by_index(self.context, idx,
-            c_profile.as_ptr(), cb_f, cb_d) };
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_card_profile_by_index(self.context, index,
+            c_profile.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1161,16 +1521,26 @@ impl Introspector {
     /// Change the profile of a card.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_card_profile_by_name(&mut self, name: &str, profile: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let c_profile = CString::new(profile.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_card_profile_by_name(self.context, c_name.as_ptr(),
-            c_profile.as_ptr(), cb_f, cb_d) };
+            c_profile.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1178,18 +1548,52 @@ impl Introspector {
     /// Set the latency offset of a port.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_port_latency_offset(&mut self, card_name: &str, port_name: &str, offset: i64,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(card_name.clone()).unwrap();
         let c_port = CString::new(port_name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe { capi::pa_context_set_port_latency_offset(self.context, c_name.as_ptr(),
-            c_port.as_ptr(), offset, cb_f, cb_d) };
+            c_port.as_ptr(), offset, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get card info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_card_info_list_cb_proxy(_: *mut ContextInternal, i: *const CardInfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const CardInfo>)>)
+            };
+            callback(ListResult::Item(i as *const CardInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const CardInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
 
@@ -1254,30 +1658,38 @@ impl From<SinkInputInfoInternal> for SinkInputInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_sink_input_info`](struct.Introspector.html#method.get_sink_input_info) and
-/// friends.
-pub type SinkInputInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SinkInputInfoInternal,
-    eol: i32, userdata: *mut c_void);
-
 impl Introspector {
     /// Get some information about a sink input by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_input_info(&self, idx: u32, cb: (SinkInputInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_sink_input_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SinkInputInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_sink_input_info(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SinkInputInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_sink_input_info(self.context, index,
+            Some(get_sink_input_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete sink input list.
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_input_info_list(&self, cb: (SinkInputInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_sink_input_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SinkInputInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_sink_input_info_list(self.context, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SinkInputInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_sink_input_info_list(self.context,
+            Some(get_sink_input_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1285,16 +1697,25 @@ impl Introspector {
     /// Move the specified sink input to a different sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_sink_input_by_name(&mut self, idx: u32, sink_name: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn move_sink_input_by_name(&mut self, index: u32, sink_name: &str,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(sink_name.clone()).unwrap();
 
-        let ptr = unsafe { capi::pa_context_move_sink_input_by_name(self.context, idx,
-            c_name.as_ptr(), cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_move_sink_input_by_name(self.context, index,
+            c_name.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1302,12 +1723,21 @@ impl Introspector {
     /// Move the specified sink input to a different sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_sink_input_by_index(&mut self, idx: u32, sink_idx: u32,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn move_sink_input_by_index(&mut self, index: u32, sink_index: u32,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_move_sink_input_by_index(self.context, idx, sink_idx,
-            cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_move_sink_input_by_index(self.context, index,
+            sink_index, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1315,12 +1745,21 @@ impl Introspector {
     /// Set the volume of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_input_volume(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_sink_input_volume(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, idx,
-            std::mem::transmute(volume), cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, index,
+            std::mem::transmute(volume), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1328,12 +1767,21 @@ impl Introspector {
     /// Set the mute switch of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_input_mute(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_sink_input_mute(&mut self, index: u32, mute: bool,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_sink_input_mute(self.context, idx, mute as i32,
-            cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_sink_input_mute(self.context, index, mute as i32,
+            cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1341,12 +1789,44 @@ impl Introspector {
     /// Kill a sink input.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn kill_sink_input(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn kill_sink_input<F>(&mut self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_context_kill_sink_input(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_kill_sink_input(self.context, index,
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get sink input info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_sink_input_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInputInfoInternal,
+    eol: i32, userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const SinkInputInfo>)>)
+            };
+            callback(ListResult::Item(i as *const SinkInputInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SinkInputInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
 
@@ -1411,21 +1891,21 @@ impl From<SourceOutputInfoInternal> for SourceOutputInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_source_output_info`](struct.Introspector.html#method.get_source_output_info)
-/// and friends.
-pub type SourceOutputInfoCb = extern "C" fn(c: *mut ContextInternal,
-    i: *const SourceOutputInfoInternal, eol: i32, userdata: *mut c_void);
-
 impl Introspector {
     /// Get information about a source output by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_source_output_info(&self, idx: u32, cb: (SourceOutputInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_source_output_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SourceOutputInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_source_output_info(self.context, idx, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SourceOutputInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_source_output_info(self.context, index,
+            Some(get_source_output_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1433,11 +1913,17 @@ impl Introspector {
     /// Get the complete list of source outputs.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_source_output_info_list(&self, cb: (SourceOutputInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_source_output_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SourceOutputInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_source_output_info_list(self.context, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SourceOutputInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_source_output_info_list(self.context,
+            Some(get_source_output_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1445,15 +1931,25 @@ impl Introspector {
     /// Move the specified source output to a different source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_source_output_by_name(&mut self, idx: u32, source_name: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn move_source_output_by_name(&mut self, index: u32, source_name: &str,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(source_name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_move_source_output_by_name(self.context, idx,
-            c_name.as_ptr(), cb_f, cb_d) };
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_move_source_output_by_name(self.context, index,
+            c_name.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1461,12 +1957,21 @@ impl Introspector {
     /// Move the specified source output to a different source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn move_source_output_by_index(&mut self, idx: u32, source_idx: u32,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn move_source_output_by_index(&mut self, index: u32, source_index: u32,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_move_source_output_by_index(self.context, idx,
-            source_idx, cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_move_source_output_by_index(self.context, index,
+            source_index, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1474,12 +1979,21 @@ impl Introspector {
     /// Set the volume of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_output_volume(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_source_output_volume(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, idx,
-            std::mem::transmute(volume), cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, index,
+            std::mem::transmute(volume), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1487,12 +2001,21 @@ impl Introspector {
     /// Set the mute switch of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_output_mute(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_source_output_mute(&mut self, index: u32, mute: bool,
+        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
-        let ptr = unsafe { capi::pa_context_set_source_output_mute(self.context, idx, mute as i32,
-            cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(super::success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_context_set_source_output_mute(self.context, index, mute as i32,
+            cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1500,12 +2023,44 @@ impl Introspector {
     /// Kill a source output.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn kill_source_output(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn kill_source_output<F>(&mut self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_context_kill_source_output(self.context, idx, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_kill_source_output(self.context, index,
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get source output info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceOutputInfoInternal,
+    eol: i32, userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const SourceOutputInfo>)>)
+            };
+            callback(ListResult::Item(i as *const SourceOutputInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SourceOutputInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
 
@@ -1513,19 +2068,34 @@ impl Introspector {
 // Stat info
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// Callback prototype for [`Introspector::stat`](struct.Introspector.html#method.stat).
-pub type StatInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const StatInfo,
-    userdata: *mut c_void);
-
 impl Introspector {
     /// Get daemon memory block statistics.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn stat(&self, cb: (StatInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_stat(self.context, Some(cb.0), cb.1) };
+    pub fn stat<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(*const StatInfo) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(*const StatInfo)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_stat(self.context, Some(get_stat_info_cb_proxy),
+            cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
+}
+
+/// Proxy for get stat info callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata: *mut c_void) {
+    assert!(!userdata.is_null() && !i.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(*const StatInfo)>) };
+    callback(i);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1566,24 +2136,25 @@ impl From<SampleInfoInternal> for SampleInfo {
     }
 }
 
-/// Callback prototype for
-/// [`Introspector::get_sample_info_by_name`](struct.Introspector.html#method.get_sample_info_by_name)
-/// and friends.
-pub type SampleInfoCb = extern "C" fn(c: *mut ContextInternal, i: *const SampleInfoInternal,
-    eol: i32, userdata: *mut c_void);
-
 impl Introspector {
     /// Get information about a sample by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sample_info_by_name(&self, name: &str, cb: (SampleInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_sample_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SampleInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SampleInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_get_sample_info_by_name(self.context, c_name.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(get_sample_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1591,11 +2162,17 @@ impl Introspector {
     /// Get information about a sample by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sample_info_by_index(&self, idx: u32, cb: (SampleInfoCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn get_sample_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SampleInfo>) + 'static
     {
-        let ptr = unsafe { capi::pa_context_get_sample_info_by_index(self.context, idx, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SampleInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_sample_info_by_index(self.context, index,
+            Some(get_sample_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1603,9 +2180,42 @@ impl Introspector {
     /// Get the complete list of samples stored in the daemon.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sample_info_list(&self, cb: (SampleInfoCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_context_get_sample_info_list(self.context, Some(cb.0), cb.1) };
+    pub fn get_sample_info_list<F>(&self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const SampleInfo>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const SampleInfo>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_get_sample_info_list(self.context,
+            Some(get_sample_info_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
+    }
+}
+
+/// Proxy for get sample info list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn get_sample_info_list_cb_proxy(_: *mut ContextInternal, i: *const SampleInfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe {
+                &mut *(userdata as *mut Box<FnMut(ListResult<*const SampleInfo>)>)
+            };
+            callback(ListResult::Item(i as *const SampleInfo));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SampleInfo>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }

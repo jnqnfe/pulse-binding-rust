@@ -146,22 +146,40 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
-use ::mainloop::events::timer::{TimeEvent, TimeEventCb};
-use ::util::unwrap_optional_callback;
-use ::operation::Operation;
+use mainloop::events::timer::{TimeEvent, TimeEventCb};
+use operation::Operation;
 use error::PAErr;
 use timeval::MicroSeconds;
-
-pub use capi::pa_context as ContextInternal;
+use proplist::Proplist;
+use capi::pa_context as ContextInternal;
 
 /// An opaque connection context to a daemon
 /// This acts as a safe Rust wrapper for the actual C object.
+/// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct Context {
     /// The actual C object.
     pub(crate) ptr: *mut ContextInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
+    /// Multi-use callback closure pointers
+    cb_ptrs: CallbackPointers,
 }
+
+/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// times), for freeing at the appropriate time.
+#[derive(Default)]
+struct CallbackPointers {
+    set_state: NotifyCb,
+    subscribe: self::subscribe::Callback,
+    event: EventCb,
+}
+
+type NotifyCb = ::callbacks::MultiUseCallback<FnMut(),
+    extern "C" fn(*mut ContextInternal, *mut c_void)>;
+
+type EventCb = ::callbacks::MultiUseCallback<FnMut(String, Proplist),
+    extern "C" fn(*mut ContextInternal, name: *const c_char, pl: *mut ::proplist::ProplistInternal,
+        *mut c_void)>;
 
 /// The state of a connection context
 #[repr(C)]
@@ -222,20 +240,6 @@ pub mod flags {
     pub const NOFAIL: FlagSet = capi::PA_CONTEXT_NOFAIL;
 }
 
-/// Generic notification callback prototype
-pub type ContextNotifyCb = extern "C" fn(c: *mut ContextInternal, userdata: *mut c_void);
-
-/// A generic callback for operation completion
-/// The `success` param with be zero on success, non-zero otherwise.
-pub type ContextSuccessCb = extern "C" fn(c: *mut ContextInternal, success: i32,
-    userdata: *mut c_void);
-
-/// A callback for asynchronous meta/policy event messages. The set of defined events can be
-/// extended at any time. Also, server modules may introduce additional message types so make sure
-/// that your callback function ignores messages it doesn't know.
-pub type ContextEventCb = extern "C" fn(c: *mut ContextInternal, name: *const c_char,
-    p: *mut ::proplist::ProplistInternal, userdata: *mut c_void);
-
 impl Context {
     /// Instantiate a new connection context with an abstract mainloop API and an application name.
     ///
@@ -255,7 +259,7 @@ impl Context {
     /// Instantiate a new connection context with an abstract mainloop API and an application name,
     /// and specify the initial client property list.
     pub fn new_with_proplist(mainloop_api: &mut ::mainloop::api::MainloopApi, name: &str,
-        proplist: &::proplist::Proplist) -> Option<Self>
+        proplist: &Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -272,27 +276,36 @@ impl Context {
     /// pointer.
     pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, weak: false }
+        Self { ptr: ptr, weak: false, cb_ptrs: Default::default() }
     }
 
     /// Create a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
-    /// pointer. This is the 'weak' version, for use in callbacks, which avoids destroying the
-    /// internal object when dropped.
-    pub fn from_raw_weak(ptr: *mut ContextInternal) -> Self {
+    /// pointer. This is the 'weak' version, which avoids destroying the internal object when
+    /// dropped.
+    pub(crate) fn from_raw_weak(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, weak: true }
-    }
+        Self { ptr: ptr, weak: true, cb_ptrs: Default::default() }
+     }
 
     /// Set a callback function that is called whenever the context status changes.
-    pub fn set_state_callback(&mut self, cb: Option<(ContextNotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextNotifyCb>(cb);
-        unsafe { capi::pa_context_set_state_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.set_state;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy_multi);
+        unsafe { capi::pa_context_set_state_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set a callback function that is called whenever a meta/policy control event is received.
-    pub fn set_event_callback(&mut self, cb: Option<(ContextEventCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<ContextEventCb>(cb);
-        unsafe { capi::pa_context_set_event_callback(self.ptr, cb_f, cb_d); }
+    ///
+    /// The callback is given a name which represents what event occurred. The set of defined events
+    /// can be extended at any time. Also, server modules may introduce additional message types so
+    /// make sure that your callback function ignores messages it doesn't know. It is also given an
+    /// (owned) property list.
+    pub fn set_event_callback(&mut self, callback: Option<Box<FnMut(String, Proplist) + 'static>>) {
+        let saved = &mut self.cb_ptrs.event;
+        *saved = EventCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(event_cb_proxy);
+        unsafe { capi::pa_context_set_event_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Returns the error number of the last failed operation
@@ -350,8 +363,15 @@ impl Context {
 
     /// Drain the context.
     /// If there is nothing to drain, the function returns `None`.
-    pub fn drain(&mut self, cb: (ContextNotifyCb, *mut c_void)) -> Operation {
-        let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(cb.0), cb.1) };
+    pub fn drain<F>(&mut self, callback: F) -> Operation
+        where F: FnMut() + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut()> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
@@ -360,32 +380,59 @@ impl Context {
     ///
     /// The returned operation is unlikely to complete successfully, since the daemon probably died
     /// before returning a success notification.
-    pub fn exit_daemon(&mut self, cb: (ContextSuccessCb, *mut c_void)) -> Operation {
-        let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(cb.0), cb.1) };
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation
+        where F: FnMut(bool) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
 
     /// Set the name of the default sink.
-    pub fn set_default_sink(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Operation {
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation
+        where F: FnMut(bool) + 'static
+    {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(), Some(cb.0),
-            cb.1) };
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
 
     /// Set the name of the default source.
-    pub fn set_default_source(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
@@ -401,11 +448,20 @@ impl Context {
     }
 
     /// Set a different application name for context on the server.
-    pub fn set_name(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Operation {
+    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation
+        where F: FnMut(bool) + 'static
+    {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(), Some(cb.0), cb.1) };
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
@@ -440,17 +496,24 @@ impl Context {
     /// [`new_with_proplist`](#method.new_with_proplist) as possible instead a posteriori with this
     /// function, since that information may then be used to route streams of the client to the
     /// right device.
-    pub fn proplist_update(&mut self, mode: ::proplist::UpdateMode, p: &::proplist::Proplist,
-        cb: (ContextSuccessCb, *mut c_void)) -> Operation
+    pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, p: &Proplist, callback: F
+        ) -> Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr,
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
 
     /// Update the property list of the client, remove entries.
-    pub fn proplist_remove(&mut self, keys: &[&str], cb: (ContextSuccessCb, *mut c_void)
-        ) -> Operation
+    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -467,8 +530,13 @@ impl Context {
         }
         c_key_ptrs.push(null());
 
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
     }
@@ -570,11 +638,74 @@ impl Drop for Context {
     }
 }
 
-impl Clone for Context {
-    /// Returns a new `Context` struct. If this is called on a 'weak' instance, a non-weak object is
-    /// returned.
-    fn clone(&self) -> Self {
-        unsafe { capi::pa_context_ref(self.ptr) };
-        Self::from_raw(self.ptr)
-    }
+/// Proxy for completion success callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn success_cb_proxy(_: *mut ContextInternal, success: i32, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(bool)>) };
+    let success_actual = match success { 0 => false, _ => true };
+    callback(success_actual);
+}
+
+/// Proxy for notification callbacks (single use).
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn notify_cb_proxy_single(_: *mut ContextInternal, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut()>) };
+    callback();
+}
+
+/// Proxy for notification callbacks (multi use).
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn notify_cb_proxy_multi(_: *mut ContextInternal, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut()>) };
+    callback();
+}
+
+/// Proxy for event callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn event_cb_proxy(_: *mut ContextInternal, name: *const c_char,
+    proplist: *mut ::proplist::ProplistInternal, userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    assert!(!name.is_null());
+    let n = {
+        let tmp = unsafe { CStr::from_ptr(name) };
+        tmp.to_string_lossy().into_owned()
+    };
+    let pl = Proplist::from_raw_weak(proplist);
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(String, Proplist)>) };
+    callback(n, pl);
+}
+
+/// Proxy for extention test callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(u32)>) };
+    callback(version);
+}
+
+/// Proxy for extention subscribe callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn ext_subscribe_cb_proxy(_: *mut ContextInternal, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut()>) };
+    callback();
 }

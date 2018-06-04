@@ -16,28 +16,7 @@
 // if not, see <http://www.gnu.org/licenses/>.
 
 use capi;
-use std::os::raw::c_void;
 use std::ffi::CStr;
-use std::ptr::null_mut;
-
-/// Unwraps optional callback function + data pointer tuple, wrapping the function pointer in an
-/// option wrapper. Used internally in passing such parameters to an underlying C function.
-///
-/// Example:
-///
-/// ```rust,ignore
-/// fn foo(cb: Option<(SuccessCb, *mut c_void)>) {
-///     let (cb_f, cb_d) = ::util::unwrap_optional_callback::<SuccessCb>(cb);
-///     //do something, i.e. passing cb_f and cb_d to C function
-/// }
-/// ```
-#[inline]
-pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>) -> (Option<T>, *mut c_void) {
-    match cb {
-        Some((f, d)) => (Some(f), d),
-        None => (None, null_mut::<c_void>()),
-    }
-}
 
 macro_rules! fn_string_with_buffer {
     ( $fn_name:ident, $fn_call:ident ) => {

@@ -258,22 +258,51 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
-use util::unwrap_optional_callback;
+use callbacks::unwrap_optional_callback;
 use error::PAErr;
 use timeval::MicroSeconds;
+use proplist::Proplist;
 
-pub use capi::pa_stream as StreamInternal;
+use capi::pa_stream as StreamInternal;
 pub use capi::pa_seek_mode_t as SeekMode;
 pub use capi::pa_stream_direction_t as Direction;
 
 /// An opaque stream for playback or recording.
 /// This acts as a safe Rust wrapper for the actual C object.
+/// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct Stream {
     /// The actual C object.
     ptr: *mut StreamInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
-    weak: bool,
+    /// Multi-use callback closure pointers
+    cb_ptrs: CallbackPointers,
 }
+
+/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// times), for freeing at the appropriate time.
+#[derive(Default)]
+struct CallbackPointers {
+    read: RequestCb,
+    write: RequestCb,
+    set_state: NotifyCb,
+    overflow: NotifyCb,
+    underflow: NotifyCb,
+    started: NotifyCb,
+    latency_update: NotifyCb,
+    moved: NotifyCb,
+    suspended: NotifyCb,
+    buffer_attr: NotifyCb,
+    event: EventCb,
+}
+
+type RequestCb = ::callbacks::MultiUseCallback<FnMut(usize),
+    extern "C" fn(*mut StreamInternal, usize, *mut c_void)>;
+
+type NotifyCb = ::callbacks::MultiUseCallback<FnMut(),
+    extern "C" fn(*mut StreamInternal, *mut c_void)>;
+
+type EventCb = ::callbacks::MultiUseCallback<FnMut(String, Proplist),
+    extern "C" fn(*mut StreamInternal, name: *const c_char, pl: *mut ::proplist::ProplistInternal,
+        *mut c_void)>;
 
 /// The state of a stream
 #[repr(C)]
@@ -501,19 +530,6 @@ pub mod event_names {
     pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
 }
 
-/// A generic callback for operation completion
-pub type SuccessCb = extern "C" fn(s: *mut StreamInternal, success: i32, userdata: *mut c_void);
-
-/// A generic request callback
-pub type RequestCb = extern "C" fn(p: *mut StreamInternal, nbytes: usize, userdata: *mut c_void);
-
-/// A generic notification callback
-pub type NotifyCb = extern "C" fn(p: *mut StreamInternal, userdata: *mut c_void);
-
-/// A callback for asynchronous meta/policy event messages.
-pub type EventCb = extern "C" fn(p: *mut StreamInternal, name: *const c_char,
-    pl: *mut ::proplist::ProplistInternal, userdata: *mut c_void);
-
 /// Result type for the [`Stream::Peek`](struct.Stream.html#method.peek) method. See documentation
 /// of the method itself for more information.
 #[derive(Debug)]
@@ -578,7 +594,7 @@ impl Stream {
     /// * `map`: The desired channel map, or `None` for default
     /// * `proplist`: The initial property list
     pub fn new_with_proplist(ctx: &mut ::context::Context, name: &str, ss: &::sample::Spec,
-        map: Option<&::channelmap::Map>, proplist: &mut ::proplist::Proplist) -> Option<Self>
+        map: Option<&::channelmap::Map>, proplist: &mut Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -610,7 +626,7 @@ impl Stream {
     /// * `formats`: The list of formats that can be provided
     /// * `proplist`: The initial property list
     pub fn new_extended(ctx: &mut ::context::Context, name: &str, formats: &[&::format::Info],
-        proplist: &mut ::proplist::Proplist) -> Option<Self>
+        proplist: &mut Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -636,15 +652,7 @@ impl Stream {
     /// Create a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
     fn from_raw(ptr: *mut StreamInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, weak: false }
-    }
-
-    /// Create a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
-    /// This is the 'weak' version, for use in callbacks, which avoids destroying the internal
-    /// object when dropped.
-    pub fn from_raw_weak(ptr: *mut StreamInternal) -> Self {
-        assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, weak: true }
+        Self { ptr: ptr, cb_ptrs: Default::default() }
     }
 
     /// Return the current state of the stream.
@@ -653,6 +661,9 @@ impl Stream {
     }
 
     /// Return the context this stream is attached to.
+    ///
+    /// Note, the returned `Context` object here is only a 'weak' reference, do not think of trying
+    /// to replace your primary `Context` object with it.
     pub fn get_context(&self) -> ::context::Context {
         ::context::Context::from_raw_weak(unsafe { capi::pa_stream_get_context(self.ptr) })
     }
@@ -896,9 +907,7 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
-    pub fn begin_write<'a>(&mut self, nbytes: Option<usize>
-        ) -> Result<Option<&'a mut [u8]>, PAErr>
-    {
+    pub fn begin_write<'a>(&mut self, nbytes: Option<usize>) -> Result<Option<&'a mut [u8]>, PAErr> {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
@@ -1093,9 +1102,18 @@ impl Stream {
     ///
     /// Use this for notification when the playback buffer is empty after playing all the audio in
     /// the buffer. Please note that only one drain operation per stream may be issued at a time.
-    pub fn drain(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_f, cb_d) };
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn drain(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1105,41 +1123,62 @@ impl Stream {
     /// Use [`get_timing_info`] to get access to the raw timing data, or [`get_time`] or
     /// [`get_latency`] to get cleaned up values.
     ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    ///
     /// [`get_timing_info`]: #method.get_timing_info
     /// [`get_time`]: #method.get_time
     /// [`get_latency`]: #method.get_latency
-    pub fn update_timing_info(&mut self, cb: Option<(SuccessCb, *mut c_void)>
+    pub fn update_timing_info(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
         ) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_update_timing_info(self.ptr, cb_f, cb_d) };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_update_timing_info(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the callback function that is called whenever the state of the stream changes.
-    pub fn set_state_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_state_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.set_state;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_state_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called when new data may be written to the stream.
-    pub fn set_write_callback(&mut self, cb: Option<(RequestCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<RequestCb>(cb);
-        unsafe { capi::pa_stream_set_write_callback(self.ptr, cb_f, cb_d); }
+    ///
+    /// The callback accepts an argument giving the number of bytes.
+    pub fn set_write_callback(&mut self, callback: Option<Box<FnMut(usize) + 'static>>) {
+        let saved = &mut self.cb_ptrs.write;
+        *saved = RequestCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(request_cb_proxy);
+        unsafe { capi::pa_stream_set_write_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called when new data is available from the stream.
-    pub fn set_read_callback(&mut self, cb: Option<(RequestCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<RequestCb>(cb);
-        unsafe { capi::pa_stream_set_read_callback(self.ptr, cb_f, cb_d); }
+    ///
+    /// The callback accepts an argument giving the number of bytes.
+    pub fn set_read_callback(&mut self, callback: Option<Box<FnMut(usize) + 'static>>) {
+        let saved = &mut self.cb_ptrs.read;
+        *saved = RequestCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(request_cb_proxy);
+        unsafe { capi::pa_stream_set_read_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called when a buffer overflow happens. (Only for playback
     /// streams).
-    pub fn set_overflow_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_overflow_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_overflow_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.overflow;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_overflow_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Return at what position the latest underflow occurred.
@@ -1157,26 +1196,32 @@ impl Stream {
 
     /// Set the callback function that is called when a buffer underflow happens. (Only for playback
     /// streams)
-    pub fn set_underflow_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_underflow_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_underflow_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.underflow;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_underflow_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called when the server starts playback after an underrun
     /// or on initial startup. This only informs that audio is flowing again, it is no indication
     /// that audio started to reach the speakers already. (Only for playback streams).
-    pub fn set_started_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_started_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_started_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.started;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_started_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called whenever a latency information update happens.
     /// Useful on [`flags::AUTO_TIMING_UPDATE`] streams only.
     ///
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
-    pub fn set_latency_update_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_latency_update_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_latency_update_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.latency_update;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_latency_update_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called whenever the stream is moved to a different
@@ -1184,9 +1229,11 @@ impl Stream {
     ///
     /// [`get_device_name`]: #method.get_device_name
     /// [`get_device_index`]: #method.get_device_index
-    pub fn set_moved_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_moved_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_moved_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.moved;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_moved_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called whenever the sink/source this stream is connected
@@ -1196,9 +1243,11 @@ impl Stream {
     ///
     /// [`is_suspended`]: #method.is_suspended
     /// [`set_moved_callback`]: #method.set_moved_callback
-    pub fn set_suspended_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_suspended_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_suspended_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.suspended;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_suspended_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called whenever a meta/policy control event is received.
@@ -1206,10 +1255,13 @@ impl Stream {
     /// The callback is given a name which represents what event occurred. The set of defined events
     /// can be extended at any time. Also, server modules may introduce additional message types so
     /// make sure that your callback function ignores messages it doesn't know. Some well known
-    /// event names can be found in the [`event_names`](event_names/index.html) submodule.
-    pub fn set_event_callback(&mut self, cb: Option<(EventCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<EventCb>(cb);
-        unsafe { capi::pa_stream_set_event_callback(self.ptr, cb_f, cb_d); }
+    /// event names can be found in the [`event_names`](event_names/index.html) submodule. It is
+    /// also given an (owned) property list.
+    pub fn set_event_callback(&mut self, callback: Option<Box<FnMut(String, Proplist) + 'static>>) {
+        let saved = &mut self.cb_ptrs.event;
+        *saved = EventCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(event_cb_proxy);
+        unsafe { capi::pa_stream_set_event_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Set the callback function that is called whenever the buffer attributes on the server side
@@ -1218,9 +1270,11 @@ impl Stream {
     /// [`set_moved_callback`] as well.
     ///
     /// [`set_moved_callback`]: #method.set_moved_callback
-    pub fn set_buffer_attr_callback(&mut self, cb: Option<(NotifyCb, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<NotifyCb>(cb);
-        unsafe { capi::pa_stream_set_buffer_attr_callback(self.ptr, cb_f, cb_d); }
+    pub fn set_buffer_attr_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+        let saved = &mut self.cb_ptrs.buffer_attr;
+        *saved = NotifyCb::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
+        unsafe { capi::pa_stream_set_buffer_attr_callback(self.ptr, cb_fn, cb_data); }
     }
 
     /// Pause playback of this stream temporarily.
@@ -1232,11 +1286,20 @@ impl Stream {
     /// state. If you pass [`flags::START_CORKED`] as a flag when connecting the stream, it will be
     /// created in corked state.
     ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn cork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_f, cb_d) };
+    pub fn cork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1250,11 +1313,20 @@ impl Stream {
     /// state. If you pass [`flags::START_CORKED`] as a flag when connecting the stream, it will be
     /// created in corked state.
     ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn uncork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_f, cb_d) };
+    pub fn uncork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1263,9 +1335,18 @@ impl Stream {
     ///
     /// This discards any audio data in the buffer. Most of the time you're better off using the
     /// parameter `seek` of [`write`](#method.write) instead of this function.
-    pub fn flush(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_f, cb_d) };
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn flush(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1273,10 +1354,19 @@ impl Stream {
     /// Reenable prebuffering if specified in the [`::def::BufferAttr`] structure. Available for
     /// playback streams only.
     ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn prebuf(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_f, cb_d) };
+    pub fn prebuf(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1286,24 +1376,45 @@ impl Stream {
     /// This disables prebuffering temporarily if specified in the [`::def::BufferAttr`] structure.
     /// Available for playback streams only.
     ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn trigger(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
-        let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_f, cb_d) };
+    pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
+        ) -> ::operation::Operation
+    {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
+        let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Rename the stream.
-    pub fn set_name(&mut self, name: &str, cb: Option<(SuccessCb, *mut c_void)>
+    ///
+    /// The optional callback must accept a `bool`, which indicates success.
+    pub fn set_name(&mut self, name: &str, callback: Option<Box<FnMut(bool) + 'static>>
         ) -> ::operation::Operation
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
+
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
+            Some(f) => {
+                // WARNING: Type must be explicit here, else compiles but seg faults :/
+                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
+                (Some(success_cb_proxy), boxed as *mut c_void)
+            },
+            None => (None, std::ptr::null_mut::<c_void>()),
+        };
         let ptr = unsafe {
-            capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_f, cb_d)
+            capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1444,13 +1555,21 @@ impl Stream {
     /// the stream has been connected successfully. Please be aware of the slightly different
     /// semantics of the call depending whether [`flags::ADJUST_LATENCY`] is set or not.
     ///
+    /// The callback must accept a `bool`, which indicates success.
+    ///
     /// [`get_buffer_attr`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-    pub fn set_buffer_attr(&mut self, attr: &::def::BufferAttr, cb: (SuccessCb, *mut c_void)
+    pub fn set_buffer_attr<F>(&mut self, attr: &::def::BufferAttr, callback: F
         ) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, std::mem::transmute(attr),
-            Some(cb.0), cb.1) };
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1460,12 +1579,20 @@ impl Stream {
     /// You need to pass [`flags::VARIABLE_RATE`] in the flags parameter of [`connect_playback`] if
     /// you plan to use this function. Only valid after the stream has been connected successfully.
     ///
+    /// The callback must accept a `bool`, which indicates success.
+    ///
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
-    pub fn update_sample_rate(&mut self, rate: u32, cb: (SuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn update_sample_rate<F>(&mut self, rate: u32, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate,
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -1476,19 +1603,29 @@ impl Stream {
     /// [`new_with_proplist`] as possible instead a posteriori with this function, since that
     /// information may be used to route this stream to the right device.
     ///
+    /// The callback must accept a `bool`, which indicates success.
+    ///
     /// [`new_with_proplist`]: #method.new_with_proplist
-    pub fn update_proplist(&mut self, mode: ::proplist::UpdateMode,
-        proplist: &mut ::proplist::Proplist, cb: (SuccessCb, *mut c_void)) -> ::operation::Operation
+    pub fn update_proplist<F>(&mut self, mode: ::proplist::UpdateMode, proplist: &mut Proplist,
+        callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.ptr, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.ptr,
+            Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Update the property list of the sink input/source output of this stream, remove entries.
-    pub fn remove_proplist(&mut self, keys: &[&str], cb: (SuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn remove_proplist<F>(&mut self, keys: &[&str], callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1505,8 +1642,14 @@ impl Stream {
         }
         c_key_ptrs.push(null());
 
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe {
-            capi::pa_stream_proplist_remove(self.ptr, c_key_ptrs.as_ptr(), Some(cb.0), cb.1)
+            capi::pa_stream_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
+                Some(success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1515,8 +1658,8 @@ impl Stream {
     /// For record streams connected to a monitor source: monitor only a very specific sink input of
     /// the sink. This function needs to be called before [`connect_record`](#method.connect_record)
     /// is called.
-    pub fn set_monitor_stream(&mut self, sink_input_idx: u32) -> Result<(), PAErr> {
-        match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_idx) } {
+    pub fn set_monitor_stream(&mut self, sink_input_index: u32) -> Result<(), PAErr> {
+        match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_index) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
@@ -1534,10 +1677,60 @@ impl Stream {
 
 impl Drop for Stream {
     fn drop(&mut self) {
-        if !self.weak {
-            self.disconnect().unwrap();
-            unsafe { capi::pa_stream_unref(self.ptr) };
-        }
+        self.disconnect().unwrap();
+        unsafe { capi::pa_stream_unref(self.ptr) };
         self.ptr = null_mut::<StreamInternal>();
     }
+}
+
+/// Proxy for completion success callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(bool)>) };
+    let success_actual = match success { 0 => false, _ => true };
+    callback(success_actual);
+}
+
+/// Proxy for request callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn request_cb_proxy(_: *mut StreamInternal, nbytes: usize, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(usize)>) };
+    callback(nbytes);
+}
+
+/// Proxy for notify callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn notify_cb_proxy(_: *mut StreamInternal, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut()>) };
+    callback();
+}
+
+/// Proxy for event callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn event_cb_proxy(_: *mut StreamInternal, name: *const c_char,
+    proplist: *mut ::proplist::ProplistInternal, userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    assert!(!name.is_null());
+    let n = {
+        let tmp = unsafe { CStr::from_ptr(name) };
+        tmp.to_string_lossy().into_owned()
+    };
+    let pl = Proplist::from_raw_weak(proplist);
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(String, Proplist)>) };
+    callback(n, pl);
 }

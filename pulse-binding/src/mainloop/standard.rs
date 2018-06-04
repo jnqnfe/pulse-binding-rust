@@ -57,11 +57,13 @@
 //! ```rust
 //! extern crate libpulse_binding as pulse;
 //!
-//! use std::os::raw::c_void;
 //! use std::sync::atomic;
-//! use std::mem::transmute;
+//! use std::rc::Rc;
+//! use std::cell::RefCell;
 //! use pulse::mainloop::standard::Mainloop;
+//! use pulse::context::Context;
 //! use pulse::stream::Stream;
+//! use pulse::proplist::Proplist;
 //! use pulse::mainloop::standard::InterateResult;
 //! use pulse::def::Retval;
 //!
@@ -73,23 +75,25 @@
 //!     };
 //!     assert!(spec.is_valid());
 //!
-//!     let mut proplist = pulse::proplist::Proplist::new().unwrap();
+//!     let mut proplist = Proplist::new().unwrap();
 //!     proplist.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp")
 //!         .unwrap();
 //!
-//!     let mut mainloop = Mainloop::new().unwrap();
+//!     let mut mainloop = Rc::new(RefCell::new(Mainloop::new()
+//!         .expect("Failed to create mainloop")));
 //!
-//!     let mut context = pulse::context::Context::new_with_proplist(
-//!         mainloop.get_api(),
+//!     let mut context = Rc::new(RefCell::new(Context::new_with_proplist(
+//!         mainloop.borrow().get_api(),
 //!         "FooAppContext",
 //!         &proplist
-//!         ).unwrap();
+//!         ).expect("Failed to create new context")));
 //!
-//!     context.connect(None, pulse::context::flags::NOFLAGS, None).unwrap();
+//!     context.borrow_mut().connect(None, pulse::context::flags::NOFLAGS, None)
+//!         .expect("Failed to connect context");
 //!
 //!     // Wait for context to be ready
 //!     loop {
-//!         match mainloop.iterate(false) {
+//!         match mainloop.borrow_mut().iterate(false) {
 //!             InterateResult::Quit(_) |
 //!             InterateResult::Err(_) => {
 //!                 eprintln!("iterate state was not success, quitting...");
@@ -97,7 +101,7 @@
 //!             },
 //!             InterateResult::Success(_) => {},
 //!         }
-//!         match context.get_state() {
+//!         match context.borrow().get_state() {
 //!             pulse::context::State::Ready => { break; },
 //!             pulse::context::State::Failed |
 //!             pulse::context::State::Terminated => {
@@ -108,14 +112,19 @@
 //!         }
 //!     }
 //!
-//!     let mut stream = Stream::new(&mut context, "Music", &spec, None).unwrap();
+//!     let mut stream = Rc::new(RefCell::new(Stream::new(
+//!         &mut context.borrow_mut(),
+//!         "Music",
+//!         &spec,
+//!         None
+//!         ).expect("Failed to create new stream")));
 //!
-//!     stream.connect_playback(None, None, pulse::stream::flags::START_CORKED,
-//!         None, None).unwrap();
+//!     stream.borrow_mut().connect_playback(None, None, pulse::stream::flags::START_CORKED,
+//!         None, None).expect("Failed to connect playback");
 //!
 //!     // Wait for stream to be ready
 //!     loop {
-//!         match mainloop.iterate(false) {
+//!         match mainloop.borrow_mut().iterate(false) {
 //!             InterateResult::Quit(_) |
 //!             InterateResult::Err(_) => {
 //!                 eprintln!("iterate state was not success, quitting...");
@@ -123,7 +132,7 @@
 //!             },
 //!             InterateResult::Success(_) => {},
 //!         }
-//!         match stream.get_state() {
+//!         match stream.borrow().get_state() {
 //!             pulse::stream::State::Ready => { break; },
 //!             pulse::stream::State::Failed |
 //!             pulse::stream::State::Terminated => {
@@ -136,9 +145,9 @@
 //!
 //!     // Our main loop
 //! #   let mut count = 0; // For automatic unit tests, we'll spin a few times
-//!     let drained = atomic::AtomicBool::new(false);
+//!     let drained = Rc::new(atomic::AtomicBool::new(false));
 //!     loop {
-//!         match mainloop.iterate(false) {
+//!         match mainloop.borrow_mut().iterate(false) {
 //!             InterateResult::Quit(_) |
 //!             InterateResult::Err(_) => {
 //!                 eprintln!("iterate state was not success, quitting...");
@@ -149,14 +158,19 @@
 //!
 //!         // Write some data with stream.write()
 //!
-//!         if stream.is_corked().unwrap() {
-//!             stream.uncork(None);
+//!         if stream.borrow().is_corked().unwrap() {
+//!             stream.borrow_mut().uncork(None);
 //!         }
 //!
 //!         // Wait for our data to be played
-//!         stream.drain(Some((drain_cb, unsafe { transmute(&drained) })));
+//!         let _o = {
+//!             let drain_state_ref = Rc::clone(&drained);
+//!             stream.borrow_mut().drain(Some(Box::new(move |_success: bool| {
+//!                 drain_state_ref.store(true, atomic::Ordering::Relaxed);
+//!             })))
+//!         };
 //!         while !drained.compare_and_swap(true, false, atomic::Ordering::Relaxed) {
-//!             match mainloop.iterate(false) {
+//!             match mainloop.borrow_mut().iterate(false) {
 //!                 InterateResult::Quit(_) |
 //!                 InterateResult::Err(_) => {
 //!                     eprintln!("iterate state was not success, quitting...");
@@ -167,7 +181,8 @@
 //!         }
 //!
 //!         // Remember to break out of the loop once done writing all data (or whatever).
-//! #       // Stop test getting stuck in infinite loop!
+//! #
+//! #       // Hack: Stop test getting stuck in infinite loop!
 //! #       count += 1;
 //! #       if count == 3 {
 //! #           break;
@@ -175,15 +190,8 @@
 //!     }
 //!
 //!     // Clean shutdown
-//!     mainloop.quit(Retval(0)); // uncertain whether this is necessary
-//!     stream.disconnect().unwrap();
-//! }
-//! 
-//! extern "C"
-//! fn drain_cb(_: *mut pulse::stream::StreamInternal, _: i32, d: *mut c_void) {
-//!     assert!(!d.is_null());
-//!     let signal: &atomic::AtomicBool = unsafe { transmute(d) };
-//!     signal.store(true, atomic::Ordering::Relaxed);
+//!     mainloop.borrow_mut().quit(Retval(0)); // uncertain whether this is necessary
+//!     stream.borrow_mut().disconnect().unwrap();
 //! }
 //! ```
 //!

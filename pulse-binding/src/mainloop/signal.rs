@@ -28,23 +28,27 @@ use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
 use error::PAErr;
+use capi::pa_signal_event as EventInternal;
 
-pub use capi::pa_signal_event as EventInternal;
-
-/// An opaque UNIX signal event source object
+/// An opaque UNIX signal event source object.
 /// This acts as a safe Rust wrapper for the actual C object.
+/// Note: Saves a copy of the closure callbacks, which it frees on drop.
 pub struct Event {
     /// The actual C object.
     ptr: *mut EventInternal,
+    /// Multi-use callback closure pointers
+    _cb_ptrs: CallbackPointers,
 }
 
-/// Callback prototype for signal events
-pub type SignalCb = extern "C" fn(api: *mut capi::pa_mainloop_api, e: *mut EventInternal, sig: i32,
-    userdata: *mut c_void);
+/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// times), for freeing at the appropriate time.
+#[derive(Default)]
+struct CallbackPointers {
+    _signal: SignalCb,
+}
 
-/// Destroy callback prototype for signal events
-pub type DestroyCb = extern "C" fn(api: *mut capi::pa_mainloop_api, e: *mut EventInternal,
-    userdata: *mut c_void);
+type SignalCb = ::callbacks::MultiUseCallback<FnMut(i32),
+    extern "C" fn(*mut capi::pa_mainloop_api, *mut EventInternal, i32, *mut c_void)>;
 
 impl ::mainloop::api::MainloopApi {
     /// Initialize the UNIX signal subsystem and bind it to the specified main loop
@@ -63,14 +67,15 @@ impl ::mainloop::api::MainloopApi {
 
 impl Event {
     /// Create a new UNIX signal event source object
-    pub fn new(sig: i32, cb: (SignalCb, *mut c_void)) -> Self {
-        Self { ptr: unsafe { capi::pa_signal_new(sig, Some(cb.0), cb.1) }, }
-    }
-
-    /// Set a function that is called when the signal event source is destroyed. Use this to free
-    /// the userdata argument if required
-    pub fn signal_set_destroy(&mut self, callback: DestroyCb) {
-        unsafe { capi::pa_signal_set_destroy(self.ptr, Some(callback)); }
+    ///
+    /// The callback must accept an integer which represents the signal
+    pub fn new<F>(sig: i32, callback: F) -> Self
+        where F: FnMut(i32) + 'static
+    {
+        let saved = SignalCb::new(Some(Box::new(callback)));
+        let (cb_fn, cb_data) = saved.get_capi_params(signal_cb_proxy);
+        let ptr = unsafe { capi::pa_signal_new(sig, cb_fn, cb_data) };
+        Self { ptr: ptr, _cb_ptrs: CallbackPointers { _signal: saved } }
     }
 }
 
@@ -79,4 +84,17 @@ impl Drop for Event {
         unsafe { capi::pa_signal_free(self.ptr) };
         self.ptr = null_mut::<EventInternal>();
     }
+}
+
+/// Proxy for signal callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn signal_cb_proxy(_api: *mut capi::pa_mainloop_api, _e: *mut EventInternal, sig: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(i32)>) };
+    callback(sig);
 }

@@ -21,8 +21,8 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
-
-pub use capi::pa_ext_stream_restore_info as InfoInternal;
+use callbacks::ListResult;
+use capi::pa_ext_stream_restore_info as InfoInternal;
 
 /// Stores information about one entry in the stream database that is maintained by
 /// module-stream-restore.
@@ -48,11 +48,22 @@ impl From<InfoInternal> for Info {
 }
 
 /// A wrapper object providing stream restore routines to a context.
+/// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct StreamRestore {
     context: *mut ContextInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
-    weak: bool,
+    /// Multi-use callback closure pointers
+    cb_ptrs: CallbackPointers,
 }
+
+/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// times), for freeing at the appropriate time.
+#[derive(Default)]
+struct CallbackPointers {
+    subscribe: SubscribeCb,
+}
+
+type SubscribeCb = ::callbacks::MultiUseCallback<FnMut(),
+    extern "C" fn(*mut ContextInternal, *mut c_void)>;
 
 impl Context {
     /// Returns a stream restore object linked to the current context, giving access to stream
@@ -63,60 +74,71 @@ impl Context {
     }
 }
 
-/// Callback prototype for [`test`](struct.StreamRestore.html#method.test).
-pub type TestCb = extern "C" fn(c: *mut ContextInternal, version: u32, userdata: *mut c_void);
-
-/// Callback prototype for [`read`](struct.StreamRestore.html#method.read).
-pub type ReadCb = extern "C" fn(c: *mut ContextInternal, info: *const InfoInternal, eol: i32,
-    userdata: *mut c_void);
-
-/// Callback prototype for [`set_subscribe_cb`](struct.StreamRestore.html#method.set_subscribe_cb).
-pub type SubscribeCb = extern "C" fn(c: *mut ContextInternal, userdata: *mut c_void);
-
 impl StreamRestore {
     /// Create a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: false }
-    }
-
-    /// Create a new `DeviceManager` from an existing
-    /// [`ContextInternal`](../struct.ContextInternal.html) pointer. This is the 'weak' version, for
-    /// use in callbacks, which avoids destroying the internal object when dropped.
-    pub fn from_raw_weak(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: true }
+        Self { context: context, cb_ptrs: Default::default() }
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context, Some(cb.0), cb.1) };
+    pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
+        where F: FnMut(u32) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(u32)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context,
+            Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Read all entries from the stream database.
-    pub fn read(&mut self, cb: (ReadCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(cb.0), cb.1) };
+    pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const Info>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(read_list_cb_proxy),
+            cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Store entries in the stream database.
-    pub fn write(&mut self, mode: ::proplist::UpdateMode, data: &[&Info], apply_immediately: bool,
-        cb: (::context::ContextSuccessCb, *mut c_void)) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn write<F>(&mut self, mode: ::proplist::UpdateMode, data: &[&Info],
+        apply_immediately: bool, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe {
             capi::pa_ext_stream_restore_write(self.context, mode,
                 std::mem::transmute(data.as_ptr()), data.len() as u32, apply_immediately as i32,
-                Some(cb.0), cb.1)
+                Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Delete entries from the stream database.
-    pub fn delete(&mut self, streams: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn delete<F>(&mut self, streams: &[&str], callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -133,34 +155,71 @@ impl StreamRestore {
         }
         c_stream_ptrs.push(null());
 
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_ext_stream_restore_delete(self.context, c_stream_ptrs.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the stream database.
-    pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
-            Some(cb.0), cb.1) };
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
-    pub fn set_subscribe_cb(&mut self, cb: (SubscribeCb, *mut c_void)) {
-        unsafe { capi::pa_ext_stream_restore_set_subscribe_cb(self.context, Some(cb.0), cb.1); }
+    pub fn set_subscribe_cb<F>(&mut self, callback: F)
+        where F: FnMut() + 'static
+    {
+        let saved = &mut self.cb_ptrs.subscribe;
+        *saved = SubscribeCb::new(Some(Box::new(callback)));
+        let (cb_fn, cb_data) = saved.get_capi_params(super::ext_subscribe_cb_proxy);
+        unsafe { capi::pa_ext_stream_restore_set_subscribe_cb(self.context, cb_fn, cb_data); }
     }
 }
 
 impl Drop for StreamRestore {
     fn drop(&mut self) {
-        if !self.weak {
-            unsafe { capi::pa_context_unref(self.context) };
-        }
+        unsafe { capi::pa_context_unref(self.context) };
         self.context = null_mut::<ContextInternal>();
+    }
+}
+
+/// Proxy for read list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<*const Info>)>) };
+            callback(ListResult::Item(i as *const Info));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const Info>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }

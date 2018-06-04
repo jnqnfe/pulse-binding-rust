@@ -20,9 +20,10 @@ use std::ffi::CString;
 use std::os::raw::{c_char, c_void};
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
+use callbacks::ListResult;
 
 pub use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfo;
-pub use capi::pa_ext_device_manager_info as InfoInternal;
+use capi::pa_ext_device_manager_info as InfoInternal;
 
 /// Stores information about one device in the device database that is maintained by
 /// module-device-manager.
@@ -51,11 +52,22 @@ impl From<InfoInternal> for Info {
 }
 
 /// A wrapper object providing device manager routines to a context.
+/// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct DeviceManager {
     context: *mut ContextInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
-    weak: bool,
+    /// Multi-use callback closure pointers
+    cb_ptrs: CallbackPointers,
 }
+
+/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// times), for freeing at the appropriate time.
+#[derive(Default)]
+struct CallbackPointers {
+    subscribe: SubscribeCb,
+}
+
+type SubscribeCb = ::callbacks::MultiUseCallback<FnMut(),
+    extern "C" fn(*mut ContextInternal, *mut c_void)>;
 
 impl Context {
     /// Returns a device manager object linked to the current context, giving access to device
@@ -66,63 +78,75 @@ impl Context {
     }
 }
 
-/// Callback prototype for [`test`](struct.DeviceManager.html#method.test)
-pub type TestCb = extern "C" fn(c: *mut ContextInternal, version: u32, userdata: *mut c_void);
-
-/// Callback prototype for [`read`](struct.DeviceManager.html#method.read).
-pub type ReadCb = extern "C" fn(c: *mut ContextInternal, info: *const InfoInternal, eol: i32,
-    userdata: *mut c_void);
-
-/// Callback prototype for [`set_subscribe_cb`](struct.DeviceManager.html#method.set_subscribe_cb).
-pub type SubscribeCb = extern "C" fn(c: *mut ContextInternal, userdata: *mut c_void);
-
 impl DeviceManager {
     /// Create a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: false }
-    }
-
-    /// Create a new `DeviceManager` from an existing
-    /// [`ContextInternal`](../struct.ContextInternal.html) pointer. This is the 'weak' version, for
-    /// use in callbacks, which avoids destroying the internal object when dropped.
-    pub fn from_raw_weak(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: true }
+        Self { context: context, cb_ptrs: Default::default() }
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_ext_device_manager_test(self.context, Some(cb.0), cb.1) };
+    pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
+        where F: FnMut(u32) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(u32)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_ext_device_manager_test(self.context,
+            Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Read all entries from the device database.
-    pub fn read(&mut self, cb: (ReadCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(cb.0), cb.1) };
+    pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const Info>) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
+            cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Sets the description for a device.
-    pub fn set_device_description(&mut self, device: &str, description: &str,
-        cb: (::context::ContextSuccessCb, *mut c_void)) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F
+        ) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
         let c_dev = CString::new(device.clone()).unwrap();
         let c_desc = CString::new(description.clone()).unwrap();
+
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe {
             capi::pa_ext_device_manager_set_device_description(self.context, c_dev.as_ptr(),
-                c_desc.as_ptr(), Some(cb.0), cb.1)
+                c_desc.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Delete entries from the device database.
-    pub fn delete(&mut self, devices: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -139,27 +163,43 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_ext_device_manager_delete(self.context, c_dev_ptrs.as_ptr(),
-            Some(cb.0), cb.1) };
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Enable the role-based device-priority routing mode.
-    pub fn enable_role_device_priority_routing(&mut self, enable: bool,
-        cb: (::context::ContextSuccessCb, *mut c_void)) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F
+        ) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe {
             capi::pa_ext_device_manager_enable_role_device_priority_routing(self.context,
-                enable as i32, Some(cb.0), cb.1)
+                enable as i32, Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Prefer a given device in the priority list.
-    pub fn reorder_devices_for_role(&mut self, role: &str, devices: &[&str],
-        cb: (::context::ContextSuccessCb, *mut c_void)) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F
+        ) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -177,36 +217,73 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe {
             capi::pa_ext_device_manager_reorder_devices_for_role(self.context, c_role.as_ptr(),
-                c_dev_ptrs.as_ptr(), Some(cb.0), cb.1)
+                c_dev_ptrs.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the device database.
-    pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
-            Some(cb.0), cb.1) };
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
-    pub fn set_subscribe_cb(&mut self, cb: (SubscribeCb, *mut c_void)) {
-        unsafe { capi::pa_ext_device_manager_set_subscribe_cb(self.context, Some(cb.0), cb.1) };
+    pub fn set_subscribe_cb<F>(&mut self, callback: F)
+        where F: FnMut() + 'static
+    {
+        let saved = &mut self.cb_ptrs.subscribe;
+        *saved = SubscribeCb::new(Some(Box::new(callback)));
+        let (cb_fn, cb_data) = saved.get_capi_params(super::ext_subscribe_cb_proxy);
+        unsafe { capi::pa_ext_device_manager_set_subscribe_cb(self.context, cb_fn, cb_data) };
     }
 }
 
 impl Drop for DeviceManager {
     fn drop(&mut self) {
-        if !self.weak {
-            unsafe { capi::pa_context_unref(self.context) };
-        }
+        unsafe { capi::pa_context_unref(self.context) };
         self.context = null_mut::<ContextInternal>();
+    }
+}
+
+/// Proxy for read list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<*const Info>)>) };
+            callback(ListResult::Item(i as *const Info));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const Info>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }

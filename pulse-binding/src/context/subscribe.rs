@@ -26,11 +26,12 @@
 //! [`::context::Context::set_subscribe_callback`].
 //!
 //! The mask provided to [`::context::Context::subscribe`] can be created by binary ORing a set of
-//! values produced with [`facility_to_mask`](fn.facility_to_mask.html).
+//! values, either produced with [`Facility::to_interest_mask`], or more simply with the provided
+//! constants in the [`subscription_masks`] submodule.
 //!
-//! The callback will be called with an [`EventType`] representing the event that caused the
-//! callback. Clients can examine what type of object (facility) changed using [`get_facility`]. The
-//! actual event type can then be extracted with [`get_operation`].
+//! The callback will be called with event type information representing the event that caused the
+//! callback, detailing *facility* and *operation*, where for instance `Facility::Source` with
+//! `Operation::New` indicates that a new source was added.
 //!
 //! # Example
 //!
@@ -48,41 +49,16 @@
 //! );
 //! ```
 //!
-//! A callback:
-//!
-//! ```rust,ignore
-//! use std::os::raw::c_void;
-//! use pulse::context::ContextInternal;
-//! use pulse::context::subscribe::*;
-//!
-//! extern "C"
-//! fn my_subscription_callback(
-//!     _: *mut ContextInternal, // Ignoring context pointer
-//!     t: EventType,            // The combined facility and operation
-//!     _: u32,                  // Ignoring index
-//!     _: *mut c_void)          // Ignoring userdata pointer
-//! {
-//!     if get_facility(t).unwrap() == Facility::Source &&
-//!        get_operation(t).unwrap() == Operation::New
-//!     {
-//!         //... a source was added, let's do stuff! ...
-//!     }
-//! }
-//! ```
-//!
 //! [`Facility`]: enum.Facility.html
 //! [`Operation`]: enum.Operation.html
-//! [`EventType`]: type.EventType.html
-//! [`facility_to_mask`]: fn.facility_to_mask.html
-//! [`get_facility`]: fn.get_facility.html
-//! [`get_operation`]: fn.get_operation.html
+//! [`Facility::to_interest_mask`]: enum.Facility.html#method.to_interest_mask
 //! [`::context::Context::subscribe`]: ../struct.Context.html#method.subscribe
 //! [`::context::Context::set_subscribe_callback`]: ../struct.Context.html#method.set_subscribe_callback
+//! [`subscription_masks`]: subscription_masks/index.html
 
 use capi;
 use std::os::raw::c_void;
-use super::{ContextInternal, Context, ContextSuccessCb};
-use ::util::unwrap_optional_callback;
+use super::{ContextInternal, Context};
 
 pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 pub use capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK as FACILITY_MASK;
@@ -111,9 +87,7 @@ pub mod subscription_masks {
     pub const ALL: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_ALL;
 }
 
-/// Facility variants for an `EventType`.
-/// You can extract the facility portion of the `EventType` value using
-/// [`get_facility`](fn.get_facility.html).
+/// Facility component of an event.
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Facility {
@@ -131,9 +105,7 @@ pub enum Facility {
     Card = 9,
 }
 
-/// Operation variants for an `EventType`.
-/// You can extract the operation portion of the `EventType` value using
-/// [`get_operation`](fn.get_operation.html).
+/// Operation component of an event.
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Operation {
@@ -146,7 +118,7 @@ pub enum Operation {
 }
 
 impl Facility {
-    pub fn from_int(value: u32) -> Option<Facility> {
+    fn from_int(value: u32) -> Option<Facility> {
         match value {
             0 => Some(Facility::Sink),
             1 => Some(Facility::Source),
@@ -161,10 +133,15 @@ impl Facility {
             _ => None,
         }
     }
+
+    /// Convert to an interest mask
+    pub fn to_interest_mask(self) -> InterestMaskSet {
+        1u32 << (self as u32)
+    }
 }
 
 impl Operation {
-    pub fn from_int(value: u32) -> Option<Operation> {
+    fn from_int(value: u32) -> Option<Operation> {
         match value {
             0 => Some(Operation::New),
             0x10 => Some(Operation::Changed),
@@ -174,39 +151,36 @@ impl Operation {
     }
 }
 
-/// Convert facility to mask
-pub fn facility_to_mask(f: Facility) -> InterestMaskSet {
-    1u32 << (f as u32)
-}
-
-/// Combine facility and operation to form an `EventType` value.
-pub fn make_eventtype(f: Facility, o: Operation) -> EventType {
-    (f as EventType) | (o as EventType)
-}
-
 /// Extract facility from `EventType` value
-pub fn get_facility(value: EventType) -> Option<Facility> {
+fn get_facility(value: EventType) -> Option<Facility> {
     Facility::from_int((value & FACILITY_MASK) as u32)
 }
 
 /// Extract operation from `EventType` value
-pub fn get_operation(value: EventType) -> Option<Operation> {
+fn get_operation(value: EventType) -> Option<Operation> {
     Operation::from_int((value & OPERATION_MASK) as u32)
 }
 
-/// Subscription event callback prototype
-pub type Callback = extern "C" fn(c: *mut ContextInternal, t: EventType, idx: u32,
-    userdata: *mut c_void);
+pub(super) type Callback = ::callbacks::MultiUseCallback<FnMut(Option<Facility>, Option<Operation>,
+    u32), extern "C" fn(*mut ContextInternal, EventType, u32, *mut c_void)>;
 
 impl Context {
     /// Enable event notification.
     /// The `mask` parameter is used to specify which facilities you are interested in being
     /// modified about. Use [`set_subscribe_callback`](#method.set_subscribe_callback) to set the
     /// actual callback that will be called when an event occurs.
-    pub fn subscribe(&mut self, mask: InterestMaskSet, cb: (ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
-        let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(super::success_cb_proxy),
+            cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
@@ -215,8 +189,33 @@ impl Context {
     /// occurs. Use [`subscribe`](#method.subscribe) to set the facilities you are interested in
     /// recieving notifications for, and thus to start receiving notifications with the callback set
     /// here.
-    pub fn set_subscribe_callback(&mut self, cb: Option<(Callback, *mut c_void)>) {
-        let (cb_f, cb_d) = unwrap_optional_callback::<Callback>(cb);
-        unsafe { capi::pa_context_set_subscribe_callback(self.ptr, cb_f, cb_d); }
+    ///
+    /// The callback must take three parameters. The first two are the facility and operation
+    /// components of the event type respectively (the underlying C API provides this information
+    /// combined into a single integer, here we extract the two component parts for you); these are
+    /// wrapped in `Option` wrappers should the given values ever not map to the enum variants, but
+    /// it's probably safe to always just `unwrap()` them). The third parameter is an associated
+    /// index value.
+    pub fn set_subscribe_callback(&mut self,
+        callback: Option<Box<FnMut(Option<Facility>, Option<Operation>, u32) + 'static>>)
+    {
+        let saved = &mut self.cb_ptrs.subscribe;
+        *saved = Callback::new(callback);
+        let (cb_fn, cb_data) = saved.get_capi_params(cb_proxy);
+        unsafe { capi::pa_context_set_subscribe_callback(self.ptr, cb_fn, cb_data); }
     }
+}
+
+/// Proxy for callbacks.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn cb_proxy(_: *mut ContextInternal, et: EventType, index: u32, userdata: *mut c_void) {
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(Option<Facility>,
+        Option<Operation>, u32)>) };
+    let facility = get_facility(et);
+    let operation = get_operation(et);
+    callback(facility, operation, index);
 }

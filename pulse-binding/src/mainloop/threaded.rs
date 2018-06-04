@@ -60,15 +60,17 @@
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
 //!
+//! use std::rc::Rc;
+//! use std::cell::RefCell;
 //! use pulse::mainloop::threaded::Mainloop;
 //! use pulse::stream:{Stream, State};
 //!
-//! fn my_check_stream_func(m: &Mainloop, s: &Stream) {
-//!     m.lock();
+//! fn check_stream(m: Rc<RefCell<Mainloop>>, s: Rc<RefCell<Stream>>) {
+//!     m.borrow_mut().lock();
 //!
-//!     let state = s.get_state();
+//!     let state = s.borrow().get_state();
 //!
-//!     m.unlock();
+//!     m.borrow_mut().unlock();
 //!
 //!     match state {
 //!         State::Ready => { printf!("Stream is ready!"); },
@@ -96,35 +98,31 @@
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
 //!
-//! use std::os::raw::c_void;
-//! use std::mem::transmute;
+//! use std::rc::Rc;
+//! use std::cell::RefCell;
 //! use pulse::mainloop::threaded::Mainloop;
 //! use pulse::operation::State;
 //! use pulse::stream:Stream;
 //!
-//! fn my_drain_stream_func(m: &mut Mainloop, s: &Stream) {
-//!     m.lock();
+//! fn drain_stream(m: Rc<RefCell<Mainloop>>, s: Rc<RefCell<Stream>>) {
+//!     m.borrow_mut().lock();
 //!
-//!     let o = s.drain(Some((my_drain_callback,
-//!         unsafe { transmute(m) }))).unwrap();
-//!
-//!     while o.get_state() == State::Running {
-//!         m.wait();
+//!     // Drain
+//!     let o = {
+//!         let ml_ref = Rc::clone(&m);
+//!         s.borrow_mut().drain(Some(Box::new(move |_success: bool| {
+//!             unsafe { (*ml_ref.as_ptr()).signal(false); }
+//!         })))
+//!     };
+//!     while o.get_state() != pulse::operation::State::Done {
+//!         m.borrow_mut().wait();
 //!     }
 //!
-//!     m.unlock();
-//! }
-//!
-//! extern "C"
-//! fn my_drain_callback(_: *mut pulse::stream::StreamInternal, _: i32, userdata: *mut c_void) {
-//!     assert!(!userdata.is_null());
-//!     let m: &Mainloop = unsafe { transmute(userdata) };
-//!     m.signal(false);
+//!     m.borrow_mut().unlock();
 //! }
 //! ```
 //!
-//! The function `my_drain_stream_func` will wait for the callback to be called using
-//! [`Mainloop::wait`].
+//! The function `drain_stream` will wait for the callback to be called using [`Mainloop::wait`].
 //!
 //! If your application is multi-threaded, then this waiting must be done inside a while loop. The
 //! reason for this is that multiple threads might be using [`Mainloop::wait`] at the same time.
@@ -152,45 +150,40 @@
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
 //!
-//! use std::os::raw::c_void;
-//! use std::mem::transmute;
+//! use std::rc::Rc;
+//! use std::cell::RefCell;
 //! use pulse::mainloop::threaded::Mainloop;
 //! use pulse::stream:Stream;
 //!
-//! struct DrainCbData<'a>(&'a Mainloop, Option<&mut i32>);
+//! struct DrainCbData(Option<&mut bool>);
 //!
-//! fn my_drain_stream_func(m: &Mainloop, s: &mut Stream) {
-//!     m.lock();
+//! fn drain_stream(m: Rc<RefCell<Mainloop>>, s: Rc<RefCell<Stream>>) {
+//!     m.borrow_mut().lock();
 //!
-//!     let mut data = DrainCbData(m, None);
+//!     let mut data = DrainCbData(None);
 //!
-//!     let o = s.drain(Some((my_drain_callback,
-//!         unsafe { transmute(&mut data) }))).unwrap();
-//!
-//!     while o.get_state() == State::Running {
-//!         m.wait();
+//!     // Drain
+//!     let o = {
+//!         let ml_ref = Rc::clone(&m);
+//!         s.borrow_mut().drain(Some(Box::new(move |success: bool| {
+//!             data.0 = Some(&mut success);
+//!             unsafe { (*ml_ref.as_ptr()).signal(true); }
+//!         })))
+//!     };
+//!     while o.get_state() != pulse::operation::State::Done {
+//!         m.borrow_mut().wait();
 //!     }
 //!
-//!     assert!(!data.1.is_none());
-//!     let success = *(data.1.take());
-//!     m.accept(); // Allow callback to continue now
+//!     assert!(!data.0.is_none());
+//!     let success = *(data.0.take());
+//!     m.borrow_mut().accept(); // Allow callback to continue now
 //!
 //!     match success {
 //!         0 => { println!("Bitter defeat..."); },
 //!         _ => { println!("Success!"); },
 //!     }
 //!
-//!     m.unlock();
-//! }
-//!
-//! extern "C"
-//! fn my_drain_callback(_: *mut pulse::stream::StreamInternal,
-//!     success: mut i32, userdata: *mut c_void)
-//! {
-//!     assert!(!userdata.is_null());
-//!     let data: &mut DrainCbData = unsafe { transmute(userdata) };
-//!     data.1 = Some(&mut success);
-//!     data.0.signal(true); // Signal and wait
+//!     m.borrow_mut().unlock();
 //! }
 //! ```
 //!
@@ -226,9 +219,12 @@
 //! ```rust
 //! extern crate libpulse_binding as pulse;
 //!
-//! use std::os::raw::c_void;
-//! use std::mem::transmute;
+//! use std::rc::Rc;
+//! use std::cell::RefCell;
 //! use pulse::mainloop::threaded::Mainloop;
+//! use pulse::context::Context;
+//! use pulse::stream::Stream;
+//! use pulse::proplist::Proplist;
 //! use pulse::mainloop::api::Mainloop as MainloopTrait; //Needs to be in scope
 //!
 //! fn main() {
@@ -239,140 +235,142 @@
 //!     };
 //!     assert!(spec.is_valid());
 //!
-//!     let mut proplist = pulse::proplist::Proplist::new().unwrap();
+//!     let mut proplist = Proplist::new().unwrap();
 //!     proplist.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp")
 //!         .unwrap();
 //!
-//!     let mut mainloop = Mainloop::new().unwrap();
+//!     let mut mainloop = Rc::new(RefCell::new(Mainloop::new()
+//!         .expect("Failed to create mainloop")));
 //!
-//!     let mut context = pulse::context::Context::new_with_proplist(
-//!         mainloop.get_api(),
+//!     let mut context = Rc::new(RefCell::new(Context::new_with_proplist(
+//!         mainloop.borrow().get_api(),
 //!         "FooAppContext",
 //!         &proplist
-//!         ).unwrap();
+//!         ).expect("Failed to create new context")));
 //!
-//!     context.set_state_callback(Some((context_state_change_cb,
-//!         unsafe { transmute(&mut mainloop) })));
+//!     // Context state change callback
+//!     {
+//!         let ml_ref = Rc::clone(&mainloop);
+//!         let context_ref = Rc::clone(&context);
+//!         context.borrow_mut().set_state_callback(Some(Box::new(move || {
+//!             let state = unsafe { (*context_ref.as_ptr()).get_state() };
+//!             match state {
+//!                 pulse::context::State::Ready |
+//!                 pulse::context::State::Failed |
+//!                 pulse::context::State::Terminated => {
+//!                     unsafe { (*ml_ref.as_ptr()).signal(false); }
+//!                 },
+//!                 _ => {},
+//!             }
+//!         })));
+//!     }
 //!
-//!     context.connect(None, pulse::context::flags::NOFLAGS, None).unwrap();
+//!     context.borrow_mut().connect(None, pulse::context::flags::NOFLAGS, None)
+//!         .expect("Failed to connect context");
 //!
-//!     mainloop.lock();
-//!     mainloop.start().unwrap();
+//!     mainloop.borrow_mut().lock();
+//!     mainloop.borrow_mut().start().expect("Failed to start mainloop");
 //!
 //!     // Wait for context to be ready
 //!     loop {
-//!         match context.get_state() {
+//!         match context.borrow().get_state() {
 //!             pulse::context::State::Ready => { break; },
 //!             pulse::context::State::Failed |
 //!             pulse::context::State::Terminated => {
 //!                 eprintln!("context state failed/terminated, quitting...");
-//!                 mainloop.unlock();
-//!                 mainloop.stop();
+//!                 mainloop.borrow_mut().unlock();
+//!                 mainloop.borrow_mut().stop();
 //!                 return;
 //!             },
-//!             _ => { mainloop.wait(); },
+//!             _ => { mainloop.borrow_mut().wait(); },
 //!         }
 //!     }
-//!     context.set_state_callback(None);
+//!     context.borrow_mut().set_state_callback(None);
 //!
-//!     let mut stream = pulse::stream::Stream::new(&mut context, "Music", &spec,
-//!         None).unwrap();
+//!     let mut stream = Rc::new(RefCell::new(Stream::new(
+//!         &mut context.borrow_mut(),
+//!         "Music",
+//!         &spec,
+//!         None
+//!         ).expect("Failed to create new stream")));
 //!
-//!     stream.set_state_callback(Some((stream_state_change_cb,
-//!         unsafe { transmute(&mut mainloop) })));
+//!     // Stream state change callback
+//!     {
+//!         let ml_ref = Rc::clone(&mainloop);
+//!         let stream_ref = Rc::clone(&stream);
+//!         stream.borrow_mut().set_state_callback(Some(Box::new(move || {
+//!             let state = unsafe { (*stream_ref.as_ptr()).get_state() };
+//!             match state {
+//!                 pulse::stream::State::Ready |
+//!                 pulse::stream::State::Failed |
+//!                 pulse::stream::State::Terminated => {
+//!                     unsafe { (*ml_ref.as_ptr()).signal(false); }
+//!                 },
+//!                 _ => {},
+//!             }
+//!         })));
+//!     }
 //!
-//!     stream.connect_playback(None, None, pulse::stream::flags::START_CORKED,
-//!         None, None).unwrap();
+//!     stream.borrow_mut().connect_playback(None, None, pulse::stream::flags::START_CORKED,
+//!         None, None).expect("Failed to connect playback");
 //!
 //!     // Wait for stream to be ready
 //!     loop {
-//!         match stream.get_state() {
+//!         match stream.borrow().get_state() {
 //!             pulse::stream::State::Ready => { break; },
 //!             pulse::stream::State::Failed |
 //!             pulse::stream::State::Terminated => {
 //!                 eprintln!("stream state failed/terminated, quitting...");
-//!                 mainloop.unlock();
-//!                 mainloop.stop();
+//!                 mainloop.borrow_mut().unlock();
+//!                 mainloop.borrow_mut().stop();
 //!                 return;
 //!             },
-//!             _ => { mainloop.wait(); },
+//!             _ => { mainloop.borrow_mut().wait(); },
 //!         }
 //!     }
-//!     stream.set_state_callback(None);
+//!     stream.borrow_mut().set_state_callback(None);
 //!
-//!     mainloop.unlock();
+//!     mainloop.borrow_mut().unlock();
 //!
 //!     // Our main loop
 //! #   let mut count = 0; // For automatic unit tests, we'll spin a few times
 //!     loop {
-//!         mainloop.lock();
+//!         mainloop.borrow_mut().lock();
 //!
 //!         // Write some data with stream.write()
 //!
-//!         if stream.is_corked().unwrap() {
-//!             stream.uncork(None);
+//!         if stream.borrow().is_corked().unwrap() {
+//!             stream.borrow_mut().uncork(None);
 //!         }
 //!
-//!         let o = stream.drain(Some((drain_cb,
-//!             unsafe { transmute(&mainloop) }))).unwrap();
-//!         while o.get_state() == pulse::operation::State::Running {
-//!             mainloop.wait();
+//!         // Drain
+//!         let o = {
+//!             let ml_ref = Rc::clone(&mainloop);
+//!             stream.borrow_mut().drain(Some(Box::new(move |_success: bool| {
+//!                 unsafe { (*ml_ref.as_ptr()).signal(false); }
+//!             })))
+//!         };
+//!         while o.get_state() != pulse::operation::State::Done {
+//!             mainloop.borrow_mut().wait();
 //!         }
 //!
-//!         mainloop.unlock();
+//!         mainloop.borrow_mut().unlock();
 //!
-//!         // If done writing data, call mainloop.stop() (with lock released), then break!
-//! #       // Stop test getting stuck in infinite loop!
+//!         // If done writing data, call `mainloop.borrow_mut().stop()` (with lock released), then
+//!         // break!
+//! # 
+//! #       // Hack: Stop test getting stuck in infinite loop!
 //! #       count += 1;
 //! #       if count == 3 {
-//! #           mainloop.stop();
+//! #           mainloop.borrow_mut().stop();
 //! #           break;
 //! #       }
 //!     }
 //!
 //!     // Clean shutdown
-//!     mainloop.lock();
-//!     stream.disconnect().unwrap();
-//!     mainloop.unlock();
-//! }
-//!
-//! extern "C"
-//! fn context_state_change_cb(context: *mut pulse::context::ContextInternal, data: *mut c_void) {
-//!     assert_eq!(false, data.is_null());
-//!     let context = pulse::context::Context::from_raw_weak(context);
-//!     let state = context.get_state();
-//!     let mainloop: &mut Mainloop = unsafe { transmute(data) };
-//!     match state {
-//!         pulse::context::State::Ready |
-//!         pulse::context::State::Failed |
-//!         pulse::context::State::Terminated => {
-//!             mainloop.signal(false);
-//!         },
-//!         _ => {},
-//!     }
-//! }
-//!
-//! extern "C"
-//! fn stream_state_change_cb(stream: *mut pulse::stream::StreamInternal, data: *mut c_void) {
-//!     assert_eq!(false, data.is_null());
-//!     let stream = pulse::stream::Stream::from_raw_weak(stream);
-//!     let state = stream.get_state();
-//!     let mainloop: &mut Mainloop = unsafe { transmute(data) };
-//!     match state {
-//!         pulse::stream::State::Ready |
-//!         pulse::stream::State::Failed |
-//!         pulse::stream::State::Terminated => {
-//!             mainloop.signal(false);
-//!         },
-//!         _ => {},
-//!     }
-//! }
-//!
-//! extern "C"
-//! fn drain_cb(_: *mut pulse::stream::StreamInternal, _: i32, data: *mut c_void) {
-//!     assert_eq!(false, data.is_null());
-//!     let mainloop: &mut Mainloop = unsafe { transmute(data) };
-//!     mainloop.signal(false);
+//!     mainloop.borrow_mut().lock();
+//!     stream.borrow_mut().disconnect().unwrap();
+//!     mainloop.borrow_mut().unlock();
 //! }
 //! ```
 //!

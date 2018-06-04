@@ -210,8 +210,8 @@ impl Proplist {
     }
 
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
-    /// pointer. This is the 'weak' version, for use in callbacks, which avoids destroying the
-    /// internal object when dropped.
+    /// pointer. This is the 'weak' version, which avoids destroying the internal object when
+    /// dropped.
     pub fn from_raw_weak(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: true }

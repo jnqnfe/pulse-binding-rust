@@ -121,6 +121,7 @@
 extern crate libc;
 extern crate libpulse_sys as capi;
 
+pub mod callbacks;
 pub mod channelmap;
 pub mod context;
 pub mod def;

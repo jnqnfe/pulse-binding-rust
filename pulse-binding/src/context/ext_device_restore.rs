@@ -20,8 +20,8 @@ use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
 use super::{ContextInternal, Context};
-
-pub use capi::pa_ext_device_restore_info as InfoInternal;
+use callbacks::ListResult;
+use capi::pa_ext_device_restore_info as InfoInternal;
 
 /// Stores information about one device in the device database that is maintained by
 /// module-device-manager.
@@ -44,11 +44,22 @@ impl From<InfoInternal> for Info {
 }
 
 /// A wrapper object providing device restore routines to a context.
+/// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct DeviceRestore {
     context: *mut ContextInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
-    weak: bool,
+    /// Multi-use callback closure pointers
+    cb_ptrs: CallbackPointers,
 }
+
+/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// times), for freeing at the appropriate time.
+#[derive(Default)]
+struct CallbackPointers {
+    subscribe: SubscribeCb,
+}
+
+type SubscribeCb = ::callbacks::MultiUseCallback<FnMut(::def::Device, u32),
+    extern "C" fn(*mut ContextInternal, ::def::Device, u32, *mut c_void)>;
 
 impl Context {
     /// Returns a device restore object linked to the current context, giving access to device
@@ -59,78 +70,103 @@ impl Context {
     }
 }
 
-/// Callback prototype for [`test`](struct.DeviceRestore.html#method.test).
-pub type TestCb = extern "C" fn(c: *mut ContextInternal, version: u32, userdata: *mut c_void);
-
-/// Callback prototype for [`set_subscribe_cb`](struct.DeviceRestore.html#method.set_subscribe_cb).
-pub type SubscribeCb = extern "C" fn(c: *mut ContextInternal,
-    type_: ::def::Device, idx: u32, userdata: *mut c_void);
-
-/// Callback prototype for [`read_formats`](struct.DeviceRestore.html#method.read_formats).
-pub type ReadDevFormatsCb = extern "C" fn(c: *mut ContextInternal, info: *const InfoInternal,
-    eol: i32, userdata: *mut c_void);
-
 impl DeviceRestore {
     /// Create a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: false }
-    }
-
-    /// Create a new `DeviceManager` from an existing
-    /// [`ContextInternal`](../struct.ContextInternal.html) pointer. This is the 'weak' version, for
-    /// use in callbacks, which avoids destroying the internal object when dropped.
-    pub fn from_raw_weak(context: *mut ContextInternal) -> Self {
-        Self { context: context, weak: true }
+        Self { context: context, cb_ptrs: Default::default() }
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> ::operation::Operation {
-        let ptr = unsafe { capi::pa_ext_device_restore_test(self.context, Some(cb.0), cb.1) };
+    ///
+    /// The callback must accept an integer, which indicates version.
+    pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
+        where F: FnMut(u32) + 'static
+    {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(u32)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_ext_device_restore_test(self.context,
+            Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the device database.
-    pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
-            Some(cb.0), cb.1) };
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
-    pub fn set_subscribe_cb(&mut self, cb: (SubscribeCb, *mut c_void)) {
-        unsafe { capi::pa_ext_device_restore_set_subscribe_cb(self.context, Some(cb.0), cb.1); }
+    ///
+    /// The callback must accept two parameters, firstly a [`::def::Device`] variant, and secondly an
+    /// integer index.
+    ///
+    /// [`::def::Device`]: ../../def/enum.Device.html
+    pub fn set_subscribe_cb<F>(&mut self, callback: F)
+        where F: FnMut(::def::Device, u32) + 'static
+    {
+        let saved = &mut self.cb_ptrs.subscribe;
+        *saved = SubscribeCb::new(Some(Box::new(callback)));
+        let (cb_fn, cb_data) = saved.get_capi_params(ext_subscribe_cb_proxy);
+        unsafe { capi::pa_ext_device_restore_set_subscribe_cb(self.context, cb_fn, cb_data); }
     }
 
     /// Read the formats for all present devices from the device database.
-    pub fn read_formats_all(&mut self, cb: (ReadDevFormatsCb, *mut c_void)
-        ) -> ::operation::Operation
+    pub fn read_formats_all<F>(&mut self, callback: F) -> ::operation::Operation
+        where F: FnMut(ListResult<*const Info>) + 'static
     {
-        let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context, Some(cb.0),
-            cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context,
+            Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Read an entry from the device database.
-    pub fn read_formats(&mut self, type_: ::def::Device, idx: u32,
-        cb: (ReadDevFormatsCb, *mut c_void)) -> ::operation::Operation
+    pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F
+        ) -> ::operation::Operation
+        where F: FnMut(ListResult<*const Info>) + 'static
     {
-        let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, idx,
-            Some(cb.0), cb.1) };
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+                Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
+        let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, index,
+            Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
     }
 
     /// Read an entry from the device database.
-    pub fn save_formats(&mut self, type_: ::def::Device, idx: u32,
-        formats: &mut [&mut ::format::Info], cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> ::operation::Operation
+    ///
+    /// The callback must accept a `bool`, which indicates success.
+    pub fn save_formats<F>(&mut self, type_: ::def::Device, index: u32,
+        formats: &mut [&mut ::format::Info], callback: F) -> ::operation::Operation
+        where F: FnMut(bool) + 'static
     {
         // Capture array of pointers to the above ::format::InfoInternal objects
         let mut format_ptrs: Vec<*mut capi::pa_format_info> = Vec::with_capacity(formats.len());
@@ -138,9 +174,15 @@ impl DeviceRestore {
             format_ptrs.push(unsafe { std::mem::transmute(&format.ptr) });
         }
 
+        let cb_data: *mut c_void = {
+            // WARNING: Type must be explicit here, else compiles but seg faults :/
+            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
+            boxed as *mut c_void
+        };
         let ptr = unsafe {
-            capi::pa_ext_device_restore_save_formats(self.context, type_, idx,
-                format_ptrs.len() as u8, format_ptrs.as_ptr(), Some(cb.0), cb.1)
+            capi::pa_ext_device_restore_save_formats(self.context, type_, index,
+                format_ptrs.len() as u8, format_ptrs.as_ptr(), Some(super::success_cb_proxy),
+                cb_data)
         };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -149,9 +191,42 @@ impl DeviceRestore {
 
 impl Drop for DeviceRestore {
     fn drop(&mut self) {
-        if !self.weak {
-            unsafe { capi::pa_context_unref(self.context) };
-        }
+        unsafe { capi::pa_context_unref(self.context) };
         self.context = null_mut::<ContextInternal>();
+    }
+}
+
+/// Proxy for the extention subscribe callback.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+extern "C"
+fn ext_subscribe_cb_proxy(_: *mut ContextInternal, type_: ::def::Device, index: u32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    // Note, does NOT destroy closure callback after use - only handles pointer
+    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(::def::Device, u32)>) };
+    callback(type_, index);
+}
+
+/// Proxy for read list callbacks.
+/// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
+extern "C"
+fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
+    userdata: *mut c_void)
+{
+    assert!(!userdata.is_null());
+    match eol {
+        0 => { // Give item to real callback, do NOT destroy it
+            assert!(!i.is_null());
+            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<*const Info>)>) };
+            callback(ListResult::Item(i as *const Info));
+        },
+        _ => { // End-of-list or failure, signal to real callback, do now destroy it
+            let mut callback = unsafe {
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const Info>)>)
+            };
+            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
+        },
     }
 }
