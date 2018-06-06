@@ -411,67 +411,57 @@ impl Introspector {
     /// Get information about a sink by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_by_name(&self, name: &str,
-        cb: (SinkInfoCb, *mut c_void)) -> Option<::operation::Operation>
+    pub fn get_sink_info_by_name(&self, name: &str, cb: (SinkInfoCb, *mut c_void)
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_get_sink_info_by_name(self.context, c_name.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get information about a sink by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_index(&self, idx: u32, cb: (SinkInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_sink_info_by_index(self.context, idx, Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete sink list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_list(&self, cb: (SinkInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_sink_info_list(&self, cb: (SinkInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_sink_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the volume of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_volume_by_index(&mut self, idx: u32, volume: &::volume::CVolume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, idx,
             std::mem::transmute(volume), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the volume of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::CVolume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -479,32 +469,28 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_name(self.context, c_name.as_ptr(),
             std::mem::transmute(volume), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the mute switch of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_mute_by_index(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_index(self.context, idx, mute as i32,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the mute switch of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_mute_by_name(&mut self, name: &str, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -512,17 +498,15 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Suspend/Resume a sink.
     /// 
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn suspend_sink_by_name(&mut self, sink_name: &str, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -530,10 +514,8 @@ impl Introspector {
         let c_name = CString::new(sink_name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_suspend_sink_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Suspend/Resume a sink.
@@ -541,22 +523,20 @@ impl Introspector {
     /// If `idx` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
     /// be suspended. Returns `None` on error, i.e. invalid arguments or state.
     pub fn suspend_sink_by_index(&mut self, idx: u32, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_index(self.context, idx, suspend as i32,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the profile of a sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_port_by_index(&mut self, idx: u32, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -564,17 +544,15 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_sink_port_by_index(self.context, idx,
             c_port.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the profile of a sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_port_by_name(&mut self, name: &str, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -583,10 +561,8 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_sink_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -704,66 +680,56 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_name(&self, name: &str, cb: (SourceInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_get_source_info_by_name(self.context, c_name.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get information about a source by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_index(&self, idx: u32, cb: (SourceInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_source_info_by_index(self.context, idx, Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete source list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_source_info_list(&self, cb: (SourceInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_source_info_list(&self, cb: (SourceInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_source_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the volume of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_volume_by_index(&mut self, idx: u32, volume: &::volume::CVolume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, idx,
             std::mem::transmute(volume), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the volume of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::CVolume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -771,32 +737,28 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context, c_name.as_ptr(),
             std::mem::transmute(volume), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the mute switch of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_mute_by_index(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_index(self.context, idx, mute as i32,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the mute switch of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_mute_by_name(&mut self, name: &str, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -804,17 +766,15 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_source_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Suspend/Resume a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn suspend_source_by_name(&mut self, name: &str, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -822,10 +782,8 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_suspend_source_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Suspend/Resume a source.
@@ -833,22 +791,20 @@ impl Introspector {
     /// If `idx` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
     /// will be suspended. Returns `None` on error, i.e. invalid arguments or state.
     pub fn suspend_source_by_index(&mut self, idx: u32, suspend: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_suspend_source_by_index(self.context, idx,
             suspend as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the profile of a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_port_by_index(&mut self, idx: u32, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -856,17 +812,15 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_source_port_by_index(self.context, idx,
             c_port.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the profile of a source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_port_by_name(&mut self, name: &str, port: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -875,10 +829,8 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_source_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -933,14 +885,10 @@ impl Introspector {
     /// Get some information about the server.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_server_info(&self, cb: (ServerInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_server_info(&self, cb: (ServerInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_server_info(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -994,33 +942,27 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_module_info(&self, idx: u32, cb: (ModuleInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_module_info(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete list of currently loaded modules.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_module_info_list(&self, cb: (ModuleInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_module_info_list(&self, cb: (ModuleInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_module_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Load a module.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn load_module(&mut self, name: &str, argument: &str, cb: (ContextIndexCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1028,23 +970,19 @@ impl Introspector {
         let c_arg = CString::new(argument.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_load_module(self.context, c_name.as_ptr(),
             c_arg.as_ptr(), Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Unload a module.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn unload_module(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_unload_module(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -1092,39 +1030,31 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_client_info(&self, idx: u32, cb: (ClientInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_client_info(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete client list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_client_info_list(&self, cb: (ClientInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_client_info_list(&self, cb: (ClientInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_client_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Kill a client.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn kill_client(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_kill_client(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -1234,51 +1164,43 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_index(&self, idx: u32, cb: (CardInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_card_info_by_index(self.context, idx,
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get information about a card by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_name(&self, name: &str, cb: (CardInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_get_card_info_by_name(self.context, c_name.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete card list.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_card_info_list(&self, cb: (CardInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_card_info_list(&self, cb: (CardInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_card_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the profile of a card.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_card_profile_by_index(&mut self, idx: u32, profile: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1286,17 +1208,15 @@ impl Introspector {
         let c_profile = CString::new(profile.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_card_profile_by_index(self.context, idx,
             c_profile.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the profile of a card.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_card_profile_by_name(&mut self, name: &str, profile: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1305,17 +1225,15 @@ impl Introspector {
         let c_profile = CString::new(profile.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_card_profile_by_name(self.context, c_name.as_ptr(),
             c_profile.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the latency offset of a port.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_port_latency_offset(&mut self, card_name: &str, port_name: &str, offset: i64,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1324,10 +1242,8 @@ impl Introspector {
         let c_port = CString::new(port_name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_port_latency_offset(self.context, c_name.as_ptr(),
             c_port.as_ptr(), offset, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -1409,32 +1325,28 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info(&self, idx: u32, cb: (SinkInputInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_sink_input_info(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete sink input list.
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info_list(&self, cb: (SinkInputInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_sink_input_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Move the specified sink input to a different sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn move_sink_input_by_name(&mut self, idx: u32, sink_name: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1443,68 +1355,58 @@ impl Introspector {
 
         let ptr = unsafe { capi::pa_context_move_sink_input_by_name(self.context, idx,
             c_name.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Move the specified sink input to a different sink.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn move_sink_input_by_index(&mut self, idx: u32, sink_idx: u32,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_index(self.context, idx, sink_idx,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the volume of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_input_volume(&mut self, idx: u32, volume: &::volume::CVolume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, idx,
             std::mem::transmute(volume), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the mute switch of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_sink_input_mute(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_sink_input_mute(self.context, idx, mute as i32,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Kill a sink input.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn kill_sink_input(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_kill_sink_input(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -1586,35 +1488,31 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_output_info(&self, idx: u32, cb: (SourceOutputInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_source_output_info(self.context, idx, Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete list of source outputs.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_output_info_list(&self, cb: (SourceOutputInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_source_output_info_list(self.context, Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Move the specified source output to a different source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn move_source_output_by_name(&mut self, idx: u32, source_name: &str,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1622,68 +1520,58 @@ impl Introspector {
         let c_name = CString::new(source_name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_move_source_output_by_name(self.context, idx,
             c_name.as_ptr(), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Move the specified source output to a different source.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn move_source_output_by_index(&mut self, idx: u32, source_idx: u32,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_move_source_output_by_index(self.context, idx,
             source_idx, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the volume of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_output_volume(&mut self, idx: u32, volume: &::volume::CVolume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, idx,
             std::mem::transmute(volume), cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the mute switch of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn set_source_output_mute(&mut self, idx: u32, mute: bool,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         let ptr = unsafe { capi::pa_context_set_source_output_mute(self.context, idx, mute as i32,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Kill a source output.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn kill_source_output(&mut self, idx: u32, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_kill_source_output(self.context, idx, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -1699,12 +1587,10 @@ impl Introspector {
     /// Get daemon memory block statistics.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn stat(&self, cb: (StatInfoCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn stat(&self, cb: (StatInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_stat(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }
 
@@ -1763,43 +1649,35 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_name(&self, name: &str, cb: (SampleInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_get_sample_info_by_name(self.context, c_name.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get information about a sample by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_index(&self, idx: u32, cb: (SampleInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_get_sample_info_by_index(self.context, idx, Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Get the complete list of samples stored in the daemon.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn get_sample_info_list(&self, cb: (SampleInfoCb, *mut c_void)
-        ) -> Option<::operation::Operation>
-    {
+    pub fn get_sample_info_list(&self, cb: (SampleInfoCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_context_get_sample_info_list(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }

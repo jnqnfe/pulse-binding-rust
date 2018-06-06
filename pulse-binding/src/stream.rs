@@ -1094,13 +1094,11 @@ impl Stream {
     ///
     /// Use this for notification when the playback buffer is empty after playing all the audio in
     /// the buffer. Please note that only one drain operation per stream may be issued at a time.
-    pub fn drain(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn drain(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Request a timing info structure update for a stream.
@@ -1112,14 +1110,12 @@ impl Stream {
     /// [`get_time`]: #method.get_time
     /// [`get_latency`]: #method.get_latency
     pub fn update_timing_info(&mut self, cb: Option<(SuccessCb, *mut c_void)>
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_update_timing_info(self.ptr, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the callback function that is called whenever the state of the stream changes.
@@ -1234,13 +1230,11 @@ impl Stream {
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn cork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn cork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Resume playback of this stream.
@@ -1254,39 +1248,33 @@ impl Stream {
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn uncork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn uncork(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Flush the playback or record buffer of this stream.
     ///
     /// This discards any audio data in the buffer. Most of the time you're better off using the
     /// parameter `seek` of [`write`](#method.write) instead of this function.
-    pub fn flush(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn flush(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Reenable prebuffering if specified in the [`::def::BufferAttr`] structure. Available for
     /// playback streams only.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn prebuf(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn prebuf(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Request immediate start of playback on this stream.
@@ -1295,18 +1283,16 @@ impl Stream {
     /// Available for playback streams only.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn trigger(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> Option<::operation::Operation> {
+    pub fn trigger(&mut self, cb: Option<(SuccessCb, *mut c_void)>) -> ::operation::Operation {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Rename the stream.
     pub fn set_name(&mut self, name: &str, cb: Option<(SuccessCb, *mut c_void)>
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<SuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -1315,10 +1301,8 @@ impl Stream {
         let ptr = unsafe {
             capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_f, cb_d)
         };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Return the current playback/recording time.
@@ -1459,14 +1443,12 @@ impl Stream {
     /// [`get_buffer_attr`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
     pub fn set_buffer_attr(&mut self, attr: &::def::BufferAttr, cb: (SuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, std::mem::transmute(attr),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Change the stream sampling rate during playback.
@@ -1477,13 +1459,11 @@ impl Stream {
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
     pub fn update_sample_rate(&mut self, rate: u32, cb: (SuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Update the property list of the sink input/source output of this stream, adding new entries.
@@ -1494,19 +1474,17 @@ impl Stream {
     ///
     /// [`new_with_proplist`]: #method.new_with_proplist
     pub fn update_proplist(&mut self, mode: ::proplist::UpdateMode, plist: &mut ::proplist::Proplist,
-        cb: (SuccessCb, *mut c_void)) -> Option<::operation::Operation>
+        cb: (SuccessCb, *mut c_void)) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, plist.ptr, Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Update the property list of the sink input/source output of this stream, remove entries.
     pub fn proplist_remove(&mut self, keys: &[&str], cb: (SuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1526,10 +1504,8 @@ impl Stream {
         let ptr = unsafe {
             capi::pa_stream_proplist_remove(self.ptr, c_key_ptrs.as_ptr(), Some(cb.0), cb.1)
         };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// For record streams connected to a monitor source: monitor only a very specific sink input of

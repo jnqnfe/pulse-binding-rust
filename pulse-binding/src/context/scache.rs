@@ -82,17 +82,15 @@ impl Context {
     ///
     /// Returns an operation object which may be used to cancel the operation while it is running.
     pub fn remove_sample(&mut self, name: &str, cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(), Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Play a sample from the sample cache to the specified device.
@@ -111,7 +109,7 @@ impl Context {
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
-        cb: Option<(ContextSuccessCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -129,10 +127,8 @@ impl Context {
 
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
             cb_f, cb_d) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Play a sample from the sample cache to the specified device, allowing specification of a
@@ -155,7 +151,7 @@ impl Context {
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
         volume: ::volume::Volume, proplist: &::proplist::Proplist,
-        cb: Option<(ContextPlaySampleCb, *mut c_void)>) -> Option<::operation::Operation>
+        cb: Option<(ContextPlaySampleCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextPlaySampleCb>(cb);
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -175,9 +171,7 @@ impl Context {
             capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
                 proplist.ptr, cb_f, cb_d)
         };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 }

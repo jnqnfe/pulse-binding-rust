@@ -350,54 +350,44 @@ impl Context {
 
     /// Drain the context.
     /// If there is nothing to drain, the function returns `None`.
-    pub fn drain(&mut self, cb: (ContextNotifyCb, *mut c_void)) -> Option<Operation> {
+    pub fn drain(&mut self, cb: (ContextNotifyCb, *mut c_void)) -> Operation {
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Tell the daemon to exit.
     ///
     /// The returned operation is unlikely to complete successfully, since the daemon probably died
     /// before returning a success notification.
-    pub fn exit_daemon(&mut self, cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation> {
+    pub fn exit_daemon(&mut self, cb: (ContextSuccessCb, *mut c_void)) -> Operation {
         let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Set the name of the default sink.
-    pub fn set_default_sink(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<Operation>
-    {
+    pub fn set_default_sink(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Operation {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(), Some(cb.0),
             cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Set the name of the default source.
     pub fn set_default_source(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<Operation>
+        ) -> Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
@@ -411,15 +401,13 @@ impl Context {
     }
 
     /// Set a different application name for context on the server.
-    pub fn set_name(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation> {
+    pub fn set_name(&mut self, name: &str, cb: (ContextSuccessCb, *mut c_void)) -> Operation {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(), Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Return the server name this context is connected to.
@@ -453,18 +441,16 @@ impl Context {
     /// function, since that information may then be used to route streams of the client to the
     /// right device.
     pub fn proplist_update(&mut self, mode: ::proplist::UpdateMode, p: &::proplist::Proplist,
-        cb: (ContextSuccessCb, *mut c_void)) -> Option<Operation>
+        cb: (ContextSuccessCb, *mut c_void)) -> Operation
     {
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Update the property list of the client, remove entries.
     pub fn proplist_remove(&mut self, keys: &[&str], cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<Operation>
+        ) -> Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -483,10 +469,8 @@ impl Context {
 
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        Operation::from_raw(ptr)
     }
 
     /// Return the client index this context is identified in the server with.

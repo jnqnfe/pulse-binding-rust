@@ -210,13 +210,11 @@ impl Context {
     /// modified about. Use [`set_subscribe_callback`](#method.set_subscribe_callback) to set the
     /// actual callback that will be called when an event occurs.
     pub fn subscribe(&mut self, mask: InterestMaskSet, cb: (ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the context specific call back function that is called whenever a subscribed-to event

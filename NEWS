@@ -1,7 +1,10 @@
 Changes between 1.2.2 and ???:
 ---------------
 
+ [pulse-binding]
 
+ * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
+   not null.
 
 Changes between 1.2.1 and 1.2.2:
 ---------------

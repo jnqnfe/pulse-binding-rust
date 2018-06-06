@@ -82,41 +82,35 @@ impl StreamRestore {
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn test(&mut self, cb: (TestCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Read all entries from the stream database.
-    pub fn read(&mut self, cb: (ReadCb, *mut c_void)) -> Option<::operation::Operation> {
+    pub fn read(&mut self, cb: (ReadCb, *mut c_void)) -> ::operation::Operation {
         let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Store entries in the stream database.
     pub fn write(&mut self, mode: ::proplist::UpdateMode, data: &[&Info], apply_immediately: bool,
-        cb: (::context::ContextSuccessCb, *mut c_void)) -> Option<::operation::Operation>
+        cb: (::context::ContextSuccessCb, *mut c_void)) -> ::operation::Operation
     {
         let ptr = unsafe {
             capi::pa_ext_stream_restore_write(self.context, mode,
                 std::mem::transmute(data.as_ptr()), data.len() as u32, apply_immediately as i32,
                 Some(cb.0), cb.1)
         };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Delete entries from the stream database.
     pub fn delete(&mut self, streams: &[&str], cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -135,22 +129,18 @@ impl StreamRestore {
 
         let ptr = unsafe { capi::pa_ext_stream_restore_delete(self.context, c_stream_ptrs.as_ptr(),
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the stream database.
     pub fn subscribe(&mut self, enable: bool, cb: (::context::ContextSuccessCb, *mut c_void)
-        ) -> Option<::operation::Operation>
+        ) -> ::operation::Operation
     {
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
             Some(cb.0), cb.1) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(::operation::Operation::from_raw(ptr))
+        assert!(!ptr.is_null());
+        ::operation::Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
