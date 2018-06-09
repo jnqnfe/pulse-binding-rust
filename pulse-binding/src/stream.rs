@@ -577,9 +577,9 @@ impl Stream {
     /// * `name`: A name for this stream
     /// * `ss`: The desired sample format
     /// * `map`: The desired channel map, or `None` for default
-    /// * `plist`: The initial property list
+    /// * `proplist`: The initial property list
     pub fn new_with_proplist(ctx: &mut ::context::Context, name: &str, ss: &::sample::Spec,
-        map: Option<&::channelmap::Map>, plist: &mut ::proplist::Proplist) -> Option<Self>
+        map: Option<&::channelmap::Map>, proplist: &mut ::proplist::Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -592,7 +592,7 @@ impl Stream {
 
         let ptr = unsafe {
             capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss),
-                p_map, plist.ptr)
+                p_map, proplist.ptr)
         };
         if ptr.is_null() {
             return None;
@@ -609,9 +609,9 @@ impl Stream {
     /// * `ctx`: The context to create this stream in
     /// * `name`: A name for this stream
     /// * `formats`: The list of formats that can be provided
-    /// * `plist`: The initial property list
+    /// * `proplist`: The initial property list
     pub fn new_extended(ctx: &mut ::context::Context, name: &str, formats: &[&::format::Info],
-        plist: &mut ::proplist::Proplist) -> Option<Self>
+        proplist: &mut ::proplist::Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -626,7 +626,7 @@ impl Stream {
 
         let ptr = unsafe {
             capi::pa_stream_new_extended(ctx.ptr, c_name.as_ptr(), info_ptrs.as_ptr(),
-                info_ptrs.len() as u32, plist.ptr)
+                info_ptrs.len() as u32, proplist.ptr)
         };
         if ptr.is_null() {
             return None;
@@ -1473,10 +1473,10 @@ impl Stream {
     /// information may be used to route this stream to the right device.
     ///
     /// [`new_with_proplist`]: #method.new_with_proplist
-    pub fn update_proplist(&mut self, mode: ::proplist::UpdateMode, plist: &mut ::proplist::Proplist,
-        cb: (SuccessCb, *mut c_void)) -> ::operation::Operation
+    pub fn update_proplist(&mut self, mode: ::proplist::UpdateMode,
+        proplist: &mut ::proplist::Proplist, cb: (SuccessCb, *mut c_void)) -> ::operation::Operation
     {
-        let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, plist.ptr, Some(cb.0),
+        let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.ptr, Some(cb.0),
             cb.1) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
