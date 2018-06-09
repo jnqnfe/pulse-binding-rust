@@ -1483,7 +1483,7 @@ impl Stream {
     }
 
     /// Update the property list of the sink input/source output of this stream, remove entries.
-    pub fn proplist_remove(&mut self, keys: &[&str], cb: (SuccessCb, *mut c_void)
+    pub fn remove_proplist(&mut self, keys: &[&str], cb: (SuccessCb, *mut c_void)
         ) -> ::operation::Operation
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
