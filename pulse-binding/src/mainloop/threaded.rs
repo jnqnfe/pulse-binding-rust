@@ -469,6 +469,7 @@ impl Mainloop {
     /// loop. This lock is recursive. This function may not be called inside the event loop thread.
     /// Events that are dispatched from the event loop thread are executed with this lock held.
     pub fn lock(&mut self) {
+        assert!(!self.in_thread(), "lock() can not be called from within the event loop thread!");
         unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
     }
 
