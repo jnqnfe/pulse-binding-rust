@@ -611,7 +611,7 @@ impl Stream {
     /// * `formats`: The list of formats that can be provided
     /// * `plist`: The initial property list
     pub fn new_extended(ctx: &mut ::context::Context, name: &str, formats: &[&::format::Info],
-        list: &mut ::proplist::Proplist) -> Option<Self>
+        plist: &mut ::proplist::Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -626,7 +626,7 @@ impl Stream {
 
         let ptr = unsafe {
             capi::pa_stream_new_extended(ctx.ptr, c_name.as_ptr(), info_ptrs.as_ptr(),
-                info_ptrs.len() as u32, list.ptr)
+                info_ptrs.len() as u32, plist.ptr)
         };
         if ptr.is_null() {
             return None;
