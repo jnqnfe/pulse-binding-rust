@@ -483,18 +483,23 @@ pub mod flags {
     pub const PASSTHROUGH: FlagSet = capi::PA_STREAM_PASSTHROUGH;
 }
 
-/// A stream policy/meta event requesting that an application should cork a specific stream. See
-/// [`EventCb`](type.EventCb.html) for more information.
-pub const EVENT_REQUEST_CORK: &str = capi::PA_STREAM_EVENT_REQUEST_CORK;
+/// Common event names supplied to the [`set_event_callback`] callback.
+///
+/// [`set_event_callback`]: ../struct.Stream.html#method.set_event_callback
+pub mod event_names {
+    use capi;
 
-/// A stream policy/meta event requesting that an application should cork a specific stream. See
-/// [`EventCb`](type.EventCb.html) for more information.
-pub const EVENT_REQUEST_UNCORK: &str = capi::PA_STREAM_EVENT_REQUEST_UNCORK;
+    /// A stream policy/meta event requesting that an application should cork a specific stream.
+    pub const EVENT_REQUEST_CORK: &str = capi::PA_STREAM_EVENT_REQUEST_CORK;
 
-/// A stream event notifying that the stream is going to be disconnected because the underlying sink
-/// changed and no longer supports the format that was originally negotiated. Clients need to
-/// connect a new stream to renegotiate a format and continue playback.
-pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
+    /// A stream policy/meta event requesting that an application should cork a specific stream.
+    pub const EVENT_REQUEST_UNCORK: &str = capi::PA_STREAM_EVENT_REQUEST_UNCORK;
+
+    /// A stream event notifying that the stream is going to be disconnected because the underlying
+    /// sink changed and no longer supports the format that was originally negotiated. Clients need
+    /// to connect a new stream to renegotiate a format and continue playback.
+    pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
+}
 
 /// A generic callback for operation completion
 pub type SuccessCb = extern "C" fn(s: *mut StreamInternal, success: i32, userdata: *mut c_void);
@@ -505,13 +510,7 @@ pub type RequestCb = extern "C" fn(p: *mut StreamInternal, nbytes: usize, userda
 /// A generic notification callback
 pub type NotifyCb = extern "C" fn(p: *mut StreamInternal, userdata: *mut c_void);
 
-/// A callback for asynchronous meta/policy event messages. Well known event names are
-/// [`EVENT_REQUEST_CORK`] and [`EVENT_REQUEST_UNCORK`]. The set of defined events can be extended
-/// at any time. Also, server modules may introduce additional message types so make sure that your
-/// callback function ignores messages it doesn't know.
-///
-/// [`EVENT_REQUEST_CORK`]: constant.EVENT_REQUEST_CORK.html
-/// [`EVENT_REQUEST_UNCORK`]: constant.EVENT_REQUEST_UNCORK.html
+/// A callback for asynchronous meta/policy event messages.
 pub type EventCb = extern "C" fn(p: *mut StreamInternal, name: *const c_char,
     pl: *mut ::proplist::ProplistInternal, userdata: *mut c_void);
 
@@ -1203,6 +1202,11 @@ impl Stream {
     }
 
     /// Set the callback function that is called whenever a meta/policy control event is received.
+    ///
+    /// The callback is given a name which represents what event occurred. The set of defined events
+    /// can be extended at any time. Also, server modules may introduce additional message types so
+    /// make sure that your callback function ignores messages it doesn't know. Some well known
+    /// event names can be found in the [`event_names`](event_names/index.html) submodule.
     pub fn set_event_callback(&mut self, cb: Option<(EventCb, *mut c_void)>) {
         let (cb_f, cb_d) = unwrap_optional_callback::<EventCb>(cb);
         unsafe { capi::pa_stream_set_event_callback(self.ptr, cb_f, cb_d); }

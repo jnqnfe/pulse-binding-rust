@@ -8,6 +8,7 @@ Changes between 1.2.2 and ???:
  * Assert added to block use of threaded mainloop `lock` method from within the event loop thread
    (i.e. within most instances of callback execution).
  * Stream: Renamed `proplist_remove` to `remove_proplist`
+ * Stream: Common `set_event_callback` callback event names moved to submodule
 
 Changes between 1.2.1 and 1.2.2:
 ---------------
