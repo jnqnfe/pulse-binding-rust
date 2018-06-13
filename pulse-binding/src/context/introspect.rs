@@ -318,12 +318,6 @@ pub struct SinkPortInfo {
     pub available: ::def::PortAvailable,
 }
 
-impl From<SinkPortInfo> for SinkPortInfoInternal {
-    fn from(p: SinkPortInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<SinkPortInfoInternal> for SinkPortInfo {
     fn from(p: SinkPortInfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -387,12 +381,6 @@ pub struct SinkInfo {
     pub n_formats: u8,
     /// Array of formats supported by the sink.
     pub formats: *mut *mut ::format::InfoInternal,
-}
-
-impl From<SinkInfo> for SinkInfoInternal {
-    fn from(p: SinkInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
 }
 
 impl From<SinkInfoInternal> for SinkInfo {
@@ -586,12 +574,6 @@ pub struct SourcePortInfo {
     pub available: ::def::PortAvailable,
 }
 
-impl From<SourcePortInfo> for SourcePortInfoInternal {
-    fn from(p: SourcePortInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<SourcePortInfoInternal> for SourcePortInfo {
     fn from(p: SourcePortInfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -655,12 +637,6 @@ pub struct SourceInfo {
     pub n_formats: u8,
     /// Array of formats supported by the source.
     pub formats: *mut *mut ::format::InfoInternal,
-}
-
-impl From<SourceInfo> for SourceInfoInternal {
-    fn from(p: SourceInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
 }
 
 impl From<SourceInfoInternal> for SourceInfo {
@@ -864,12 +840,6 @@ pub struct ServerInfo {
     pub channel_map: ::channelmap::Map,
 }
 
-impl From<ServerInfo> for ServerInfoInternal {
-    fn from(p: ServerInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<ServerInfoInternal> for ServerInfo {
     fn from(p: ServerInfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -915,12 +885,6 @@ pub struct ModuleInfo {
     pub auto_unload: i32,
     /// Property list.
     pub proplist: *mut ::proplist::ProplistInternal,
-}
-
-impl From<ModuleInfo> for ModuleInfoInternal {
-    fn from(p: ModuleInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
 }
 
 impl From<ModuleInfoInternal> for ModuleInfo {
@@ -1008,12 +972,6 @@ pub struct ClientInfo {
     pub proplist: *mut ::proplist::ProplistInternal,
 }
 
-impl From<ClientInfo> for ClientInfoInternal {
-    fn from(p: ClientInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<ClientInfoInternal> for ClientInfo {
     fn from(p: ClientInfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -1094,12 +1052,6 @@ pub struct CardPortInfo {
     pub profiles2: *mut *mut CardProfileInfo2,
 }
 
-impl From<CardPortInfo> for CardPortInfoInternal {
-    fn from(p: CardPortInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<CardPortInfoInternal> for CardPortInfo {
     fn from(p: CardPortInfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -1141,12 +1093,6 @@ pub struct CardInfo {
     pub profiles2: *mut *mut CardProfileInfo2,
     /// Pointer to active profile in the array, or `NULL`.
     pub active_profile2: *mut CardProfileInfo2,
-}
-
-impl From<CardInfo> for CardInfoInternal {
-    fn from(p: CardInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
 }
 
 impl From<CardInfoInternal> for CardInfo {
@@ -1300,12 +1246,6 @@ pub struct SinkInputInfo {
     pub volume_writable: i32,
     /// Stream format information.
     pub format: *mut ::format::InfoInternal,
-}
-
-impl From<SinkInputInfo> for SinkInputInfoInternal {
-    fn from(p: SinkInputInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
 }
 
 impl From<SinkInputInfoInternal> for SinkInputInfo {
@@ -1465,12 +1405,6 @@ pub struct SourceOutputInfo {
     pub format: *mut ::format::InfoInternal,
 }
 
-impl From<SourceOutputInfo> for SourceOutputInfoInternal {
-    fn from(p: SourceOutputInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<SourceOutputInfoInternal> for SourceOutputInfo {
     fn from(p: SourceOutputInfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -1624,12 +1558,6 @@ pub struct SampleInfo {
     pub filename: *const c_char,
     /// Property list for this sample.
     pub proplist: *mut ::proplist::ProplistInternal,
-}
-
-impl From<SampleInfo> for SampleInfoInternal {
-    fn from(p: SampleInfo) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
 }
 
 impl From<SampleInfoInternal> for SampleInfo {

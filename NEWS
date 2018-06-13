@@ -9,6 +9,10 @@ Changes between 1.2.2 and ???:
    (i.e. within most instances of callback execution).
  * Stream: Renamed `proplist_remove` to `remove_proplist`
  * Stream: Common `set_event_callback` callback event names moved to submodule
+ * Introspection: removed unnecessary converters.
+   The `From` trait was implemented for introspection objects in both directions between the binding
+   and the sys instances. While this is necessary for the sys to binding direction, the other really
+   wasn't needed.
 
 Changes between 1.2.1 and 1.2.2:
 ---------------
