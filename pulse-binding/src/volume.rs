@@ -78,7 +78,7 @@ pub const VOLUME_MUTED: Volume = Volume(capi::PA_VOLUME_MUTED);
 pub const VOLUME_MAX: Volume = Volume(capi::PA_VOLUME_MAX);
 pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 
-/// Minus Inifinity. This floor value is used / can be used, when using converting between integer
+/// Minus Infinity. This floor value is used / can be used, when using converting between integer
 /// software volume and decibel (dB, floating point) software volume.
 pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY);
 
