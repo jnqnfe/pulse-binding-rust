@@ -301,7 +301,7 @@ impl Context {
     }
 
     /// Returns `true` if some data is pending to be written to the connection
-    pub fn is_pending(&mut self) -> bool {
+    pub fn is_pending(&self) -> bool {
         unsafe { capi::pa_context_is_pending(self.ptr) != 0 }
     }
 
@@ -392,7 +392,7 @@ impl Context {
 
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
     /// instance when no connection has been made yet.
-    pub fn is_local(&mut self) -> Option<bool> {
+    pub fn is_local(&self) -> Option<bool> {
         match unsafe { capi::pa_context_is_local(self.ptr) } {
             1 => Some(true),
             0 => Some(false),
@@ -411,7 +411,7 @@ impl Context {
     }
 
     /// Return the server name this context is connected to.
-    pub fn get_server(&mut self) -> Option<String> {
+    pub fn get_server(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_context_get_server(self.ptr) };
         if ptr.is_null() {
             return None;
@@ -427,7 +427,7 @@ impl Context {
     /// Return the protocol version of the connected server.
     ///
     /// Returns `None` on error.
-    pub fn get_server_protocol_version(&mut self) -> Option<u32> {
+    pub fn get_server_protocol_version(&self) -> Option<u32> {
         match unsafe { capi::pa_context_get_server_protocol_version(self.ptr) } {
             ::def::INVALID_INDEX => None,
             r => Some(r),
@@ -481,7 +481,7 @@ impl Context {
     /// Returns `None` on error.
     ///
     /// [`::introspect::Introspector::get_client_info`]: introspect/struct.Introspector.html#method.get_client_info
-    pub fn get_index(&mut self) -> Option<u32> {
+    pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_context_get_index(self.ptr) } {
             ::def::INVALID_INDEX => None,
             r => Some(r),
@@ -499,7 +499,7 @@ impl Context {
     ///
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     /// [`::mainloop::api::MainloopApi.time_new`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_new
-    pub fn rttime_new<T>(&mut self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
+    pub fn rttime_new<T>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
         time: MicroSeconds, cb: (TimeEventCb, *mut c_void)) -> Option<TimeEvent<T::MI>>
         where T: ::mainloop::api::Mainloop
     {
@@ -514,7 +514,7 @@ impl Context {
     /// [`::mainloop::api::MainloopApi.time_restart`]).
     ///
     /// [`::mainloop::api::MainloopApi.time_restart`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_restart
-    pub fn rttime_restart<T>(&mut self, e: &TimeEvent<T::MI>, time: MicroSeconds)
+    pub fn rttime_restart<T>(&self, e: &TimeEvent<T::MI>, time: MicroSeconds)
         where T: ::mainloop::api::Mainloop
     {
         unsafe { capi::pa_context_rttime_restart(self.ptr, e.get_ptr(), time.0); }
@@ -535,7 +535,7 @@ impl Context {
     /// let ss = stream.get_sample_spec().unwrap();
     /// let size = stream.get_context().get_tile_size(ss).unwrap();
     /// ```
-    pub fn get_tile_size(&mut self, ss: &::sample::Spec) -> Option<usize> {
+    pub fn get_tile_size(&self, ss: &::sample::Spec) -> Option<usize> {
         // Note: C function doc comments mention possibility of passing in a NULL pointer for ss.
         // We do not allow this, since 
         match unsafe { capi::pa_context_get_tile_size(self.ptr, std::mem::transmute(ss)) } {

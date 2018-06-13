@@ -5,6 +5,13 @@ Changes between 1.2.2 and ???:
 
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.
+ * Context: Handful of methods changed to take immutable `self`. Patches were previously sent in to
+   apply const to a lot of pointers in the C API, which have been accepted. Some context related
+   functions were not changed simply because of an artefact relating to validation checks.
+   Additional patches solving this have now been sent in. This change has been reflected here. (No
+   need to worry about whether or not these are accepted, though discussion indicates they will, nor
+   for a new version of PA to be released; logically they should be immutable, and we do not need to
+   propagate this unfortunate artefact).
  * Assert added to block use of threaded mainloop `lock` method from within the event loop thread
    (i.e. within most instances of callback execution).
  * Stream: Renamed `proplist_remove` to `remove_proplist`
@@ -17,6 +24,7 @@ Changes between 1.2.2 and ???:
 
  [pulse-sys]
 
+ * Context: Handful of functions changed to take const pointers, as discussed above.
  * Introspect & subscribe: purge audoload API (deprecated since 2009)
 
 Changes between 1.2.1 and 1.2.2:
