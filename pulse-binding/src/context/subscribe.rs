@@ -107,7 +107,6 @@ pub mod subscription_masks {
     pub const CLIENT: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CLIENT;
     pub const SAMPLE_CACHE: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SAMPLE_CACHE;
     pub const SERVER: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SERVER;
-    pub const AUTOLOAD: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_AUTOLOAD;
     pub const MASK_CARD: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CARD;
     pub const ALL: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_ALL;
 }
@@ -128,9 +127,7 @@ pub enum Facility {
     /// Global server change, only occurring with
     /// [`Operation::Changed`](enum.Operation.html#Changed.v).
     Server = 7,
-    /// Autoload table changes.
-    #[deprecated]
-    AutoLoad = 8,
+    /* NOTE: value '8' previously assigned, obsoleted */
     Card = 9,
 }
 
@@ -159,10 +156,7 @@ impl Facility {
             5 => Some(Facility::Client),
             6 => Some(Facility::SampleCache),
             7 => Some(Facility::Server),
-            8 => {
-                #[allow(deprecated)]
-                Some(Facility::AutoLoad)
-            },
+            /* NOTE: value '8' previously assigned, obsoleted */
             9 => Some(Facility::Card),
             _ => None,
         }

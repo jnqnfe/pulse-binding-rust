@@ -13,6 +13,11 @@ Changes between 1.2.2 and ???:
    The `From` trait was implemented for introspection objects in both directions between the binding
    and the sys instances. While this is necessary for the sys to binding direction, the other really
    wasn't needed.
+ * Subscribe: purge audoload API (deprecated since 2009)
+
+ [pulse-sys]
+
+ * Introspect & subscribe: purge audoload API (deprecated since 2009)
 
 Changes between 1.2.1 and 1.2.2:
 ---------------

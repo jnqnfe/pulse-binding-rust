@@ -305,46 +305,6 @@ pub struct pa_sample_info {
 
 pub type pa_sample_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_sample_info, eol: i32, userdata: *mut c_void)>;
 
-/// Type of an autoload entry.
-#[deprecated]
-#[repr(C)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum pa_autoload_type_t {
-    Sink = 0,
-    Source = 1,
-}
-
-#[deprecated]
-#[allow(deprecated)]
-pub const PA_AUTOLOAD_SINK: pa_autoload_type_t = pa_autoload_type_t::Sink;
-#[deprecated]
-#[allow(deprecated)]
-pub const PA_AUTOLOAD_SOURCE: pa_autoload_type_t = pa_autoload_type_t::Source;
-
-/// Stores information about autoload entries.
-///
-/// Please note that this structure can be extended as part of evolutionary API updates at any time
-/// in any new release.
-#[deprecated]
-#[repr(C)]
-pub struct pa_autoload_info {
-    /// Index of this autoload entry.
-    pub index: u32,
-    /// Name of the sink or source.
-    pub name: *const c_char,
-    /// Type of the autoload entry.
-    #[allow(deprecated)]
-    pub type_: pa_autoload_type_t,
-    /// Module name to load.
-    pub module: *const c_char,
-    /// Argument string for module.
-    pub argument: *const c_char,
-}
-
-#[deprecated]
-#[allow(deprecated)]
-pub type pa_autoload_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_autoload_info, eol: i32, userdata: *mut c_void)>;
-
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_context_get_sink_info_by_name(c: *mut pa_context, name: *const c_char, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
@@ -410,23 +370,4 @@ extern "C" {
     pub fn pa_context_get_sample_info_by_name(c: *mut pa_context, name: *const c_char, cb: pa_sample_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
     pub fn pa_context_get_sample_info_by_index(c: *mut pa_context, idx: u32, cb: pa_sample_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
     pub fn pa_context_get_sample_info_list(c: *mut pa_context, cb: pa_sample_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-
-    #[deprecated]
-    #[allow(deprecated)]
-    pub fn pa_context_get_autoload_info_by_name(c: *mut pa_context, name: *const c_char, type_: pa_autoload_type_t, cb: pa_autoload_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    #[deprecated]
-    #[allow(deprecated)]
-    pub fn pa_context_get_autoload_info_by_index(c: *mut pa_context, idx: u32, cb: pa_autoload_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    #[deprecated]
-    #[allow(deprecated)]
-    pub fn pa_context_get_autoload_info_list(c: *mut pa_context, cb: pa_autoload_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    #[deprecated]
-    #[allow(deprecated)]
-    pub fn pa_context_add_autoload(c: *mut pa_context, name: *const c_char, type_: pa_autoload_type_t, module: *const c_char, argument: *const c_char, cb: pa_context_index_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    #[deprecated]
-    #[allow(deprecated)]
-    pub fn pa_context_remove_autoload_by_name(c: *mut pa_context, name: *const c_char, type_: pa_autoload_type_t, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    #[deprecated]
-    #[allow(deprecated)]
-    pub fn pa_context_remove_autoload_by_index(c: *mut pa_context, idx: u32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
 }

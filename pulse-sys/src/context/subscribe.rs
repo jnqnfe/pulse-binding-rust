@@ -44,7 +44,7 @@ pub mod subscription_masks {
     pub const PA_SUBSCRIPTION_MASK_CLIENT: pa_subscription_mask_t = 0x20;
     pub const PA_SUBSCRIPTION_MASK_SAMPLE_CACHE: pa_subscription_mask_t = 0x40;
     pub const PA_SUBSCRIPTION_MASK_SERVER: pa_subscription_mask_t = 0x80;
-    pub const PA_SUBSCRIPTION_MASK_AUTOLOAD: pa_subscription_mask_t = 0x100;
+    /* NOTE: value '0x100' previously assigned, obsoleted */
     pub const PA_SUBSCRIPTION_MASK_CARD: pa_subscription_mask_t = 0x200;
     pub const PA_SUBSCRIPTION_MASK_ALL: pa_subscription_mask_t = 0x2ff;
 }
@@ -64,9 +64,7 @@ pub mod event_facilities {
     pub const PA_SUBSCRIPTION_EVENT_SAMPLE_CACHE: pa_subscription_event_type_t = 6;
     /// Global server change, only occurring with a change operation.
     pub const PA_SUBSCRIPTION_EVENT_SERVER: pa_subscription_event_type_t = 7;
-    /// Autoload table changes.
-    #[deprecated]
-    pub const PA_SUBSCRIPTION_EVENT_AUTOLOAD: pa_subscription_event_type_t = 8;
+    /* NOTE: value '8' previously assigned, obsoleted */
     pub const PA_SUBSCRIPTION_EVENT_CARD: pa_subscription_event_type_t = 9;
 }
 
