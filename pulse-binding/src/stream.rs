@@ -769,7 +769,7 @@ impl Stream {
     /// [`::context::introspect::Introspector::get_sink_info_by_name`]:
     /// ../context/struct.Context.html#method.get_sink_info_by_name
     pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
-        flags: FlagSet, volume: Option<&::volume::CVolume>, sync_stream: Option<&mut Self>
+        flags: FlagSet, volume: Option<&::volume::ChannelVolumes>, sync_stream: Option<&mut Self>
         ) -> Result<(), PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to

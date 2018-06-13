@@ -3,6 +3,7 @@ Changes between 1.2.2 and ???:
 
  [pulse-binding]
 
+ * Volume: Renamed `CVolume` to `ChannelVolumes`
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.
  * Context: Handful of methods changed to take immutable `self`. Patches were previously sent in to

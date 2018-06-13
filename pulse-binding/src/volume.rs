@@ -21,7 +21,8 @@
 //! with these, The PulseAudio library contains a number of functions that ease handling.
 //!
 //! The basic volume type in PulseAudio is the [`Volume`] type. Most of the time, applications will
-//! use the aggregated [`CVolume`] structure that can store the volume of all channels at once.
+//! use the aggregated [`ChannelVolumes`] structure that can store the volume of all channels at
+//! once.
 //!
 //! Volumes commonly span between muted (0%), and normal (100%). It is possible to set volumes to
 //! higher than 100%, but clipping might occur.
@@ -47,7 +48,7 @@
 //! The [`VolumeDB`] type represents decibel (dB) converted values, and [`VolumeLinear`], linear.
 //! The `From` trait has been implemented for your convenience, allowing such convertions.
 //!
-//! For simple multiplication, [`Volume::multiply`] and [`CVolume::sw_multiply`] can be used.
+//! For simple multiplication, [`Volume::multiply`] and [`ChannelVolumes::sw_multiply`] can be used.
 //!
 //! It's often unknown what scale hardware volumes relate to. Don't use the above functions on sink
 //! and source volumes, unless the sink or source in question has the
@@ -58,11 +59,11 @@
 //! [`Volume`]: struct.Volume.html
 //! [`VolumeDB`]: struct.VolumeDB.html
 //! [`VolumeLinear`]: struct.VolumeLinear.html
-//! [`CVolume`]: struct.CVolume.html
+//! [`ChannelVolumes`]: struct.ChannelVolumes.html
 //! [`::context::introspect::Introspector::get_sink_info_by_name`]:
 //! ../context/introspect/struct.Introspector.html#method.get_sink_info_by_name
 //! [`Volume::multiply`]: struct.Volume.html#method.multiply
-//! [`CVolume::sw_multiply`]: struct.CVolume.html#method.sw_multiply
+//! [`ChannelVolumes::sw_multiply`]: struct.ChannelVolumes.html#method.sw_multiply
 //! [`VOLUME_MUTED`]: constant.VOLUME_MUTED.html
 //! [`VOLUME_NORM`]: constant.VOLUME_NORM.html
 //! [`::def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
@@ -109,14 +110,14 @@ impl Default for VolumeLinear {
 /// A structure encapsulating a per-channel volume
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Default)]
-pub struct CVolume {
+pub struct ChannelVolumes {
     /// Number of channels.
     pub channels: u8,
     /// Per-channel volume.
     pub values: [Volume; ::sample::CHANNELS_MAX],
 }
 
-impl PartialEq for CVolume {
+impl PartialEq for ChannelVolumes {
     fn eq(&self, other: &Self) -> bool {
         match self.channels == other.channels {
             true => self.values[..self.channels as usize] == other.values[..other.channels as usize],
@@ -269,7 +270,7 @@ impl std::fmt::Display for Volume {
     }
 }
 
-impl CVolume {
+impl ChannelVolumes {
     /// Initialize the specified volume and return a pointer to it. The sample spec will have a
     /// defined state but [`is_valid`](#method.is_valid) will fail for it.
     pub fn init(&mut self) -> &Self {
@@ -368,7 +369,7 @@ impl CVolume {
             std::mem::transmute(cm), mask_actual) })
     }
 
-    /// Returns `true` when the `CVolume` structure is valid.
+    /// Returns `true` when the `ChannelVolumes` structure is valid.
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_cvolume_valid(std::mem::transmute(self)) != 0 }
     }
@@ -715,7 +716,7 @@ impl CVolume {
     }
 }
 
-impl std::fmt::Display for CVolume {
+impl std::fmt::Display for ChannelVolumes {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", &self.print())
     }

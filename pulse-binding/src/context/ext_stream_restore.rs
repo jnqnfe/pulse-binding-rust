@@ -34,7 +34,7 @@ pub struct Info {
     /// The channel map for the volume field, if applicable.
     pub channel_map: ::channelmap::Map,
     /// The volume of the stream when it was seen last, if applicable and saved.
-    pub volume: ::volume::CVolume,
+    pub volume: ::volume::ChannelVolumes,
     /// The sink/source of the stream when it was last seen, if applicable and saved.
     pub device: *const c_char,
     /// The boolean mute state of the stream when it was last seen, if applicable and saved.

@@ -344,7 +344,7 @@ pub struct SinkInfo {
     /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
     pub owner_module: u32,
     /// Volume of the sink.
-    pub volume: ::volume::CVolume,
+    pub volume: ::volume::ChannelVolumes,
     /// Mute switch of the sink.
     pub mute: i32,
     /// Index of the monitor source connected to this sink.
@@ -435,7 +435,7 @@ impl Introspector {
     /// Set the volume of a sink device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_volume_by_index(&mut self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_sink_volume_by_index(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -448,7 +448,7 @@ impl Introspector {
     /// Set the volume of a sink device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::CVolume,
+    pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -599,7 +599,7 @@ pub struct SourceInfo {
     /// Owning module index, or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
     pub owner_module: u32,
     /// Volume of the source.
-    pub volume: ::volume::CVolume,
+    pub volume: ::volume::ChannelVolumes,
     /// Mute switch of the sink.
     pub mute: i32,
     /// If this is a monitor source, the index of the owning sink, otherwise
@@ -691,7 +691,7 @@ impl Introspector {
     /// Set the volume of a source device specified by its index.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_volume_by_index(&mut self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_source_volume_by_index(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -704,7 +704,7 @@ impl Introspector {
     /// Set the volume of a source device specified by its name.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::CVolume,
+    pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1222,7 +1222,7 @@ pub struct SinkInputInfo {
     /// Channel map.
     pub channel_map: ::channelmap::Map,
     /// The volume of this sink input.
-    pub volume: ::volume::CVolume,
+    pub volume: ::volume::ChannelVolumes,
     /// Latency due to buffering in sink input, see
     /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
     pub buffer_usec: MicroSeconds,
@@ -1315,7 +1315,7 @@ impl Introspector {
     /// Set the volume of a sink input stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_sink_input_volume(&mut self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_sink_input_volume(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1393,7 +1393,7 @@ pub struct SourceOutputInfo {
     /// Stream corked.
     pub corked: i32,
     /// The volume of this source output.
-    pub volume: ::volume::CVolume,
+    pub volume: ::volume::ChannelVolumes,
     /// Stream muted.
     pub mute: i32,
     /// Stream has volume. If not set, then the meaning of this struct's volume member is unspecified.
@@ -1474,7 +1474,7 @@ impl Introspector {
     /// Set the volume of a source output stream.
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
-    pub fn set_source_output_volume(&mut self, idx: u32, volume: &::volume::CVolume,
+    pub fn set_source_output_volume(&mut self, idx: u32, volume: &::volume::ChannelVolumes,
         cb: Option<(ContextSuccessCb, *mut c_void)>) -> ::operation::Operation
     {
         let (cb_f, cb_d) = unwrap_optional_callback::<ContextSuccessCb>(cb);
@@ -1543,7 +1543,7 @@ pub struct SampleInfo {
     /// Name of this entry.
     pub name: *const c_char,
     /// Default volume of this entry.
-    pub volume: ::volume::CVolume,
+    pub volume: ::volume::ChannelVolumes,
     /// Sample specification of the sample.
     pub sample_spec: ::sample::Spec,
     /// The channel map.
