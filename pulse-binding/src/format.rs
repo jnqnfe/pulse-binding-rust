@@ -77,7 +77,7 @@ impl Default for Encoding {
 /// This acts as a safe Rust wrapper for the actual C object.
 pub struct Info<'a> {
     /// The actual C object
-    pub(crate) ptr: &'a mut InfoInternal,
+    pub ptr: &'a mut InfoInternal,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
