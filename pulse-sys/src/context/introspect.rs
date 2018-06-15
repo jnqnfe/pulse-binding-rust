@@ -274,6 +274,7 @@ pub type pa_source_output_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 #[repr(C)]
+#[derive(Debug)]
 pub struct pa_stat_info {
     /// Currently allocated memory blocks.
     pub memblock_total: u32,

@@ -86,10 +86,9 @@ pub struct Info {
 
 /// The raw C structure (with documentation)
 #[repr(C)]
-pub struct InfoInternal {
+pub(crate) struct InfoInternal {
     /// The encoding used for the format.
     pub encoding: Encoding,
-
     /// Additional encoding-specific properties such as sample rate, bitrate, etc.
     pub list: *mut ::proplist::ProplistInternal,
 }
@@ -103,6 +102,13 @@ impl From<capi::pa_format_info> for InfoInternal {
 impl From<InfoInternal> for capi::pa_format_info {
     fn from(i: InfoInternal) -> Self {
         unsafe { std::mem::transmute(i) }
+    }
+}
+
+impl std::fmt::Debug for Info {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Info {{ encoding: {:?}, properties: {:?} }}", self.get_encoding(),
+            *self.get_properties())
     }
 }
 
@@ -199,7 +205,7 @@ impl Info {
 
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
     /// This is the 'weak' version, which avoids destroying the internal object when dropped.
-    pub fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
+    pub(crate) fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         unsafe {
             Self {

@@ -10,6 +10,13 @@ Changes between 1.2.2 and ???:
    method's optional 'free' callback; the `SpawnApi` has no userdata arg and thus cannot be done,
    which is not a big deal; finally the standard mainloop's function for specifying an alternate
    'poll' function has been left, at least for now).
+ * Introspection: Big clean up. Previously we simply transmuted from the raw C structs, which was
+   very efficient, and some attributes (like enums) transmuted perfectly to binding counterparts thus
+   were 'clean'. A lot of attributes however were ugly, exposing raw pointers, particularly with
+   strings and lists. Now instead a proper conversion is done. This takes more effort, but gives a
+   much more pleasant to use interface. Note, the `Debug` trait has been implemented, thus combined
+   with the new support of closures for callbacks, makes it very easy to dump a copy of
+   introspection data.
  * Volume: Renamed `CVolume` to `ChannelVolumes`
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.

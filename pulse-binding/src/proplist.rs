@@ -22,7 +22,7 @@ use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use error::PAErr;
 
-pub use capi::pa_proplist as ProplistInternal;
+pub(crate) use capi::pa_proplist as ProplistInternal;
 pub use capi::pa_update_mode_t as UpdateMode;
 
 /// Common properties
@@ -143,6 +143,12 @@ pub struct Proplist {
     weak: bool,
 }
 
+impl std::fmt::Debug for Proplist {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Proplist {{ {} }}", self.to_string().unwrap())
+    }
+}
+
 /// Proplist iterator, used for iterating over the list's keys. Returned by the
 /// [`iterate`](struct.Proplist.html#method.iterate) method.
 pub struct Iterator {
@@ -212,7 +218,7 @@ impl Proplist {
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
     /// pointer. This is the 'weak' version, which avoids destroying the internal object when
     /// dropped.
-    pub fn from_raw_weak(ptr: *mut ProplistInternal) -> Self {
+    pub(crate) fn from_raw_weak(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: true }
     }

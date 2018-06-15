@@ -225,8 +225,9 @@
 
 use std;
 use capi;
-use std::os::raw::{c_char, c_void};
-use std::ffi::CString;
+use std::os::raw::c_void;
+use std::ffi::{CStr, CString};
+use std::borrow::Cow;
 use std::ptr::null_mut;
 use super::{Context, ContextInternal};
 use timeval::MicroSeconds;
@@ -239,9 +240,7 @@ use capi::pa_source_info as SourceInfoInternal;
 use capi::pa_server_info as ServerInfoInternal;
 use capi::pa_module_info as ModuleInfoInternal;
 use capi::pa_client_info as ClientInfoInternal;
-#[allow(deprecated)]
-use capi::pa_card_profile_info as CardProfileInfo;
-use capi::pa_card_profile_info2 as CardProfileInfo2;
+use capi::pa_card_profile_info2 as CardProfileInfo2Internal;
 use capi::pa_card_port_info as CardPortInfoInternal;
 use capi::pa_card_info as CardInfoInternal;
 use capi::pa_sink_input_info as SinkInputInfoInternal;
@@ -288,20 +287,36 @@ impl Drop for Introspector {
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 #[repr(C)]
-pub struct SinkPortInfo {
+#[derive(Debug)]
+pub struct SinkPortInfo<'a> {
     /// Name of this port.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Description of this port.
-    pub description: *const c_char,
+    pub description: Option<Cow<'a, str>>,
     /// The higher this value is, the more useful this port is as a default.
     pub priority: u32,
     /// A flag indicating availability status of this port.
     pub available: ::def::PortAvailable,
 }
 
-impl From<SinkPortInfoInternal> for SinkPortInfo {
-    fn from(p: SinkPortInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SinkPortInfo<'a> {
+    fn new_from_raw(p: *const SinkPortInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            SinkPortInfo {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                priority: src.priority,
+                available: std::mem::transmute(src.available),
+            }
+        }
     }
 }
 
@@ -309,37 +324,36 @@ impl From<SinkPortInfoInternal> for SinkPortInfo {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct SinkInfo {
+#[derive(Debug)]
+pub struct SinkInfo<'a> {
     /// Name of the sink.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Index of the sink.
     pub index: u32,
     /// Description of this sink.
-    pub description: *const c_char,
+    pub description: Option<Cow<'a, str>>,
     /// Sample spec of this sink.
     pub sample_spec: ::sample::Spec,
     /// Channel map.
     pub channel_map: ::channelmap::Map,
-    /// Index of the owning module of this sink, or
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub owner_module: u32,
+    /// Index of the owning module of this sink, or `None` if is invalid.
+    pub owner_module: Option<u32>,
     /// Volume of the sink.
     pub volume: ::volume::ChannelVolumes,
     /// Mute switch of the sink.
-    pub mute: i32,
+    pub mute: bool,
     /// Index of the monitor source connected to this sink.
     pub monitor_source: u32,
     /// The name of the monitor source.
-    pub monitor_source_name: *const c_char,
+    pub monitor_source_name: Option<Cow<'a, str>>,
     /// Length of queued audio in the output buffer.
     pub latency: MicroSeconds,
     /// Driver name.
-    pub driver: *const c_char,
+    pub driver: Option<Cow<'a, str>>,
     /// Flags.
     pub flags: ::def::SinkFlagSet,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
     /// The latency this device has been configured to.
     pub configured_latency: MicroSeconds,
     /// Some kind of "base" volume that refers to unamplified/unattenuated volume in the context of
@@ -349,24 +363,85 @@ pub struct SinkInfo {
     pub state: ::def::SinkState,
     /// Number of volume steps for sinks which do not support arbitrary volumes.
     pub n_volume_steps: u32,
-    /// Card index, or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub card: u32,
-    /// Number of entries in port array.
-    pub n_ports: u32,
-    /// Array of available ports, or `NULL`. Array is terminated by an entry set to `NULL`. The
-    /// number of entries is stored in `n_ports`.
-    pub ports: *mut *mut SinkPortInfo,
-    /// Pointer to active port in the array, or `NULL`.
-    pub active_port: *mut SinkPortInfo,
-    /// Number of formats supported by the sink.
-    pub n_formats: u8,
-    /// Array of formats supported by the sink.
-    pub formats: *mut *mut ::format::InfoInternal,
+    /// Card index, or `None` if invalid.
+    pub card: Option<u32>,
+    /// Set of available ports.
+    pub ports: Vec<SinkPortInfo<'a>>,
+    /// Pointer to active port in the set, or `None`.
+    pub active_port: Option<Box<SinkPortInfo<'a>>>,
+    /// Set of formats supported by the sink.
+    pub formats: Vec<::format::Info>,
 }
 
-impl From<SinkInfoInternal> for SinkInfo {
-    fn from(p: SinkInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SinkInfo<'a> {
+    fn new_from_raw(p: *const SinkInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+
+        let mut port_vec = Vec::with_capacity(src.n_ports as usize);
+        assert!(src.n_ports == 0 || !src.ports.is_null());
+        for i in 0..src.n_ports as isize {
+            let indexed_ptr = unsafe { (*src.ports.offset(i)) as *mut SinkPortInfoInternal };
+            if !indexed_ptr.is_null() {
+                port_vec.push(SinkPortInfo::new_from_raw(indexed_ptr));
+            }
+        }
+        let mut formats_vec = Vec::with_capacity(src.n_formats as usize);
+        assert!(src.n_formats == 0 || !src.formats.is_null());
+        for i in 0..src.n_formats as isize {
+            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut ::format::InfoInternal };
+            if !indexed_ptr.is_null() {
+                formats_vec.push(::format::Info::from_raw_weak(indexed_ptr));
+            }
+        }
+
+        unsafe {
+            SinkInfo {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                index: src.index,
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                sample_spec: std::mem::transmute(src.sample_spec),
+                channel_map: std::mem::transmute(src.channel_map),
+                owner_module: match src.owner_module {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                volume: std::mem::transmute(src.volume),
+                mute: match src.mute { 0 => false, _ => true },
+                monitor_source: src.monitor_source,
+                monitor_source_name: match src.monitor_source_name.is_null() {
+                    false => Some(CStr::from_ptr(src.monitor_source_name).to_string_lossy()),
+                    true => None,
+                },
+                latency: MicroSeconds(src.latency),
+                driver: match src.driver.is_null() {
+                    false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
+                    true => None,
+                },
+                flags: src.flags,
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                configured_latency: MicroSeconds(src.configured_latency),
+                base_volume: ::volume::Volume(src.base_volume),
+                state: std::mem::transmute(src.state),
+                n_volume_steps: src.n_volume_steps,
+                card: match src.card {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                ports: port_vec,
+                active_port: match src.active_port.is_null() {
+                    true => None,
+                    false => Some(Box::new(SinkPortInfo::new_from_raw(src.active_port))),
+                },
+                formats: formats_vec,
+            }
+        }
     }
 }
 
@@ -375,7 +450,7 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SinkInfo>) + 'static
+        where F: FnMut(ListResult<&SinkInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -383,7 +458,7 @@ impl Introspector {
 
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SinkInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SinkInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -397,11 +472,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SinkInfo>) + 'static
+        where F: FnMut(ListResult<&SinkInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SinkInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SinkInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -415,11 +490,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SinkInfo>) + 'static
+        where F: FnMut(ListResult<&SinkInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SinkInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SinkInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -639,13 +714,14 @@ fn get_sink_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInfoIntern
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const SinkInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&SinkInfo>)>)
             };
-            callback(ListResult::Item(i as *const SinkInfo));
+            let obj = SinkInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SinkInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SinkInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -660,21 +736,36 @@ fn get_sink_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInfoIntern
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct SourcePortInfo {
+#[derive(Debug)]
+pub struct SourcePortInfo<'a> {
     /// Name of this port.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Description of this port.
-    pub description: *const c_char,
+    pub description: Option<Cow<'a, str>>,
     /// The higher this value is, the more useful this port is as a default.
     pub priority: u32,
     /// A flag indicating availability status of this port.
     pub available: ::def::PortAvailable,
 }
 
-impl From<SourcePortInfoInternal> for SourcePortInfo {
-    fn from(p: SourcePortInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SourcePortInfo<'a> {
+    fn new_from_raw(p: *const SourcePortInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            SourcePortInfo {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                description: match src.description.is_null() {
+                    false=> Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                priority: src.priority,
+                available: std::mem::transmute(src.available),
+            }
+        }
     }
 }
 
@@ -682,37 +773,36 @@ impl From<SourcePortInfoInternal> for SourcePortInfo {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct SourceInfo {
+#[derive(Debug)]
+pub struct SourceInfo<'a> {
     /// Name of the source.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Index of the source.
     pub index: u32,
     /// Description of this source.
-    pub description: *const c_char,
+    pub description: Option<Cow<'a, str>>,
     /// Sample spec of this source.
     pub sample_spec: ::sample::Spec,
     /// Channel map.
     pub channel_map: ::channelmap::Map,
-    /// Owning module index, or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub owner_module: u32,
+    /// Owning module index, or `None`.
+    pub owner_module: Option<u32>,
     /// Volume of the source.
     pub volume: ::volume::ChannelVolumes,
     /// Mute switch of the sink.
-    pub mute: i32,
-    /// If this is a monitor source, the index of the owning sink, otherwise
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub monitor_of_sink: u32,
-    /// Name of the owning sink, or `NULL`.
-    pub monitor_of_sink_name: *const c_char,
+    pub mute: bool,
+    /// If this is a monitor source, the index of the owning sink, otherwise `None`.
+    pub monitor_of_sink: Option<u32>,
+    /// Name of the owning sink, or `None`.
+    pub monitor_of_sink_name: Option<Cow<'a, str>>,
     /// Length of filled record buffer of this source.
     pub latency: MicroSeconds,
     /// Driver name.
-    pub driver: *const c_char,
+    pub driver: Option<Cow<'a, str>>,
     /// Flags.
     pub flags: ::def::SourceFlagSet,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
     /// The latency this device has been configured to.
     pub configured_latency: MicroSeconds,
     /// Some kind of "base" volume that refers to unamplified/unattenuated volume in the context of
@@ -722,24 +812,88 @@ pub struct SourceInfo {
     pub state: ::def::SourceState,
     /// Number of volume steps for sources which do not support arbitrary volumes.
     pub n_volume_steps: u32,
-    /// Card index, or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html)
-    pub card: u32,
-    /// Number of entries in port array.
-    pub n_ports: u32,
-    /// Array of available ports, or `NULL`. Array is terminated by an entry set to `NULL`. The
-    /// number of entries is stored in `n_ports`.
-    pub ports: *mut *mut SourcePortInfo,
-    /// Pointer to active port in the array, or `NULL`.
-    pub active_port: *mut SourcePortInfo,
-    /// Number of formats supported by the source.
-    pub n_formats: u8,
-    /// Array of formats supported by the source.
-    pub formats: *mut *mut ::format::InfoInternal,
+    /// Card index, or `None`.
+    pub card: Option<u32>,
+    /// Set of available ports.
+    pub ports: Vec<SourcePortInfo<'a>>,
+    /// Pointer to active port in the set, or `None`.
+    pub active_port: Option<Box<SourcePortInfo<'a>>>,
+    /// Set of formats supported by the sink.
+    pub formats: Vec<::format::Info>,
 }
 
-impl From<SourceInfoInternal> for SourceInfo {
-    fn from(p: SourceInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SourceInfo<'a> {
+    fn new_from_raw(p: *const SourceInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+
+        let mut port_vec = Vec::with_capacity(src.n_ports as usize);
+        assert!(src.n_ports == 0 || !src.ports.is_null());
+        for i in 0..src.n_ports as isize {
+            let indexed_ptr = unsafe { (*src.ports.offset(i)) as *mut SourcePortInfoInternal };
+            if !indexed_ptr.is_null() {
+                port_vec.push(SourcePortInfo::new_from_raw(indexed_ptr));
+            }
+        }
+        let mut formats_vec = Vec::with_capacity(src.n_formats as usize);
+        assert!(src.n_formats == 0 || !src.formats.is_null());
+        for i in 0..src.n_formats as isize {
+            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut ::format::InfoInternal };
+            if !indexed_ptr.is_null() {
+                formats_vec.push(::format::Info::from_raw_weak(indexed_ptr));
+            }
+        }
+
+        unsafe {
+            SourceInfo {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                index: src.index,
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                sample_spec: std::mem::transmute(src.sample_spec),
+                channel_map: std::mem::transmute(src.channel_map),
+                owner_module: match src.owner_module {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                volume: std::mem::transmute(src.volume),
+                mute: match src.mute { 0 => false, _ => true },
+                monitor_of_sink: match src.monitor_of_sink {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                monitor_of_sink_name: match src.monitor_of_sink_name.is_null() {
+                    false => Some(CStr::from_ptr(src.monitor_of_sink_name).to_string_lossy()),
+                    true => None,
+                },
+                latency: MicroSeconds(src.latency),
+                driver: match src.driver.is_null() {
+                    false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
+                    true => None,
+                },
+                flags: src.flags,
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                configured_latency: MicroSeconds(src.configured_latency),
+                base_volume: ::volume::Volume(src.base_volume),
+                state: src.state.into(),
+                n_volume_steps: src.n_volume_steps,
+                card: match src.card {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                ports: port_vec,
+                active_port: match src.active_port.is_null() {
+                    true => None,
+                    false => Some(Box::new(SourcePortInfo::new_from_raw(src.active_port))),
+                },
+                formats: formats_vec,
+            }
+        }
     }
 }
 
@@ -748,7 +902,7 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SourceInfo>) + 'static
+        where F: FnMut(ListResult<&SourceInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -756,7 +910,7 @@ impl Introspector {
 
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SourceInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SourceInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -770,11 +924,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SourceInfo>) + 'static
+        where F: FnMut(ListResult<&SourceInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SourceInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SourceInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -788,11 +942,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SourceInfo>) + 'static
+        where F: FnMut(ListResult<&SourceInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SourceInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SourceInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1012,13 +1166,14 @@ fn get_source_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceInfoIn
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const SourceInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&SourceInfo>)>)
             };
-            callback(ListResult::Item(i as *const SourceInfo));
+            let obj = SourceInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SourceInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SourceInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -1033,31 +1188,63 @@ fn get_source_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceInfoIn
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct ServerInfo {
+#[derive(Debug)]
+pub struct ServerInfo<'a> {
     /// User name of the daemon process.
-    pub user_name: *const c_char,
+    pub user_name: Option<Cow<'a, str>>,
     /// Host name the daemon is running on.
-    pub host_name: *const c_char,
+    pub host_name: Option<Cow<'a, str>>,
     /// Version string of the daemon.
-    pub server_version: *const c_char,
+    pub server_version: Option<Cow<'a, str>>,
     /// Server package name (usually "pulseaudio").
-    pub server_name: *const c_char,
+    pub server_name: Option<Cow<'a, str>>,
     /// Default sample specification.
     pub sample_spec: ::sample::Spec,
     /// Name of default sink.
-    pub default_sink_name: *const c_char,
+    pub default_sink_name: Option<Cow<'a, str>>,
     /// Name of default source.
-    pub default_source_name: *const c_char,
+    pub default_source_name: Option<Cow<'a, str>>,
     /// A random cookie for identifying this instance of PulseAudio.
     pub cookie: u32,
     /// Default channel map.
     pub channel_map: ::channelmap::Map,
 }
 
-impl From<ServerInfoInternal> for ServerInfo {
-    fn from(p: ServerInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> ServerInfo<'a> {
+    fn new_from_raw(p: *const ServerInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            ServerInfo {
+                user_name: match src.user_name.is_null() {
+                    false => Some(CStr::from_ptr(src.user_name).to_string_lossy()),
+                    true => None,
+                },
+                host_name: match src.host_name.is_null() {
+                    false => Some(CStr::from_ptr(src.host_name).to_string_lossy()),
+                    true => None,
+                },
+                server_version: match src.server_version.is_null() {
+                    false => Some(CStr::from_ptr(src.server_version).to_string_lossy()),
+                    true => None,
+                },
+                server_name: match src.server_name.is_null() {
+                    false => Some(CStr::from_ptr(src.server_name).to_string_lossy()),
+                    true => None,
+                },
+                sample_spec: std::mem::transmute(src.sample_spec),
+                default_sink_name: match src.default_sink_name.is_null() {
+                    false => Some(CStr::from_ptr(src.default_sink_name).to_string_lossy()),
+                    true => None,
+                },
+                default_source_name: match src.default_source_name.is_null() {
+                    false => Some(CStr::from_ptr(src.default_source_name).to_string_lossy()),
+                    true => None,
+                },
+                cookie: src.cookie,
+                channel_map: std::mem::transmute(src.channel_map),
+            }
+        }
     }
 }
 
@@ -1066,11 +1253,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_server_info<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(*const ServerInfo) + 'static
+        where F: FnMut(&ServerInfo) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(*const ServerInfo)> =
+            let boxed: *mut Box<FnMut(&ServerInfo)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1089,8 +1276,9 @@ fn get_server_info_cb_proxy(_: *mut ContextInternal, i: *const ServerInfoInterna
 {
     assert!(!userdata.is_null() && !i.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(*const ServerInfo)>) };
-    callback(i as *const ServerInfo);
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(&ServerInfo)>) };
+    let obj = ServerInfo::new_from_raw(i);
+    callback(&obj);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1101,26 +1289,42 @@ fn get_server_info_cb_proxy(_: *mut ContextInternal, i: *const ServerInfoInterna
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct ModuleInfo {
+#[derive(Debug)]
+pub struct ModuleInfo<'a> {
     /// Index of the module.
     pub index: u32,
     /// Name of the module.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Argument string of the module.
-    pub argument: *const c_char,
-    /// Usage counter or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub n_used: u32,
-    /// Non-zero if this is an autoloaded module.
-    #[deprecated]
-    pub auto_unload: i32,
+    pub argument: Option<Cow<'a, str>>,
+    /// Usage counter or `None` if invalid.
+    pub n_used: Option<u32>,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
 }
 
-impl From<ModuleInfoInternal> for ModuleInfo {
-    fn from(p: ModuleInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> ModuleInfo<'a> {
+    fn new_from_raw(p: *const ModuleInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            ModuleInfo {
+                index: src.index,
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                argument: match src.argument.is_null() {
+                    false => Some(CStr::from_ptr(src.argument).to_string_lossy()),
+                    true => None,
+                },
+                n_used: match src.n_used {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+            }
+        }
     }
 }
 
@@ -1129,11 +1333,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_module_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const ModuleInfo>) + 'static
+        where F: FnMut(ListResult<&ModuleInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const ModuleInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&ModuleInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1147,11 +1351,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_module_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const ModuleInfo>) + 'static
+        where F: FnMut(ListResult<&ModuleInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const ModuleInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&ModuleInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1216,13 +1420,14 @@ fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal,
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const ModuleInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&ModuleInfo>)>)
             };
-            callback(ListResult::Item(i as *const ModuleInfo));
+            let obj = ModuleInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const ModuleInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&ModuleInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -1247,23 +1452,42 @@ fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct ClientInfo {
+#[derive(Debug)]
+pub struct ClientInfo<'a> {
     /// Index of this client.
     pub index: u32,
     /// Name of this client.
-    pub name: *const c_char,
-    /// Index of the owning module, or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub owner_module: u32,
+    pub name: Option<Cow<'a, str>>,
+    /// Index of the owning module, or `None`.
+    pub owner_module: Option<u32>,
     /// Driver name.
-    pub driver: *const c_char,
+    pub driver: Option<Cow<'a, str>>,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
 }
 
-impl From<ClientInfoInternal> for ClientInfo {
-    fn from(p: ClientInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> ClientInfo<'a> {
+    fn new_from_raw(p: *const ClientInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            ClientInfo {
+                index: src.index,
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                owner_module: match src.owner_module {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                driver: match src.driver.is_null() {
+                    false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
+                    true => None,
+                },
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+            }
+        }
     }
 }
 
@@ -1272,11 +1496,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_client_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const ClientInfo>) + 'static
+        where F: FnMut(ListResult<&ClientInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const ClientInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&ClientInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1290,11 +1514,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_client_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const ClientInfo>) + 'static
+        where F: FnMut(ListResult<&ClientInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const ClientInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&ClientInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1335,13 +1559,14 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const ClientInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&ClientInfo>)>)
             };
-            callback(ListResult::Item(i as *const ClientInfo));
+            let obj = ClientInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const ClientInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&ClientInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -1352,41 +1577,110 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
 // Card info
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// Stores information about a specific profile of a card.
+///
+/// Please note that this structure can be extended as part of evolutionary API updates at any time
+/// in any new release.
+#[derive(Debug)]
+pub struct CardProfileInfo2<'a> {
+    /// Name of this profile.
+    pub name: Option<Cow<'a, str>>,
+    /// Description of this profile.
+    pub description: Option<Cow<'a, str>>,
+    /// Number of sinks this profile would create.
+    pub n_sinks: u32,
+    /// Number of sources this profile would create.
+    pub n_sources: u32,
+    /// The higher this value is, the more useful this profile is as a default.
+    pub priority: u32,
+
+    /// Is this profile available? If this is `false`, meaning "unavailable", then it makes no sense
+    /// to try to activate this profile. If this is `true`, it's still not a guarantee that
+    /// activating the profile will result in anything useful, it just means that the server isn't
+    /// aware of any reason why the profile would definitely be useless.
+    pub available: bool,
+}
+
+impl<'a> CardProfileInfo2<'a> {
+    fn new_from_raw(p: *const CardProfileInfo2Internal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            CardProfileInfo2 {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                n_sinks: src.n_sinks,
+                n_sources: src.n_sources,
+                priority: src.priority,
+                available: match src.available { 0 => false, _ => true },
+            }
+        }
+    }
+}
+
 /// Stores information about a specific port of a card.
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct CardPortInfo {
+#[derive(Debug)]
+pub struct CardPortInfo<'a> {
     /// Name of this port.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Description of this port.
-    pub description: *const c_char,
+    pub description: Option<Cow<'a, str>>,
     /// The higher this value is, the more useful this port is as a default.
     pub priority: u32,
     /// Availability status of this port.
     pub available: ::def::PortAvailable,
     /// The direction of this port.
     pub direction: ::direction::FlagSet,
-    /// Number of entries in profile array.
-    pub n_profiles: u32,
-    /// Superseded by `profiles2`.
-    #[deprecated]
-    #[allow(deprecated)]
-    pub profiles: *mut *mut CardProfileInfo,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
     /// Latency offset of the port that gets added to the sink/source latency when the port is
     /// active.
     pub latency_offset: i64,
-    /// Array of pointers to available profiles, or `NULL`. Array is terminated by an entry set to
-    /// `NULL`.
-    pub profiles2: *mut *mut CardProfileInfo2,
+    /// Set of available profiles.
+    pub profiles: Vec<CardProfileInfo2<'a>>,
 }
 
-impl From<CardPortInfoInternal> for CardPortInfo {
-    fn from(p: CardPortInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> CardPortInfo<'a> {
+    fn new_from_raw(p: *const CardPortInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+
+        let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
+        assert!(src.n_profiles == 0 || !src.profiles2.is_null());
+        for i in 0..src.n_profiles as isize {
+            let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
+            if !indexed_ptr.is_null() {
+                profiles_vec.push(CardProfileInfo2::new_from_raw(indexed_ptr));
+            }
+        }
+
+        unsafe {
+            CardPortInfo {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                priority: src.priority,
+                available: std::mem::transmute(src.available),
+                direction: src.direction,
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                latency_offset: src.latency_offset,
+                profiles: profiles_vec,
+            }
+        }
     }
 }
 
@@ -1394,42 +1688,72 @@ impl From<CardPortInfoInternal> for CardPortInfo {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct CardInfo {
+#[derive(Debug)]
+pub struct CardInfo<'a> {
     /// Index of this card.
     pub index: u32,
     /// Name of this card.
-    pub name: *const c_char,
-    /// Index of the owning module, or [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub owner_module: u32,
+    pub name: Option<Cow<'a, str>>,
+    /// Index of the owning module, or `None`.
+    pub owner_module: Option<u32>,
     /// Driver name.
-    pub driver: *const c_char,
-    /// Number of entries in profile array.
-    pub n_profiles: u32,
-    /// Superseded by `profiles2`.
-    #[deprecated]
-    #[allow(deprecated)]
-    pub profiles: *mut CardProfileInfo,
-    /// Superseded by `active_profile2`.
-    #[deprecated]
-    #[allow(deprecated)]
-    pub active_profile: *mut CardProfileInfo,
+    pub driver: Option<Cow<'a, str>>,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
-    /// Number of entries in port array.
-    pub n_ports: u32,
-    /// Array of pointers to ports, or `NULL`. Array is terminated by an entry set to `NULL`.
-    pub ports: *mut *mut CardPortInfo,
-    /// Array of pointers to available profiles, or `NULL`. Array is terminated by an entry set to
-    /// `NULL`.
-    pub profiles2: *mut *mut CardProfileInfo2,
-    /// Pointer to active profile in the array, or `NULL`.
-    pub active_profile2: *mut CardProfileInfo2,
+    pub proplist: ::proplist::Proplist,
+    /// Set of ports.
+    pub ports: Vec<CardPortInfo<'a>>,
+    /// Set of available profiles.
+    pub profiles: Vec<CardProfileInfo2<'a>>,
+    /// Pointer to active profile in the set, or `None`.
+    pub active_profile: Option<Box<CardProfileInfo2<'a>>>,
 }
 
-impl From<CardInfoInternal> for CardInfo {
-    fn from(p: CardInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> CardInfo<'a> {
+    fn new_from_raw(p: *const CardInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+
+        let mut ports_vec = Vec::with_capacity(src.n_ports as usize);
+        assert!(src.n_ports == 0 || !src.ports.is_null());
+        for i in 0..src.n_ports as isize {
+            let indexed_ptr = unsafe { (*src.ports.offset(i)) as *mut CardPortInfoInternal };
+            if !indexed_ptr.is_null() {
+                ports_vec.push(CardPortInfo::new_from_raw(indexed_ptr));    
+            }
+        }
+        let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
+        assert!(src.n_profiles == 0 || !src.profiles2.is_null());
+        for i in 0..src.n_profiles as isize {
+            let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
+            if !indexed_ptr.is_null() {
+                profiles_vec.push(CardProfileInfo2::new_from_raw(indexed_ptr));
+            }
+        }
+
+        unsafe {
+            CardInfo {
+                index: src.index,
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                owner_module: match src.owner_module {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                driver: match src.driver.is_null() {
+                    false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
+                    true => None,
+                },
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                ports: ports_vec,
+                profiles: profiles_vec,
+                active_profile: match src.active_profile2.is_null() {
+                    true => None,
+                    false => Some(Box::new(CardProfileInfo2::new_from_raw(src.active_profile2))),
+                },
+            }
+        }
     }
 }
 
@@ -1438,11 +1762,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const CardInfo>) + 'static
+        where F: FnMut(ListResult<&CardInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const CardInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&CardInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1456,7 +1780,7 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const CardInfo>) + 'static
+        where F: FnMut(ListResult<&CardInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1464,7 +1788,7 @@ impl Introspector {
 
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const CardInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&CardInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1478,11 +1802,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_card_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const CardInfo>) + 'static
+        where F: FnMut(ListResult<&CardInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const CardInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&CardInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1584,13 +1908,14 @@ fn get_card_info_list_cb_proxy(_: *mut ContextInternal, i: *const CardInfoIntern
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const CardInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&CardInfo>)>)
             };
-            callback(ListResult::Item(i as *const CardInfo));
+            let obj= CardInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const CardInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&CardInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -1605,20 +1930,18 @@ fn get_card_info_list_cb_proxy(_: *mut ContextInternal, i: *const CardInfoIntern
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct SinkInputInfo {
+#[derive(Debug)]
+pub struct SinkInputInfo<'a> {
     /// Index of the sink input.
     pub index: u32,
     /// Name of the sink input.
-    pub name: *const c_char,
-    /// Index of the module this sink input belongs to, or
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) when it does not belong to
-    /// any module.
-    pub owner_module: u32,
-    /// Index of the client this sink input belongs to, or
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) when it does not belong to
-    /// any client.
-    pub client: u32,
+    pub name: Option<Cow<'a, str>>,
+    /// Index of the module this sink input belongs to, or `None` when it does not belong to any
+    /// module.
+    pub owner_module: Option<u32>,
+    /// Index of the client this sink input belongs to, or invalid when it does not belong to any
+    /// client.
+    pub client: Option<u32>,
     /// Index of the connected sink.
     pub sink: u32,
     /// The sample specification of the sink input.
@@ -1634,27 +1957,65 @@ pub struct SinkInputInfo {
     /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
     pub sink_usec: MicroSeconds,
     /// The resampling method used by this sink input.
-    pub resample_method: *const c_char,
+    pub resample_method: Option<Cow<'a, str>>,
     /// Driver name.
-    pub driver: *const c_char,
+    pub driver: Option<Cow<'a, str>>,
     /// Stream muted.
-    pub mute: i32,
+    pub mute: bool,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
     /// Stream corked.
-    pub corked: i32,
+    pub corked: bool,
     /// Stream has volume. If not set, then the meaning of this struct's volume member is unspecified.
-    pub has_volume: i32,
+    pub has_volume: bool,
     /// The volume can be set. If not set, the volume can still change even though clients can't
     /// control the volume.
-    pub volume_writable: i32,
+    pub volume_writable: bool,
     /// Stream format information.
-    pub format: *mut ::format::InfoInternal,
+    pub format: ::format::Info,
 }
 
-impl From<SinkInputInfoInternal> for SinkInputInfo {
-    fn from(p: SinkInputInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SinkInputInfo<'a> {
+    fn new_from_raw(p: *const SinkInputInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            SinkInputInfo {
+                index: src.index,
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                owner_module: match src.owner_module {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                client: match src.client {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                sink: src.sink,
+                sample_spec: std::mem::transmute(src.sample_spec),
+                channel_map: std::mem::transmute(src.channel_map),
+                volume: std::mem::transmute(src.volume),
+                buffer_usec: MicroSeconds(src.buffer_usec),
+                sink_usec: MicroSeconds(src.sink_usec),
+                resample_method: match src.resample_method.is_null() {
+                    false => Some(CStr::from_ptr(src.resample_method).to_string_lossy()),
+                    true => None,
+                },
+                driver: match src.driver.is_null() {
+                    false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
+                    true => None,
+                },
+                mute: match src.mute { 0 => false, _ => true },
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                corked: match src.corked { 0 => false, _ => true },
+                has_volume: match src.has_volume { 0 => false, _ => true },
+                volume_writable: match src.volume_writable { 0 => false, _ => true },
+                format: ::format::Info::from_raw_weak(src.format as *mut ::format::InfoInternal),
+            }
+        }
     }
 }
 
@@ -1663,11 +2024,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SinkInputInfo>) + 'static
+        where F: FnMut(ListResult<&SinkInputInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SinkInputInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SinkInputInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1678,13 +2039,14 @@ impl Introspector {
     }
 
     /// Get the complete sink input list.
+    ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SinkInputInfo>) + 'static
+        where F: FnMut(ListResult<&SinkInputInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SinkInputInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SinkInputInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1817,13 +2179,14 @@ fn get_sink_input_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInpu
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const SinkInputInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&SinkInputInfo>)>)
             };
-            callback(ListResult::Item(i as *const SinkInputInfo));
+            let obj = SinkInputInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SinkInputInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SinkInputInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -1838,20 +2201,18 @@ fn get_sink_input_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInpu
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct SourceOutputInfo {
+#[derive(Debug)]
+pub struct SourceOutputInfo<'a> {
     /// Index of the source output.
     pub index: u32,
     /// Name of the source output.
-    pub name: *const c_char,
-    /// Index of the module this source output belongs to, or
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) when it does not belong to
-    /// any module.
-    pub owner_module: u32,
-    /// Index of the client this source output belongs to, or
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) when it does not belong to
-    /// any client.
-    pub client: u32,
+    pub name: Option<Cow<'a, str>>,
+    /// Index of the module this source output belongs to, or `None` when it does not belong to any
+    /// module.
+    pub owner_module: Option<u32>,
+    /// Index of the client this source output belongs to, or `None` when it does not belong to any
+    /// client.
+    pub client: Option<u32>,
     /// Index of the connected source.
     pub source: u32,
     /// The sample specification of the source output.
@@ -1865,29 +2226,67 @@ pub struct SourceOutputInfo {
     /// for details.
     pub source_usec: MicroSeconds,
     /// The resampling method used by this source output.
-    pub resample_method: *const c_char,
+    pub resample_method: Option<Cow<'a, str>>,
     /// Driver name.
-    pub driver: *const c_char,
+    pub driver: Option<Cow<'a, str>>,
     /// Property list.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
     /// Stream corked.
-    pub corked: i32,
+    pub corked: bool,
     /// The volume of this source output.
     pub volume: ::volume::ChannelVolumes,
     /// Stream muted.
-    pub mute: i32,
+    pub mute: bool,
     /// Stream has volume. If not set, then the meaning of this struct's volume member is unspecified.
-    pub has_volume: i32,
+    pub has_volume: bool,
     /// The volume can be set. If not set, the volume can still change even though clients can't
     /// control the volume.
-    pub volume_writable: i32,
+    pub volume_writable: bool,
     /// Stream format information.
-    pub format: *mut ::format::InfoInternal,
+    pub format: ::format::Info,
 }
 
-impl From<SourceOutputInfoInternal> for SourceOutputInfo {
-    fn from(p: SourceOutputInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SourceOutputInfo<'a> {
+    fn new_from_raw(p: *const SourceOutputInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            SourceOutputInfo {
+                index: src.index,
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                owner_module: match src.owner_module {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                client: match src.client {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                source: src.source,
+                sample_spec: std::mem::transmute(src.sample_spec),
+                channel_map: std::mem::transmute(src.channel_map),
+                buffer_usec: MicroSeconds(src.buffer_usec),
+                source_usec: MicroSeconds(src.source_usec),
+                resample_method: match src.resample_method.is_null() {
+                    false => Some(CStr::from_ptr(src.resample_method).to_string_lossy()),
+                    true => None,
+                },
+                driver: match src.driver.is_null() {
+                    false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
+                    true => None,
+                },
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                corked: match src.corked { 0 => false, _ => true },
+                volume: std::mem::transmute(src.volume),
+                mute: match src.mute { 0 => false, _ => true },
+                has_volume: match src.has_volume { 0 => false, _ => true },
+                volume_writable: match src.volume_writable { 0 => false, _ => true },
+                format: ::format::Info::from_raw_weak(src.format as *mut ::format::InfoInternal),
+            }
+        }
     }
 }
 
@@ -1896,11 +2295,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_output_info<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SourceOutputInfo>) + 'static
+        where F: FnMut(ListResult<&SourceOutputInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SourceOutputInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SourceOutputInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -1914,11 +2313,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_source_output_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SourceOutputInfo>) + 'static
+        where F: FnMut(ListResult<&SourceOutputInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SourceOutputInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SourceOutputInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -2051,13 +2450,14 @@ fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const Sourc
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const SourceOutputInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&SourceOutputInfo>)>)
             };
-            callback(ListResult::Item(i as *const SourceOutputInfo));
+            let obj = SourceOutputInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SourceOutputInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SourceOutputInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
@@ -2073,12 +2473,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn stat<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(*const StatInfo) + 'static
+        where F: FnMut(&StatInfo) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(*const StatInfo)> =
-                Box::into_raw(Box::new(Box::new(callback)));
+            let boxed: *mut Box<FnMut(&StatInfo)> = Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
         let ptr = unsafe { capi::pa_context_stat(self.context, Some(get_stat_info_cb_proxy),
@@ -2094,8 +2493,8 @@ extern "C"
 fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata: *mut c_void) {
     assert!(!userdata.is_null() && !i.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(*const StatInfo)>) };
-    callback(i);
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(&StatInfo)>) };
+    callback(unsafe { i.as_ref().unwrap() });
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2106,12 +2505,12 @@ fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata:
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
-pub struct SampleInfo {
+#[derive(Debug)]
+pub struct SampleInfo<'a> {
     /// Index of this entry.
     pub index: u32,
     /// Name of this entry.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// Default volume of this entry.
     pub volume: ::volume::ChannelVolumes,
     /// Sample specification of the sample.
@@ -2123,16 +2522,37 @@ pub struct SampleInfo {
     /// Length of this sample in bytes.
     pub bytes: u32,
     /// Non-zero when this is a lazy cache entry.
-    pub lazy: i32,
+    pub lazy: bool,
     /// In case this is a lazy cache entry, the filename for the sound file to be loaded on demand.
-    pub filename: *const c_char,
+    pub filename: Option<Cow<'a, str>>,
     /// Property list for this sample.
-    pub proplist: *mut ::proplist::ProplistInternal,
+    pub proplist: ::proplist::Proplist,
 }
 
-impl From<SampleInfoInternal> for SampleInfo {
-    fn from(p: SampleInfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> SampleInfo<'a> {
+    fn new_from_raw(p: *const SampleInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            SampleInfo {
+                index: src.index,
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                volume: std::mem::transmute(src.volume),
+                sample_spec: std::mem::transmute(src.sample_spec),
+                channel_map: std::mem::transmute(src.channel_map),
+                duration: MicroSeconds(src.duration),
+                bytes: src.bytes,
+                lazy: match src.lazy { 0 => false, _ => true },
+                filename: match src.filename.is_null() {
+                    false => Some(CStr::from_ptr(src.filename).to_string_lossy()),
+                    true => None,
+                },
+                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+            }
+        }
     }
 }
 
@@ -2141,7 +2561,7 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_name<F>(&self, name: &str, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SampleInfo>) + 'static
+        where F: FnMut(ListResult<&SampleInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -2149,7 +2569,7 @@ impl Introspector {
 
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SampleInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SampleInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -2163,11 +2583,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_index<F>(&self, index: u32, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SampleInfo>) + 'static
+        where F: FnMut(ListResult<&SampleInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SampleInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SampleInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -2181,11 +2601,11 @@ impl Introspector {
     ///
     /// Returns `None` on error, i.e. invalid arguments or state.
     pub fn get_sample_info_list<F>(&self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const SampleInfo>) + 'static
+        where F: FnMut(ListResult<&SampleInfo>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const SampleInfo>)> =
+            let boxed: *mut Box<FnMut(ListResult<&SampleInfo>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -2207,13 +2627,14 @@ fn get_sample_info_list_cb_proxy(_: *mut ContextInternal, i: *const SampleInfoIn
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
             let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<*const SampleInfo>)>)
+                &mut *(userdata as *mut Box<FnMut(ListResult<&SampleInfo>)>)
             };
-            callback(ListResult::Item(i as *const SampleInfo));
+            let obj = SampleInfo::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const SampleInfo>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SampleInfo>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },
