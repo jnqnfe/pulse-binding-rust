@@ -636,7 +636,7 @@ impl Stream {
         // pointers.
         let mut info_ptrs: Vec<*const capi::pa_format_info> = Vec::with_capacity(formats.len());
         for format in formats {
-            info_ptrs.push(unsafe { std::mem::transmute(&format.ptr) });
+            info_ptrs.push(format.ptr as *const capi::pa_format_info);
         }
 
         let ptr = unsafe {

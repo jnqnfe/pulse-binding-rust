@@ -20,6 +20,13 @@ Changes between 1.2.2 and ???:
    need to worry about whether or not these are accepted, though discussion indicates they will, nor
    for a new version of PA to be released; logically they should be immutable, and we do not need to
    propagate this unfortunate artefact).
+ * Format: Simplified. The inner pointer to a raw `InfoInternal` object (mistakenly hidden in v1.1,
+   restored in v1.2.2) has been hidden, replaced with cleaner set/get methods. A method already
+   existed for setting the encoding; one has now also been added for reading it, saving users from
+   having to do an unsafe raw pointer dereference. Also, with respect to the property list, if the
+   existing convenience methods are insufficient and direct access is needed, this is also now far
+   cleaner; not only is the unsafe raw pointer dereference avoided, but now you are given access to
+   a clean `Proplist` wrapper (see `get_properties` and `get_properties_mut`).
  * Assert added to block use of threaded mainloop `lock` method from within the event loop thread
    (i.e. within most instances of callback execution).
  * Stream: Renamed `proplist_remove` to `remove_proplist`

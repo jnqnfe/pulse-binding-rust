@@ -18,7 +18,7 @@
 //! # Note
 //!
 //! Clients using an [`Info`] struture must remember to at least set the encoding attribute, which
-//! can be done through the [`set_encoding`] convenience method.
+//! can be done through the [`set_encoding`] method.
 //!
 //! [`Info`]: struct.Info.html
 //! [`set_encoding`]: struct.Info.html#method.set_encoding
@@ -74,15 +74,17 @@ impl Default for Encoding {
     }
 }
 
-/// This acts as a safe Rust wrapper for the actual C object.
-pub struct Info<'a> {
+/// Represents the format of data provided in a stream or processed by a sink.
+pub struct Info {
     /// The actual C object
-    pub ptr: &'a mut InfoInternal,
+    pub(crate) ptr: *mut InfoInternal,
+    /// Wrapped property list pointer
+    properties: ::proplist::Proplist,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
     weak: bool,
 }
 
-/// Represents the format of data provided in a stream or processed by a sink.
+/// The raw C structure (with documentation)
 #[repr(C)]
 pub struct InfoInternal {
     /// The encoding used for the format.
@@ -90,6 +92,18 @@ pub struct InfoInternal {
 
     /// Additional encoding-specific properties such as sample rate, bitrate, etc.
     pub list: *mut ::proplist::ProplistInternal,
+}
+
+impl From<capi::pa_format_info> for InfoInternal {
+    fn from(i: capi::pa_format_info) -> Self {
+        unsafe { std::mem::transmute(i) }
+    }
+}
+
+impl From<InfoInternal> for capi::pa_format_info {
+    fn from(i: InfoInternal) -> Self {
+        unsafe { std::mem::transmute(i) }
+    }
 }
 
 impl Encoding {
@@ -116,7 +130,7 @@ impl Encoding {
     }
 }
 
-impl<'a> Info<'a> {
+impl Info {
     /// Allocates a new `Info` structure.
     ///
     /// Clients must initialise at least the encoding field themselves. Returns `None` on failure.
@@ -172,14 +186,28 @@ impl<'a> Info<'a> {
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
     pub(crate) fn from_raw(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        unsafe { Self { ptr: &mut *ptr, weak: false } }
+        unsafe {
+            Self {
+                ptr: ptr,
+                // Note, yes, this should be the weak version, the 'free' function for a format info
+                // object free's its own proplist!
+                properties: ::proplist::Proplist::from_raw_weak((*ptr).list),
+                weak: false,
+            }
+        }
     }
 
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
     /// This is the 'weak' version, which avoids destroying the internal object when dropped.
     pub fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        unsafe { Self { ptr: &mut *ptr, weak: true } }
+        unsafe {
+            Self {
+                ptr: ptr,
+                properties: ::proplist::Proplist::from_raw_weak((*ptr).list),
+                weak: true,
+            }
+        }
     }
 
     /// Returns whether the `Info` structure is valid.
@@ -234,9 +262,24 @@ impl<'a> Info<'a> {
         }
     }
 
-    /// Convenience method to set the encoding attribute.
+    /// Get the encoding.
+    pub fn get_encoding(&self) -> Encoding {
+        unsafe { (*self.ptr).encoding }
+    }
+
+    /// Set the encoding attribute.
     pub fn set_encoding(&mut self, encoding: Encoding) {
-        (*self.ptr).encoding = encoding;
+        unsafe { (*self.ptr).encoding = encoding };
+    }
+
+    /// Get an immutable reference to the property list.
+    pub fn get_properties(&self) -> &::proplist::Proplist {
+        &self.properties
+    }
+
+    /// Get a mutable reference to the property list.
+    pub fn get_properties_mut(&mut self) -> &mut ::proplist::Proplist {
+        &mut self.properties
     }
 
     /// Gets the type of property key.
@@ -443,7 +486,7 @@ impl<'a> Info<'a> {
     }
 }
 
-impl<'a> Drop for Info<'a> {
+impl Drop for Info {
     fn drop(&mut self) {
         if !self.weak {
             unsafe { capi::pa_format_info_free(std::mem::transmute(&self.ptr)) };
@@ -451,7 +494,7 @@ impl<'a> Drop for Info<'a> {
     }
 }
 
-impl<'a> Clone for Info<'a> {
+impl Clone for Info {
     /// Returns a new `Info` struct and representing the same format. If this is called on a 'weak'
     /// instance, a non-weak object is returned.
     fn clone(&self) -> Self {
