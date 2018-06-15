@@ -1430,7 +1430,7 @@ impl Stream {
         if ptr.is_null() {
             return None;
         }
-        Some(::format::Info::from_raw(unsafe { std::mem::transmute(ptr) }))
+        Some(::format::Info::from_raw_weak(unsafe { std::mem::transmute(ptr) }))
     }
 
     /// Return the per-stream server-side buffer metrics of the stream.
