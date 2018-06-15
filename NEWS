@@ -3,9 +3,9 @@ Changes between 1.2.0 and ???:
 
  [pulse-binding]
 
- * Stream: Fix use-after-free with `get_format_info`. This used `from_raw` instead of
-   `from_raw_weak` meaning dropping the returned object would incorrectly free the underlying C
-   object, leaving a dangling pointer.
+ * Stream: Fix use-after-frees with `get_format_info` and `get_context`. These should have used
+   `from_raw_weak` instead of `from_raw` to avoid incorrectly freeing the underlying C object,
+   leaving a dangling pointer.
 
 Changes between 1.1.0 and 1.2.0:
 ---------------

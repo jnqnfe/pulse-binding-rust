@@ -655,7 +655,7 @@ impl Stream {
 
     /// Return the context this stream is attached to.
     pub fn get_context(&self) -> ::context::Context {
-        ::context::Context::from_raw(unsafe { capi::pa_stream_get_context(self.ptr) })
+        ::context::Context::from_raw_weak(unsafe { capi::pa_stream_get_context(self.ptr) })
     }
 
     /// Return the sink input resp. source output index this stream is identified in the server
