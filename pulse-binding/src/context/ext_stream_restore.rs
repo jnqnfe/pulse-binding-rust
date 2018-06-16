@@ -18,7 +18,8 @@
 use std;
 use capi;
 use std::os::raw::{c_char, c_void};
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
+use std::borrow::Cow;
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
 use callbacks::ListResult;
@@ -26,24 +27,40 @@ use capi::pa_ext_stream_restore_info as InfoInternal;
 
 /// Stores information about one entry in the stream database that is maintained by
 /// module-stream-restore.
-#[repr(C)]
-pub struct Info {
+#[derive(Debug)]
+pub struct Info<'a> {
     /// Identifier string of the stream. A string like "sink-input-by-role:" or similar followed by
     /// some arbitrary property value.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// The channel map for the volume field, if applicable.
     pub channel_map: ::channelmap::Map,
     /// The volume of the stream when it was seen last, if applicable and saved.
     pub volume: ::volume::ChannelVolumes,
     /// The sink/source of the stream when it was last seen, if applicable and saved.
-    pub device: *const c_char,
+    pub device: Option<Cow<'a, str>>,
     /// The boolean mute state of the stream when it was last seen, if applicable and saved.
-    pub mute: i32,
+    pub mute: bool,
 }
 
-impl From<InfoInternal> for Info {
-    fn from(p: InfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> Info<'a> {
+    fn new_from_raw(p: *const InfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            Info {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                channel_map: std::mem::transmute(src.channel_map),
+                volume: std::mem::transmute(src.volume),
+                device: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.device).to_string_lossy()),
+                    true => None,
+                },
+                mute: match src.mute { 0 => false, _ => true },
+            }
+        }
     }
 }
 
@@ -99,11 +116,11 @@ impl StreamRestore {
 
     /// Read all entries from the stream database.
     pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const Info>) + 'static
+        where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -212,12 +229,13 @@ fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     match eol {
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
-            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<*const Info>)>) };
-            callback(ListResult::Item(i as *const Info));
+            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<&Info>)>) };
+            let obj = Info::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const Info>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&Info>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },

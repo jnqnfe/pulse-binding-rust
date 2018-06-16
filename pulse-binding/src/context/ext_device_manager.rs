@@ -16,38 +16,89 @@
 // if not, see <http://www.gnu.org/licenses/>.
 
 use capi;
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
+use std::borrow::Cow;
 use std::os::raw::{c_char, c_void};
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
 use callbacks::ListResult;
-
-pub use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfo;
 use capi::pa_ext_device_manager_info as InfoInternal;
+use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfoInternal;
+
+#[derive(Debug)]
+pub struct RolePriorityInfo<'a> {
+    pub role: Option<Cow<'a, str>>,
+    pub priority: u32,
+}
+
+impl<'a> RolePriorityInfo<'a> {
+    fn new_from_raw(p: *const RolePriorityInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            RolePriorityInfo {
+                role: match src.role.is_null() {
+                    false => Some(CStr::from_ptr(src.role).to_string_lossy()),
+                    true => None,
+                },
+                priority: src.priority,
+            }
+        }
+    }
+}
 
 /// Stores information about one device in the device database that is maintained by
 /// module-device-manager.
-#[repr(C)]
-pub struct Info {
+#[derive(Debug)]
+pub struct Info<'a> {
     /// Identifier string of the device. A string like "sink:" or similar followed by the name of
     /// the device.
-    pub name: *const c_char,
+    pub name: Option<Cow<'a, str>>,
     /// The description of the device when it was last seen, if applicable and saved.
-    pub description: *const c_char,
+    pub description: Option<Cow<'a, str>>,
     /// The icon given to the device.
-    pub icon: *const c_char,
-    /// The device index if it is currently available or
-    /// [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html).
-    pub index: u32,
-    /// How many role priorities do we have?
-    pub n_role_priorities: u32,
-    /// An array of role priority structures or `NULL`.
-    pub role_priorities: *mut RolePriorityInfo,
+    pub icon: Option<Cow<'a, str>>,
+    /// The device index if it is currently available or `None` if invalid.
+    pub index: Option<u32>,
+    /// A set of role priority structures.
+    pub role_priorities: Vec<RolePriorityInfo<'a>>,
 }
 
-impl From<InfoInternal> for Info {
-    fn from(p: InfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl<'a> Info<'a> {
+    fn new_from_raw(p: *const InfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+
+        let mut rp_vec = Vec::with_capacity(src.n_role_priorities as usize);
+        assert!(src.n_role_priorities == 0 || !src.role_priorities.is_null());
+        for i in 0..src.n_role_priorities as isize {
+            let indexed_ptr = unsafe { src.role_priorities.offset(i) as *mut RolePriorityInfoInternal };
+            if !indexed_ptr.is_null() {
+                rp_vec.push(RolePriorityInfo::new_from_raw(indexed_ptr));
+            }
+        }
+
+        unsafe {
+            Info {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                icon: match src.icon.is_null() {
+                    false => Some(CStr::from_ptr(src.icon).to_string_lossy()),
+                    true => None,
+                },
+                index: match src.index {
+                    ::def::INVALID_INDEX => None,
+                    i => Some(i),
+                },
+                role_priorities: rp_vec,
+            }
+        }
     }
 }
 
@@ -103,11 +154,11 @@ impl DeviceManager {
 
     /// Read all entries from the device database.
     pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const Info>) + 'static
+        where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -276,12 +327,13 @@ fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     match eol {
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
-            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<*const Info>)>) };
-            callback(ListResult::Item(i as *const Info));
+            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<&Info>)>) };
+            let obj = Info::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const Info>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&Info>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },

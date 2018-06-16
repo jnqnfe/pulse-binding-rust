@@ -25,21 +25,35 @@ use capi::pa_ext_device_restore_info as InfoInternal;
 
 /// Stores information about one device in the device database that is maintained by
 /// module-device-manager.
-#[repr(C)]
+#[derive(Debug)]
 pub struct Info {
     /// Device type sink or source?
     pub dtype: ::def::Device,
     /// The device index.
     pub index: u32,
-    /// How many formats do we have?
-    pub n_formats: u8,
-    /// An array of formats (may be `NULL` if ``n_formats == 0``).
-    pub formats: *mut *mut ::format::InfoInternal,
+    /// A set of formats.
+    pub formats: Vec<::format::Info>,
 }
 
-impl From<InfoInternal> for Info {
-    fn from(p: InfoInternal) -> Self {
-        unsafe { std::mem::transmute(p) }
+impl Info {
+    fn new_from_raw(p: *const InfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+
+        let mut formats_vec = Vec::with_capacity(src.n_formats as usize);
+        assert!(src.n_formats == 0 || !src.formats.is_null());
+        for i in 0..src.n_formats as isize {
+            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut ::format::InfoInternal };
+            if !indexed_ptr.is_null() {
+                formats_vec.push(::format::Info::from_raw_weak(indexed_ptr));
+            }
+        }
+
+        Info {
+            dtype: src.dtype,
+            index: src.index,
+            formats: formats_vec,
+        }
     }
 }
 
@@ -130,11 +144,11 @@ impl DeviceRestore {
 
     /// Read the formats for all present devices from the device database.
     pub fn read_formats_all<F>(&mut self, callback: F) -> ::operation::Operation
-        where F: FnMut(ListResult<*const Info>) + 'static
+        where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -147,11 +161,11 @@ impl DeviceRestore {
     /// Read an entry from the device database.
     pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F
         ) -> ::operation::Operation
-        where F: FnMut(ListResult<*const Info>) + 'static
+        where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data: *mut c_void = {
             // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<*const Info>)> =
+            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
                 Box::into_raw(Box::new(Box::new(callback)));
             boxed as *mut c_void
         };
@@ -219,12 +233,13 @@ fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     match eol {
         0 => { // Give item to real callback, do NOT destroy it
             assert!(!i.is_null());
-            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<*const Info>)>) };
-            callback(ListResult::Item(i as *const Info));
+            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<&Info>)>) };
+            let obj = Info::new_from_raw(i);
+            callback(ListResult::Item(&obj));
         },
         _ => { // End-of-list or failure, signal to real callback, do now destroy it
             let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<*const Info>)>)
+                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&Info>)>)
             };
             callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
         },

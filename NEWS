@@ -17,6 +17,7 @@ Changes between 1.2.2 and ???:
    much more pleasant to use interface. Note, the `Debug` trait has been implemented, thus combined
    with the new support of closures for callbacks, makes it very easy to dump a copy of
    introspection data.
+ * Context: ext_*: Cleaned up in the same way as introspection.
  * Volume: Renamed `CVolume` to `ChannelVolumes`
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.
