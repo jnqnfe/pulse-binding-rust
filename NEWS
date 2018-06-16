@@ -1,4 +1,4 @@
-Changes between 1.2.2 and ???:
+Changes between 1.2.2 and 2.0.0:
 ---------------
 
  [pulse-binding]
@@ -45,7 +45,7 @@ Changes between 1.2.2 and ???:
    wasn't needed.
  * Subscribe: purge audoload API (deprecated since 2009)
 
- [pulse-sys]
+ [pulse-sys] (1.1.0 => 1.2.0)
 
  * Context: Handful of functions changed to take const pointers, as discussed above.
  * Introspect & subscribe: purge audoload API (deprecated since 2009)
