@@ -41,6 +41,18 @@ pub struct Info {
     pub mute: i32,
 }
 
+impl From<Info> for InfoInternal {
+    fn from(p: Info) -> Self {
+        unsafe { std::mem::transmute(p) }
+    }
+}
+
+impl From<InfoInternal> for Info {
+    fn from(p: InfoInternal) -> Self {
+        unsafe { std::mem::transmute(p) }
+    }
+}
+
 /// A wrapper object providing stream restore routines to a context.
 pub struct StreamRestore {
     context: *mut ContextInternal,

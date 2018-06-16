@@ -37,6 +37,18 @@ pub struct Info {
     pub formats: *mut *mut ::format::InfoInternal,
 }
 
+impl From<Info> for InfoInternal {
+    fn from(p: Info) -> Self {
+        unsafe { std::mem::transmute(p) }
+    }
+}
+
+impl From<InfoInternal> for Info {
+    fn from(p: InfoInternal) -> Self {
+        unsafe { std::mem::transmute(p) }
+    }
+}
+
 /// A wrapper object providing device restore routines to a context.
 pub struct DeviceRestore {
     context: *mut ContextInternal,
