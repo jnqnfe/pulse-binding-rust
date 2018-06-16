@@ -44,12 +44,6 @@ pub struct Info {
     pub role_priorities: *mut RolePriorityInfo,
 }
 
-impl From<Info> for InfoInternal {
-    fn from(p: Info) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<InfoInternal> for Info {
     fn from(p: InfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }

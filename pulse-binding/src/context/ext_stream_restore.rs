@@ -41,12 +41,6 @@ pub struct Info {
     pub mute: i32,
 }
 
-impl From<Info> for InfoInternal {
-    fn from(p: Info) -> Self {
-        unsafe { std::mem::transmute(p) }
-    }
-}
-
 impl From<InfoInternal> for Info {
     fn from(p: InfoInternal) -> Self {
         unsafe { std::mem::transmute(p) }
