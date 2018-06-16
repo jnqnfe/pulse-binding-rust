@@ -38,7 +38,7 @@ Changes between 1.1.0 and 1.2.0:
     - `Volume` and `VolumeDB` are now wrappers rather than type aliases
     - Added the `VolumeLinear` wrapper. I had mistakenly taken floating point volumes to all be dB
       values, but there is actually a distinction between dB and 'linear factor', as per the C API
-      conversion functions. This is now used in linear related convertions, which thus no longer
+      conversion functions. This is now used in linear related conversions, which thus no longer
       incorrectly portray such values to be dB scale.
     - Renamed `DECIBEL_MININFTY` to `DECIBEL_MINUS_INFINITY`
     - CVolume `inc` and `dec` methods renamed to `increase` and `decrease` respectively for clarity,
@@ -60,10 +60,10 @@ Changes between 1.1.0 and 1.2.0:
       `::mainloop::events::timer`
  * Added and put to use wrapper for 'quit return values'
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
-   to avoid unecessary conversion, but users most likely would prefer `Strings`s, and there should
+   to avoid unnecessary conversion, but users most likely would prefer `Strings`s, and there should
    definitely not be a problem with "lossy" utf8 conversion in these cases.
  * stream: get_underflow_index: return unsigned
- * Hid string printing length constants, only used interally
+ * Hid string printing length constants, only used internally
  * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
    thus more simple, and removed the `Option` result wrapper.
  * Changed several `::sample::Format` related functions to methods
@@ -118,7 +118,7 @@ Changes between 1.0.4d and 1.0.5:
     - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
       cannot be hidden within the iterate function, it causes an infinite loop whereby the function
       always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
-    - Implemented proper iterator symantics. The `iterate` method was renamed `iter` and now returns
+    - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
  * CVolume: make self for is_[muted|norm] immutable
  * Stream: fix double option wrapping of callback fn ptr with write methods
