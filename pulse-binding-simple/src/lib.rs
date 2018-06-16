@@ -263,4 +263,3 @@ impl Drop for Simple {
         self.ptr = null::<SimpleInternal>() as *mut SimpleInternal;
     }
 }
-
