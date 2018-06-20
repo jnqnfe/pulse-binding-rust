@@ -97,7 +97,7 @@ typedef enum pa_operation_state {
     /**< The operation has completed */
     PA_OPERATION_CANCELLED
     /**< The operation has been cancelled. Operations may get cancelled by the
-     * application, or as a result of the context getting disconneted while the
+     * application, or as a result of the context getting disconnected while the
      * operation is pending. */
 } pa_operation_state_t;
 
@@ -118,7 +118,9 @@ typedef enum pa_context_flags {
     PA_CONTEXT_NOAUTOSPAWN = 0x0001U,
     /**< Disabled autospawning of the PulseAudio daemon if required */
     PA_CONTEXT_NOFAIL = 0x0002U
-    /**< Don't fail if the daemon is not available when pa_context_connect() is called, instead enter PA_CONTEXT_CONNECTING state and wait for the daemon to appear.  \since 0.9.15 */
+    /**< Don't fail if the daemon is not available when pa_context_connect() is
+     * called, instead enter PA_CONTEXT_CONNECTING state and wait for the daemon
+     * to appear.  \since 0.9.15 */
 } pa_context_flags_t;
 
 /** \cond fulldocs */
@@ -259,7 +261,7 @@ typedef enum pa_stream_flags {
     PA_STREAM_FIX_CHANNELS = 0x0100,
     /**< Use the number of channels and the channel map of the sink,
      * and possibly ignore the number of channels and the map the
-     * sample spec and the passed channel map contains. Usage similar
+     * sample spec and the passed channel map contain. Usage similar
      * to PA_STREAM_FIX_FORMAT. Only supported when the server is at
      * least PA 0.9.8. It is ignored on older servers.
      *
@@ -295,7 +297,7 @@ typedef enum pa_stream_flags {
 
     PA_STREAM_START_MUTED = 0x1000U,
     /**< Create in muted state. If neither PA_STREAM_START_UNMUTED nor
-     * PA_STREAM_START_MUTED it is left to the server to decide
+     * PA_STREAM_START_MUTED are set, it is left to the server to decide
      * whether to create the stream in muted or in unmuted
      * state. \since 0.9.11 */
 
@@ -330,7 +332,7 @@ typedef enum pa_stream_flags {
 
     PA_STREAM_START_UNMUTED = 0x10000U,
     /**< Create in unmuted state. If neither PA_STREAM_START_UNMUTED
-     * nor PA_STREAM_START_MUTED it is left to the server to decide
+     * nor PA_STREAM_START_MUTED are set it is left to the server to decide
      * whether to create the stream in muted or in unmuted
      * state. \since 0.9.15 */
 
@@ -399,13 +401,18 @@ typedef struct pa_buffer_attr {
     uint32_t tlength;
     /**< Playback only: target length of the buffer. The server tries
      * to assure that at least tlength bytes are always available in
-     * the per-stream server-side playback buffer. It is recommended
-     * to set this to (uint32_t) -1, which will initialize this to a
-     * value that is deemed sensible by the server. However, this
-     * value will default to something like 2s, i.e. for applications
-     * that have specific latency requirements this value should be
-     * set to the maximum latency that the application can deal
-     * with. When PA_STREAM_ADJUST_LATENCY is not set this value will
+     * the per-stream server-side playback buffer. The server will
+     * only send requests for more data as long as the buffer has
+     * less than this number of bytes of data.
+     *
+     * It is recommended to set this to (uint32_t) -1, which will
+     * initialize this to a value that is deemed sensible by the
+     * server. However, this value will default to something like 2s;
+     * for applications that have specific latency requirements
+     * this value should be set to the maximum latency that the
+     * application can deal with.
+     *
+     * When PA_STREAM_ADJUST_LATENCY is not set this value will
      * influence only the per-stream playback buffer size. When
      * PA_STREAM_ADJUST_LATENCY is set the overall latency of the sink
      * plus the playback buffer size is configured to this value. Set
@@ -419,11 +426,19 @@ typedef struct pa_buffer_attr {
      * playback before at least prebuf bytes are available in the
      * buffer. It is recommended to set this to (uint32_t) -1, which
      * will initialize this to the same value as tlength, whatever
-     * that may be. Initialize to 0 to enable manual start/stop
-     * control of the stream. This means that playback will not stop
-     * on underrun and playback will not start automatically. Instead
-     * pa_stream_cork() needs to be called explicitly. If you set
-     * this value to 0 you should also set PA_STREAM_START_CORKED. */
+     * that may be.
+     *
+     * Initialize to 0 to enable manual start/stop control of the stream.
+     * This means that playback will not stop on underrun and playback
+     * will not start automatically, instead pa_stream_cork() needs to
+     * be called explicitly. If you set this value to 0 you should also
+     * set PA_STREAM_START_CORKED. Should underrun occur, the read index
+     * of the output buffer overtakes the write index, and hence the
+     * fill level of the buffer is negative.
+     *
+     * Start of playback can be forced using pa_stream_trigger() even
+     * though the prebuffer size hasn't been reached. If a buffer
+     * underrun occurs, this prebuffering will be again enabled. */
 
     uint32_t minreq;
     /**< Playback only: minimum request. The server does not request
@@ -442,11 +457,12 @@ typedef struct pa_buffer_attr {
      * but decrease control overhead. It is recommended to set this to
      * (uint32_t) -1, which will initialize this to a value that is
      * deemed sensible by the server. However, this value will default
-     * to something like 2s, i.e. for applications that have specific
+     * to something like 2s; For applications that have specific
      * latency requirements this value should be set to the maximum
-     * latency that the application can deal with. If
-     * PA_STREAM_ADJUST_LATENCY is set the overall source latency will
-     * be adjusted according to this value. If it is not set the
+     * latency that the application can deal with.
+     *
+     * If PA_STREAM_ADJUST_LATENCY is set the overall source latency
+     * will be adjusted according to this value. If it is not set the
      * source latency is left unmodified. */
 
 } pa_buffer_attr;
@@ -703,7 +719,7 @@ typedef struct pa_timing_info {
     int64_t write_index;
     /**< Current write index into the playback buffer in bytes. Think
      * twice before using this for seeking purposes: it might be out
-     * of date a the time you want to use it. Consider using
+     * of date at the time you want to use it. Consider using
      * PA_SEEK_RELATIVE instead. */
 
     int read_index_corrupt;
@@ -714,7 +730,7 @@ typedef struct pa_timing_info {
     int64_t read_index;
     /**< Current read index into the playback buffer in bytes. Think
      * twice before using this for seeking purposes: it might be out
-     * of date a the time you want to use it. Consider using
+     * of date at the time you want to use it. Consider using
      * PA_SEEK_RELATIVE_ON_READ instead. */
 
     pa_usec_t configured_sink_usec;
@@ -758,16 +774,16 @@ typedef struct pa_spawn_api {
 /** Seek type for pa_stream_write(). */
 typedef enum pa_seek_mode {
     PA_SEEK_RELATIVE = 0,
-    /**< Seek relatively to the write index */
+    /**< Seek relative to the write index. */
 
     PA_SEEK_ABSOLUTE = 1,
-    /**< Seek relatively to the start of the buffer queue */
+    /**< Seek relative to the start of the buffer queue. */
 
     PA_SEEK_RELATIVE_ON_READ = 2,
-    /**< Seek relatively to the read index.  */
+    /**< Seek relative to the read index. */
 
     PA_SEEK_RELATIVE_END = 3
-    /**< Seek relatively to the current end of the buffer queue. */
+    /**< Seek relative to the current end of the buffer queue. */
 } pa_seek_mode_t;
 
 /** \cond fulldocs */
