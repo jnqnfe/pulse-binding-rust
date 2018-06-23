@@ -19,7 +19,7 @@ use capi;
 use std::ffi::CStr;
 
 /// The version of the PulseAudio headers this binding is designed to link to.
-pub const BINDING_TARGET_VERSION: &str = "11.1.0";
+pub const BINDING_TARGET_VERSION: &str = "12.0.0";
 
 #[inline(always)]
 pub fn get_headers_version() -> &'static str {
@@ -34,7 +34,7 @@ pub const API_VERSION: u8 = 12;
 pub const PROTOCOL_VERSION: u16 = 32;
 
 /// The major version of PA.
-pub const MAJOR: u8 = 11;
+pub const MAJOR: u8 = 12;
 
 /// The minor version of PA.
 pub const MINOR: u8 = 0;

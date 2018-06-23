@@ -19,7 +19,7 @@ use std::os::raw::c_char;
 
 /// The version of the PulseAudio headers this linking library is designed to link to. (It may also
 /// incidentally be backwards compatible with older versions).
-pub const LINK_TARGET_VERSION: &str = "11.1.0";
+pub const LINK_TARGET_VERSION: &str = "12.0.0";
 
 #[inline(always)]
 pub fn pa_get_headers_version() -> &'static str {
@@ -28,7 +28,7 @@ pub fn pa_get_headers_version() -> &'static str {
 
 pub const PA_API_VERSION: u8 = 12;
 pub const PA_PROTOCOL_VERSION: u16 = 32;
-pub const PA_MAJOR: u8 = 11;
+pub const PA_MAJOR: u8 = 12;
 pub const PA_MINOR: u8 = 0;
 pub const PA_MICRO: u8 = 0;
 
