@@ -4,6 +4,7 @@ Changes between 2.0.0 and ???:
  [pulse-binding]
 
  * Updated declared version compatability
+ * Operation: Documented possible memory leak
  * Proplist: Fix debug output to use comma separator rather than newline (for consistency in
    dumping introspection data), and output in list style instead of mixed struct/list style.
 
