@@ -217,9 +217,7 @@ extern "C"
 fn ext_subscribe_cb_proxy(_: *mut ContextInternal, type_: ::def::Device, index: u32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(::def::Device, u32)>) };
+    let callback = SubscribeCb::get_callback(userdata);
     callback(type_, index);
 }
 

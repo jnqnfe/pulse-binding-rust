@@ -211,11 +211,8 @@ impl Context {
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn cb_proxy(_: *mut ContextInternal, et: EventType, index: u32, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(Option<Facility>,
-        Option<Operation>, u32)>) };
     let facility = get_facility(et);
     let operation = get_operation(et);
+    let callback = Callback::get_callback(userdata);
     callback(facility, operation, index);
 }

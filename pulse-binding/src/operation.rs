@@ -95,8 +95,6 @@ impl Drop for Operation {
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn notify_cb_proxy(_: *mut OperationInternal, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut()>) };
+    let callback = NotifyCb::get_callback(userdata);
     callback();
 }

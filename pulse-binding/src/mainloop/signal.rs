@@ -93,8 +93,6 @@ extern "C"
 fn signal_cb_proxy(_api: *mut capi::pa_mainloop_api, _e: *mut EventInternal, sig: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(i32)>) };
+    let callback = SignalCb::get_callback(userdata);
     callback(sig);
 }

@@ -1699,9 +1699,7 @@ fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void)
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn request_cb_proxy(_: *mut StreamInternal, nbytes: usize, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(usize)>) };
+    let callback = RequestCb::get_callback(userdata);
     callback(nbytes);
 }
 
@@ -1710,9 +1708,7 @@ fn request_cb_proxy(_: *mut StreamInternal, nbytes: usize, userdata: *mut c_void
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn notify_cb_proxy(_: *mut StreamInternal, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut()>) };
+    let callback = NotifyCb::get_callback(userdata);
     callback();
 }
 
@@ -1723,14 +1719,13 @@ extern "C"
 fn event_cb_proxy(_: *mut StreamInternal, name: *const c_char,
     proplist: *mut ::proplist::ProplistInternal, userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
     assert!(!name.is_null());
     let n = {
         let tmp = unsafe { CStr::from_ptr(name) };
         tmp.to_string_lossy().into_owned()
     };
     let pl = Proplist::from_raw_weak(proplist);
-    // Note, does NOT destroy closure callback after use - only handles pointer
-    let callback = unsafe { &mut *(userdata as *mut Box<FnMut(String, Proplist)>) };
+
+    let callback = EventCb::get_callback(userdata);
     callback(n, pl);
 }

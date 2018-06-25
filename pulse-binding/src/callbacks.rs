@@ -85,6 +85,17 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
             None => (None, std::ptr::null_mut::<c_void>()),
         }
     }
+
+    /// Convert void closure pointer back to real type. For use in callback proxies. Only a
+    /// reference is returned, in order to deliberately avoid reclaiming ownership and thus
+    /// triggering of destruction.
+    ///
+    /// Panics if `ptr` is null.
+    pub fn get_callback<'a>(ptr: *mut c_void) -> &'a mut Box<ClosureProto> {
+        assert!(!ptr.is_null());
+        // Note, does NOT destroy closure callback after use - only handles pointer
+        unsafe { &mut *(ptr as *mut Box<ClosureProto>) }
+    }
 }
 
 impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, ProxyProto> {
