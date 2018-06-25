@@ -95,7 +95,7 @@ impl Context {
 
     /// Play a sample from the sample cache to the specified device.
     ///
-    /// If the sepecified device is `None` use the default sink.
+    /// If the specified device is `None` use the default sink.
     ///
     /// # Params
     ///

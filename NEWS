@@ -7,10 +7,15 @@ Changes between 2.0.0 and ???:
  * Operation: Documented possible memory leak
  * Proplist: Fix debug output to use comma separator rather than newline (for consistency in
    dumping introspection data), and output in list style instead of mixed struct/list style.
+ * Doc typo fixes
 
  [pulse-sys]
 
  * Updated declared version compatability
+
+ [pulse-glib-mainloop-binding]
+
+ * Doc typo fix
 
 Changes between 1.2.2 and 2.0.0:
 ---------------

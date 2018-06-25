@@ -333,7 +333,7 @@ impl Map {
         unsafe { capi::pa_channel_map_can_fade(std::mem::transmute(self)) != 0 }
     }
 
-    /// Checks whether or not it makes sense to apply a volume "lfe balance" (i.e. "balance" between
+    /// Checks whether or not it makes sense to apply a volume "LFE balance" (i.e. "balance" between
     /// LFE and non-LFE channels) with this mapping, i.e. if there are LFE and non-LFE channels
     /// available.
     pub fn can_lfe_balance(&self) -> bool {

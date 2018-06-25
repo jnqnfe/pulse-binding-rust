@@ -187,7 +187,7 @@ impl Context {
 
     /// Set the context specific call back function that is called whenever a subscribed-to event
     /// occurs. Use [`subscribe`](#method.subscribe) to set the facilities you are interested in
-    /// recieving notifications for, and thus to start receiving notifications with the callback set
+    /// receiving notifications for, and thus to start receiving notifications with the callback set
     /// here.
     ///
     /// The callback must take three parameters. The first two are the facility and operation

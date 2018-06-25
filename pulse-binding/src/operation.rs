@@ -54,10 +54,10 @@ impl Operation {
     ///
     /// Beware! This will not necessarily cancel the execution of the operation on the server side.
     /// However it will make sure that the callback associated with this operation will not be
-    /// called anymore, effectively disabling the operation from the client side's view.
+    /// called any more, effectively disabling the operation from the client side's view.
     ///
     /// **Warning**, cancelling operations with *single-use* callbacks (those that are fired only
-    /// once) **will** result in a memory leak. (In such cases the closure is transfered to the
+    /// once) **will** result in a memory leak. (In such cases the closure is transferred to the
     /// callback via a raw pointer, and when the callback is fired, it is reconstructed and dropped
     /// after use; cancelling callback execution means this will not happen, thus a leak occurs).
     pub fn cancel(&mut self) {

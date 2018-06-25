@@ -78,7 +78,7 @@ impl<T> Drop for MainloopInner<T>
 /// This is the actual implementation of the 'inner type' trait.
 ///
 /// It is not possible to replace this with 'default' method implementations within the trait itself
-/// since the trait does not know about the existance of the struct attributes being accessed.
+/// since the trait does not know about the existence of the struct attributes being accessed.
 impl<T> MainloopInnerType for MainloopInner<T>
     where T: MainloopInternalType
 {

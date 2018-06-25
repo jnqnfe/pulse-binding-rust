@@ -17,7 +17,7 @@
 
 //! # Note
 //!
-//! Clients using an [`Info`] struture must remember to at least set the encoding attribute, which
+//! Clients using an [`Info`] structure must remember to at least set the encoding attribute, which
 //! can be done through the [`set_encoding`] method.
 //!
 //! [`Info`]: struct.Info.html

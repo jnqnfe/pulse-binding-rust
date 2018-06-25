@@ -210,7 +210,7 @@ impl Drop for DeviceRestore {
     }
 }
 
-/// Proxy for the extention subscribe callback.
+/// Proxy for the extension subscribe callback.
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

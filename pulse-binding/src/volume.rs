@@ -46,7 +46,7 @@
 //! linear scale.
 //!
 //! The [`VolumeDB`] type represents decibel (dB) converted values, and [`VolumeLinear`], linear.
-//! The `From` trait has been implemented for your convenience, allowing such convertions.
+//! The `From` trait has been implemented for your convenience, allowing such conversions.
 //!
 //! For simple multiplication, [`Volume::multiply`] and [`ChannelVolumes::sw_multiply`] can be used.
 //!
@@ -533,7 +533,7 @@ impl ChannelVolumes {
             std::mem::transmute(map)) }
     }
 
-    /// Adjust the 'lfe balance' value for the specified volume with the specified channel map.
+    /// Adjust the 'LFE balance' value for the specified volume with the specified channel map.
     ///
     /// The balance is a value between `-1.0` (no lfe) and `+1.0` (only lfe). This operation might
     /// not be reversible! Also, after this call [`get_lfe_balance`] is not guaranteed to actually

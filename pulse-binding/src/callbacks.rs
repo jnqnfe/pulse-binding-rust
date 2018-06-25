@@ -50,9 +50,9 @@ pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>) -> (Opti
     }
 }
 
-/// A saved multi-use callback. closures of multi-use callbacks (those that may be called multiple
+/// A saved multi-use callback. Closures of multi-use callbacks (those that may be called multiple
 /// times) need saving, and releasing later at an appropriate time (on change of registered
-/// callback, or on destruction of accosiated object). This is used for saving the pointer to it
+/// callback, or on destruction of associated object). This is used for saving the pointer to it
 /// for such deferred destruction.
 pub(crate) struct MultiUseCallback<ClosureProto: ?Sized, ProxyProto> {
     saved: Option<*mut Box<ClosureProto>>,

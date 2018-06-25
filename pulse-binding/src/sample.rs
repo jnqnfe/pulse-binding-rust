@@ -337,7 +337,7 @@ impl Format {
     /// Is format native endian?
     ///
     /// Returns `true` when the specified format is native endian, `false` when not. Returns `None`
-    /// when endianness does not apply to the specified format, or endianess is unknown.
+    /// when endianness does not apply to the specified format, or endianness is unknown.
     #[cfg(target_endian = "big")]
     pub fn is_ne(&self) -> Option<bool> {
         Format::is_be(self)
@@ -345,7 +345,7 @@ impl Format {
     /// Is format native endian?
     ///
     /// Returns `true` when the specified format is native endian, `false` when not. Returns `None`
-    /// when endianness does not apply to the specified format, or endianess is unknown
+    /// when endianness does not apply to the specified format, or endianness is unknown
     #[cfg(target_endian = "little")]
     pub fn is_ne(&self) -> Option<bool> {
         Format::is_le(self)
@@ -354,7 +354,7 @@ impl Format {
     /// Is format reverse of native endian?
     ///
     /// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
-    /// when endianness does not apply to the specified format, or endianess is unknown.
+    /// when endianness does not apply to the specified format, or endianness is unknown.
     #[cfg(target_endian = "big")]
     pub fn is_re(&self) -> Option<bool> {
         Format::is_le(self)
@@ -362,7 +362,7 @@ impl Format {
     /// Is format reverse of native endian?
     ///
     /// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
-    /// when endianness does not apply to the specified format, or endianess is unknown.
+    /// when endianness does not apply to the specified format, or endianness is unknown.
     #[cfg(target_endian = "little")]
     pub fn is_re(&self) -> Option<bool> {
         Format::is_be(self)

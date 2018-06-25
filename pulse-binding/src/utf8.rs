@@ -1,7 +1,7 @@
 //! UTF-8 validation functions.
 //!
 //! Bindings are not provided here for most of the PulseAudio UTF-8 functions since Rust has built
-//! in UTF-8 handling and thus they should be entirely unecessary.
+//! in UTF-8 handling and thus they should be entirely unnecessary.
 
 // This file is part of the PulseAudio Rust language binding.
 //

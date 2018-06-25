@@ -689,7 +689,7 @@ fn event_cb_proxy(_: *mut ContextInternal, name: *const c_char,
     callback(n, pl);
 }
 
-/// Proxy for extention test callbacks.
+/// Proxy for extension test callbacks.
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_void) {
@@ -699,7 +699,7 @@ fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_voi
     callback(version);
 }
 
-/// Proxy for extention subscribe callbacks.
+/// Proxy for extension subscribe callbacks.
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

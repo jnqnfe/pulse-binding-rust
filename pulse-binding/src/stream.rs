@@ -357,7 +357,7 @@ pub mod flags {
     /// Interpolate the latency for this stream. When enabled, [`Stream::get_latency`] and
     /// [`Stream::get_time`] will try to estimate the current record/playback time based on the
     /// local time that passed since the last timing info update. Using this option has the
-    /// advantage of not requiring a whole roundtrip when the current playback/recording time is
+    /// advantage of not requiring a whole round trip when the current playback/recording time is
     /// needed. Consider using this option when requesting latency information frequently. This is
     /// especially useful on long latency network connections. It makes a lot of sense to combine
     /// this option with [`AUTO_TIMING_UPDATE`](constant.AUTO_TIMING_UPDATE.html).
@@ -461,7 +461,7 @@ pub mod flags {
     pub const PEAK_DETECT: FlagSet = capi::PA_STREAM_PEAK_DETECT;
 
     /// Create in muted state. If neither [`START_UNMUTED`] nor this is specified, it is left to the
-    /// server to decide whether to create the stream in muted or in unmuted state.
+    /// server to decide whether to create the stream in muted or in un-muted state.
     ///
     /// [`START_UNMUTED`]: constant.START_UNMUTED.html
     pub const START_MUTED: FlagSet = capi::PA_STREAM_START_MUTED;
@@ -888,7 +888,7 @@ impl Stream {
     /// successful, but the pointer returned was `NULL`, otherwise the buffer will be returned as
     /// `Ok(Some(_))`.
     ///
-    /// After placing your data in the memory area returned, call [`write`] with a subslice of it,
+    /// After placing your data in the memory area returned, call [`write`] with a sub-slice of it,
     /// to actually execute the write. **Note**, the buffer may only be used once, i.e. if you were
     /// thinking of getting a large buffer, placing a large chunk of data into it, then perform
     /// multiple small writes from it, you **cannot** do this. Any attempt at accessing the memory
@@ -897,7 +897,7 @@ impl Stream {
     /// If you want to cancel a previously called [`begin_write`] without calling [`write`] use
     /// [`cancel_write`].
     ///
-    /// The memory should **not** be explicly freed by the caller.
+    /// The memory should **not** be explicitly freed by the caller.
     ///
     /// An invocation of [`write`] should "quickly" follow a [`begin_write`]. It is not recommended
     /// letting an unbounded amount of time pass after calling [`begin_write`] and before calling
@@ -1306,7 +1306,7 @@ impl Stream {
 
     /// Resume playback of this stream.
     ///
-    /// Available on both playback and recording streams. The unpause operation is executed as
+    /// Available on both playback and recording streams. The un-pause operation is executed as
     /// quickly as possible. If an uncork is very quickly followed by a cork, this might not
     /// actually have any effect on the stream that is output. You can use [`is_corked`] to find out
     /// whether the stream is currently paused or not. Normally a stream will be created in uncorked
@@ -1351,7 +1351,7 @@ impl Stream {
         ::operation::Operation::from_raw(ptr)
     }
 
-    /// Reenable prebuffering if specified in the [`::def::BufferAttr`] structure. Available for
+    /// Re-enable prebuffering if specified in the [`::def::BufferAttr`] structure. Available for
     /// playback streams only.
     ///
     /// The optional callback must accept a `bool`, which indicates success.

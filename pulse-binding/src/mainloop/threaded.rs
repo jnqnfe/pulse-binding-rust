@@ -516,7 +516,7 @@ impl Mainloop {
     /// loop is freed.
     ///
     /// Talking to PA directly with C requires fetching this pointer explicitly via this function.
-    /// This is actually unecessary through this binding. The pointer is retrieved automatically
+    /// This is actually unnecessary through this binding. The pointer is retrieved automatically
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
     pub fn get_api<'a>(&self) -> &'a mut ::mainloop::api::MainloopApi {
