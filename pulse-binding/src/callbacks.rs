@@ -68,7 +68,7 @@ impl<ClosureProto: ?Sized, ProxyProto> Default for MultiUseCallback<ClosureProto
 impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto> {
     /// Create a new instance. **Note**, an existing instance should always be overwritten with a
     /// new one, to ensure the old one is correctly freed.
-    pub fn new(cb: Option<Box<ClosureProto>>) -> MultiUseCallback<ClosureProto, ProxyProto> {
+    pub fn new(cb: Option<Box<ClosureProto>>) -> Self {
         match cb {
             Some(f) => MultiUseCallback::<ClosureProto, ProxyProto> {
                 saved: Some(Box::into_raw(Box::new(f))),
