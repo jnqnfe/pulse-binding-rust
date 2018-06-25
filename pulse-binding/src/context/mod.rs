@@ -693,9 +693,8 @@ fn event_cb_proxy(_: *mut ContextInternal, name: *const c_char,
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(u32)>) };
+    let mut callback = ::callbacks::get_su_callback::<FnMut(u32)>(userdata);
     callback(version);
 }
 

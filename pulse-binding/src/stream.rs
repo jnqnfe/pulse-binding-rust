@@ -1687,9 +1687,8 @@ impl Drop for Stream {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(bool)>) };
+    let mut callback = ::callbacks::get_su_callback::<FnMut(bool)>(userdata);
     let success_actual = match success { 0 => false, _ => true };
     callback(success_actual);
 }

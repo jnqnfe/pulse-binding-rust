@@ -194,9 +194,9 @@ impl Context {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn play_sample_success_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(Result<u32, ()>)>) };
     let index_actual = match index { ::def::INVALID_INDEX => Err(()), i => Ok(i) };
+
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = ::callbacks::get_su_callback::<FnMut(Result<u32, ()>)>(userdata);
     callback(index_actual);
 }

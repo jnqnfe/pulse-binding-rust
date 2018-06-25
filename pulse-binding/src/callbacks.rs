@@ -105,3 +105,12 @@ impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, P
         }
     }
 }
+
+/// Convert void single-use-callback closure pointer back to real type. For use in callback proxies.
+/// Returns ownership of the closure, thus it can be destroyed after use.
+///
+/// Panics if `ptr` is null.
+pub(crate) fn get_su_callback<ClosureProto: ?Sized>(ptr: *mut c_void) -> Box<Box<ClosureProto>> {
+    assert!(!ptr.is_null());
+    unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) }
+}

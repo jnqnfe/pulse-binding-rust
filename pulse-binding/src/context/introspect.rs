@@ -1274,10 +1274,11 @@ extern "C"
 fn get_server_info_cb_proxy(_: *mut ContextInternal, i: *const ServerInfoInternal,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null() && !i.is_null());
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(&ServerInfo)>) };
+    assert!(!i.is_null());
     let obj = ServerInfo::new_from_raw(i);
+
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = ::callbacks::get_su_callback::<FnMut(&ServerInfo)>(userdata);
     callback(&obj);
 }
 
@@ -1438,9 +1439,8 @@ fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal,
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(u32)>) };
+    let mut callback = ::callbacks::get_su_callback::<FnMut(u32)>(userdata);
     callback(index);
 }
 
@@ -2491,9 +2491,9 @@ impl Introspector {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata: *mut c_void) {
-    assert!(!userdata.is_null() && !i.is_null());
+    assert!(!i.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(&StatInfo)>) };
+    let mut callback = ::callbacks::get_su_callback::<FnMut(&StatInfo)>(userdata);
     callback(unsafe { i.as_ref().unwrap() });
 }
 
