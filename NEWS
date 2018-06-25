@@ -5,7 +5,7 @@ Changes between 2.0.0 and ???:
 
  * Updated declared version compatability
  * Proplist: Fix debug output to use comma separator rather than newline (for consistency in
-   dumping introspection data).
+   dumping introspection data), and output in list style instead of mixed struct/list style.
 
  [pulse-sys]
 

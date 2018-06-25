@@ -145,7 +145,7 @@ pub struct Proplist {
 
 impl std::fmt::Debug for Proplist {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Proplist {{ {} }}", self.to_string_sep(", ").unwrap())
+        write!(f, "[{}]", self.to_string_sep(", ").unwrap())
     }
 }
 
