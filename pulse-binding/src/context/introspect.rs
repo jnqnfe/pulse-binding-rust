@@ -231,7 +231,7 @@ use std::borrow::Cow;
 use std::ptr::null_mut;
 use super::{Context, ContextInternal};
 use timeval::MicroSeconds;
-use callbacks::{ListResult, box_closure_get_capi_ptr};
+use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
 
 use capi::pa_sink_port_info as SinkPortInfoInternal;
 use capi::pa_sink_info as SinkInfoInternal;
@@ -646,22 +646,14 @@ extern "C"
 fn get_sink_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&SinkInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&SinkInfo>)>)
-            };
             let obj = SinkInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SinkInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -1035,22 +1027,14 @@ extern "C"
 fn get_source_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceInfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&SourceInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&SourceInfo>)>)
-            };
             let obj = SourceInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SourceInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -1267,22 +1251,14 @@ extern "C"
 fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&ModuleInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&ModuleInfo>)>)
-            };
             let obj = ModuleInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&ModuleInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -1391,22 +1367,14 @@ extern "C"
 fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&ClientInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&ClientInfo>)>)
-            };
             let obj = ClientInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&ClientInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -1707,22 +1675,14 @@ extern "C"
 fn get_card_info_list_cb_proxy(_: *mut ContextInternal, i: *const CardInfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&CardInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&CardInfo>)>)
-            };
-            let obj= CardInfo::new_from_raw(i);
+            let obj = CardInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&CardInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -1942,22 +1902,14 @@ extern "C"
 fn get_sink_input_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInputInfoInternal,
     eol: i32, userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&SinkInputInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&SinkInputInfo>)>)
-            };
             let obj = SinkInputInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SinkInputInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -2177,22 +2129,14 @@ extern "C"
 fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceOutputInfoInternal,
     eol: i32, userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&SourceOutputInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&SourceOutputInfo>)>)
-            };
             let obj = SourceOutputInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SourceOutputInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
 
@@ -2335,21 +2279,13 @@ extern "C"
 fn get_sample_info_list_cb_proxy(_: *mut ContextInternal, i: *const SampleInfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&SampleInfo>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe {
-                &mut *(userdata as *mut Box<FnMut(ListResult<&SampleInfo>)>)
-            };
             let obj = SampleInfo::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&SampleInfo>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }

@@ -145,3 +145,35 @@ pub(crate) fn get_su_callback<ClosureProto: ?Sized>(ptr: *mut c_void) -> Box<Box
     assert!(!ptr.is_null());
     unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) }
 }
+
+pub(crate) enum ListInstanceCallback<'a, ClosureProto: 'a + ?Sized> {
+    /// An entry instance. Contains reference to closure callback.
+    Entry(&'a mut Box<ClosureProto>),
+    /// End-of-list instance. Contains owned closure callback, for destruction after use.
+    End(Box<Box<ClosureProto>>),
+    /// Error instance. Contains owned closure callback, for destruction after use.
+    Error(Box<Box<ClosureProto>>),
+}
+
+/// Used by multi-use-list style callback proxies. Provide this with the `eol` parameter, and the
+/// userdata (closure) pointer parameter, and it will return either a reference to the closure or
+/// the owned closure, depending upon whether or not `eol` signals end-of-list/error.
+pub(crate) fn callback_for_list_instance<'a, ClosureProto: ?Sized>(eol: i32, ptr: *mut c_void
+    ) -> ListInstanceCallback<'a, ClosureProto>
+{
+    assert!(!ptr.is_null());
+    match eol {
+        0 => { // NOT end-of-list or error. Return reference to avoid destruction.
+            let callback = unsafe { &mut *(ptr as *mut Box<ClosureProto>) };
+            ListInstanceCallback::Entry(callback)
+        },
+        i if i > 0 => { // End-of-list. Return owned, so it can be destroyed after use.
+            let mut callback = unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) };
+            ListInstanceCallback::End(callback)
+        },
+        _ => { // Error. Return owned, so it can be destroyed after use.
+            let mut callback = unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) };
+            ListInstanceCallback::Error(callback)
+        },
+    }
+}

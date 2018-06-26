@@ -21,7 +21,7 @@ use std::borrow::Cow;
 use std::os::raw::{c_char, c_void};
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
-use callbacks::{ListResult, box_closure_get_capi_ptr};
+use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
 use capi::pa_ext_device_manager_info as InfoInternal;
 use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfoInternal;
 
@@ -290,19 +290,13 @@ extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    assert!(!userdata.is_null());
-    match eol {
-        0 => { // Give item to real callback, do NOT destroy it
+    match callback_for_list_instance::<FnMut(ListResult<&Info>)>(eol, userdata) {
+        ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
-            let callback = unsafe { &mut *(userdata as *mut Box<FnMut(ListResult<&Info>)>) };
             let obj = Info::new_from_raw(i);
             callback(ListResult::Item(&obj));
         },
-        _ => { // End-of-list or failure, signal to real callback, do now destroy it
-            let mut callback = unsafe {
-                Box::from_raw(userdata as *mut Box<FnMut(ListResult<&Info>)>)
-            };
-            callback(match eol < 0 { false => ListResult::End, true => ListResult::Error });
-        },
+        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
+        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
     }
 }
