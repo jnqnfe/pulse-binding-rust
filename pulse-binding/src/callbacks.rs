@@ -106,6 +106,37 @@ impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, P
     }
 }
 
+/// Convert single-use-callback closure to pointer for C API.
+///
+/// It can be restored in an `extern "C"` callback proxy with `get_su_callback`.
+///
+/// Note: The closure itself needs to exist on the heap, and here we take it as such (wrapped in a
+/// `Box`); from this you may assume that a pointer is already available. However, this is a pointer
+/// to a trait object, and these are special in Rust, they are twice the size of a normal pointer
+/// because in actual fact it is implemented as a pair of pointers (one to a type instance and one
+/// to a 'vtable'). We can only pass a normal sized pointer through the C API, so we must further
+/// box it, producing `Box<Box<Closure>>` which we convert to `*mut Box<Closure>` and then further
+/// to simply `*mut c_void`.
+pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<ClosureProto>
+    ) -> *mut c_void
+{
+    Box::into_raw(Box::new(callback)) as *mut c_void
+}
+
+/// Get the C API callback params (function pointer and data pointer pair), for an optional
+/// single-use callback closure. The proxy function must be specified. If `callback` is `None` then
+/// a pair of null pointers will be returned. Otherwise, a pair consisting of the given proxy and
+/// a pointer for the given closure will be returned. The data pointer can be restored to the actual
+/// (boxed) closure in the `extern "C"` callback proxy with `get_su_callback`.
+pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
+    callback: Option<Box<ClosureProto>>, proxy: ProxyProto) -> (Option<ProxyProto>, *mut c_void)
+{
+    match callback {
+        Some(f) => (Some(proxy), box_closure_get_capi_ptr::<ClosureProto>(f)),
+        None => (None, std::ptr::null_mut::<c_void>()),
+    }
+}
+
 /// Convert void single-use-callback closure pointer back to real type. For use in callback proxies.
 /// Returns ownership of the closure, thus it can be destroyed after use.
 ///

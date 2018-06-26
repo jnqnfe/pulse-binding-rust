@@ -62,12 +62,12 @@
 //! [`::context::Context::play_sample`]: ../struct.Context.html#method.play_sample
 //! [`::context::Context::remove_sample`]: ../struct.Context.html#method.remove_sample
 
-use std;
 use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null;
 use super::{ContextInternal, Context};
+use callbacks::box_closure_get_capi_ptr;
 
 impl Context {
     /// Remove a sample from the sample cache.
@@ -82,11 +82,7 @@ impl Context {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -123,14 +119,8 @@ impl Context {
             None => null::<c_char>(),
         };
 
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(super::success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -173,14 +163,8 @@ impl Context {
             None => null::<c_char>(),
         };
 
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(Result<u32, ()>)> = Box::into_raw(Box::new(f));
-                (Some(play_sample_success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, play_sample_success_cb_proxy);
         let ptr = unsafe {
             capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
                 proplist.ptr, cb_fn, cb_data)

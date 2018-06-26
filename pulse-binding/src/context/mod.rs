@@ -151,6 +151,7 @@ use operation::Operation;
 use error::PAErr;
 use timeval::MicroSeconds;
 use proplist::Proplist;
+use callbacks::box_closure_get_capi_ptr;
 use capi::pa_context as ContextInternal;
 
 /// An opaque connection context to a daemon
@@ -369,11 +370,7 @@ impl Context {
     pub fn drain<F>(&mut self, callback: F) -> Operation
         where F: FnMut() + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut()> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut()>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
@@ -388,11 +385,7 @@ impl Context {
     pub fn exit_daemon<F>(&mut self, callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr)
@@ -408,11 +401,7 @@ impl Context {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -429,11 +418,7 @@ impl Context {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -458,11 +443,7 @@ impl Context {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -503,11 +484,7 @@ impl Context {
         ) -> Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -533,11 +510,7 @@ impl Context {
         }
         c_key_ptrs.push(null());
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());

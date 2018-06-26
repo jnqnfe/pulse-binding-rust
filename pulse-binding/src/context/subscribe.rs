@@ -59,6 +59,7 @@
 use capi;
 use std::os::raw::c_void;
 use super::{ContextInternal, Context};
+use callbacks::box_closure_get_capi_ptr;
 
 pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 pub use capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK as FACILITY_MASK;
@@ -174,11 +175,7 @@ impl Context {
     pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(super::success_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());

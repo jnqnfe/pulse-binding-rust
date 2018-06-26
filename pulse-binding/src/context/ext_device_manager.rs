@@ -21,7 +21,7 @@ use std::borrow::Cow;
 use std::os::raw::{c_char, c_void};
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
-use callbacks::ListResult;
+use callbacks::{ListResult, box_closure_get_capi_ptr};
 use capi::pa_ext_device_manager_info as InfoInternal;
 use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfoInternal;
 
@@ -137,12 +137,7 @@ impl DeviceManager {
     pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
         where F: FnMut(u32) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(u32)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -153,12 +148,7 @@ impl DeviceManager {
     pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
@@ -177,11 +167,7 @@ impl DeviceManager {
         let c_dev = CString::new(device.clone()).unwrap();
         let c_desc = CString::new(description.clone()).unwrap();
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_set_device_description(self.context, c_dev.as_ptr(),
                 c_desc.as_ptr(), Some(super::success_cb_proxy), cb_data)
@@ -211,11 +197,7 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_delete(self.context, c_dev_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -229,11 +211,7 @@ impl DeviceManager {
         ) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_enable_role_device_priority_routing(self.context,
                 enable as i32, Some(super::success_cb_proxy), cb_data)
@@ -265,11 +243,7 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_reorder_devices_for_role(self.context, c_role.as_ptr(),
                 c_dev_ptrs.as_ptr(), Some(super::success_cb_proxy), cb_data)
@@ -284,11 +258,7 @@ impl DeviceManager {
     pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());

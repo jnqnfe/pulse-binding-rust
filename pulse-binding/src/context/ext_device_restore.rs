@@ -20,7 +20,7 @@ use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
 use super::{ContextInternal, Context};
-use callbacks::ListResult;
+use callbacks::{ListResult, box_closure_get_capi_ptr};
 use capi::pa_ext_device_restore_info as InfoInternal;
 
 /// Stores information about one device in the device database that is maintained by
@@ -97,12 +97,7 @@ impl DeviceRestore {
     pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
         where F: FnMut(u32) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(u32)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -115,11 +110,7 @@ impl DeviceRestore {
     pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -146,12 +137,7 @@ impl DeviceRestore {
     pub fn read_formats_all<F>(&mut self, callback: F) -> ::operation::Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context,
             Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -163,12 +149,7 @@ impl DeviceRestore {
         ) -> ::operation::Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, index,
             Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -188,11 +169,7 @@ impl DeviceRestore {
             format_ptrs.push(unsafe { std::mem::transmute(&format.ptr) });
         }
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_restore_save_formats(self.context, type_, index,
                 format_ptrs.len() as u8, format_ptrs.as_ptr(), Some(super::success_cb_proxy),

@@ -22,7 +22,7 @@ use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
-use callbacks::ListResult;
+use callbacks::{ListResult, box_closure_get_capi_ptr};
 use capi::pa_ext_stream_restore_info as InfoInternal;
 
 /// Stores information about one entry in the stream database that is maintained by
@@ -99,12 +99,7 @@ impl StreamRestore {
     pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
         where F: FnMut(u32) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(u32)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -115,12 +110,7 @@ impl StreamRestore {
     pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(ListResult<&Info>)> =
-                Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
@@ -134,11 +124,7 @@ impl StreamRestore {
         apply_immediately: bool, callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_stream_restore_write(self.context, mode,
                 std::mem::transmute(data.as_ptr()), data.len() as u32, apply_immediately as i32,
@@ -169,11 +155,7 @@ impl StreamRestore {
         }
         c_stream_ptrs.push(null());
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_delete(self.context, c_stream_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -186,11 +168,7 @@ impl StreamRestore {
     pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());

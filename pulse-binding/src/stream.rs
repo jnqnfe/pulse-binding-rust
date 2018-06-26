@@ -262,6 +262,7 @@ use callbacks::unwrap_optional_callback;
 use error::PAErr;
 use timeval::MicroSeconds;
 use proplist::Proplist;
+use callbacks::box_closure_get_capi_ptr;
 
 use capi::pa_stream as StreamInternal;
 pub use capi::pa_seek_mode_t as SeekMode;
@@ -1105,14 +1106,8 @@ impl Stream {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn drain(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1131,14 +1126,8 @@ impl Stream {
     pub fn update_timing_info(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
         ) -> ::operation::Operation
     {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_update_timing_info(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1291,14 +1280,8 @@ impl Stream {
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn cork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1318,14 +1301,8 @@ impl Stream {
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn uncork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1338,14 +1315,8 @@ impl Stream {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn flush(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1358,14 +1329,8 @@ impl Stream {
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
     pub fn prebuf(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1382,14 +1347,8 @@ impl Stream {
     pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
         ) -> ::operation::Operation
     {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
         ::operation::Operation::from_raw(ptr)
@@ -1405,14 +1364,8 @@ impl Stream {
         // variable, leading to as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, *mut c_void) = match callback {
-            Some(f) => {
-                // WARNING: Type must be explicit here, else compiles but seg faults :/
-                let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(f));
-                (Some(success_cb_proxy), boxed as *mut c_void)
-            },
-            None => (None, std::ptr::null_mut::<c_void>()),
-        };
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe {
             capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_fn, cb_data)
         };
@@ -1563,11 +1516,7 @@ impl Stream {
         ) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, std::mem::transmute(attr),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -1586,11 +1535,7 @@ impl Stream {
     pub fn update_sample_rate<F>(&mut self, rate: u32, callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -1610,11 +1555,7 @@ impl Stream {
         callback: F) -> ::operation::Operation
         where F: FnMut(bool) + 'static
     {
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
@@ -1642,11 +1583,7 @@ impl Stream {
         }
         c_key_ptrs.push(null());
 
-        let cb_data: *mut c_void = {
-            // WARNING: Type must be explicit here, else compiles but seg faults :/
-            let boxed: *mut Box<FnMut(bool)> = Box::into_raw(Box::new(Box::new(callback)));
-            boxed as *mut c_void
-        };
+        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_stream_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
                 Some(success_cb_proxy), cb_data)
