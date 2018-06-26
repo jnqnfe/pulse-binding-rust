@@ -1,4 +1,4 @@
-Changes between 2.0.0 and ???:
+Changes between 2.0.0 and 2.0.1:
 ---------------
 
  [pulse-binding]
@@ -9,7 +9,7 @@ Changes between 2.0.0 and ???:
    dumping introspection data), and output in list style instead of mixed struct/list style.
  * Doc typo fixes
 
- [pulse-sys]
+ [pulse-sys] (1.2.0 => 1.2.1)
 
  * Updated declared version compatability
 
