@@ -18,7 +18,7 @@
 use capi;
 use std::ffi::CStr;
 
-/// The version of the PulseAudio headers this binding is designed to link to.
+/// The version of the PulseAudio client library this binding is targetted at.
 pub const BINDING_TARGET_VERSION: &str = "12.0.0";
 
 #[inline(always)]

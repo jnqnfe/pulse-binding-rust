@@ -17,8 +17,7 @@
 
 use std::os::raw::c_char;
 
-/// The version of the PulseAudio headers this linking library is designed to link to. (It may also
-/// incidentally be backwards compatible with older versions).
+/// The version of the PulseAudio client library this linking library is targetted at.
 pub const LINK_TARGET_VERSION: &str = "12.0.0";
 
 #[inline(always)]
