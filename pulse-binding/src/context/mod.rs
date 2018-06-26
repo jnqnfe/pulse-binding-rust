@@ -249,7 +249,7 @@ impl Context {
     ///
     /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
     /// specify some initial properties.
-    pub fn new(mainloop_api: &mut ::mainloop::api::MainloopApi, name: &str) -> Option<Self> {
+    pub fn new(mainloop_api: &::mainloop::api::MainloopApi, name: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
@@ -262,7 +262,7 @@ impl Context {
 
     /// Instantiate a new connection context with an abstract mainloop API and an application name,
     /// and specify the initial client property list.
-    pub fn new_with_proplist(mainloop_api: &mut ::mainloop::api::MainloopApi, name: &str,
+    pub fn new_with_proplist(mainloop_api: &::mainloop::api::MainloopApi, name: &str,
         proplist: &Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to

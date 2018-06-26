@@ -56,7 +56,7 @@ extern crate libpulse_binding as pulse;
 extern crate libpulse_mainloop_glib_sys as capi;
 
 use std::rc::Rc;
-use std::ptr::null_mut;
+use std::ptr::{null, null_mut};
 use pulse::mainloop::api::MainloopInternalType;
 
 pub use capi::GMainContext;
@@ -95,7 +95,7 @@ impl pulse::mainloop::api::Mainloop for Mainloop {
 fn drop_actual(self_: &mut pulse::mainloop::api::MainloopInner<MainloopInternal>) {
     unsafe { capi::pa_glib_mainloop_free(std::mem::transmute(&self_.ptr)) };
     self_.ptr = null_mut::<MainloopInternal>();
-    self_.api = null_mut::<pulse::mainloop::api::MainloopApi>();
+    self_.api = null::<pulse::mainloop::api::MainloopApi>();
 }
 
 impl Mainloop {
@@ -140,9 +140,9 @@ impl Mainloop {
     /// This is actually unnecessary through this binding. The pointer is retrieved automatically
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
-    pub fn get_api<'a>(&self) -> &'a mut pulse::mainloop::api::MainloopApi {
+    pub fn get_api<'a>(&self) -> &'a pulse::mainloop::api::MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
-        unsafe { &mut *ptr }
+        unsafe { &*ptr }
     }
 }

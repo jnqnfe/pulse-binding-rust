@@ -6,17 +6,25 @@ project:
 
 pulse-binding:
 
+ * Mainloop API objects now correctly treated as immutable. The PA devs have informed me that
+   these structures are not intended to be mutated. Patches have been sent to them to correct it in
+   the PA C API itself. No point in waiting for those to be accepted. The get/set userdata methods
+   have been removed.
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.
  * Simplified callback proxy / setup code (internal change only)
 
+pulse-glib-mainloop-binding:
+
+ * Mainloop API objects now correctly treated as immutable, per above
+
 pulse-sys:
 
- * Mainloop API objects now correctly treated as immutable
+ * Mainloop API objects now correctly treated as immutable, per above
 
 pulse-glib-mainloop-sys:
 
- * Mainloop API objects now correctly treated as immutable
+ * Mainloop API objects now correctly treated as immutable, per above
 
 # 2.0.1 (June 26th, 2018)
 

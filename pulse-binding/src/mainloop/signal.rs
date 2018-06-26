@@ -48,7 +48,7 @@ struct CallbackPointers {
 }
 
 type SignalCb = ::callbacks::MultiUseCallback<FnMut(i32),
-    extern "C" fn(*mut capi::pa_mainloop_api, *mut EventInternal, i32, *mut c_void)>;
+    extern "C" fn(*const capi::pa_mainloop_api, *mut EventInternal, i32, *mut c_void)>;
 
 impl ::mainloop::api::MainloopApi {
     /// Initialize the UNIX signal subsystem and bind it to the specified main loop
@@ -90,7 +90,7 @@ impl Drop for Event {
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
-fn signal_cb_proxy(_api: *mut capi::pa_mainloop_api, _e: *mut EventInternal, sig: i32,
+fn signal_cb_proxy(_api: *const capi::pa_mainloop_api, _e: *mut EventInternal, sig: i32,
     userdata: *mut c_void)
 {
     let callback = SignalCb::get_callback(userdata);

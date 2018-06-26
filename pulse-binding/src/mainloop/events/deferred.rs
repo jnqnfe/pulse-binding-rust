@@ -32,10 +32,10 @@ pub struct DeferEvent<T>
 }
 
 /// A defer event callback prototype
-pub type DeferEventCb = extern "C" fn(a: *mut MainloopApi, e: *mut DeferEventInternal,
+pub type DeferEventCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
     userdata: *mut c_void);
 /// A defer event destroy callback prototype
-pub type DeferEventDestroyCb = extern "C" fn(a: *mut MainloopApi, e: *mut DeferEventInternal,
+pub type DeferEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
     userdata: *mut c_void);
 
 impl<T> DeferEvent<T>

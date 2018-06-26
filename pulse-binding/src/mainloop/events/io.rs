@@ -51,10 +51,10 @@ pub struct IoEvent<T>
 }
 
 /// An IO event callback prototype
-pub type IoEventCb = extern "C" fn(a: *mut MainloopApi, e: *mut IoEventInternal, fd: i32,
+pub type IoEventCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32,
     events: IoEventFlagSet, userdata: *mut c_void);
 /// A IO event destroy callback prototype
-pub type IoEventDestroyCb = extern "C" fn(a: *mut MainloopApi, e: *mut IoEventInternal,
+pub type IoEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal,
     userdata: *mut c_void);
 
 impl<T> IoEvent<T>

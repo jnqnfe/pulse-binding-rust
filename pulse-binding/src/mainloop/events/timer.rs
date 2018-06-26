@@ -34,10 +34,10 @@ pub struct TimeEvent<T>
 }
 
 /// A time event callback prototype
-pub type TimeEventCb = extern "C" fn(a: *mut MainloopApi, e: *mut TimeEventInternal,
+pub type TimeEventCb = extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal,
     tv: *const timeval, userdata: *mut c_void);
 /// A time event destroy callback prototype
-pub type TimeEventDestroyCb = extern "C" fn(a: *mut MainloopApi, e: *mut TimeEventInternal,
+pub type TimeEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal,
     userdata: *mut c_void);
 
 impl<T> TimeEvent<T>

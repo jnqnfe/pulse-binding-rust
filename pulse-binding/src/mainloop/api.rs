@@ -40,7 +40,7 @@ pub trait MainloopInnerType {
     fn get_ptr(&self) -> *mut Self::I;
 
     /// Return main loop API object pointer
-    fn get_api(&self) -> &mut MainloopApi;
+    fn get_api(&self) -> &MainloopApi;
 }
 
 /// Mainloop inner wrapper.
@@ -61,7 +61,7 @@ pub struct MainloopInner<T>
 
     /// The abstract main loop API vtable for the GLIB main loop object. No need to free this API as
     /// it is owned by the loop and is destroyed when the loop is freed.
-    pub api: *mut MainloopApi,
+    pub api: *const MainloopApi,
 
     /// All implementations must provide a drop method, to be called from an actual drop call.
     pub dropfn: fn(&mut MainloopInner<T>),
@@ -90,9 +90,9 @@ impl<T> MainloopInnerType for MainloopInner<T>
     }
 
     /// Return main loop API object pointer
-    fn get_api(&self) -> &mut MainloopApi {
+    fn get_api(&self) -> &MainloopApi {
         assert!(!self.api.is_null());
-        unsafe { &mut *self.api }
+        unsafe { &*self.api }
     }
 }
 
@@ -105,52 +105,50 @@ pub trait Mainloop {
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet, cb: (IoEventCb, *mut c_void)
         ) -> Option<IoEvent<Self::MI>>
     {
-        let fn_ptr = self.inner().get_api().io_new.unwrap();
-        let ptr = fn_ptr(self.inner().get_api(), fd, events, Some(cb.0), cb.1);
+        let inner = self.inner();
+        let api = inner.get_api();
+        let fn_ptr = api.io_new.unwrap();
+        let ptr = fn_ptr(api, fd, events, Some(cb.0), cb.1);
         if ptr.is_null() {
             return None;
         }
-        Some(IoEvent::<Self::MI>::from_raw(ptr, self.inner().clone()))
+        Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner)))
     }
 
     /// Create a new timer event
     fn new_timer_event(&mut self, tv: &Timeval, cb: (TimeEventCb, *mut c_void)
         ) -> Option<TimeEvent<Self::MI>>
     {
-        let fn_ptr = self.inner().get_api().time_new.unwrap();
-        let ptr = fn_ptr(self.inner().get_api(), &tv.0, Some(cb.0), cb.1);
+        let inner = self.inner();
+        let api = inner.get_api();
+        let fn_ptr = api.time_new.unwrap();
+        let ptr = fn_ptr(api, &tv.0, Some(cb.0), cb.1);
         if ptr.is_null() {
             return None;
         }
-        Some(TimeEvent::<Self::MI>::from_raw(ptr, self.inner().clone()))
+        Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner)))
     }
 
     /// Create a new deferred event
     fn new_deferred_event(&mut self, cb: (DeferEventCb, *mut c_void)
         ) -> Option<DeferEvent<Self::MI>>
     {
-        let fn_ptr = self.inner().get_api().defer_new.unwrap();
-        let ptr = fn_ptr(self.inner().get_api(), Some(cb.0), cb.1);
+        let inner = self.inner();
+        let api = inner.get_api();
+        let fn_ptr = api.defer_new.unwrap();
+        let ptr = fn_ptr(api, Some(cb.0), cb.1);
         if ptr.is_null() {
             return None;
         }
-        Some(DeferEvent::<Self::MI>::from_raw(ptr, self.inner().clone()))
-    }
-
-    /// Set the userdata pointer held in the api vtable object
-    fn set_api_userdata(&mut self, userdata: *mut c_void) {
-        self.inner().get_api().userdata = userdata;
-    }
-
-    /// Get the userdata pointer held in the api vtable object
-    fn get_api_userdata(&self) -> *mut c_void {
-        self.inner().get_api().userdata
+        Some(DeferEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner)))
     }
 
     /// Call quit
     fn quit(&mut self, retval: ::def::Retval) {
-        let fn_ptr = self.inner().get_api().quit.unwrap();
-        fn_ptr(self.inner().get_api(), retval.0);
+        let inner = self.inner();
+        let api = inner.get_api();
+        let fn_ptr = api.quit.unwrap();
+        fn_ptr(api, retval.0);
     }
 }
 
@@ -161,7 +159,7 @@ pub struct MainloopApi {
     pub userdata: *mut c_void,
 
     /// Create a new IO event source object
-    pub io_new: Option<extern "C" fn(a: *mut MainloopApi, fd: i32, events: IoEventFlagSet,
+    pub io_new: Option<extern "C" fn(a: *const MainloopApi, fd: i32, events: IoEventFlagSet,
         cb: Option<IoEventCb>, userdata: *mut c_void) -> *mut IoEventInternal>,
     /// Enable or disable IO events on this object
     pub io_enable: Option<extern "C" fn(e: *mut IoEventInternal, events: IoEventFlagSet)>,
@@ -172,7 +170,7 @@ pub struct MainloopApi {
     pub io_set_destroy: Option<extern "C" fn(e: *mut IoEventInternal, cb: Option<IoEventDestroyCb>)>,
 
     /// Create a new timer event source object for the specified Unix time
-    pub time_new: Option<extern "C" fn(a: *mut MainloopApi, tv: *const timeval,
+    pub time_new: Option<extern "C" fn(a: *const MainloopApi, tv: *const timeval,
         cb: Option<TimeEventCb>, userdata: *mut c_void) -> *mut TimeEventInternal>,
     /// Restart a running or expired timer event source with a new Unix time
     pub time_restart: Option<extern "C" fn(e: *mut TimeEventInternal, tv: *const timeval)>,
@@ -184,7 +182,7 @@ pub struct MainloopApi {
         cb: Option<TimeEventDestroyCb>)>,
 
     /// Create a new deferred event source object
-    pub defer_new: Option<extern "C" fn(a: *mut MainloopApi, cb: Option<DeferEventCb>,
+    pub defer_new: Option<extern "C" fn(a: *const MainloopApi, cb: Option<DeferEventCb>,
         userdata: *mut c_void) -> *mut DeferEventInternal>,
     /// Enable or disable a deferred event source temporarily
     pub defer_enable: Option<extern "C" fn(e: *mut DeferEventInternal, b: i32)>,
@@ -196,11 +194,10 @@ pub struct MainloopApi {
         cb: Option<DeferEventDestroyCb>)>,
 
     /// Exit the main loop and return the specified retval
-    pub quit: Option<extern "C" fn(a: *mut MainloopApi, retval: ::def::RetvalActual)>,
+    pub quit: Option<extern "C" fn(a: *const MainloopApi, retval: ::def::RetvalActual)>,
 }
 
-pub type MainloopApiOnceCallback = extern "C" fn(m: *mut ApiInternal,
-    userdata: *mut c_void);
+pub type MainloopApiOnceCallback = extern "C" fn(m: *const ApiInternal, userdata: *mut c_void);
 
 impl MainloopApi {
     /// Run the specified callback function once from the main loop using an anonymous defer event.
