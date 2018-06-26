@@ -4,6 +4,10 @@ project:
 
  * Renamed `NEWS` file to `CHANGELOG.md` and reformatted to markdown
 
+pulse-binding:
+
+ * Simplified callback proxy / setup code (internal change only)
+
 # 2.0.1 (June 26th, 2018)
 
 pulse-binding:
