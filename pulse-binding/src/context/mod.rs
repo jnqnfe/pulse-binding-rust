@@ -181,6 +181,9 @@ type EventCb = ::callbacks::MultiUseCallback<FnMut(String, Proplist),
     extern "C" fn(*mut ContextInternal, name: *const c_char, pl: *mut ::proplist::ProplistInternal,
         *mut c_void)>;
 
+type ExtSubscribeCb = ::callbacks::MultiUseCallback<FnMut(),
+    extern "C" fn(*mut ContextInternal, *mut c_void)>;
+
 /// The state of a connection context
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

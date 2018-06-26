@@ -114,11 +114,8 @@ pub struct DeviceManager {
 /// times), for freeing at the appropriate time.
 #[derive(Default)]
 struct CallbackPointers {
-    subscribe: SubscribeCb,
+    subscribe: super::ExtSubscribeCb,
 }
-
-type SubscribeCb = ::callbacks::MultiUseCallback<FnMut(),
-    extern "C" fn(*mut ContextInternal, *mut c_void)>;
 
 impl Context {
     /// Returns a device manager object linked to the current context, giving access to device
@@ -304,7 +301,7 @@ impl DeviceManager {
         where F: FnMut() + 'static
     {
         let saved = &mut self.cb_ptrs.subscribe;
-        *saved = SubscribeCb::new(Some(Box::new(callback)));
+        *saved = super::ExtSubscribeCb::new(Some(Box::new(callback)));
         let (cb_fn, cb_data) = saved.get_capi_params(super::ext_subscribe_cb_proxy);
         unsafe { capi::pa_ext_device_manager_set_subscribe_cb(self.context, cb_fn, cb_data) };
     }
