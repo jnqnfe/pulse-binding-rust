@@ -10,6 +10,14 @@ pulse-binding:
    binding type, unlike other event callbacks.
  * Simplified callback proxy / setup code (internal change only)
 
+pulse-sys:
+
+ * Mainloop API objects now correctly treated as immutable
+
+pulse-glib-mainloop-sys:
+
+ * Mainloop API objects now correctly treated as immutable
+
 # 2.0.1 (June 26th, 2018)
 
 pulse-binding:

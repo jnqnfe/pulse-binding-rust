@@ -32,7 +32,7 @@ extern "C" {
     pub fn pa_threaded_mainloop_signal(m: *mut pa_threaded_mainloop, wait_for_accept: i32);
     pub fn pa_threaded_mainloop_accept(m: *mut pa_threaded_mainloop);
     pub fn pa_threaded_mainloop_get_retval(m: *const pa_threaded_mainloop) -> i32;
-    pub fn pa_threaded_mainloop_get_api(m: *mut pa_threaded_mainloop) -> *mut ::mainloop::api::pa_mainloop_api;
+    pub fn pa_threaded_mainloop_get_api(m: *const pa_threaded_mainloop) -> *const ::mainloop::api::pa_mainloop_api;
     pub fn pa_threaded_mainloop_in_thread(m: *mut pa_threaded_mainloop) -> i32;
     pub fn pa_threaded_mainloop_set_name(m: *mut pa_threaded_mainloop, name: *const c_char);
 }

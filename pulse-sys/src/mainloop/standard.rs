@@ -33,7 +33,7 @@ extern "C" {
     pub fn pa_mainloop_get_retval(m: *const pa_mainloop) -> i32;
     pub fn pa_mainloop_iterate(m: *mut pa_mainloop, block: i32, retval: *mut i32) -> i32;
     pub fn pa_mainloop_run(m: *mut pa_mainloop, retval: *mut i32) -> i32;
-    pub fn pa_mainloop_get_api(m: *mut pa_mainloop) -> *mut super::api::pa_mainloop_api;
+    pub fn pa_mainloop_get_api(m: *const pa_mainloop) -> *const super::api::pa_mainloop_api;
     pub fn pa_mainloop_quit(m: *mut pa_mainloop, retval: i32);
     pub fn pa_mainloop_wakeup(m: *mut pa_mainloop);
 

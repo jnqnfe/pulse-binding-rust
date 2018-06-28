@@ -87,8 +87,8 @@ pub type pa_context_event_cb_t = Option<extern "C" fn(c: *mut pa_context, name: 
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_context_new(mainloop: *mut ::mainloop::api::pa_mainloop_api, name: *const c_char) -> *mut pa_context;
-    pub fn pa_context_new_with_proplist(mainloop: *mut ::mainloop::api::pa_mainloop_api, name: *const c_char, proplist: *const ::proplist::pa_proplist) -> *mut pa_context;
+    pub fn pa_context_new(mainloop: *const ::mainloop::api::pa_mainloop_api, name: *const c_char) -> *mut pa_context;
+    pub fn pa_context_new_with_proplist(mainloop: *const ::mainloop::api::pa_mainloop_api, name: *const c_char, proplist: *const ::proplist::pa_proplist) -> *mut pa_context;
     pub fn pa_context_unref(c: *mut pa_context);
     pub fn pa_context_ref(c: *mut pa_context) -> *mut pa_context;
     pub fn pa_context_set_state_callback(c: *mut pa_context, cb: pa_context_notify_cb_t, userdata: *mut c_void);

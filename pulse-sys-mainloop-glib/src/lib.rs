@@ -33,5 +33,5 @@ pub enum pa_glib_mainloop {}
 extern "C" {
     pub fn pa_glib_mainloop_new(c: *mut GMainContext) -> *mut pa_glib_mainloop;
     pub fn pa_glib_mainloop_free(g: *mut pa_glib_mainloop);
-    pub fn pa_glib_mainloop_get_api(g: *mut pa_glib_mainloop) -> *mut ::pulse::mainloop::api::pa_mainloop_api;
+    pub fn pa_glib_mainloop_get_api(g: *const pa_glib_mainloop) -> *const ::pulse::mainloop::api::pa_mainloop_api;
 }
