@@ -15,11 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-use capi;
 use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
-use super::super::api::MainloopInnerType;
+use super::super::api::{MainloopApi, MainloopInnerType};
 use timeval::Timeval;
 
 pub use capi::pa_time_event as TimeEventInternal;
@@ -35,11 +34,11 @@ pub struct TimeEvent<T>
 }
 
 /// A time event callback prototype
-pub type TimeEventCb = extern "C" fn(a: *mut capi::pa_mainloop_api, e: *mut TimeEventInternal,
+pub type TimeEventCb = extern "C" fn(a: *mut MainloopApi, e: *mut TimeEventInternal,
     tv: *const timeval, userdata: *mut c_void);
 /// A time event destroy callback prototype
-pub type TimeEventDestroyCb = extern "C" fn(a: *mut capi::pa_mainloop_api,
-    e: *mut TimeEventInternal, userdata: *mut c_void);
+pub type TimeEventDestroyCb = extern "C" fn(a: *mut MainloopApi, e: *mut TimeEventInternal,
+    userdata: *mut c_void);
 
 impl<T> TimeEvent<T>
     where T: MainloopInnerType

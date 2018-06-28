@@ -6,6 +6,8 @@ project:
 
 pulse-binding:
 
+ * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
+   binding type, unlike other event callbacks.
  * Simplified callback proxy / setup code (internal change only)
 
 # 2.0.1 (June 26th, 2018)

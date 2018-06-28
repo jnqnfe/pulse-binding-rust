@@ -547,7 +547,8 @@ impl Context {
         time: MicroSeconds, cb: (TimeEventCb, *mut c_void)) -> Option<TimeEvent<T::MI>>
         where T: ::mainloop::api::Mainloop
     {
-        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0, Some(cb.0), cb.1) };
+        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0,
+            Some(std::mem::transmute(cb.0)), cb.1) };
         if ptr.is_null() {
             return None;
         }
