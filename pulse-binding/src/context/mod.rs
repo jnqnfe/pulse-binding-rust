@@ -555,10 +555,7 @@ impl Context {
         Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner().clone()))
     }
 
-    /// Restart a running or expired timer event source (wrapper for
-    /// [`::mainloop::api::MainloopApi.time_restart`]).
-    ///
-    /// [`::mainloop::api::MainloopApi.time_restart`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_restart
+    /// Restart a running or expired timer event source, (with a new monotonic-based time).
     pub fn rttime_restart<T>(&self, e: &TimeEvent<T::MI>, time: MicroSeconds)
         where T: ::mainloop::api::Mainloop
     {
