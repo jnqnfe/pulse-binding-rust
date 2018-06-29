@@ -54,7 +54,8 @@ impl<T> TimeEvent<T>
         self.ptr
     }
 
-    /// Restart a running or expired timer event source with a new Unix time.
+    /// Restart this timer event source (whether still running or already expired) with a new Unix
+    /// time.
     pub fn restart(&mut self, tv: &Timeval) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, &tv.0);
