@@ -46,10 +46,16 @@ impl<T> DeferEvent<T>
         Self { ptr: ptr, owner: mainloop_inner }
     }
 
-    /// Enable or disable a deferred event source temporarily.
-    pub fn enable(&mut self, b: bool) {
+    /// Enable this event source temporarily.
+    pub fn enable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
-        fn_ptr(self.ptr, b as i32);
+        fn_ptr(self.ptr, 1);
+    }
+
+    /// Disable this event source temporarily.
+    pub fn disable(&mut self) {
+        let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
+        fn_ptr(self.ptr, 0);
     }
 
     /// Set a function that is called when the deferred event source is destroyed. Use this to free

@@ -10,6 +10,7 @@ pulse-binding:
    these structures are not intended to be mutated. Patches have been sent to them to correct it in
    the PA C API itself. No point in waiting for those to be accepted. The get/set userdata methods
    have been removed.
+ * Events/deferred: Split the `enable` method into separate `enable` and `disable` methods
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.
  * Simplified callback proxy / setup code (internal change only)
