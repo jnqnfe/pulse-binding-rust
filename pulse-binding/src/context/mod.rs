@@ -544,6 +544,15 @@ impl Context {
     /// If pointer returned by underlying C function is `NULL`, `None` will be returned, otherwise a
     /// [`::mainloop::events::timer::TimeEvent`] object will be returned.
     ///
+    /// Example event set to fire in five seconds time:
+    ///
+    /// ```rust,ignore
+    /// use pulse::timeval::{MicroSeconds, MICROS_PER_SEC};
+    /// let _t_event = context.rttime_new::<Mainloop, _>(&mainloop,
+    ///     pulse::rtclock::now() + MicroSeconds(5 * MICROS_PER_SEC),
+    ///     || { println!("Timer event fired!"); });
+    /// ```
+    ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
