@@ -47,10 +47,9 @@ impl MicroSeconds {
 }
 
 /// Wrapper for `libc::timeval`, providing trait impls
-/// Warning, this must remain directly transmutable with the inner libc::timeval
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct Timeval(pub timeval);
+pub struct Timeval(pub timeval); // Warning, this must remain directly transmutable with the inner libc::timeval
 
 impl PartialEq for Timeval {
     fn eq(&self, other: &Self) -> bool {
