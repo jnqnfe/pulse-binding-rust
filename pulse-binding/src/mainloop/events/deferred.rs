@@ -29,21 +29,21 @@ pub struct DeferEvent<T>
     ptr: *mut DeferEventInternal,
     /// Source mainloop
     owner: Rc<T>,
+    /// Saved callback closure, for later destruction
+    _saved_cb: EventCb,
 }
 
-/// A defer event callback prototype
-pub type DeferEventCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
-    userdata: *mut c_void);
-/// A defer event destroy callback prototype
-pub type DeferEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
-    userdata: *mut c_void);
+pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(),
+    extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal, userdata: *mut c_void)>;
 
 impl<T> DeferEvent<T>
     where T: MainloopInnerType
 {
-    pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>) -> Self {
+    pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>, callback: EventCb
+        ) -> Self
+    {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, owner: mainloop_inner }
+        Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
     }
 
     /// Enable this event source temporarily.
@@ -57,13 +57,6 @@ impl<T> DeferEvent<T>
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 0);
     }
-
-    /// Set a function that is called when the deferred event source is destroyed. Use this to free
-    /// the userdata argument if required.
-    pub fn set_destroy_cb(&mut self, cb: DeferEventDestroyCb) {
-        let fn_ptr = (*self.owner).get_api().defer_set_destroy.unwrap();
-        fn_ptr(self.ptr, Some(cb));
-    }
 }
 
 impl<T> Drop for DeferEvent<T>
@@ -73,4 +66,14 @@ impl<T> Drop for DeferEvent<T>
         let fn_ptr = (*self.owner).get_api().defer_free.unwrap();
         fn_ptr(self.ptr);
     }
+}
+
+/// Proxy for the event callback.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+pub(crate)
+extern "C"
+fn event_cb_proxy(_: *const MainloopApi, _: *mut DeferEventInternal, userdata: *mut c_void) {
+    let callback = EventCb::get_callback(userdata);
+    callback();
 }

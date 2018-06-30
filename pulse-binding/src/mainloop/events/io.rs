@@ -47,35 +47,30 @@ pub struct IoEvent<T>
     where T: MainloopInnerType
 {
     ptr: *mut IoEventInternal,
+    /// Source mainloop
     owner: Rc<T>,
+    /// Saved callback closure, for later destruction
+    _saved_cb: EventCb,
 }
 
-/// An IO event callback prototype
-pub type IoEventCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32,
-    events: IoEventFlagSet, userdata: *mut c_void);
-/// A IO event destroy callback prototype
-pub type IoEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal,
-    userdata: *mut c_void);
+pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(i32, IoEventFlagSet),
+    extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: IoEventFlagSet,
+    userdata: *mut c_void)>;
 
 impl<T> IoEvent<T>
     where T: MainloopInnerType
 {
-    pub(crate) fn from_raw(ptr: *mut IoEventInternal, mainloop_inner: Rc<T>) -> Self {
+    pub(crate) fn from_raw(ptr: *mut IoEventInternal, mainloop_inner: Rc<T>, callback: EventCb
+        ) -> Self
+    {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, owner: mainloop_inner }
+        Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
     }
 
     /// Enable or disable IO events on this object.
     pub fn enable(&mut self, events: IoEventFlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
         fn_ptr(self.ptr, events);
-    }
-
-    /// Set a function that is called when the IO event source is destroyed.
-    /// Use this to free the userdata argument if required.
-    pub fn set_destroy(&mut self, cb: IoEventDestroyCb) {
-        let fn_ptr = (*self.owner).get_api().io_set_destroy.unwrap();
-        fn_ptr(self.ptr, Some(cb));
     }
 }
 
@@ -86,4 +81,16 @@ impl<T> Drop for IoEvent<T>
         let fn_ptr = (*self.owner).get_api().io_free.unwrap();
         fn_ptr(self.ptr);
     }
+}
+
+/// Proxy for the event callback.
+/// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
+/// must be accomplished separately to avoid a memory leak.
+pub(crate)
+extern "C"
+fn event_cb_proxy(_: *const MainloopApi, _: *mut IoEventInternal, fd: i32, events: IoEventFlagSet,
+    userdata: *mut c_void)
+{
+    let callback = EventCb::get_callback(userdata);
+    callback(fd, events);
 }

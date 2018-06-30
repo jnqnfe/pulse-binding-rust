@@ -6,10 +6,13 @@ project:
 
 pulse-binding:
 
+ * Mainloop: Events now take closures for callbacks, like the rest of the API
  * Mainloop API objects now correctly treated as immutable. The PA devs have informed me that
    these structures are not intended to be mutated. Patches have been sent to them to correct it in
    the PA C API itself. No point in waiting for those to be accepted. The get/set userdata methods
    have been removed.
+ * Events: Removed the `set_destroy_cb` event methods, which became obsolete with the switch to
+   closure based callbacks.
  * Events/deferred: Split the `enable` method into separate `enable` and `disable` methods
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.

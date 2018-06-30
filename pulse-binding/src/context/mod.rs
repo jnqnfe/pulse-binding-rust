@@ -146,7 +146,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
-use mainloop::events::timer::{TimeEvent, TimeEventCb};
+use mainloop::events::timer::TimeEvent;
 use operation::Operation;
 use error::PAErr;
 use timeval::MicroSeconds;
@@ -532,8 +532,11 @@ impl Context {
         }
     }
 
-    /// Create a new timer event source for the specified time (wrapper for
-    /// [`::mainloop::api::MainloopApi.time_new`]).
+    /// Create a new timer event source for the specified time.
+    ///
+    /// This is an alternative to the mainloop `new_timer_event` method. Note that this takes the
+    /// time value as a `MicroSeconds` value, rather than `&Timeval`, and the value should be an
+    /// offset added to `::rtclock::now()`.
     ///
     /// A reference to the mainloop object is needed, in order to associate the event object with
     /// it. The association is done to ensure the even does not outlive the mainloop.
@@ -542,17 +545,20 @@ impl Context {
     /// [`::mainloop::events::timer::TimeEvent`] object will be returned.
     ///
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
-    /// [`::mainloop::api::MainloopApi.time_new`]: ../mainloop/api/struct.MainloopApi.html#structfield.time_new
-    pub fn rttime_new<T>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
-        time: MicroSeconds, cb: (TimeEventCb, *mut c_void)) -> Option<TimeEvent<T::MI>>
-        where T: ::mainloop::api::Mainloop
+    pub fn rttime_new<T, F>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
+        time: MicroSeconds, callback: F) -> Option<TimeEvent<T::MI>>
+        where T: ::mainloop::api::Mainloop,
+              F: FnMut() + 'static
     {
-        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0,
-            Some(std::mem::transmute(cb.0)), cb.1) };
+        let to_save = ::mainloop::events::timer::EventCb::new(Some(Box::new(callback)));
+        let (cb_fn, cb_data) = to_save.get_capi_params(::mainloop::events::timer::event_cb_proxy);
+
+        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0, std::mem::transmute(cb_fn),
+            cb_data) };
         if ptr.is_null() {
             return None;
         }
-        Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner().clone()))
+        Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner().clone(), to_save))
     }
 
     /// Restart a running or expired timer event source, (with a new monotonic-based time).

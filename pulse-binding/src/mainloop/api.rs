@@ -20,12 +20,12 @@ use capi;
 use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
-use super::events::io::*;
-use super::events::timer::*;
-use super::events::deferred::*;
+use super::events::io::{IoEvent, IoEventInternal, IoEventFlagSet};
+use super::events::timer::{TimeEvent, TimeEventInternal};
+use super::events::deferred::{DeferEvent, DeferEventInternal};
 use timeval::Timeval;
 
-pub use capi::pa_mainloop_api as ApiInternal;
+use capi::pa_mainloop_api as ApiInternal;
 
 /// This enables generic type enforcement with the opaque C objects.
 pub trait MainloopInternalType {}
@@ -102,45 +102,57 @@ pub trait Mainloop {
     fn inner(&self) -> Rc<Self::MI>;
 
     /// Create a new IO event
-    fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet, cb: (IoEventCb, *mut c_void)
-        ) -> Option<IoEvent<Self::MI>>
+    ///
+    /// The given callback must accept two parameters, a copy of the given file descriptor, and an
+    /// event flag set, indicating the event(s) that occurred.
+    fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
+        callback: Box<FnMut(i32, IoEventFlagSet) + 'static>) -> Option<IoEvent<Self::MI>>
     {
+        let to_save = super::events::io::EventCb::new(Some(callback));
+        let (cb_fn, cb_data) = to_save.get_capi_params(super::events::io::event_cb_proxy);
+
         let inner = self.inner();
         let api = inner.get_api();
         let fn_ptr = api.io_new.unwrap();
-        let ptr = fn_ptr(api, fd, events, Some(cb.0), cb.1);
+        let ptr = fn_ptr(api, fd, events, cb_fn, cb_data);
         if ptr.is_null() {
             return None;
         }
-        Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner)))
+        Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Create a new timer event
-    fn new_timer_event(&mut self, tv: &Timeval, cb: (TimeEventCb, *mut c_void)
+    fn new_timer_event(&mut self, tv: &Timeval, callback: Box<FnMut() + 'static>
         ) -> Option<TimeEvent<Self::MI>>
     {
+        let to_save = super::events::timer::EventCb::new(Some(callback));
+        let (cb_fn, cb_data) = to_save.get_capi_params(super::events::timer::event_cb_proxy);
+
         let inner = self.inner();
         let api = inner.get_api();
         let fn_ptr = api.time_new.unwrap();
-        let ptr = fn_ptr(api, &tv.0, Some(cb.0), cb.1);
+        let ptr = fn_ptr(api, &tv.0, cb_fn, cb_data);
         if ptr.is_null() {
             return None;
         }
-        Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner)))
+        Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Create a new deferred event
-    fn new_deferred_event(&mut self, cb: (DeferEventCb, *mut c_void)
+    fn new_deferred_event(&mut self, callback: Box<FnMut() + 'static>
         ) -> Option<DeferEvent<Self::MI>>
     {
+        let to_save = super::events::deferred::EventCb::new(Some(callback));
+        let (cb_fn, cb_data) = to_save.get_capi_params(super::events::deferred::event_cb_proxy);
+
         let inner = self.inner();
         let api = inner.get_api();
         let fn_ptr = api.defer_new.unwrap();
-        let ptr = fn_ptr(api, Some(cb.0), cb.1);
+        let ptr = fn_ptr(api, cb_fn, cb_data);
         if ptr.is_null() {
             return None;
         }
-        Some(DeferEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner)))
+        Some(DeferEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Call quit
@@ -151,6 +163,27 @@ pub trait Mainloop {
         fn_ptr(api, retval.0);
     }
 }
+
+/// An IO event callback prototype
+pub type IoEventCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32,
+    events: IoEventFlagSet, userdata: *mut c_void);
+/// A IO event destroy callback prototype
+pub type IoEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal,
+    userdata: *mut c_void);
+
+/// A time event callback prototype
+pub type TimeEventCb = extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal,
+    tv: *const timeval, userdata: *mut c_void);
+/// A time event destroy callback prototype
+pub type TimeEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal,
+    userdata: *mut c_void);
+
+/// A defer event callback prototype
+pub type DeferEventCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
+    userdata: *mut c_void);
+/// A defer event destroy callback prototype
+pub type DeferEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
+    userdata: *mut c_void);
 
 /// An abstract mainloop API vtable
 #[repr(C)]
@@ -197,15 +230,24 @@ pub struct MainloopApi {
     pub quit: Option<extern "C" fn(a: *const MainloopApi, retval: ::def::RetvalActual)>,
 }
 
-pub type MainloopApiOnceCallback = extern "C" fn(m: *const ApiInternal, userdata: *mut c_void);
-
 impl MainloopApi {
-    /// Run the specified callback function once from the main loop using an anonymous defer event.
+    /// Run the specified callback once from the main loop using an anonymous defer event.
     /// If the mainloop runs in a different thread, you need to follow the mainloop implementation's
     /// rules regarding how to safely create defer events. In particular, if you're using
     /// [`::mainloop::threaded`](../threaded/index.html), you must lock the mainloop before calling
     /// this function.
-    pub fn mainloop_api_once(&mut self, cb: (MainloopApiOnceCallback, *mut c_void)) {
-        unsafe { capi::pa_mainloop_api_once(std::mem::transmute(self), Some(cb.0), cb.1) };
+    pub fn mainloop_api_once(&mut self, callback: Box<FnMut() + 'static>) {
+        let (cb_fn, cb_data): (Option<extern "C" fn(_, _)>, _) =
+            ::callbacks::get_su_capi_params::<_, _>(Some(callback), once_cb_proxy);
+        unsafe { capi::pa_mainloop_api_once(std::mem::transmute(self), cb_fn, cb_data) };
     }
+}
+
+/// Proxy for anonymous 'once' deferred event callbacks.
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+extern "C"
+fn once_cb_proxy(_: *const ApiInternal, userdata: *mut c_void) {
+    // Note, destroys closure callback after use - restoring outer box means it gets dropped
+    let mut callback = ::callbacks::get_su_callback::<FnMut()>(userdata);
+    callback();
 }
