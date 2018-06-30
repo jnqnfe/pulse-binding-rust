@@ -46,7 +46,7 @@ impl MicroSeconds {
     }
 }
 
-/// Wrapper for `libc::timeval`, providing trait impls
+/// Wrapper for `libc::timeval`, attaching various methods and trait implementations
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Timeval(pub timeval); // Warning, this must remain directly transmutable with the inner libc::timeval
