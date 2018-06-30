@@ -103,6 +103,10 @@ pub trait Mainloop {
 
     /// Create a new IO event
     ///
+    /// **Note**: You must ensure that the returned event object lives for as long as you want its
+    /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
+    /// a new event, but then immediately drop the object returned here, no event will fire!
+    ///
     /// The given callback must accept two parameters, a copy of the given file descriptor, and an
     /// event flag set, indicating the event(s) that occurred.
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
@@ -122,6 +126,10 @@ pub trait Mainloop {
     }
 
     /// Create a new timer event
+    ///
+    /// **Note**: You must ensure that the returned event object lives for as long as you want its
+    /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
+    /// a new event, but then immediately drop the object returned here, no event will fire!
     fn new_timer_event(&mut self, tv: &Timeval, callback: Box<FnMut() + 'static>
         ) -> Option<TimeEvent<Self::MI>>
     {
@@ -139,6 +147,10 @@ pub trait Mainloop {
     }
 
     /// Create a new deferred event
+    ///
+    /// **Note**: You must ensure that the returned event object lives for as long as you want its
+    /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
+    /// a new event, but then immediately drop the object returned here, no event will fire!
     fn new_deferred_event(&mut self, callback: Box<FnMut() + 'static>
         ) -> Option<DeferEvent<Self::MI>>
     {

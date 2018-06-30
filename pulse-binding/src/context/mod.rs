@@ -544,6 +544,10 @@ impl Context {
     /// If pointer returned by underlying C function is `NULL`, `None` will be returned, otherwise a
     /// [`::mainloop::events::timer::TimeEvent`] object will be returned.
     ///
+    /// **Note**: You must ensure that the returned event object lives for as long as you want its
+    /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
+    /// a new event, but then immediately drop the object returned here, no event will fire!
+    ///
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     pub fn rttime_new<T, F>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
         time: MicroSeconds, callback: F) -> Option<TimeEvent<T::MI>>
