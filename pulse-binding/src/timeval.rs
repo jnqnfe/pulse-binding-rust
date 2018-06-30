@@ -116,18 +116,21 @@ impl Timeval {
     }
 
     /// Add the specified time in microseconds
-    pub fn add(&mut self, t: MicroSeconds) {
+    pub fn add(&mut self, t: MicroSeconds) -> &mut Self {
         unsafe { capi::pa_timeval_add(&mut self.0, t.0); }
+        self
     }
 
     /// Subtract the specified time in microseconds
-    pub fn sub(&mut self, t: MicroSeconds) {
+    pub fn sub(&mut self, t: MicroSeconds) -> &mut Self {
         unsafe { capi::pa_timeval_sub(&mut self.0, t.0); }
+        self
     }
 
     /// Set the specified usec value
-    pub fn set(&mut self, t: MicroSeconds) {
+    pub fn set(&mut self, t: MicroSeconds) -> &mut Self {
         unsafe { capi::pa_timeval_store(&mut self.0, t.0); }
+        self
     }
 }
 
