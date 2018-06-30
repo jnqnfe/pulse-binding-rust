@@ -17,6 +17,7 @@
 
 use std;
 use capi;
+use libc;
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 pub use libc::timeval; //Export wanted for use in timer event callbacks, so users don't need to import the libc crate themselves!
@@ -81,6 +82,23 @@ impl std::fmt::Debug for Timeval {
 }
 
 impl Timeval {
+    /// Create a new instance, with values provided.
+    pub fn new(sec: libc::time_t, usec: libc::suseconds_t) -> Self {
+        Timeval(timeval { tv_sec: sec, tv_usec: usec })
+    }
+
+    /// Create a new instance, with value of zero.
+    pub fn new_zero() -> Self {
+        Timeval::new(0, 0)
+    }
+
+    /// Create a new instance, with value of 'time of day'.
+    pub fn new_tod() -> Self {
+        let mut tv = Timeval(timeval { tv_sec: 0, tv_usec: 0 });
+        tv.get_time_of_day();
+        tv
+    }
+
     /// Obtain the current wallclock timestamp, just like UNIX gettimeofday().
     pub fn get_time_of_day(&mut self) -> &mut Self {
         unsafe { capi::pa_gettimeofday(&mut self.0) };

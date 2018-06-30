@@ -16,6 +16,7 @@ pulse-binding:
  * Events/deferred: Split the `enable` method into separate `enable` and `disable` methods
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.
+ * Timeval: Added convenience `new`, `new_zero` and `new_tod` methods
  * Simplified callback proxy / setup code (internal change only)
 
 pulse-glib-mainloop-binding:
