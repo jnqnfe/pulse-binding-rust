@@ -7,6 +7,8 @@ project:
 pulse-binding:
 
  * Mainloop: Events now take closures for callbacks, like the rest of the API
+ * Mainloop/api: Moved the `mainloop_api_once` method to the `Mainloop` trait from the mainloop API
+   structure.
  * Mainloop API objects now correctly treated as immutable. The PA devs have informed me that
    these structures are not intended to be mutated. Patches have been sent to them to correct it in
    the PA C API itself. No point in waiting for those to be accepted. The get/set userdata methods
