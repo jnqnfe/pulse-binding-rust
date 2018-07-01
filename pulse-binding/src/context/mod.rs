@@ -146,6 +146,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
+use mainloop::api::MainloopInnerType;
 use mainloop::events::timer::TimeEvent;
 use operation::Operation;
 use error::PAErr;
@@ -249,11 +250,12 @@ impl Context {
     ///
     /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
     /// specify some initial properties.
-    pub fn new(mainloop_api: &::mainloop::api::MainloopApi, name: &str) -> Option<Self> {
+    pub fn new(mainloop: &impl ::mainloop::api::Mainloop, name: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_new(std::mem::transmute(mainloop_api), c_name.as_ptr()) };
+        let ptr = unsafe { capi::pa_context_new(std::mem::transmute(mainloop.inner().get_api()),
+            c_name.as_ptr()) };
         if ptr.is_null() {
             return None;
         }
@@ -262,14 +264,14 @@ impl Context {
 
     /// Instantiate a new connection context with an abstract mainloop API and an application name,
     /// and specify the initial client property list.
-    pub fn new_with_proplist(mainloop_api: &::mainloop::api::MainloopApi, name: &str,
+    pub fn new_with_proplist(mainloop: &impl ::mainloop::api::Mainloop, name: &str,
         proplist: &Proplist) -> Option<Self>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_new_with_proplist(
-            std::mem::transmute(mainloop_api), c_name.as_ptr(), proplist.ptr) };
+            std::mem::transmute(mainloop.inner().get_api()), c_name.as_ptr(), proplist.ptr) };
         if ptr.is_null() {
             return None;
         }

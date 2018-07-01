@@ -60,6 +60,7 @@
 //! use std::sync::atomic;
 //! use std::rc::Rc;
 //! use std::cell::RefCell;
+//! use std::ops::Deref;
 //! use pulse::mainloop::standard::Mainloop;
 //! use pulse::context::Context;
 //! use pulse::stream::Stream;
@@ -83,7 +84,7 @@
 //!         .expect("Failed to create mainloop")));
 //!
 //!     let mut context = Rc::new(RefCell::new(Context::new_with_proplist(
-//!         mainloop.borrow().get_api(),
+//!         mainloop.borrow().deref(),
 //!         "FooAppContext",
 //!         &proplist
 //!         ).expect("Failed to create new context")));
