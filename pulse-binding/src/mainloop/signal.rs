@@ -28,6 +28,7 @@ use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
 use error::PAErr;
+use super::api::{MainloopApi, ApiInternal};
 use capi::pa_signal_event as EventInternal;
 
 /// An opaque UNIX signal event source object.
@@ -48,9 +49,9 @@ struct CallbackPointers {
 }
 
 type SignalCb = ::callbacks::MultiUseCallback<FnMut(i32),
-    extern "C" fn(*const capi::pa_mainloop_api, *mut EventInternal, i32, *mut c_void)>;
+    extern "C" fn(*const ApiInternal, *mut EventInternal, i32, *mut c_void)>;
 
-impl ::mainloop::api::MainloopApi {
+impl MainloopApi {
     /// Initialize the UNIX signal subsystem and bind it to the specified main loop
     pub fn init_signals(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_signal_init(std::mem::transmute(self)) } {
@@ -90,7 +91,7 @@ impl Drop for Event {
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
-fn signal_cb_proxy(_api: *const capi::pa_mainloop_api, _e: *mut EventInternal, sig: i32,
+fn signal_cb_proxy(_api: *const ApiInternal, _e: *mut EventInternal, sig: i32,
     userdata: *mut c_void)
 {
     let callback = SignalCb::get_callback(userdata);

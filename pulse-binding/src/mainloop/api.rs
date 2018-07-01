@@ -25,7 +25,7 @@ use super::events::timer::{TimeEvent, TimeEventInternal};
 use super::events::deferred::{DeferEvent, DeferEventInternal};
 use timeval::Timeval;
 
-use capi::pa_mainloop_api as ApiInternal;
+pub(crate) use capi::pa_mainloop_api as ApiInternal;
 
 /// This enables generic type enforcement with the opaque C objects.
 pub trait MainloopInternalType {}
