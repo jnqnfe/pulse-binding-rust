@@ -416,6 +416,8 @@ impl super::api::Mainloop for Mainloop {
     }
 }
 
+impl super::signal::MainloopSignals for Mainloop {}
+
 impl super::api::MainloopInner<MainloopInternal> {
     fn drop_actual(&mut self) {
         unsafe { capi::pa_threaded_mainloop_free(self.ptr) };

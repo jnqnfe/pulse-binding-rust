@@ -28,7 +28,7 @@ use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
 use error::PAErr;
-use super::api::{MainloopApi, ApiInternal};
+use super::api::{ApiInternal, MainloopInnerType};
 use capi::pa_signal_event as EventInternal;
 
 /// An opaque UNIX signal event source object.
@@ -51,17 +51,20 @@ struct CallbackPointers {
 type SignalCb = ::callbacks::MultiUseCallback<FnMut(i32),
     extern "C" fn(*const ApiInternal, *mut EventInternal, i32, *mut c_void)>;
 
-impl MainloopApi {
+/// Trait with signal handling, for mainloops
+pub trait MainloopSignals : ::mainloop::api::Mainloop {
     /// Initialize the UNIX signal subsystem and bind it to the specified main loop
-    pub fn init_signals(&mut self) -> Result<(), PAErr> {
-        match unsafe { capi::pa_signal_init(std::mem::transmute(self)) } {
+    fn init_signals(&mut self) -> Result<(), PAErr> {
+        let inner = self.inner();
+        let api = inner.get_api();
+        match unsafe { capi::pa_signal_init(std::mem::transmute(api)) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
     }
 
     /// Cleanup the signal subsystem
-    pub fn signals_done(&self) {
+    fn signals_done(&self) {
         unsafe { capi::pa_signal_done(); }
     }
 }

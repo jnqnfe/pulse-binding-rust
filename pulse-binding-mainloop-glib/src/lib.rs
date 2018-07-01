@@ -91,6 +91,8 @@ impl pulse::mainloop::api::Mainloop for Mainloop {
     }
 }
 
+impl pulse::mainloop::signal::MainloopSignals for Mainloop {}
+
 /// Drop function for MainloopInner<MainloopInternal>
 fn drop_actual(self_: &mut pulse::mainloop::api::MainloopInner<MainloopInternal>) {
     unsafe { capi::pa_glib_mainloop_free(std::mem::transmute(&self_.ptr)) };
