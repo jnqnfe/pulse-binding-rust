@@ -541,7 +541,7 @@ impl Context {
     /// offset added to `::rtclock::now()`.
     ///
     /// A reference to the mainloop object is needed, in order to associate the event object with
-    /// it. The association is done to ensure the even does not outlive the mainloop.
+    /// it. The association is done to ensure the event does not outlive the mainloop.
     ///
     /// If pointer returned by underlying C function is `NULL`, `None` will be returned, otherwise a
     /// [`::mainloop::events::timer::TimeEvent`] object will be returned.
