@@ -28,15 +28,8 @@ pub use capi::pa_operation_state_t as State;
 pub struct Operation {
     /// The actual C object.
     ptr: *mut OperationInternal,
-    /// Multi-use callback closure pointers
-    cb_ptrs: CallbackPointers,
-}
-
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
-/// times), for freeing at the appropriate time.
-#[derive(Default)]
-struct CallbackPointers {
-    state: NotifyCb,
+    /// Saved multi-use state callback closure, for later destruction
+    state_cb: NotifyCb,
 }
 
 type NotifyCb = ::callbacks::MultiUseCallback<FnMut(),
@@ -47,7 +40,7 @@ impl Operation {
     /// pointer.
     pub(crate) fn from_raw(ptr: *mut OperationInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, cb_ptrs: Default::default() }
+        Self { ptr: ptr, state_cb: Default::default() }
     }
 
     /// Cancel the operation.
@@ -76,7 +69,7 @@ impl Operation {
     /// callback is mainly useful, if you want to get called back also if the operation gets
     /// cancelled.
     pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
-        let saved = &mut self.cb_ptrs.state;
+        let saved = &mut self.state_cb;
         *saved = NotifyCb::new(callback);
         let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);
         unsafe { capi::pa_operation_set_state_callback(self.ptr, cb_fn, cb_data); }
