@@ -22,6 +22,7 @@ use std::os::raw::{c_char, c_void};
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
 use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use operation::Operation;
 use capi::pa_ext_device_manager_info as InfoInternal;
 use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfoInternal;
 
@@ -134,32 +135,32 @@ impl DeviceManager {
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
+    pub fn test<F>(&mut self, callback: F) -> Operation
         where F: FnMut(u32) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Read all entries from the device database.
-    pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
+    pub fn read<F>(&mut self, callback: F) -> Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Sets the description for a device.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F
-        ) -> ::operation::Operation
+        ) -> Operation
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -173,13 +174,13 @@ impl DeviceManager {
                 c_desc.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Delete entries from the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> ::operation::Operation
+    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -201,14 +202,14 @@ impl DeviceManager {
         let ptr = unsafe { capi::pa_ext_device_manager_delete(self.context, c_dev_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Enable the role-based device-priority routing mode.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F
-        ) -> ::operation::Operation
+        ) -> Operation
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
@@ -217,14 +218,14 @@ impl DeviceManager {
                 enable as i32, Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Prefer a given device in the priority list.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F
-        ) -> ::operation::Operation
+        ) -> Operation
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -249,20 +250,20 @@ impl DeviceManager {
                 c_dev_ptrs.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was

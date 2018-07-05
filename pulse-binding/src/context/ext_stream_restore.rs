@@ -23,6 +23,7 @@ use std::borrow::Cow;
 use std::ptr::{null, null_mut};
 use super::{ContextInternal, Context};
 use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use operation::Operation;
 use capi::pa_ext_stream_restore_info as InfoInternal;
 
 /// Stores information about one entry in the stream database that is maintained by
@@ -96,32 +97,32 @@ impl StreamRestore {
     }
 
     /// Test if this extension module is available in the server.
-    pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
+    pub fn test<F>(&mut self, callback: F) -> Operation
         where F: FnMut(u32) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Read all entries from the stream database.
-    pub fn read<F>(&mut self, callback: F) -> ::operation::Operation
+    pub fn read<F>(&mut self, callback: F) -> Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Store entries in the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn write<F>(&mut self, mode: ::proplist::UpdateMode, data: &[&Info],
-        apply_immediately: bool, callback: F) -> ::operation::Operation
+        apply_immediately: bool, callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
@@ -131,13 +132,13 @@ impl StreamRestore {
                 Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Delete entries from the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn delete<F>(&mut self, streams: &[&str], callback: F) -> ::operation::Operation
+    pub fn delete<F>(&mut self, streams: &[&str], callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -159,20 +160,20 @@ impl StreamRestore {
         let ptr = unsafe { capi::pa_ext_stream_restore_delete(self.context, c_stream_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was

@@ -21,6 +21,7 @@ use std::os::raw::c_void;
 use std::ptr::null_mut;
 use super::{ContextInternal, Context};
 use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use operation::Operation;
 use capi::pa_ext_device_restore_info as InfoInternal;
 
 /// Stores information about one device in the device database that is maintained by
@@ -94,27 +95,27 @@ impl DeviceRestore {
     /// Test if this extension module is available in the server.
     ///
     /// The callback must accept an integer, which indicates version.
-    pub fn test<F>(&mut self, callback: F) -> ::operation::Operation
+    pub fn test<F>(&mut self, callback: F) -> Operation
         where F: FnMut(u32) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Subscribe to changes in the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> ::operation::Operation
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
@@ -134,33 +135,33 @@ impl DeviceRestore {
     }
 
     /// Read the formats for all present devices from the device database.
-    pub fn read_formats_all<F>(&mut self, callback: F) -> ::operation::Operation
+    pub fn read_formats_all<F>(&mut self, callback: F) -> Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context,
             Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Read an entry from the device database.
     pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F
-        ) -> ::operation::Operation
+        ) -> Operation
         where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, index,
             Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 
     /// Read an entry from the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn save_formats<F>(&mut self, type_: ::def::Device, index: u32,
-        formats: &mut [&mut ::format::Info], callback: F) -> ::operation::Operation
+        formats: &mut [&mut ::format::Info], callback: F) -> Operation
         where F: FnMut(bool) + 'static
     {
         // Capture array of pointers to the above ::format::InfoInternal objects
@@ -176,7 +177,7 @@ impl DeviceRestore {
                 cb_data)
         };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr)
     }
 }
 
