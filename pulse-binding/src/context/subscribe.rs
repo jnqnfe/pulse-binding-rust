@@ -172,14 +172,15 @@ impl Context {
     /// actual callback that will be called when an event occurs.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F) -> ::operation::Operation
+    pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F
+        ) -> ::operation::Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(super::success_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        ::operation::Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Set the context specific call back function that is called whenever a subscribed-to event

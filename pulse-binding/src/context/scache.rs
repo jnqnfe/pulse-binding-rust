@@ -68,6 +68,7 @@ use std::ffi::CString;
 use std::ptr::null;
 use super::{ContextInternal, Context};
 use callbacks::box_closure_get_capi_ptr;
+use ::operation::Operation;
 
 impl Context {
     /// Remove a sample from the sample cache.
@@ -75,7 +76,7 @@ impl Context {
     /// Returns an operation object which may be used to cancel the operation while it is running.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn remove_sample<F>(&mut self, name: &str, callback: F) -> ::operation::Operation
+    pub fn remove_sample<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -86,7 +87,7 @@ impl Context {
         let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Play a sample from the sample cache to the specified device.
@@ -104,7 +105,7 @@ impl Context {
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
-        callback: Option<Box<FnMut(bool) + 'static>>) -> ::operation::Operation
+        callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -124,7 +125,7 @@ impl Context {
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Play a sample from the sample cache to the specified device, allowing specification of a
@@ -148,7 +149,8 @@ impl Context {
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
         volume: ::volume::Volume, proplist: &::proplist::Proplist,
-        callback: Option<Box<FnMut(Result<u32, ()>) + 'static>>) -> ::operation::Operation
+        callback: Option<Box<FnMut(Result<u32, ()>) + 'static>>
+        ) -> Operation<FnMut(Result<u32, ()>)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
@@ -170,7 +172,7 @@ impl Context {
                 proplist.ptr, cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(Result<u32, ()>)>)
     }
 }
 

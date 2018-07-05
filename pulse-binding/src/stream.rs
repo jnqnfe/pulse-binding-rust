@@ -1106,12 +1106,12 @@ impl Stream {
     /// the buffer. Please note that only one drain operation per stream may be issued at a time.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn drain(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn drain(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Request a timing info structure update for a stream.
@@ -1124,12 +1124,14 @@ impl Stream {
     /// [`get_timing_info`]: #method.get_timing_info
     /// [`get_time`]: #method.get_time
     /// [`get_latency`]: #method.get_latency
-    pub fn update_timing_info(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn update_timing_info(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
+        ) -> Operation<FnMut(bool)>
+    {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_update_timing_info(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Set the callback function that is called whenever the state of the stream changes.
@@ -1278,12 +1280,12 @@ impl Stream {
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn cork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn cork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Resume playback of this stream.
@@ -1299,12 +1301,12 @@ impl Stream {
     ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-    pub fn uncork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn uncork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Flush the playback or record buffer of this stream.
@@ -1313,12 +1315,12 @@ impl Stream {
     /// parameter `seek` of [`write`](#method.write) instead of this function.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn flush(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn flush(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Re-enable prebuffering if specified in the [`::def::BufferAttr`] structure. Available for
@@ -1327,12 +1329,12 @@ impl Stream {
     /// The optional callback must accept a `bool`, which indicates success.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn prebuf(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn prebuf(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Request immediate start of playback on this stream.
@@ -1343,19 +1345,21 @@ impl Stream {
     /// The optional callback must accept a `bool`, which indicates success.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation {
+    pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
+        ) -> Operation<FnMut(bool)>
+    {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Rename the stream.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_name(&mut self, name: &str, callback: Option<Box<FnMut(bool) + 'static>>
-        ) -> Operation
+        ) -> Operation<FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
@@ -1367,7 +1371,7 @@ impl Stream {
             capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Return the current playback/recording time.
@@ -1509,14 +1513,15 @@ impl Stream {
     ///
     /// [`get_buffer_attr`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-    pub fn set_buffer_attr<F>(&mut self, attr: &::def::BufferAttr, callback: F) -> Operation
+    pub fn set_buffer_attr<F>(&mut self, attr: &::def::BufferAttr, callback: F
+        ) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, std::mem::transmute(attr),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Change the stream sampling rate during playback.
@@ -1528,14 +1533,14 @@ impl Stream {
     ///
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
-    pub fn update_sample_rate<F>(&mut self, rate: u32, callback: F) -> Operation
+    pub fn update_sample_rate<F>(&mut self, rate: u32, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Update the property list of the sink input/source output of this stream, adding new entries.
@@ -1548,20 +1553,20 @@ impl Stream {
     ///
     /// [`new_with_proplist`]: #method.new_with_proplist
     pub fn update_proplist<F>(&mut self, mode: ::proplist::UpdateMode, proplist: &mut Proplist,
-        callback: F) -> Operation
+        callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Update the property list of the sink input/source output of this stream, remove entries.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn remove_proplist<F>(&mut self, keys: &[&str], callback: F) -> Operation
+    pub fn remove_proplist<F>(&mut self, keys: &[&str], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1585,7 +1590,7 @@ impl Stream {
                 Some(success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// For record streams connected to a monitor source: monitor only a very specific sink input of

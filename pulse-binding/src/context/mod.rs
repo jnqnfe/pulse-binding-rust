@@ -369,13 +369,13 @@ impl Context {
 
     /// Drain the context.
     /// If there is nothing to drain, the function returns `None`.
-    pub fn drain<F>(&mut self, callback: F) -> Operation
+    pub fn drain<F>(&mut self, callback: F) -> Operation<FnMut()>
         where F: FnMut() + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut()>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut()>)
     }
 
     /// Tell the daemon to exit.
@@ -384,19 +384,19 @@ impl Context {
     /// before returning a success notification.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation
+    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Set the name of the default sink.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation
+    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -407,13 +407,13 @@ impl Context {
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Set the name of the default source.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation
+    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -424,7 +424,7 @@ impl Context {
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
@@ -438,7 +438,7 @@ impl Context {
     }
 
     /// Set a different application name for context on the server.
-    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation
+    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -449,7 +449,7 @@ impl Context {
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Return the server name this context is connected to.
@@ -483,18 +483,18 @@ impl Context {
     /// function, since that information may then be used to route streams of the client to the
     /// right device.
     pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, p: &Proplist, callback: F
-        ) -> Operation
+        ) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Update the property list of the client, remove entries.
-    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation
+    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -516,7 +516,7 @@ impl Context {
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr)
+        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
     }
 
     /// Return the client index this context is identified in the server with.

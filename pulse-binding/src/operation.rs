@@ -25,9 +25,15 @@ pub use capi::pa_operation_state_t as State;
 /// An asynchronous operation object.
 /// This acts as a safe Rust wrapper for the actual C object.
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
-pub struct Operation {
+pub struct Operation<ClosureProto: ?Sized> {
     /// The actual C object.
     ptr: *mut OperationInternal,
+    /// The operation's associated closure callback.
+    /// This is a copy of the callback userdata pointer given in the C API function call that
+    /// generated the operation instance (except not cast to void). It is saved here in case the
+    /// user tries to cancel execution of the callback (with the `cancel` method), in which case we
+    /// need this in order to release the memory.
+    saved_cb: Option<*mut Box<ClosureProto>>,
     /// Saved multi-use state callback closure, for later destruction
     state_cb: NotifyCb,
 }
@@ -35,12 +41,19 @@ pub struct Operation {
 type NotifyCb = ::callbacks::MultiUseCallback<FnMut(),
     extern "C" fn(*mut OperationInternal, *mut c_void)>;
 
-impl Operation {
+impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     /// Create a new `Operation` from an existing [`OperationInternal`](enum.OperationInternal.html)
-    /// pointer.
-    pub(crate) fn from_raw(ptr: *mut OperationInternal) -> Self {
+    /// pointer. We also take a copy of the closure callback pointer, in order to free the memory
+    /// on cancellation.
+    pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>
+        ) -> Self
+    {
         assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, state_cb: Default::default() }
+        let saved_cb_actual = match saved_cb.is_null() {
+            true => Some(saved_cb),
+            false => None,
+        };
+        Self { ptr: ptr, saved_cb: saved_cb_actual, state_cb: Default::default() }
     }
 
     /// Cancel the operation.
@@ -53,13 +66,17 @@ impl Operation {
     /// execution of that callback itself. This should go without saying, since it makes absolutely
     /// no sense to try and do this, but be aware that this is not supported by the C API and
     /// **will** break things.
-    ///
-    /// **Warning**, cancelling operations with *single-use* callbacks (those that are fired only
-    /// once) **will** result in a memory leak. (In such cases the closure is transferred to the
-    /// callback via a raw pointer, and when the callback is fired, it is reconstructed and dropped
-    /// after use; cancelling callback execution means this will not happen, thus a leak occurs).
     pub fn cancel(&mut self) {
         unsafe { capi::pa_operation_cancel(self.ptr); }
+        // Release the memory allocated for the closure.
+        // Note, we `take()` here to help avoid issues if this function is mistakenly called more
+        // than once.
+        let callback = self.saved_cb.take();
+        if let Some(ptr) = callback {
+            if !ptr.is_null() {
+                drop(unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) });
+            }
+        }
     }
 
     /// Return the current status of the operation
@@ -81,8 +98,10 @@ impl Operation {
     }
 }
 
-impl Drop for Operation {
+impl<ClosureProto: ?Sized> Drop for Operation<ClosureProto> {
     fn drop(&mut self) {
+        // Note, we deliberately do not destroy the `saved_cb` closure here. That should only be
+        // destroyed either separately by a callback proxy, or by the `Operation`'s `cancel` method.
         unsafe { capi::pa_operation_unref(self.ptr) };
         self.ptr = null_mut::<OperationInternal>();
     }

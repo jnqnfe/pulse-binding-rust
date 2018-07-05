@@ -7,6 +7,7 @@ project:
 pulse-binding:
 
  * Mainloop: Events now take closures for callbacks, like the rest of the API
+ * Operation: Fixed possible memory leak with cancellation
  * Context: Now takes a ref to the mainloop instead of the mainloop's API in creation methods
  * Mainloop/api: Moved the `mainloop_api_once` method to the `Mainloop` trait from the mainloop API
    structure.
