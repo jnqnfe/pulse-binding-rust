@@ -49,6 +49,11 @@ impl Operation {
     /// However it will make sure that the callback associated with this operation will not be
     /// called any more, effectively disabling the operation from the client side's view.
     ///
+    /// **Warning**, you should **never** attempt to use this to cancel a callback from within the
+    /// execution of that callback itself. This should go without saying, since it makes absolutely
+    /// no sense to try and do this, but be aware that this is not supported by the C API and
+    /// **will** break things.
+    ///
     /// **Warning**, cancelling operations with *single-use* callbacks (those that are fired only
     /// once) **will** result in a memory leak. (In such cases the closure is transferred to the
     /// callback via a raw pointer, and when the callback is fired, it is reconstructed and dropped
