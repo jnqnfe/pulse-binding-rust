@@ -9,7 +9,7 @@ Three bindings are provided:
  * `libpulse_simple_binding` for `libpulse-simple`, and
  * `libpulse_glib_binding` for `libpulse-mainloop-glib`.
 
-See the repective library sub-directories for details.
+See the respective library sub-directories for details.
 
 The bindings are based upon the public API of PulseAudio, as provided in the PulseAudio 'include' C
 header files. They provide:
