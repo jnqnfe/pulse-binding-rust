@@ -41,6 +41,9 @@ pub trait MainloopInnerType {
 
     /// Return main loop API object pointer
     fn get_api(&self) -> &MainloopApi;
+
+    /// Returns `true` if the mainloop implementation supports monotonic based time events.
+    fn supports_rtclock(&self) -> bool;
 }
 
 /// Mainloop inner wrapper.
@@ -65,6 +68,9 @@ pub struct MainloopInner<T>
 
     /// All implementations must provide a drop method, to be called from an actual drop call.
     pub dropfn: fn(&mut MainloopInner<T>),
+
+    /// Whether or not the implementation supports monotonic based time events. (`true` if so).
+    pub supports_rtclock: bool,
 }
 
 impl<T> Drop for MainloopInner<T>
@@ -93,6 +99,10 @@ impl<T> MainloopInnerType for MainloopInner<T>
     fn get_api(&self) -> &MainloopApi {
         assert!(!self.api.is_null());
         unsafe { &*self.api }
+    }
+
+    fn supports_rtclock(&self) -> bool {
+        self.supports_rtclock
     }
 }
 

@@ -305,6 +305,7 @@ impl Mainloop {
                         ptr: ptr,
                         api: unsafe { std::mem::transmute(api_ptr) },
                         dropfn: super::api::MainloopInner::<MainloopInternal>::drop_actual,
+                        supports_rtclock: true,
                     }
                 ),
             }

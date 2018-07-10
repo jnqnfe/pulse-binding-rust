@@ -128,6 +128,7 @@ impl Mainloop {
                         ptr: unsafe { std::mem::transmute(ptr) },
                         api: api_ptr,
                         dropfn: drop_actual,
+                        supports_rtclock: false,
                     }
                 ),
             }
