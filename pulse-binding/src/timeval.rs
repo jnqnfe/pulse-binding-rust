@@ -80,7 +80,7 @@ pub const MILLIS_PER_SEC: u64 = 1_000;
 pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
 
 /// Largest valid time value in microseconds (largest integer value is reserved for representing
-/// 'invalid'.
+/// 'invalid').
 pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
 
 /// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
