@@ -233,7 +233,7 @@ pub trait Mainloop {
     /// rules regarding how to safely create defer events. In particular, if you're using
     /// [`::mainloop::threaded`](../threaded/index.html), you must lock the mainloop before calling
     /// this function.
-    fn mainloop_api_once(&mut self, callback: Box<FnMut() + 'static>) {
+    fn once_event(&mut self, callback: Box<FnMut() + 'static>) {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(Some(callback), once_cb_proxy);
 

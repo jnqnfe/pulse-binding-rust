@@ -12,7 +12,7 @@ pulse-binding:
  * Operation: Fixed possible memory leak with cancellation
  * Context: Now takes a ref to the mainloop instead of the mainloop's API in creation methods
  * Mainloop/api: Moved the `mainloop_api_once` method to the `Mainloop` trait from the mainloop API
-   structure.
+   structure, and renamed it to `once_event`.
  * Mainloop/signals: Converted to a trait and implemented on mainloops, rather than being
    implemented as methods implemented on the mainloop API structure.
  * Mainloop API objects now correctly treated as immutable. The PA devs have informed me that
