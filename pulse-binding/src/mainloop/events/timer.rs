@@ -19,7 +19,7 @@ use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
 use super::super::api::{MainloopApi, MainloopInnerType};
-use timeval::Timeval;
+use timeval::{Timeval, MicroSeconds, USEC_INVALID};
 
 pub use capi::pa_time_event as TimeEventInternal;
 
@@ -58,6 +58,17 @@ impl<T> TimeEvent<T>
     /// Restart this timer event source (whether still running or already expired) with a new Unix
     /// time.
     pub fn restart(&mut self, tv: &Timeval) {
+        let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
+        fn_ptr(self.ptr, &tv.0);
+    }
+
+    /// Restart this timer event source (whether still running or already expired) with a new
+    /// monotonic time.
+    pub fn restart_rt(&mut self, t: MicroSeconds) {
+        assert_ne!(t, USEC_INVALID);
+        let mut tv = Timeval::new_zero();
+        tv.set_rt(t, (*self.owner).supports_rtclock());
+
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, &tv.0);
     }
