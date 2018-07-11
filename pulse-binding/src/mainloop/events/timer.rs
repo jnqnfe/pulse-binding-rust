@@ -49,12 +49,6 @@ impl<T> TimeEvent<T>
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
     }
 
-    /// Needed to support
-    /// [`::context::Context::rttime_restart`](../../../context/struct.Context.html#method.rttime_restart).
-    pub(crate) fn get_ptr(&self) -> *mut TimeEventInternal {
-        self.ptr
-    }
-
     /// Restart this timer event source (whether still running or already expired) with a new Unix
     /// time.
     pub fn restart(&mut self, tv: &Timeval) {

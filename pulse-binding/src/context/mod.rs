@@ -574,13 +574,6 @@ impl Context {
         Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner().clone(), to_save))
     }
 
-    /// Restart a running or expired timer event source, (with a new monotonic-based time).
-    pub fn rttime_restart<T>(&self, e: &TimeEvent<T::MI>, time: MicroSeconds)
-        where T: ::mainloop::api::Mainloop
-    {
-        unsafe { capi::pa_context_rttime_restart(self.ptr, e.get_ptr(), time.0); }
-    }
-
     /// Return the optimal block size for passing around audio buffers.
     ///
     /// It is recommended to allocate buffers of the size returned here when writing audio data to

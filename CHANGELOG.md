@@ -20,6 +20,8 @@ pulse-binding:
  * Mainloop/api: Added method for creating time events using monotonic time values, as an alternate
    to the similar method available on the `Context` object.
  * Events/timer: Added `restart_rt` method, taking monotonic time
+ * Context: Removed `rttime_restart` method, made obsolete by the new `restart_rt` method on the
+   event itself.
  * Events: Removed the `set_destroy_cb` event methods, which became obsolete with the switch to
    closure based callbacks.
  * Events/deferred: Split the `enable` method into separate `enable` and `disable` methods
