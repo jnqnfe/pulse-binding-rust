@@ -21,7 +21,7 @@
 //! Due to this it is possible to embed PulseAudio into other applications easily. Three main loop
 //! implementations are currently available:
 //!
-//! * A minimal implementation based on the C library's poll() function (See
+//! * A minimal implementation based on the C library's poll() function. (See
 //!   [`::mainloop::standard`]).
 //! * A variation of the previous implementation, where it runs in a separate thread. (See
 //!   [`::mainloop::threaded`]).
