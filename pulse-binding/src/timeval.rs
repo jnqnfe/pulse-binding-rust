@@ -37,6 +37,9 @@ pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
 /// 'invalid'.
 pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
 
+/// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
+const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
+
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MicroSeconds(pub u64);
 
@@ -129,6 +132,43 @@ impl Timeval {
     /// Set the specified usec value
     pub fn set(&mut self, t: MicroSeconds) -> &mut Self {
         unsafe { capi::pa_timeval_store(&mut self.0, t.0); }
+        self
+    }
+
+    /// Set to the specified (monotonic) value
+    ///
+    /// The `rtclock` boolean is used for indicating support of the rtclock (monotonic time). If
+    /// `true` then the conversion from `MicroSeconds` to `Timeval` is done, and a special 'rt' flag
+    /// bit is set in `Timeval`'s inner `tv_usec` attribute. If `false`, then instead the timestamp
+    /// is converted to a Unix wallclock timestamp.
+    ///
+    /// Asserts that `v` is not `USEC_INVALID`
+    pub(crate) fn set_rt(&mut self, v: MicroSeconds, rtclock: bool) -> &mut Self {
+        /* This is a copy of PA's internal `pa_timeval_rtstore()` function */
+
+        assert_ne!(v, USEC_INVALID);
+
+        self.set(v);
+
+        match rtclock {
+            true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK; },
+            false => { self.wallclock_from_rtclock(); },
+        }
+        self
+    }
+
+    pub(crate) fn wallclock_from_rtclock(&mut self) -> &mut Self {
+        /* This is a copy of PA's internal `wallclock_from_rtclock()` function */
+
+        let mut wc_now = Timeval::new_tod();
+        let rt_now = Timeval::from(::rtclock::now());
+
+        match rt_now.cmp(self) {
+            Ordering::Less => { wc_now.add(Timeval::diff(self, &rt_now)); },
+            _              => { wc_now.sub(Timeval::diff(&rt_now, self)); },
+        }
+
+        *self = wc_now;
         self
     }
 }
