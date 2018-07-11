@@ -226,9 +226,9 @@ impl From<Timeval> for MicroSeconds {
 }
 impl From<MicroSeconds> for Timeval {
     fn from(t: MicroSeconds) -> Self {
-        let mut tmp = Timeval(timeval { tv_sec: 0, tv_usec: 0 });
-        tmp.set(t);
-        tmp
+        let secs = t.0 / MICROS_PER_SEC;
+        let usecs = t.0 % MICROS_PER_SEC;
+        Timeval::new(secs as i64, usecs as i64)
     }
 }
 
