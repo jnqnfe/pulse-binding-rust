@@ -15,6 +15,15 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
+//! # Notes
+//!
+//! Time events may be created (or reset) with either Unix time values or real-time (monotonic)
+//! based values (though if the mainloop does not support monotonic time value, they may be silently
+//! converted to unix time).
+//!
+//! Note that time events created with one form of time value can be freely restarted with the other
+//! form of time value.
+
 use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
