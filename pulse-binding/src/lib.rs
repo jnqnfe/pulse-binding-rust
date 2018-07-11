@@ -134,7 +134,7 @@ pub mod proplist;
 pub mod rtclock;
 pub mod sample;
 pub mod stream;
-pub mod timeval;
+pub mod time;
 pub mod utf8;
 pub mod util;
 pub mod version;

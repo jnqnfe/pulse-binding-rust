@@ -260,7 +260,7 @@ use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use callbacks::unwrap_optional_callback;
 use error::PAErr;
-use timeval::MicroSeconds;
+use time::MicroSeconds;
 use proplist::Proplist;
 use callbacks::box_closure_get_capi_ptr;
 use operation::Operation;

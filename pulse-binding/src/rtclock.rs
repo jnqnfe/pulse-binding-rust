@@ -16,7 +16,7 @@
 // if not, see <http://www.gnu.org/licenses/>.
 
 use capi;
-use timeval::MicroSeconds;
+use time::MicroSeconds;
 
 /// Return the current monotonic system time in usecs, if such a clock is available. If it is not
 /// available this will return the wallclock time instead.

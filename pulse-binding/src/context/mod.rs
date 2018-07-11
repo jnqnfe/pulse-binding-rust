@@ -150,7 +150,7 @@ use mainloop::api::MainloopInnerType;
 use mainloop::events::timer::TimeEvent;
 use operation::Operation;
 use error::PAErr;
-use timeval::MicroSeconds;
+use time::MicroSeconds;
 use proplist::Proplist;
 use callbacks::box_closure_get_capi_ptr;
 use capi::pa_context as ContextInternal;
@@ -547,7 +547,7 @@ impl Context {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::timeval::{MicroSeconds, MICROS_PER_SEC};
+    /// use pulse::time::{MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = context.rttime_new::<Mainloop, _>(&mainloop,
     ///     pulse::rtclock::now() + MicroSeconds(5 * MICROS_PER_SEC),
     ///     || { println!("Timer event fired!"); });

@@ -1,4 +1,4 @@
-//! Utility functions for handling timeval calculations.
+//! Time handling functionality.
 
 // This file is part of the PulseAudio Rust language binding.
 //
@@ -41,7 +41,7 @@
 //! # Examples
 //!
 //! ```rust,ignore
-//! use pulse::timeval::{Timeval, MicroSeconds, MICROS_PER_SEC};
+//! use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC};
 //!
 //! // A `Timeval` holding a Unix timestamp, representing the current time-of-day, plus five seconds
 //! let unix_tv = Timeval::new_tod().add(MicroSeconds(5 * MICROS_PER_SEC));

@@ -6,6 +6,7 @@ project:
 
 pulse-binding:
 
+ * Renamed the `timeval` mod to `time`
  * Mainloop: Events now take closures for callbacks, like the rest of the API
  * Operation: Fixed possible memory leak with cancellation
  * Context: Now takes a ref to the mainloop instead of the mainloop's API in creation methods
@@ -29,7 +30,11 @@ pulse-binding:
    binding type, unlike other event callbacks.
  * Timeval: Added convenience `new`, `new_zero` and `new_tod` methods
  * Simplified callback proxy / setup code (internal change only)
- * Added documentation discussing Unix and monotonic time to the `timeval` mod
+ * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
+
+pulse-simple-binding:
+
+ * Updated with respect to having renamed the `timeval` mod to `time` in the main binding
 
 pulse-glib-mainloop-binding:
 

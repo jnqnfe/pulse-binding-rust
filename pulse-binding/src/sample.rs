@@ -72,7 +72,7 @@
 use std;
 use capi;
 use std::ffi::{CStr, CString};
-use timeval::MicroSeconds;
+use time::MicroSeconds;
 
 pub use capi::PA_CHANNELS_MAX as CHANNELS_MAX;
 pub use capi::PA_RATE_MAX as RATE_MAX;

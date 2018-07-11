@@ -28,7 +28,7 @@ use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
 use super::super::api::{MainloopApi, MainloopInnerType};
-use timeval::{Timeval, MicroSeconds, USEC_INVALID};
+use time::{Timeval, MicroSeconds, USEC_INVALID};
 
 pub use capi::pa_time_event as TimeEventInternal;
 

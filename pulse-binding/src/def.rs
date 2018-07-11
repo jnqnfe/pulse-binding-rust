@@ -18,7 +18,7 @@
 use std;
 use capi;
 use std::os::raw::c_void;
-use timeval::{Timeval, MicroSeconds};
+use time::{Timeval, MicroSeconds};
 
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;
 pub use capi::pa_device_type_t as Device;

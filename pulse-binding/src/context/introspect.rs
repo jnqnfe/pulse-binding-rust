@@ -230,7 +230,7 @@ use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::ptr::null_mut;
 use super::{Context, ContextInternal};
-use timeval::MicroSeconds;
+use time::MicroSeconds;
 use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
 use operation::Operation;
 

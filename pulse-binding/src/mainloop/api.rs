@@ -23,7 +23,7 @@ use libc::timeval;
 use super::events::io::{IoEvent, IoEventInternal, IoEventFlagSet};
 use super::events::timer::{TimeEvent, TimeEventInternal};
 use super::events::deferred::{DeferEvent, DeferEventInternal};
-use timeval::{Timeval, MicroSeconds, USEC_INVALID};
+use time::{Timeval, MicroSeconds, USEC_INVALID};
 
 pub(crate) use capi::pa_mainloop_api as ApiInternal;
 
@@ -144,7 +144,7 @@ pub trait Mainloop {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::timeval::{Timeval, MicroSeconds, MICROS_PER_SEC};
+    /// use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event(
     ///     &(Timeval::new_tod().add(MicroSeconds(5 * MICROS_PER_SEC))),
     ///     Box::new(|| { println!("Timer event fired!"); }));
@@ -181,7 +181,7 @@ pub trait Mainloop {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::timeval::{MicroSeconds, MICROS_PER_SEC};
+    /// use pulse::time::{MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event_rt(
     ///     pulse::rtclock::now() + MicroSeconds(5 * MICROS_PER_SEC),
     ///     Box::new(|| { println!("Timer event fired!"); }));
