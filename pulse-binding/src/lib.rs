@@ -131,7 +131,6 @@ pub mod format;
 pub mod mainloop;
 pub mod operation;
 pub mod proplist;
-pub mod rtclock;
 pub mod sample;
 pub mod stream;
 pub mod time;

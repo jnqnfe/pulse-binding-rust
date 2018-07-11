@@ -36,12 +36,12 @@
 //! Unix based times will typically be an offset from the current wall-clock time (time-of-day).
 //! You can get a new [`Timeval`] object set with this value using it's [`new_tod`] associated
 //! function. Monotonic based times should be an offset from the current monotonic system time,
-//! which can be obtained via the [`::rtclock::now`] function.
+//! which can be obtained via the [`rtclock_now`] function.
 //!
 //! # Examples
 //!
 //! ```rust,ignore
-//! use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC};
+//! use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC, rtclock_now};
 //!
 //! // A `Timeval` holding a Unix timestamp, representing the current time-of-day, plus five seconds
 //! let unix_tv = Timeval::new_tod().add(MicroSeconds(5 * MICROS_PER_SEC));
@@ -50,7 +50,7 @@
 //! let unix_usecs = MicroSeconds::from(unix_tv);
 //!
 //! // A monotonic timestamp, representing the current system time, plus five seconds
-//! let rt_usecs = pulse::rtclock::now() + MicroSeconds(5 * MICROS_PER_SEC);
+//! let rt_usecs = rtclock_now() + MicroSeconds(5 * MICROS_PER_SEC);
 //!
 //! // Converting to `Timeval`, still a monotonic timestamp
 //! let rt_tv = Timeval::from(rt_usecs);
@@ -59,7 +59,7 @@
 //! [`Timeval`]: struct.Timeval.html
 //! [`MicroSeconds`]: struct.MicroSeconds.html
 //! [`new_tod`]: struct.Timeval.html#method.new_tod
-//! [`::rtclock::now`]: ../rtclock/fn.now.html
+//! [`rtclock_now`]: fn.rtclock_now.html
 
 use std;
 use capi;
@@ -207,7 +207,7 @@ impl Timeval {
         /* This is a copy of PA's internal `wallclock_from_rtclock()` function */
 
         let mut wc_now = Timeval::new_tod();
-        let rt_now = Timeval::from(::rtclock::now());
+        let rt_now = Timeval::from(rtclock_now());
 
         match rt_now.cmp(self) {
             Ordering::Less => { wc_now.add(Timeval::diff(self, &rt_now)); },
@@ -319,4 +319,10 @@ impl std::fmt::Display for MicroSeconds {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} µs", self.0)
     }
+}
+
+/// Return the current monotonic system time in usecs, if such a clock is available. If it is not
+/// available this will return the wallclock time instead.
+pub fn rtclock_now() -> MicroSeconds {
+    MicroSeconds(unsafe { capi::pa_rtclock_now() })
 }

@@ -7,6 +7,7 @@ project:
 pulse-binding:
 
  * Renamed the `timeval` mod to `time`
+ * Moved the `rtclock::now` function to `time::rtclock_now`
  * Mainloop: Events now take closures for callbacks, like the rest of the API
  * Operation: Fixed possible memory leak with cancellation
  * Context: Now takes a ref to the mainloop instead of the mainloop's API in creation methods
