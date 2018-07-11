@@ -175,7 +175,7 @@ impl Timeval {
         self
     }
 
-    /// Set the specified usec value
+    /// Set to the specified value, given in microseconds
     pub fn set(&mut self, t: MicroSeconds) -> &mut Self {
         unsafe { capi::pa_timeval_store(&mut self.0, t.0); }
         self
