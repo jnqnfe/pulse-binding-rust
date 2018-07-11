@@ -17,6 +17,8 @@ pulse-binding:
    these structures are not intended to be mutated. Patches have been sent to them to correct it in
    the PA C API itself. No point in waiting for those to be accepted. The get/set userdata methods
    have been removed.
+ * Mainloop/api: Added method for creating time events using monotonic time values, as an alternate
+   to the similar method available on the `Context` object.
  * Events/timer: Added `restart_rt` method, taking monotonic time
  * Events: Removed the `set_destroy_cb` event methods, which became obsolete with the switch to
    closure based callbacks.

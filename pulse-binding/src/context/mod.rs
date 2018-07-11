@@ -536,9 +536,7 @@ impl Context {
 
     /// Create a new timer event source for the specified time.
     ///
-    /// This is an alternative to the mainloop `new_timer_event` method. Note that this takes the
-    /// time value as a `MicroSeconds` value, rather than `&Timeval`, and the value should be an
-    /// offset added to `::rtclock::now()`.
+    /// This is an alternative to the mainloop `new_timer_event_rt` method.
     ///
     /// A reference to the mainloop object is needed, in order to associate the event object with
     /// it. The association is done to ensure the event does not outlive the mainloop.

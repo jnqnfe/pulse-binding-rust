@@ -23,7 +23,7 @@ use libc::timeval;
 use super::events::io::{IoEvent, IoEventInternal, IoEventFlagSet};
 use super::events::timer::{TimeEvent, TimeEventInternal};
 use super::events::deferred::{DeferEvent, DeferEventInternal};
-use timeval::Timeval;
+use timeval::{Timeval, MicroSeconds, USEC_INVALID};
 
 pub(crate) use capi::pa_mainloop_api as ApiInternal;
 
@@ -156,6 +156,48 @@ pub trait Mainloop {
         let (cb_fn, cb_data) = to_save.get_capi_params(super::events::timer::event_cb_proxy);
 
         let inner = self.inner();
+        let api = inner.get_api();
+        let fn_ptr = api.time_new.unwrap();
+        let ptr = fn_ptr(api, &tv.0, cb_fn, cb_data);
+        if ptr.is_null() {
+            return None;
+        }
+        Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
+    }
+
+    /// Create a new monotonic-based timer event
+    ///
+    /// Asserts that `t` is not `USEC_INVALID`
+    ///
+    /// This is an alternative to the `new_timer_event` method, taking a monotonic based time value.
+    /// Note that this takes the time value as a `MicroSeconds` value, rather than `&Timeval`,
+    /// however beware that simply converting between the two representations is **not** enough to
+    /// also convert the value between monotonic and non-monotonic.
+    ///
+    /// **Note**: You must ensure that the returned event object lives for as long as you want its
+    /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
+    /// a new event, but then immediately drop the object returned here, no event will fire!
+    ///
+    /// Example event set to fire in five seconds time:
+    ///
+    /// ```rust,ignore
+    /// use pulse::timeval::{MicroSeconds, MICROS_PER_SEC};
+    /// let _t_event = mainloop.new_timer_event_rt(
+    ///     pulse::rtclock::now() + MicroSeconds(5 * MICROS_PER_SEC),
+    ///     Box::new(|| { println!("Timer event fired!"); }));
+    /// ```
+    fn new_timer_event_rt(&mut self, t: MicroSeconds, callback: Box<FnMut() + 'static>
+        ) -> Option<TimeEvent<Self::MI>>
+    {
+        assert_ne!(t, USEC_INVALID);
+        let to_save = super::events::timer::EventCb::new(Some(callback));
+        let (cb_fn, cb_data) = to_save.get_capi_params(super::events::timer::event_cb_proxy);
+
+        let inner = self.inner();
+
+        let mut tv = Timeval::new_zero();
+        tv.set_rt(t, inner.supports_rtclock());
+
         let api = inner.get_api();
         let fn_ptr = api.time_new.unwrap();
         let ptr = fn_ptr(api, &tv.0, cb_fn, cb_data);
