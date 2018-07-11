@@ -18,7 +18,7 @@
 use std;
 use capi;
 use std::os::raw::c_void;
-use timeval::Timeval;
+use timeval::{Timeval, MicroSeconds};
 
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;
 pub use capi::pa_device_type_t as Device;
@@ -164,15 +164,15 @@ pub struct TimingInfo {
 
     /// Time in usecs a sample takes to be played on the sink. For playback streams and record
     /// streams connected to a monitor source.
-    pub sink_usec: ::timeval::MicroSeconds,
+    pub sink_usec: MicroSeconds,
 
     /// Time in usecs a sample takes from being recorded to being delivered to the application. Only
     /// for record streams.
-    pub source_usec: ::timeval::MicroSeconds,
+    pub source_usec: MicroSeconds,
 
     /// Estimated time in usecs a sample takes to be transferred to/from the daemon. For both
     /// playback and record streams.
-    pub transport_usec: ::timeval::MicroSeconds,
+    pub transport_usec: MicroSeconds,
 
     /// Non-zero when the stream is currently not underrun and data is being passed on to the
     /// device. Only for playback streams. This field does not say whether the data is actually
@@ -210,10 +210,10 @@ pub struct TimingInfo {
     pub read_index: i64,
 
     /// The configured latency for the sink.
-    pub configured_sink_usec: ::timeval::MicroSeconds,
+    pub configured_sink_usec: MicroSeconds,
 
     /// The configured latency for the source.
-    pub configured_source_usec: ::timeval::MicroSeconds,
+    pub configured_source_usec: MicroSeconds,
 
     /// Bytes that were handed to the sink since the last underrun happened, or since playback
     /// started again after the last underrun. `playing` will tell you which case it is.
