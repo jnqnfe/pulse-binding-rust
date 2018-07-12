@@ -70,9 +70,8 @@
 //! Interacting with PulseAudio through this Rust binding, pointers to most reference counted
 //! objects are held in a wrapper object, which has an implementation of the `Drop` trait, which is
 //! automatically called upon the owned wrapper object going out of scope, and calls the PulseAudio
-//! `unref` function. Should use of this binding require increasing the ref count further, there is
-//! a choice of either possibly using the raw PulseAudio `ref`/`unref` functions with the underlying
-//! C API object pointer, if available, or, preferably, using Rust `Rc`/`Arc` wrappers.
+//! `unref` function. Should use of this binding require increasing the ref count further, Rust's
+//! `Rc`/`Arc` wrappers should be used instead.
 //!
 //! # Context
 //!
