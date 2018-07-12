@@ -33,6 +33,7 @@ pulse-binding:
  * Simplified callback proxy / setup code (internal change only)
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting
+ * Context: Moved documentation discussing mainloop abstraction to the `mainloop` mod
 
 pulse-simple-binding:
 

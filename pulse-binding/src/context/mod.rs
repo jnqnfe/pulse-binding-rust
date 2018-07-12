@@ -19,41 +19,6 @@
 
 //! # Overview
 //!
-//! The asynchronous API is the native interface to the PulseAudio library. It allows full access to
-//! all available functionality. This however means that it is rather complex and can take some time
-//! to fully master.
-//!
-//! # Main Loop Abstraction
-//!
-//! The API is based around an asynchronous event loop, or main loop, abstraction. This abstraction
-//! contains three basic elements:
-//!
-//! * Deferred events: Events that will trigger as soon as possible. Note that some implementations
-//!   may block all other events when a deferred event is active.
-//! * I/O events: Events that trigger on file descriptor activities.
-//! * Timer events: Events that trigger after a fixed amount of time.
-//!
-//! The abstraction is represented as a number of function pointers in the
-//! [`::mainloop::api::MainloopApi`] structure.
-//!
-//! To actually be able to use these functions, an implementation needs to be coupled to the
-//! abstraction. There are three of these shipped with PulseAudio, but any other can be used with a
-//! minimal amount of work, provided it supports the three basic events listed above.
-//!
-//! The implementations shipped with PulseAudio are:
-//!
-//! * 'Standard': A minimal but fast implementation based on poll().
-//! * 'Threaded': A special version of the previous implementation where all of PulseAudio's
-//!   internal handling runs in a separate thread.
-//! * 'Glib': A wrapper around GLib's main loop. This is provided in the separate
-//!   `libpulse_glib_binding` crate.
-//!
-//! UNIX signals may be hooked to a main loop using the functions from [`::mainloop::signal`]. These
-//! rely only on the main loop abstraction and can therefore be used with any of the
-//! implementations.
-//!
-//! # Context
-//!
 //! A context is the basic object for a connection to a PulseAudio server. It multiplexes commands,
 //! data streams and events through a single channel.
 //!
@@ -105,8 +70,6 @@
 //! [`::context::introspect`]: ../context/introspect/index.html 
 //! [`::context::scache`]: ../context/scache/index.html
 //! [`::context::subscribe`]: ../context/subscribe/index.html
-//! [`::mainloop::api::MainloopApi`]: ../mainloop/api/struct.MainloopApi.html
-//! [`::mainloop::signal`]: ../mainloop/signal/index.html
 //! [`::operation::Operation::cancel`]: ../operation/struct.Operation.html#method.cancel
 //! [`::operation::Operation::get_state`]: ../operation/struct.Operation.html#method.get_state
 //! [`::operation::Operation`]: ../operation/struct.Operation.html

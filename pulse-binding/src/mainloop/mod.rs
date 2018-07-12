@@ -15,29 +15,41 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! # Overview
+//! # Main Loop Abstraction
 //!
 //! Both the PulseAudio core and the PulseAudio client library use a main loop abstraction layer.
-//! Due to this it is possible to embed PulseAudio into other applications easily. Three main loop
-//! implementations are currently available:
+//! Due to this it is possible to embed PulseAudio into other applications easily.
 //!
-//! * A minimal implementation based on the C library's poll() function. (See
-//!   [`::mainloop::standard`]).
-//! * A variation of the previous implementation, where it runs in a separate thread. (See
-//!   [`::mainloop::threaded`]).
-//! * A wrapper around the GLIB main loop. Use this to embed PulseAudio into your GLIB/GTK+/GNOME
-//!   programs. (See the separate `libpulse_glib_binding` crate).
+//! This abstraction contains three basic elements:
 //!
-//! The structure [`::mainloop::api::MainloopApi`] is used as a 'vtable' for the main loop
-//! abstraction.
+//! * Deferred events: Events that will trigger as soon as possible. Note that some implementations
+//!   may block all other events when a deferred event is active.
+//! * I/O events: Events that trigger on file descriptor activities.
+//! * Timer events: Events that trigger after a fixed amount of time.
 //!
-//! This mainloop abstraction layer has no direct support for UNIX signals. Generic, mainloop
-//! implementation agnostic support is available through [`::mainloop::signal`].
+//! The abstraction is represented as a number of function pointers in the
+//! [`::mainloop::api::MainloopApi`] structure.
 //!
-//! [`::mainloop::standard`]: standard/index.html
-//! [`::mainloop::threaded`]: threaded/index.html
-//! [`::mainloop::api::MainloopApi`]: api/struct.MainloopApi.html
+//! To actually be able to use these functions, an implementation needs to be coupled to the
+//! abstraction. There are three of these shipped with PulseAudio, but any other can be used with a
+//! minimal amount of work, provided it supports the three basic events listed above.
+//!
+//! The implementations shipped with PulseAudio are:
+//!
+//! * [`Standard`]: A minimal but fast implementation based on the C library's poll() function.
+//! * [`Threaded`]: A special version of the previous implementation where all of PulseAudio's
+//!   internal handling runs in a separate thread.
+//! * 'Glib': A wrapper around GLib's main loop. This is provided in the separate
+//!   `libpulse_glib_binding` crate.
+//!
+//! UNIX signals may be hooked to a main loop using the functionality from [`::mainloop::signal`].
+//! This relies only on the main loop abstraction and can therefore be used with any of the
+//! implementations.
+//!
+//! [`Standard`]: standard/index.html
+//! [`Threaded`]: threaded/index.html
 //! [`::mainloop::signal`]: signal/index.html
+//! [`::mainloop::api::MainloopApi`]: api/struct.MainloopApi.html
 
 pub mod api;
 pub mod events;
