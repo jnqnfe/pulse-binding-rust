@@ -226,14 +226,6 @@ impl Context {
         Self { ptr: ptr, weak: false, cb_ptrs: Default::default() }
     }
 
-    /// Create a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
-    /// pointer. This is the 'weak' version, which avoids destroying the internal object when
-    /// dropped.
-    pub(crate) fn from_raw_weak(ptr: *mut ContextInternal) -> Self {
-        assert_eq!(false, ptr.is_null());
-        Self { ptr: ptr, weak: true, cb_ptrs: Default::default() }
-    }
-
     /// Set a callback function that is called whenever the context status changes.
     pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.set_state;
