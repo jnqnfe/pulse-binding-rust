@@ -1,12 +1,12 @@
-Changes between 2.0.1 and ???:
----------------
+# ??? (???)
 
+project:
 
+ * Renamed `NEWS` file to `CHANGELOG.md` and reformatted to markdown
 
-Changes between 2.0.0 and 2.0.1:
----------------
+# 2.0.1 (June 26th, 2018)
 
- [pulse-binding]
+pulse-binding:
 
  * Updated declared version compatability
  * Operation: Documented possible memory leak
@@ -14,18 +14,17 @@ Changes between 2.0.0 and 2.0.1:
    dumping introspection data), and output in list style instead of mixed struct/list style.
  * Doc typo fixes
 
- [pulse-sys] (1.2.0 => 1.2.1)
+pulse-sys (1.2.1):
 
  * Updated declared version compatability
 
- [pulse-glib-mainloop-binding]
+pulse-glib-mainloop-binding:
 
  * Doc typo fix
 
-Changes between 1.2.2 and 2.0.0:
----------------
+# 2.0 (June 16th, 2018)
 
- [pulse-binding]
+pulse-binding:
 
  * Changed handling of callbacks to support closures! Now you can simply supply a closure, instead
    of an "extern C" function and a raw `c_void` data pointer, in almost any place across the
@@ -46,7 +45,7 @@ Changes between 1.2.2 and 2.0.0:
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.
  * Context: Handful of methods changed to take immutable `self`. Patches were previously sent in to
-   apply const to a lot of pointers in the C API, which have been accepted. Some context related
+   apply `const` to a lot of pointers in the C API, which have been accepted. Some context related
    functions were not changed simply because of an artefact relating to validation checks.
    Additional patches solving this have now been sent in. This change has been reflected here. (No
    need to worry about whether or not these are accepted, though discussion indicates they will, nor
@@ -69,35 +68,32 @@ Changes between 1.2.2 and 2.0.0:
    wasn't needed.
  * Subscribe: purge audoload API (deprecated since 2009)
 
- [pulse-sys] (1.1.0 => 1.2.0)
+pulse-sys (1.2.0):
 
- * Context: Handful of functions changed to take const pointers, as discussed above.
+ * Context: Handful of functions changed to take `const` pointers, as discussed above.
  * Introspect & subscribe: purge audoload API (deprecated since 2009)
 
-Changes between 1.2.1 and 1.2.2:
----------------
+# 1.2.2 (June 16th, 2018)
 
- [pulse-binding]
+pulse-binding:
 
  * Format: Restored access to `Info`'s `ptr` attribute
 
-Changes between 1.2.0 and 1.2.1:
----------------
+# 1.2.1 (June 15th, 2018)
 
- [pulse-binding]
+pulse-binding:
 
  * Stream: Fix use-after-frees with `get_format_info` and `get_context`. These should have used
    `from_raw_weak` instead of `from_raw` to avoid incorrectly freeing the underlying C object,
    leaving a dangling pointer.
 
-Changes between 1.1.0 and 1.2.0:
----------------
+# 1.2 (June 1st, 2018)
 
- [project]
+project:
 
  * Further licensing clarification
 
- [pulse-binding]
+pulse-binding:
 
  * Fixed lifetime issues with a handful of stream methods.
  * Fixed lifetime issues with `get_api` mainloop method.
@@ -105,10 +101,10 @@ Changes between 1.1.0 and 1.2.0:
    result, while claiming in the documentation that this was the quit retval, which wasn't returned
    at all.
  * Tidied up error code handling:
-    - add `PAErr` wrapper for i32 error type, for cleaner interfaces
+    - add `PAErr` wrapper for `i32` error type, for cleaner interfaces
     - move `strerror` function to `PAErr` method
     - rename `sterror` `PAErr` and `Code` methods to `to_string`
-    - convert the error CStr to String for the users, no need to make users do it
+    - convert the error `CStr` to `String` for the users; no need to make users do it
     - add `PAErr` <=> `Code` `From` impls
  * Simplified volume handling:
     - `Volume` and `VolumeDB` are now wrappers rather than type aliases
@@ -117,8 +113,8 @@ Changes between 1.1.0 and 1.2.0:
       conversion functions. This is now used in linear related conversions, which thus no longer
       incorrectly portray such values to be dB scale.
     - Renamed `DECIBEL_MININFTY` to `DECIBEL_MINUS_INFINITY`
-    - CVolume `inc` and `dec` methods renamed to `increase` and `decrease` respectively for clarity,
-      they are not increment/decrement.
+    - Renamed `CVolume`'s `inc` and `dec` methods to `increase` and `decrease` respectively for
+      clarity (they are not increment/decrement).
  * Stream:
     - The buffer given by `begin_write` is now converted to a slice for you, rather than burdening
       the caller.
@@ -127,43 +123,42 @@ Changes between 1.1.0 and 1.2.0:
     - Minor doc fixes
  * Derived more common traits for a handful of structs/enums
  * Implemented `PartialEq` for `::channelmap::Map` and `::volume::CVolume`
- * Removed Copy,Clone derives from def::SpawnApi
+ * Removed `Copy` and `Clone` derives from `def::SpawnApi`
  * Improved time handling:
     - Added `Timeval` wrapper
-    - Introduced `MicroSeconds` u64 wrapper, replacing use of `::sample::Usecs` (now removed)
+    - Introduced `MicroSeconds` `u64` wrapper, replacing use of `::sample::Usecs` (now removed)
     - Tidied up conversion constants. Note, names (and in some cases types) have changed.
-    - libc::timeval re-exported (primarily for timer event callback use) from `::timeval` instead of
-      `::mainloop::events::timer`
+    - Re-exported `libc::timeval` (primarily for timer event callback use) from `::timeval` instead
+      of `::mainloop::events::timer`.
  * Added and put to use wrapper for 'quit return values'
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
    to avoid unnecessary conversion, but users most likely would prefer `Strings`s, and there should
    definitely not be a problem with "lossy" utf8 conversion in these cases.
- * stream: get_underflow_index: return unsigned
+ * Stream: Now returning unsigned from `get_underflow_index`
  * Hid string printing length constants, only used internally
  * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
    thus more simple, and removed the `Option` result wrapper.
  * Changed several `::sample::Format` related functions to methods
 
- [pulse-simple-binding]
+pulse-simple-binding:
 
  * Tidied up error code handling, per above
  * Improved time handling, per above
 
- [pulse-glib-binding]
+pulse-glib-binding:
 
  * Now returning `get_api` pointer as ref, as done with standard and threaded mainloops
 
-Changes between 1.0.5 and 1.1.0:
----------------
+# 1.1 (May 27th, 2018)
 
- [pulse-binding]
+pulse-binding:
 
  * Privatised the `from_raw` method of various objects, having become aware of the more granular
    `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
    callbacks are still available.
  * Also privatised inner pointer attributes of structs in a few places on the same basis.
- * Privatised utils::unwrap_optional_callback function
- * Privatised timer event get_ptr method
+ * Privatised `utils::unwrap_optional_callback` function
+ * Privatised timer event `get_ptr` method
  * As described below, a number of C function declarations in the sys crates now take certain object
    pointers immutably. A small number of functions in the binding have been similarly updated.
  * Promoted `self` reference to mutable for various methods across context, mainloops, streams,
@@ -171,22 +166,21 @@ Changes between 1.0.5 and 1.1.0:
    change in the wrapped pointer), we should reflect mutability needs of the operation being
    performed on the underlying C objects.
 
- [pulse-simple-binding]
+pulse-simple-binding:
 
- * Privatised SimpleInternal
+ * Privatised `SimpleInternal`
 
- [pulse-sys]
+pulse-sys:
 
- * Various functions have been changed to take immutable const pointers.
+ * Various functions have been changed to take immutable `const` pointers.
    There are numerous functions in the C API which take mutable pointers to objects where there is
    no intention to actually mutate those objects. Patches have been sent in to the PA project to
    correct many of these cases. There is no point in waiting for those to be accepted, so the
    change has been reflected in the C API description in the sys crate.
 
-Changes between 1.0.4d and 1.0.5:
----------------
+# 1.0.5 (May 27th, 2018)
 
- [pulse-binding] (1.0.3 => 1.0.5)
+pulse-binding:
 
  * Fixed and simplified Proplist iteration
     - Fixed infinite loop bug: I mis-read the documentation, it's the return value from the C
@@ -196,50 +190,45 @@ Changes between 1.0.4d and 1.0.5:
       always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
     - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
- * CVolume: make self for is_[muted|norm] immutable
+ * CVolume: make `self` for `is_[muted|norm]` immutable
  * Stream: fix double option wrapping of callback fn ptr with write methods
- * Stream: combine write_ext_free free_cb_data param with free_cb as tuple, as done elsewhere
+ * Stream: combine `write_ext_free` `free_cb_data` param with `free_cb` as tuple, as done elsewhere
 
- [pulse-simple-binding] (1.0.2 => 1.0.5)
+pulse-simple-binding:
 
  * Enabled pulse-simple doc test
 
- [pulse-sys] (1.0.2 => 1.0.5)
+pulse-sys:
 
  * Minor, non-functional consistency fix only
 
-Changes between 1.0.3 and 1.0.4d:
----------------
+# 1.0.4d (February 15th, 2018)
 
-(no crate version changes, project only)
+project:
 
  * Use explicit test script for Travis, rather than relying on default, to ensure that the `--all`
    flag is passed to `cargo test`, which I thought was already done, but seems not from the logs and
    thus tests were not actually being done.
- * Fix Travis failures - add missing libpulse-mainloop-glib0 dependency to test environment.
+ * Fix Travis failures - add missing `libpulse-mainloop-glib0` dependency to test environment.
  * Properly fix Travis tests - add pulseaudio dependency and get it started in test environment.
 
-Changes between 1.0.2 and 1.0.3:
----------------
+# 1.0.3 (February 10th, 2018)
 
- [pulse-binding] (1.0.2 => 1.0.3)
+pulse-binding:
 
  * Added `From` methods for transmuting between certain introspection structs and their `sys`
    counterparts. (They are identical, and only duplicated in the binding to add documentation).
 
-Changes between 1.0.1 and 1.0.2:
----------------
+# 1.0.2 (February 9th, 2018)
 
  * Added travis badge to individual crates
 
-Changes between 1.0.0 and 1.0.1:
----------------
+# 1.0.1 (February 2nd, 2018)
 
- * Fixed toml file license string "LGPL-2.1" => "LGPL-2.1+"
+ * Fixed toml file license string `LGPL-2.1` => `LGPL-2.1+`
  * Fixed toml file missing author email address
  * Removed obsolete readme doc links
 
-Version 1.0:
----------------
+# 1.0 (January 24th, 2018)
 
  * Original release
