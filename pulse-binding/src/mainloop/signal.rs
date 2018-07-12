@@ -37,15 +37,8 @@ use capi::pa_signal_event as EventInternal;
 pub struct Event {
     /// The actual C object.
     ptr: *mut EventInternal,
-    /// Multi-use callback closure pointers
-    _cb_ptrs: CallbackPointers,
-}
-
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
-/// times), for freeing at the appropriate time.
-#[derive(Default)]
-struct CallbackPointers {
-    _signal: SignalCb,
+    /// Saved multi-use state callback closure, for later destruction
+    _signal_cb: SignalCb,
 }
 
 type SignalCb = ::callbacks::MultiUseCallback<FnMut(i32),
@@ -79,7 +72,7 @@ impl Event {
         let saved = SignalCb::new(Some(Box::new(callback)));
         let (cb_fn, cb_data) = saved.get_capi_params(signal_cb_proxy);
         let ptr = unsafe { capi::pa_signal_new(sig, cb_fn, cb_data) };
-        Self { ptr: ptr, _cb_ptrs: CallbackPointers { _signal: saved } }
+        Self { ptr: ptr, _signal_cb: saved }
     }
 }
 
