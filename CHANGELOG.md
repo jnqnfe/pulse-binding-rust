@@ -34,6 +34,7 @@ pulse-binding:
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting
  * Context: Moved documentation discussing mainloop abstraction to the `mainloop` mod
+ * Mainloop: Added documentation discussing callback execution
 
 pulse-simple-binding:
 

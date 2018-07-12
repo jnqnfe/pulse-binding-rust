@@ -46,10 +46,53 @@
 //! This relies only on the main loop abstraction and can therefore be used with any of the
 //! implementations.
 //!
+//! # Callback Notes
+//!
+//! ## Execution
+//!
+//! As described in the [standard mainloop documentation], there are three phases to mainloop
+//! execution, and the third - 'dispatch' - is when user callbacks get executed.
+//!
+//! It is important to understand that while it is *typical* that user callbacks are executed
+//! by the mainloop's dispatcher, callback execution is not exclusively done there; in some cases
+//! callbacks get executed directly in synchronous function execution. For instance, if you set up
+//! a context state change callback, then try to connect the context object, execution of the
+//! 'connect' function call involves (internally within the PulseAudio client library) direct
+//! execution of this callback in setting the initial connection state. After returning, the
+//! callback is then on only executed asynchronously from the mainloop's dispatcher.
+//!
+//! While execution using the [`Standard`] mainloop is entirely synchronous, the [`Threaded`]
+//! mainloop implementation runs the standard mainloop in a separate thread and callback execution
+//! occurs asynchronously, requiring careful use of the mainloop's `lock` method. When writing
+//! callbacks with the [`Threaded`] mainloop, users must beware the potential that in a few cases
+//! the callback may be executed in two different scenarios, and with different threads. Note that
+//! the threaded mainloop has an [`in_thread`] method for determining whether or not the thread it
+//! it is executed from is the special event loop thread.
+//!
+//! ## Queued Events and Changing Callbacks
+//!
+//! It is also worth understanding that any events that get queued for dispatch do **not** hold
+//! cached copies of user callback parameters. Where applicable, you can thus freely and safely
+//! change the set callback, with that change taking effect immediately to all future event
+//! dispatching.
+//!
+//! ## Threading and `Rc`
+//!
+//! Normally when holding multiple references to objects across threads in Rust you would use an
+//! `Arc` wrapper. However, with the [`Threaded`] mainloop, you may be able to get away with using
+//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use it's `lock`
+//! method to synchronise access to objects, and so you know that at any one moment either your
+//! thread (when you take the lock) **or** the event loop thread hold the lock, never both, and thus
+//! only one thread is ever working with objects at any one time, and since Rust actually has no
+//! idea that more than one thread is involved (hidden in the C library's implementation), you can
+//! safely get away with using `Rc`.
+//!
 //! [`Standard`]: standard/index.html
 //! [`Threaded`]: threaded/index.html
 //! [`::mainloop::signal`]: signal/index.html
 //! [`::mainloop::api::MainloopApi`]: api/struct.MainloopApi.html
+//! [standard mainloop documentation]: standard/index.html
+//! [`in_thread`]: threaded/struct.Mainloop.html#method.in_thread
 
 pub mod api;
 pub mod events;
