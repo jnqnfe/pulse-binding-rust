@@ -24,6 +24,18 @@ pulse-binding:
  * Events/timer: Added `restart_rt` method, taking monotonic time
  * Context: Removed `rttime_restart` method, made obsolete by the new `restart_rt` method on the
    event itself.
+ * Stream: Removed the `get_context` method.
+   This method returned a 'weak' wrapper object, where 'weak' means that it deliberately will not
+   decrement the ref count of the underlying C object on drop. This was exactly what was wanted
+   back in v1.x, however in v2.x we introduced closure based callbacks, and the `Context` object
+   (wrapper) was extended to hold saved multi-use callbacks. This causes a problem. If you use this
+   `get_context` method to get a weak ref, then use it to change a multi-use callback, the new
+   callback gets saved into the 'weak' object, and then you need both that and the original context
+   object wrapper to both exist for the lifetime that you want the new callback to remain in use.
+   Not ideal, and not obvious. To fix it would require that `Stream` creation methods take the
+   `Context` with an `Rc` wrapper so it can hold onto a cloned `Rc` ref, instead of taking a
+   reference, and then returning a cloned `Rc` from `get_context`. The more simple option was to
+   just remove this method, as I have done.
  * Events: Removed the `set_destroy_cb` event methods, which became obsolete with the switch to
    closure based callbacks.
  * Events/deferred: Split the `enable` method into separate `enable` and `disable` methods

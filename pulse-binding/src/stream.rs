@@ -662,14 +662,6 @@ impl Stream {
         unsafe { capi::pa_stream_get_state(self.ptr).into() }
     }
 
-    /// Return the context this stream is attached to.
-    ///
-    /// Note, the returned `Context` object here is only a 'weak' reference, do not think of trying
-    /// to replace your primary `Context` object with it.
-    pub fn get_context(&self) -> ::context::Context {
-        ::context::Context::from_raw_weak(unsafe { capi::pa_stream_get_context(self.ptr) })
-    }
-
     /// Return the sink input resp. source output index this stream is identified in the server
     /// with. This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_input_info`] or
