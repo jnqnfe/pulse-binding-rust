@@ -32,6 +32,7 @@ pulse-binding:
  * Timeval: Added convenience `new`, `new_zero` and `new_tod` methods
  * Simplified callback proxy / setup code (internal change only)
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
+ * Context: Purged documentation discussing ref counting
 
 pulse-simple-binding:
 

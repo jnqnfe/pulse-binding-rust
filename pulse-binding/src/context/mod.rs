@@ -52,27 +52,6 @@
 //! rely only on the main loop abstraction and can therefore be used with any of the
 //! implementations.
 //!
-//! # Reference Counting
-//!
-//! Almost all objects in PulseAudio are reference counted. What that means is that you rarely
-//! malloc() or free() any objects. Instead you increase and decrease their reference counts.
-//! Whenever an object's reference count reaches zero, that object gets destroyed and any resources
-//! it uses get freed.
-//!
-//! The benefit of this design is that an application need not worry about whether or not it needs
-//! to keep an object around in case the library is using it internally. If it is, then it has made
-//! sure it has its own reference to it.
-//!
-//! Whenever the library creates an object, it will have an initial reference count of one. Most of
-//! the time, this single reference will be sufficient for the application, so all required
-//! reference count interaction will be a single call to the object's `unref` function.
-//!
-//! Interacting with PulseAudio through this Rust binding, pointers to most reference counted
-//! objects are held in a wrapper object, which has an implementation of the `Drop` trait, which is
-//! automatically called upon the owned wrapper object going out of scope, and calls the PulseAudio
-//! `unref` function. Should use of this binding require increasing the ref count further, Rust's
-//! `Rc`/`Arc` wrappers should be used instead.
-//!
 //! # Context
 //!
 //! A context is the basic object for a connection to a PulseAudio server. It multiplexes commands,
