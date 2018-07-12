@@ -232,7 +232,7 @@ impl Context {
     pub(crate) fn from_raw_weak(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: true, cb_ptrs: Default::default() }
-     }
+    }
 
     /// Set a callback function that is called whenever the context status changes.
     pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
