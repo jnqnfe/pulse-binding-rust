@@ -8,15 +8,15 @@ project:
 
 pulse-binding:
 
- * Updated declared version compatability
+ * Updated declared version compatibility
  * Operation: Documented possible memory leak
- * Proplist: Fix debug output to use comma separator rather than newline (for consistency in
+ * Proplist: Fixed debug output to use comma separator rather than newline (for consistency in
    dumping introspection data), and output in list style instead of mixed struct/list style.
  * Doc typo fixes
 
 pulse-sys (1.2.1):
 
- * Updated declared version compatability
+ * Updated declared version compatibility
 
 pulse-glib-mainloop-binding:
 
@@ -62,16 +62,16 @@ pulse-binding:
    (i.e. within most instances of callback execution).
  * Stream: Renamed `proplist_remove` to `remove_proplist`
  * Stream: Common `set_event_callback` callback event names moved to submodule
- * Introspection: removed unnecessary converters.
+ * Introspection: Removed unnecessary converters.
    The `From` trait was implemented for introspection objects in both directions between the binding
    and the sys instances. While this is necessary for the sys to binding direction, the other really
    wasn't needed.
- * Subscribe: purge audoload API (deprecated since 2009)
+ * Subscribe: Purged autoload API (deprecated since 2009)
 
 pulse-sys (1.2.0):
 
  * Context: Handful of functions changed to take `const` pointers, as discussed above.
- * Introspect & subscribe: purge audoload API (deprecated since 2009)
+ * Introspect & subscribe: Purged autoload API (deprecated since 2009)
 
 # 1.2.2 (June 16th, 2018)
 
@@ -83,7 +83,7 @@ pulse-binding:
 
 pulse-binding:
 
- * Stream: Fix use-after-frees with `get_format_info` and `get_context`. These should have used
+ * Stream: Fixed use-after-frees with `get_format_info` and `get_context`. These should have used
    `from_raw_weak` instead of `from_raw` to avoid incorrectly freeing the underlying C object,
    leaving a dangling pointer.
 
@@ -101,11 +101,11 @@ pulse-binding:
    result, while claiming in the documentation that this was the quit retval, which wasn't returned
    at all.
  * Tidied up error code handling:
-    - add `PAErr` wrapper for `i32` error type, for cleaner interfaces
-    - move `strerror` function to `PAErr` method
-    - rename `sterror` `PAErr` and `Code` methods to `to_string`
-    - convert the error `CStr` to `String` for the users; no need to make users do it
-    - add `PAErr` <=> `Code` `From` impls
+    - Added `PAErr` wrapper for the `i32` error type, for cleaner interfaces
+    - Moved the `strerror` function to be a `PAErr` method
+    - Renamed the `sterror` method of `PAErr` and `Code` to `to_string`
+    - Converted the error `CStr` to `String` for users; no need to make users do it
+    - Added `PAErr` <=> `Code` `From` impls
  * Simplified volume handling:
     - `Volume` and `VolumeDB` are now wrappers rather than type aliases
     - Added the `VolumeLinear` wrapper. I had mistakenly taken floating point volumes to all be dB
@@ -157,8 +157,8 @@ pulse-binding:
    `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
    callbacks are still available.
  * Also privatised inner pointer attributes of structs in a few places on the same basis.
- * Privatised `utils::unwrap_optional_callback` function
- * Privatised timer event `get_ptr` method
+ * Privatised the `utils::unwrap_optional_callback` function
+ * Privatised timer event's `get_ptr` method
  * As described below, a number of C function declarations in the sys crates now take certain object
    pointers immutably. A small number of functions in the binding have been similarly updated.
  * Promoted `self` reference to mutable for various methods across context, mainloops, streams,
@@ -182,17 +182,17 @@ pulse-sys:
 
 pulse-binding:
 
- * Fixed and simplified Proplist iteration
-    - Fixed infinite loop bug: I mis-read the documentation, it's the return value from the C
+ * Fixed and simplified Proplist iteration:
+    - Fixed an infinite loop bug: I misread the documentation, it's the return value from the C
       function call that will be NULL when it reaches the end of the list, not the state variable.
     - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
       cannot be hidden within the iterate function, it causes an infinite loop whereby the function
       always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
     - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust Iterator object, which makes iterating much more simple and tidy.
- * CVolume: make `self` for `is_[muted|norm]` immutable
- * Stream: fix double option wrapping of callback fn ptr with write methods
- * Stream: combine `write_ext_free` `free_cb_data` param with `free_cb` as tuple, as done elsewhere
+ * CVolume: Made `self` for `is_[muted|norm]` immutable
+ * Stream: Fixed unwanted double option wrapping of callback fn ptr with write methods
+ * Stream: Combined `write_ext_free` `free_cb_data` param with `free_cb` as tuple, as done elsewhere
 
 pulse-simple-binding:
 
@@ -206,11 +206,11 @@ pulse-sys:
 
 project:
 
- * Use explicit test script for Travis, rather than relying on default, to ensure that the `--all`
-   flag is passed to `cargo test`, which I thought was already done, but seems not from the logs and
-   thus tests were not actually being done.
- * Fix Travis failures - add missing `libpulse-mainloop-glib0` dependency to test environment.
- * Properly fix Travis tests - add pulseaudio dependency and get it started in test environment.
+ * Now using explicit test script for Travis, rather than relying on default, to ensure that the
+   `--all` flag is passed to `cargo test`, which I thought was already done, but seems not from the
+   logs and thus tests were not actually being done.
+ * Fixed Travis failures - added missing `libpulse-mainloop-glib0` dependency to test environment.
+ * Properly fixed Travis tests - added pulseaudio dependency and get it started in test environment.
 
 # 1.0.3 (February 10th, 2018)
 
