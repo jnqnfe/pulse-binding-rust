@@ -413,7 +413,7 @@ impl super::api::Mainloop for Mainloop {
     type MI = super::api::MainloopInner<MainloopInternal>;
 
     fn inner(&self) -> Rc<super::api::MainloopInner<MainloopInternal>> {
-        self._inner.clone()
+        Rc::clone(&self._inner)
     }
 }
 

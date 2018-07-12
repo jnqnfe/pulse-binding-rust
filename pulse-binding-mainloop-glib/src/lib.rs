@@ -87,7 +87,7 @@ impl pulse::mainloop::api::Mainloop for Mainloop {
     type MI = pulse::mainloop::api::MainloopInner<MainloopInternal>;
 
     fn inner(&self) -> Rc<pulse::mainloop::api::MainloopInner<MainloopInternal>> {
-        self._inner.clone()
+        Rc::clone(&self._inner)
     }
 }
 
