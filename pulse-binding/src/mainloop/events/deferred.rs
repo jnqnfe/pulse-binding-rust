@@ -21,8 +21,7 @@ use super::super::api::{MainloopApi, MainloopInnerType};
 
 pub use capi::pa_defer_event as DeferEventInternal;
 
-/// A deferred event source object.
-/// This acts as a safe Rust wrapper for the actual C object.
+/// A deferred event source
 pub struct DeferEvent<T>
     where T: MainloopInnerType
 {

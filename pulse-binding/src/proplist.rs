@@ -135,7 +135,7 @@ pub mod properties {
 }
 
 /// A property list object. Basically a dictionary with ASCII strings as keys and arbitrary data as
-/// values. This acts as a safe Rust wrapper for the actual C object.
+/// values.
 pub struct Proplist {
     /// The actual C object.
     pub(crate) ptr: *mut ProplistInternal,

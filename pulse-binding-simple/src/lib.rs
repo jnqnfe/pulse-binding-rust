@@ -122,7 +122,6 @@ use pulse::error::PAErr;
 use capi::pa_simple as SimpleInternal;
 
 /// An opaque simple connection object.
-/// This acts as a safe Rust wrapper for the actual C object.
 pub struct Simple {
     /// The actual C object.
     ptr: *mut SimpleInternal,

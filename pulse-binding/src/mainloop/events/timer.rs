@@ -32,8 +32,7 @@ use time::{Timeval, MicroSeconds, USEC_INVALID};
 
 pub use capi::pa_time_event as TimeEventInternal;
 
-/// A timer event source object.
-/// This acts as a safe Rust wrapper for the actual C object.
+/// A timer event source
 pub struct TimeEvent<T>
     where T: MainloopInnerType
 {

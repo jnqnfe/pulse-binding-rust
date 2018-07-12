@@ -23,7 +23,7 @@ use capi::pa_operation as OperationInternal;
 pub use capi::pa_operation_state_t as State;
 
 /// An asynchronous operation object.
-/// This acts as a safe Rust wrapper for the actual C object.
+///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct Operation<ClosureProto: ?Sized> {
     /// The actual C object.

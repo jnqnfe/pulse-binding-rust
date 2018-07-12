@@ -41,8 +41,7 @@ pub mod flags {
     pub const ERROR: IoEventFlagSet = capi::PA_IO_EVENT_ERROR;
 }
 
-/// An IO event source object.
-/// This acts as a safe Rust wrapper for the actual C object.
+/// An IO event source
 pub struct IoEvent<T>
     where T: MainloopInnerType
 {

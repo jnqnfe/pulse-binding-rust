@@ -32,7 +32,7 @@ use super::api::{ApiInternal, MainloopInnerType};
 use capi::pa_signal_event as EventInternal;
 
 /// An opaque UNIX signal event source object.
-/// This acts as a safe Rust wrapper for the actual C object.
+///
 /// Note: Saves a copy of the closure callbacks, which it frees on drop.
 pub struct Event {
     /// The actual C object.

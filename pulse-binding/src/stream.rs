@@ -270,7 +270,7 @@ pub use capi::pa_seek_mode_t as SeekMode;
 pub use capi::pa_stream_direction_t as Direction;
 
 /// An opaque stream for playback or recording.
-/// This acts as a safe Rust wrapper for the actual C object.
+///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct Stream {
     /// The actual C object.

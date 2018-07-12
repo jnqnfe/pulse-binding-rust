@@ -156,7 +156,7 @@ use callbacks::box_closure_get_capi_ptr;
 use capi::pa_context as ContextInternal;
 
 /// An opaque connection context to a daemon
-/// This acts as a safe Rust wrapper for the actual C object.
+///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct Context {
     /// The actual C object.
