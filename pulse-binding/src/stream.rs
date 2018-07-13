@@ -258,6 +258,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
+use std::borrow::Cow;
 use callbacks::unwrap_optional_callback;
 use error::PAErr;
 use time::MicroSeconds;
@@ -709,12 +710,12 @@ impl Stream {
     /// ../context/struct.Context.html#method.get_sink_info_by_name
     /// [`::context::introspect::Introspector::get_source_info_by_name`]:
     /// ../context/struct.Context.html#method.get_source_info_by_name
-    pub fn get_device_name(&self) -> Option<&'static CStr> {
+    pub fn get_device_name(&self) -> Option<Cow<'static, str>> {
         let ptr: *const c_char = unsafe { capi::pa_stream_get_device_name(self.ptr) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr) })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Return whether or not the sink or source this stream is connected to has been suspended.

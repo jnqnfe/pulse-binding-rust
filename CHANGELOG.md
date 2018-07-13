@@ -42,6 +42,7 @@ pulse-binding:
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.
  * Timeval: Added convenience `new`, `new_zero` and `new_tod` methods
+ * Stream: Changed the `get_device_name` method to return a `Cow<str>` instead of a `CStr`
  * Simplified callback proxy / setup code (internal change only)
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting
