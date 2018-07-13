@@ -43,6 +43,9 @@ pulse-binding:
    binding type, unlike other event callbacks.
  * Timeval: Added convenience `new`, `new_zero` and `new_tod` methods
  * Stream: Changed the `get_device_name` method to return a `Cow<str>` instead of a `CStr`
+ * Avoided creating owned copies of static strings in a few places, returning `Cow<str>` instead.
+   This includes `channelmap::Position::to_string`, `channelmap::Map::to_name`,
+   `format::Encoding::to_string` and `sample::Format::to_string`.
  * Simplified callback proxy / setup code (internal change only)
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting

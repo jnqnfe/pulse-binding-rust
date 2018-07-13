@@ -72,6 +72,7 @@
 use std;
 use capi;
 use std::ffi::{CStr, CString};
+use std::borrow::Cow;
 use time::MicroSeconds;
 
 pub use capi::PA_CHANNELS_MAX as CHANNELS_MAX;
@@ -298,12 +299,12 @@ impl Format {
     }
 
     /// Returns a descriptive string for the specified sample format.
-    pub fn to_string(&self) -> Option<String> {
+    pub fn to_string(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_sample_format_to_string((*self).into()) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Parse a sample format text. Inverse of [`to_string`](#method.to_string).

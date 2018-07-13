@@ -46,6 +46,7 @@
 use std;
 use capi;
 use std::ffi::{CStr, CString};
+use std::borrow::Cow;
 
 pub use capi::pa_channel_map_def_t as MapDef;
 
@@ -206,12 +207,12 @@ impl Position {
     }
 
     /// Return a text label for the specified channel position
-    pub fn to_string(pos: Self) -> Option<String> {
+    pub fn to_string(pos: Self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_position_to_string(pos.into()) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Return a human readable text label for the specified channel position.
@@ -343,12 +344,12 @@ impl Map {
     /// Tries to find a well-known channel mapping name for this channel mapping, i.e. "stereo",
     /// "surround-71" and so on. This name can be parsed with
     /// [`new_from_string`](#method.new_from_string).
-    pub fn to_name(&self) -> Option<String> {
+    pub fn to_name(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_map_to_name(std::mem::transmute(self)) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Similar to [`to_name`](#method.to_name), but returning prettier, human readable text labels,

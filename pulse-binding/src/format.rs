@@ -28,6 +28,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
+use std::borrow::Cow;
 use error::PAErr;
 
 pub use capi::pa_prop_type_t as PropType;
@@ -114,12 +115,12 @@ impl std::fmt::Debug for Info {
 
 impl Encoding {
     /// Returns a printable string representing the given encoding type.
-    pub fn to_string(e: Self) -> Option<String> {
+    pub fn to_string(e: Self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_encoding_to_string(e.into()) };
         if ptr.is_null() {
             return None;
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
+        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Converts a string of the form returned by [`to_string`](#method.to_string) back to an
