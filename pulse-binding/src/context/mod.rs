@@ -504,7 +504,7 @@ impl Context {
         if ptr.is_null() {
             return None;
         }
-        Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner().clone(), to_save))
+        Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner(), to_save))
     }
 
     /// Return the optimal block size for passing around audio buffers.
