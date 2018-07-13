@@ -87,8 +87,9 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
+use std::rc::Rc;
 use mainloop::api::MainloopInnerType;
-use mainloop::events::timer::TimeEvent;
+use mainloop::events::timer::{TimeEvent, TimeEventRef};
 use operation::Operation;
 use error::PAErr;
 use time::MicroSeconds;
@@ -492,11 +493,17 @@ impl Context {
     ///
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     pub fn rttime_new<T, F>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
-        time: MicroSeconds, callback: F) -> Option<TimeEvent<T::MI>>
-        where T: ::mainloop::api::Mainloop,
-              F: FnMut() + 'static
+        time: MicroSeconds, mut callback: F) -> Option<TimeEvent<T::MI>>
+        where T: ::mainloop::api::Mainloop + 'static,
+              F: FnMut(TimeEventRef<T::MI>) + 'static
     {
-        let to_save = ::mainloop::events::timer::EventCb::new(Some(Box::new(callback)));
+        let inner_for_wrapper = mainloop.inner();
+        let wrapper_cb = Box::new(move |ptr| {
+            let ref_obj = TimeEventRef::<T::MI>::from_raw(ptr, Rc::clone(&inner_for_wrapper));
+            callback(ref_obj);
+        });
+
+        let to_save = ::mainloop::events::timer::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(::mainloop::events::timer::event_cb_proxy);
 
         let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0, std::mem::transmute(cb_fn),

@@ -32,7 +32,17 @@ pub struct DeferEvent<T>
     _saved_cb: EventCb,
 }
 
-pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(),
+/// A reference to a deferred event source, provided to the callback, allowing modification within
+/// the callback itself
+pub struct DeferEventRef<T: 'static>
+    where T: MainloopInnerType
+{
+    ptr: *mut DeferEventInternal,
+    /// Source mainloop
+    owner: Rc<T>,
+}
+
+pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(*mut DeferEventInternal),
     extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal, userdata: *mut c_void)>;
 
 impl<T> DeferEvent<T>
@@ -43,6 +53,27 @@ impl<T> DeferEvent<T>
     {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
+    }
+
+    /// Enable this event source temporarily.
+    pub fn enable(&mut self) {
+        let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
+        fn_ptr(self.ptr, 1);
+    }
+
+    /// Disable this event source temporarily.
+    pub fn disable(&mut self) {
+        let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
+        fn_ptr(self.ptr, 0);
+    }
+}
+
+impl<T> DeferEventRef<T>
+    where T: MainloopInnerType
+{
+    pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>) -> Self {
+        assert_eq!(false, ptr.is_null());
+        Self { ptr: ptr, owner: mainloop_inner }
     }
 
     /// Enable this event source temporarily.
@@ -72,7 +103,7 @@ impl<T> Drop for DeferEvent<T>
 /// must be accomplished separately to avoid a memory leak.
 pub(crate)
 extern "C"
-fn event_cb_proxy(_: *const MainloopApi, _: *mut DeferEventInternal, userdata: *mut c_void) {
+fn event_cb_proxy(_: *const MainloopApi, e: *mut DeferEventInternal, userdata: *mut c_void) {
     let callback = EventCb::get_callback(userdata);
-    callback();
+    callback(e);
 }

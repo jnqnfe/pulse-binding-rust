@@ -43,7 +43,17 @@ pub struct TimeEvent<T>
     _saved_cb: EventCb,
 }
 
-pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(),
+/// A reference to a timer event source, provided to the callback, allowing modification within the
+/// callback itself
+pub struct TimeEventRef<T: 'static>
+    where T: MainloopInnerType
+{
+    ptr: *mut TimeEventInternal,
+    /// Source mainloop
+    owner: Rc<T>,
+}
+
+pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(*mut TimeEventInternal),
     extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal, tv: *const timeval,
     userdata: *mut c_void)>;
 
@@ -55,6 +65,33 @@ impl<T> TimeEvent<T>
     {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
+    }
+
+    /// Restart this timer event source (whether still running or already expired) with a new Unix
+    /// time.
+    pub fn restart(&mut self, tv: &Timeval) {
+        let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
+        fn_ptr(self.ptr, &tv.0);
+    }
+
+    /// Restart this timer event source (whether still running or already expired) with a new
+    /// monotonic time.
+    pub fn restart_rt(&mut self, t: MicroSeconds) {
+        assert_ne!(t, USEC_INVALID);
+        let mut tv = Timeval::new_zero();
+        tv.set_rt(t, (*self.owner).supports_rtclock());
+
+        let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
+        fn_ptr(self.ptr, &tv.0);
+    }
+}
+
+impl<T> TimeEventRef<T>
+    where T: MainloopInnerType
+{
+    pub(crate) fn from_raw(ptr: *mut TimeEventInternal, mainloop_inner: Rc<T>) -> Self {
+        assert_eq!(false, ptr.is_null());
+        Self { ptr: ptr, owner: mainloop_inner }
     }
 
     /// Restart this timer event source (whether still running or already expired) with a new Unix
@@ -90,9 +127,9 @@ impl<T> Drop for TimeEvent<T>
 /// must be accomplished separately to avoid a memory leak.
 pub(crate)
 extern "C"
-fn event_cb_proxy(_: *const MainloopApi, _: *mut TimeEventInternal, _: *const timeval,
+fn event_cb_proxy(_: *const MainloopApi, e: *mut TimeEventInternal, _: *const timeval,
     userdata: *mut c_void)
 {
     let callback = EventCb::get_callback(userdata);
-    callback();
+    callback(e);
 }

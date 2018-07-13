@@ -20,9 +20,9 @@ use capi;
 use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
-use super::events::io::{IoEvent, IoEventInternal, IoEventFlagSet};
-use super::events::timer::{TimeEvent, TimeEventInternal};
-use super::events::deferred::{DeferEvent, DeferEventInternal};
+use super::events::io::{IoEvent, IoEventRef, IoEventInternal, IoEventFlagSet};
+use super::events::timer::{TimeEvent, TimeEventRef, TimeEventInternal};
+use super::events::deferred::{DeferEvent, DeferEventRef, DeferEventInternal};
 use time::{Timeval, MicroSeconds, USEC_INVALID};
 
 pub(crate) use capi::pa_mainloop_api as ApiInternal;
@@ -117,12 +117,23 @@ pub trait Mainloop {
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
-    /// The given callback must accept two parameters, a copy of the given file descriptor, and an
-    /// event flag set, indicating the event(s) that occurred.
+    /// The given callback must accept three parameters, an [`IoEventRef`] object, a copy of the
+    /// given file descriptor, and an event flag set, indicating the event(s) that occurred. The
+    /// [`DeferEventRef`] object gives you some opportunity to manage the event source from within
+    /// it's callback execution.
+    ///
+    /// [`IoEventRef`]: ../events/io/struct.IoEventRef.html
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
-        callback: Box<FnMut(i32, IoEventFlagSet) + 'static>) -> Option<IoEvent<Self::MI>>
+        mut callback: Box<FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>
+        ) -> Option<IoEvent<Self::MI>>
     {
-        let to_save = super::events::io::EventCb::new(Some(callback));
+        let inner_for_wrapper = self.inner();
+        let wrapper_cb = Box::new(move |ptr, fd, flags| {
+            let ref_obj = IoEventRef::<Self::MI>::from_raw(ptr, Rc::clone(&inner_for_wrapper));
+            callback(ref_obj, fd, flags);
+        });
+
+        let to_save = super::events::io::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(super::events::io::event_cb_proxy);
 
         let inner = self.inner();
@@ -141,6 +152,9 @@ pub trait Mainloop {
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
+    /// The callback must take a [`TimeEventRef`] object, which gives you some opportunity to
+    /// manage the event source from within it's callback execution.
+    ///
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
@@ -149,10 +163,18 @@ pub trait Mainloop {
     ///     &(Timeval::new_tod().add(MicroSeconds(5 * MICROS_PER_SEC))),
     ///     Box::new(|| { println!("Timer event fired!"); }));
     /// ```
-    fn new_timer_event(&mut self, tv: &Timeval, callback: Box<FnMut() + 'static>
-        ) -> Option<TimeEvent<Self::MI>>
+    ///
+    /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
+    fn new_timer_event(&mut self, tv: &Timeval,
+        mut callback: Box<FnMut(TimeEventRef<Self::MI>) + 'static>) -> Option<TimeEvent<Self::MI>>
     {
-        let to_save = super::events::timer::EventCb::new(Some(callback));
+        let inner_for_wrapper = self.inner();
+        let wrapper_cb = Box::new(move |ptr| {
+            let ref_obj = TimeEventRef::<Self::MI>::from_raw(ptr, Rc::clone(&inner_for_wrapper));
+            callback(ref_obj);
+        });
+
+        let to_save = super::events::timer::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(super::events::timer::event_cb_proxy);
 
         let inner = self.inner();
@@ -178,6 +200,9 @@ pub trait Mainloop {
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
+    /// The callback must take a [`TimeEventRef`] object, which gives you some opportunity to
+    /// manage the event source from within it's callback execution.
+    ///
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
@@ -186,11 +211,20 @@ pub trait Mainloop {
     ///     rtclock_now() + MicroSeconds(5 * MICROS_PER_SEC),
     ///     Box::new(|| { println!("Timer event fired!"); }));
     /// ```
-    fn new_timer_event_rt(&mut self, t: MicroSeconds, callback: Box<FnMut() + 'static>
-        ) -> Option<TimeEvent<Self::MI>>
+    ///
+    /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
+    fn new_timer_event_rt(&mut self, t: MicroSeconds,
+        mut callback: Box<FnMut(TimeEventRef<Self::MI>) + 'static>) -> Option<TimeEvent<Self::MI>>
     {
         assert_ne!(t, USEC_INVALID);
-        let to_save = super::events::timer::EventCb::new(Some(callback));
+
+        let inner_for_wrapper = self.inner();
+        let wrapper_cb = Box::new(move |ptr| {
+            let ref_obj = TimeEventRef::<Self::MI>::from_raw(ptr, Rc::clone(&inner_for_wrapper));
+            callback(ref_obj);
+        });
+
+        let to_save = super::events::timer::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(super::events::timer::event_cb_proxy);
 
         let inner = self.inner();
@@ -212,10 +246,21 @@ pub trait Mainloop {
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
-    fn new_deferred_event(&mut self, callback: Box<FnMut() + 'static>
+    ///
+    /// The callback must take a [`DeferEventRef`] object, which gives you some opportunity to
+    /// manage the event source from within it's callback execution.
+    ///
+    /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
+    fn new_deferred_event(&mut self, mut callback: Box<FnMut(DeferEventRef<Self::MI>) + 'static>
         ) -> Option<DeferEvent<Self::MI>>
     {
-        let to_save = super::events::deferred::EventCb::new(Some(callback));
+        let inner_for_wrapper = self.inner();
+        let wrapper_cb = Box::new(move |ptr| {
+            let ref_obj = DeferEventRef::<Self::MI>::from_raw(ptr, Rc::clone(&inner_for_wrapper));
+            callback(ref_obj);
+        });
+
+        let to_save = super::events::deferred::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(super::events::deferred::event_cb_proxy);
 
         let inner = self.inner();
