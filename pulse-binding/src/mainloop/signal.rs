@@ -23,7 +23,6 @@
 //! support for UNIX signals. However, you may hook signal support into an abstract main loop via
 //! the routines defined herein.
 
-use std;
 use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
@@ -50,7 +49,7 @@ pub trait MainloopSignals : ::mainloop::api::Mainloop {
     fn init_signals(&mut self) -> Result<(), PAErr> {
         let inner = self.inner();
         let api = inner.get_api();
-        match unsafe { capi::pa_signal_init(std::mem::transmute(api)) } {
+        match unsafe { capi::pa_signal_init(api.into()) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
