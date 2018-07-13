@@ -362,6 +362,18 @@ pub struct MainloopApi {
     pub quit: Option<extern "C" fn(a: *const MainloopApi, retval: ::def::RetvalActual)>,
 }
 
+impl<'a> From<*const ApiInternal> for &'a MainloopApi {
+    fn from(a: *const ApiInternal) -> Self {
+        unsafe { std::mem::transmute(a) }
+    }
+}
+
+impl<'a> From<&'a MainloopApi> for *const ApiInternal {
+    fn from(a: &'a MainloopApi) -> Self {
+        unsafe { std::mem::transmute(a) }
+    }
+}
+
 /// Proxy for anonymous 'once' deferred event callbacks.
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
