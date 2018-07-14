@@ -49,6 +49,9 @@ pulse-binding:
  * Default-enabled inclusion of the `format::Encoding::from_string` method, for which the underlying
    function symbol was missing from PA's symbol file and thus not available in the client library
    before v12.
+ * Format: Fixed `Encoding::from_string`, which would not compile due to a return type mismatch.
+   (As mentioned above, the underlying symbol was missing before PA v12, leaving this previously
+   untested, and it unfortunately turned out to have been broken).
  * Simplified callback proxy / setup code (internal change only)
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting

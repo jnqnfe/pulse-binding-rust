@@ -133,7 +133,7 @@ impl Encoding {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_enc = CString::new(encoding.clone()).unwrap();
-        unsafe { capi::pa_encoding_from_string(c_enc.as_ptr()) }
+        unsafe { capi::pa_encoding_from_string(c_enc.as_ptr()).into() }
     }
 }
 
