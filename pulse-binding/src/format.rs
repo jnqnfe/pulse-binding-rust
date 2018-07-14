@@ -125,9 +125,7 @@ impl Encoding {
 
     /// Converts a string of the form returned by [`to_string`](#method.to_string) back to an
     /// `Encoding`.
-    ///
-    /// Only included if 'pa_encoding_from_string' feature enabled, because symbol seems to be
-    /// missing (at least on Debian Sid).
+    //XXX: The C API symbol was missing from PA's symbol file before PA v12, so using feature flag
     #[cfg(feature = "pa_encoding_from_string")]
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
