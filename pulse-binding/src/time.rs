@@ -86,6 +86,7 @@ pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
 /// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
 const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
 
+/// Microseconds. This is an unsigned 64-bit type.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MicroSeconds(pub u64);
 
