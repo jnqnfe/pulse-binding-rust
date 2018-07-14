@@ -14,8 +14,8 @@ build = "build.rs"
 libc = "0.2"
 
 [features]
-default = []
-#include pa_encoding_from_string function, symbol for which might be missing
+default = ["pa_encoding_from_string"]
+#include pa_encoding_from_string function, symbol for which might be missing before PA v12
 pa_encoding_from_string = []
 
 [badges]

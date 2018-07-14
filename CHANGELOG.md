@@ -46,6 +46,9 @@ pulse-binding:
  * Avoided creating owned copies of static strings in a few places, returning `Cow<str>` instead.
    This includes `channelmap::Position::to_string`, `channelmap::Map::to_name`,
    `format::Encoding::to_string` and `sample::Format::to_string`.
+ * Default-enabled inclusion of the `format::Encoding::from_string` method, for which the underlying
+   function symbol was missing from PA's symbol file and thus not available in the client library
+   before v12.
  * Simplified callback proxy / setup code (internal change only)
  * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting
@@ -63,6 +66,8 @@ pulse-glib-mainloop-binding:
 pulse-sys:
 
  * Mainloop API objects now correctly treated as immutable, per above
+ * Default-enabled inclusion of the `pa_encoding_from_string` function symbol, which was missing
+   from PA's symbol file and thus not available in the client library before v12.
 
 pulse-glib-mainloop-sys:
 
