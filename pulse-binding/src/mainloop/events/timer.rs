@@ -28,7 +28,7 @@ use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
 use super::super::api::{MainloopApi, MainloopInnerType};
-use time::{Timeval, MicroSeconds, USEC_INVALID};
+use time::{UnixTs, MonotonicTs, Timeval, USEC_INVALID};
 
 pub use capi::pa_time_event as TimeEventInternal;
 
@@ -69,17 +69,17 @@ impl<T> TimeEvent<T>
 
     /// Restart this timer event source (whether still running or already expired) with a new Unix
     /// time.
-    pub fn restart(&mut self, tv: &Timeval) {
+    pub fn restart(&mut self, t: &UnixTs) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
-        fn_ptr(self.ptr, &tv.0);
+        fn_ptr(self.ptr, &(t.0).0);
     }
 
     /// Restart this timer event source (whether still running or already expired) with a new
     /// monotonic time.
-    pub fn restart_rt(&mut self, t: MicroSeconds) {
-        assert_ne!(t, USEC_INVALID);
+    pub fn restart_rt(&mut self, t: MonotonicTs) {
+        assert_ne!(t.0, USEC_INVALID);
         let mut tv = Timeval::new_zero();
-        tv.set_rt(t, (*self.owner).supports_rtclock());
+        tv.set_rt(t.0, (*self.owner).supports_rtclock());
 
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, &tv.0);
@@ -96,17 +96,17 @@ impl<T> TimeEventRef<T>
 
     /// Restart this timer event source (whether still running or already expired) with a new Unix
     /// time.
-    pub fn restart(&mut self, tv: &Timeval) {
+    pub fn restart(&mut self, t: &UnixTs) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
-        fn_ptr(self.ptr, &tv.0);
+        fn_ptr(self.ptr, &(t.0).0);
     }
 
     /// Restart this timer event source (whether still running or already expired) with a new
     /// monotonic time.
-    pub fn restart_rt(&mut self, t: MicroSeconds) {
-        assert_ne!(t, USEC_INVALID);
+    pub fn restart_rt(&mut self, t: MonotonicTs) {
+        assert_ne!(t.0, USEC_INVALID);
         let mut tv = Timeval::new_zero();
-        tv.set_rt(t, (*self.owner).supports_rtclock());
+        tv.set_rt(t.0, (*self.owner).supports_rtclock());
 
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, &tv.0);
