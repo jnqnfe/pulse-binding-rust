@@ -9,7 +9,7 @@ pulse-binding:
  * Renamed the `timeval` mod to `time`
  * Time: Introduced `UnixTs` and `MonotonicTs` timestamp types, and put them to use with functions
    handling time events.
- * Moved the `rtclock::now` function to `time::rtclock_now`
+ * Time: Replaced `rtclock::now` with `MonotonicTs::now`
  * Mainloop: Events now take closures for callbacks, like the rest of the API
  * Operation: Fixed possible memory leak with cancellation
  * Context: Now takes a ref to the mainloop instead of the mainloop's API in creation methods

@@ -54,13 +54,3 @@ impl From<MicroSeconds> for Timeval {
         Timeval::new(secs as i64, usecs as i64)
     }
 }
-
-/// Return the current monotonic system time in microseconds.
-///
-/// Note, if such a clock is not available then this will actually fall back to the wallclock time
-/// instead. No indication is available for whether or not this is the case; users need not be
-/// concerned and should just treat the value as monotonic in terms of selecting which time related
-/// API functions to use it with.
-pub fn rtclock_now() -> MicroSeconds {
-    MicroSeconds(unsafe { capi::pa_rtclock_now() })
-}

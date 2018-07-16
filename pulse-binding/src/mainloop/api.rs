@@ -203,9 +203,9 @@ pub trait Mainloop {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::time::{MicroSeconds, MICROS_PER_SEC, rtclock_now};
+    /// use pulse::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event_rt(
-    ///     rtclock_now() + MicroSeconds(5 * MICROS_PER_SEC),
+    ///     MonotonicTs::now() + MicroSeconds(5 * MICROS_PER_SEC),
     ///     Box::new(|| { println!("Timer event fired!"); }));
     /// ```
     ///

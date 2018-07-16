@@ -16,8 +16,9 @@
 // if not, see <http://www.gnu.org/licenses/>.
 
 use std;
+use capi;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
-use super::{MicroSeconds, rtclock_now};
+use super::MicroSeconds;
 
 /// A monotonic timestamp
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
@@ -30,7 +31,7 @@ impl MonotonicTs {
     /// time instead. No indication is available for whether or not this is the case, and the
     /// return value is still a `MonotonicTs` type.
     pub fn now() -> Self {
-        MonotonicTs(rtclock_now())
+        MonotonicTs(MicroSeconds(unsafe { capi::pa_rtclock_now() }))
     }
 
     pub fn is_valid(&self) -> bool {

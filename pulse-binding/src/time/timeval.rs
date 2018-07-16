@@ -20,7 +20,7 @@ use capi;
 use libc;
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
-use super::{rtclock_now, USEC_INVALID, MicroSeconds};
+use super::{MonotonicTs, MicroSeconds, USEC_INVALID};
 
 /// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
 const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
@@ -119,7 +119,7 @@ impl Timeval {
         /* This is a copy of PA's internal `wallclock_from_rtclock()` function */
 
         let wc_now = Timeval::new_tod();
-        let rt_now = Timeval::from(rtclock_now());
+        let rt_now = Timeval::from((MonotonicTs::now()).0);
 
         match rt_now.cmp(self) {
             Ordering::Less => { wc_now.add(Timeval::diff(self, &rt_now)); },
