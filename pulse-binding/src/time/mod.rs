@@ -68,3 +68,14 @@ impl From<MicroSeconds> for Duration {
         Duration::from_millis(t.0)
     }
 }
+
+impl From<Duration> for Timeval {
+    fn from(t: Duration) -> Self {
+        Timeval::new(t.as_secs() as i64, (t.subsec_nanos() / NANOS_PER_MILLI) as i64)
+    }
+}
+impl From<Timeval> for Duration {
+    fn from(t: Timeval) -> Self {
+        Duration::from_millis((MicroSeconds::from(t)).0)
+    }
+}
