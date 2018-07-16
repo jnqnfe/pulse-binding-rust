@@ -47,6 +47,7 @@ pulse-binding:
  * Timeval: Added math operation implementations, and removed the `add` and `sub` methods in favour
    of them. Also removed the `set` method since you can convert and assign from `MicroSeconds`
    simply with `From` and `into()`.
+ * Time: Enabled conversions between `Duration` and `MicroSeconds`
  * Stream: Changed the `get_device_name` method to return a `Cow<str>` instead of a `CStr`
  * Avoided creating owned copies of static strings in a few places, returning `Cow<str>` instead.
    This includes `channelmap::Position::to_string`, `channelmap::Map::to_name`,
