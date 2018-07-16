@@ -92,7 +92,7 @@ use mainloop::api::MainloopInnerType;
 use mainloop::events::timer::{TimeEvent, TimeEventRef};
 use operation::Operation;
 use error::PAErr;
-use time::MicroSeconds;
+use time::MonotonicTs;
 use proplist::Proplist;
 use callbacks::box_closure_get_capi_ptr;
 use capi::pa_context as ContextInternal;
@@ -493,7 +493,7 @@ impl Context {
     ///
     /// [`::mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     pub fn rttime_new<T, F>(&self, mainloop: &::mainloop::api::Mainloop<MI=T::MI>,
-        time: MicroSeconds, mut callback: F) -> Option<TimeEvent<T::MI>>
+        time: MonotonicTs, mut callback: F) -> Option<TimeEvent<T::MI>>
         where T: ::mainloop::api::Mainloop + 'static,
               F: FnMut(TimeEventRef<T::MI>) + 'static
     {
@@ -506,8 +506,8 @@ impl Context {
         let to_save = ::mainloop::events::timer::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(::mainloop::events::timer::event_cb_proxy);
 
-        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, time.0, std::mem::transmute(cb_fn),
-            cb_data) };
+        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, (time.0).0,
+            std::mem::transmute(cb_fn), cb_data) };
         if ptr.is_null() {
             return None;
         }
