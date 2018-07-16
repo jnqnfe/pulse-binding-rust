@@ -136,7 +136,7 @@ impl Timeval {
     pub(crate) fn wallclock_from_rtclock(&mut self) -> &mut Self {
         /* This is a copy of PA's internal `wallclock_from_rtclock()` function */
 
-        let mut wc_now = Timeval::new_tod();
+        let wc_now = Timeval::new_tod();
         let rt_now = Timeval::from(rtclock_now());
 
         match rt_now.cmp(self) {
