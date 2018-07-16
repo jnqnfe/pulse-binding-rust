@@ -44,7 +44,7 @@
 //! use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC, rtclock_now};
 //!
 //! // A `Timeval` holding a Unix timestamp, representing the current time-of-day, plus five seconds
-//! let unix_tv = Timeval::new_tod().add(MicroSeconds(5 * MICROS_PER_SEC));
+//! let unix_tv = Timeval::new_tod() + MicroSeconds(5 * MICROS_PER_SEC);
 //!
 //! // Converting to `MicroSeconds`, still a Unix timestamp
 //! let unix_usecs = MicroSeconds::from(unix_tv);

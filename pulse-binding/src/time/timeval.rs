@@ -19,6 +19,7 @@ use std;
 use capi;
 use libc;
 use std::cmp::Ordering;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use super::{rtclock_now, USEC_INVALID, MicroSeconds};
 
 /// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
@@ -145,5 +146,133 @@ impl Timeval {
 
         *self = wc_now;
         self
+    }
+
+    pub fn checked_add(self, other: Self) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        let other_us = MicroSeconds::from(other);
+        self_us.checked_add(other_us).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_add_us(self, rhs: MicroSeconds) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        self_us.checked_add(rhs).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_sub(self, other: Self) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        let other_us = MicroSeconds::from(other);
+        self_us.checked_sub(other_us).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_sub_us(self, rhs: MicroSeconds) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        self_us.checked_sub(rhs).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_mul(self, rhs: u32) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        self_us.checked_mul(rhs).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_div(self, rhs: u32) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        self_us.checked_div(rhs).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_rem(self, rhs: u32) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        self_us.checked_rem(rhs).and_then(|i| Some(i.into()))
+    }
+}
+
+impl Add for Timeval {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        self.checked_add(other).unwrap()
+    }
+}
+impl AddAssign for Timeval {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = self.checked_add(rhs).unwrap();
+    }
+}
+
+impl Add<MicroSeconds> for Timeval {
+    type Output = Self;
+
+    fn add(self, rhs: MicroSeconds) -> Self {
+        self.checked_add_us(rhs).unwrap()
+    }
+}
+impl AddAssign<MicroSeconds> for Timeval {
+    fn add_assign(&mut self, rhs: MicroSeconds) {
+        *self = self.checked_add_us(rhs).unwrap();
+    }
+}
+
+impl Sub for Timeval {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        self.checked_sub(other).unwrap()
+    }
+}
+impl SubAssign for Timeval {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = self.checked_sub(rhs).unwrap();
+    }
+}
+
+impl Sub<MicroSeconds> for Timeval {
+    type Output = Self;
+
+    fn sub(self, rhs: MicroSeconds) -> Self {
+        self.checked_sub_us(rhs).unwrap()
+    }
+}
+impl SubAssign<MicroSeconds> for Timeval {
+    fn sub_assign(&mut self, rhs: MicroSeconds) {
+        *self = self.checked_sub_us(rhs).unwrap();
+    }
+}
+
+impl Mul<u32> for Timeval {
+    type Output = Self;
+
+    fn mul(self, rhs: u32) -> Self {
+        self.checked_mul(rhs).unwrap()
+    }
+}
+impl MulAssign<u32> for Timeval {
+    fn mul_assign(&mut self, rhs: u32) {
+        *self = self.checked_mul(rhs).unwrap();
+    }
+}
+
+impl Div<u32> for Timeval {
+    type Output = Self;
+
+    fn div(self, rhs: u32) -> Self {
+        self.checked_div(rhs).unwrap()
+    }
+}
+impl DivAssign<u32> for Timeval {
+    fn div_assign(&mut self, rhs: u32) {
+        *self = self.checked_div(rhs).unwrap();
+    }
+}
+
+impl Rem<u32> for Timeval {
+    type Output = Self;
+
+    fn rem(self, rhs: u32) -> Self {
+        self.checked_rem(rhs).unwrap()
+    }
+}
+impl RemAssign<u32> for Timeval {
+    fn rem_assign(&mut self, rhs: u32) {
+        *self = self.checked_rem(rhs).unwrap();
     }
 }
