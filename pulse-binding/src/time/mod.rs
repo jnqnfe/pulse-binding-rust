@@ -62,12 +62,16 @@
 //! [`rtclock_now`]: fn.rtclock_now.html
 
 mod microseconds;
+mod monotonic;
 mod timeval;
+mod unix;
 
 use capi;
 
 pub use self::microseconds::*;
+pub use self::monotonic::*;
 pub use self::timeval::*;
+pub use self::unix::*;
 
 // (Copied constants from rust's std/time/duration.rs)
 pub const NANOS_PER_SEC: u32 = 1_000_000_000;
