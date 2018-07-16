@@ -42,7 +42,9 @@ pulse-binding:
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.
  * Timeval: Added convenience `new`, `new_zero` and `new_tod` methods
- * Timeval: Added math operation implementations
+ * Timeval: Added math operation implementations, and removed the `add` and `sub` methods in favour
+   of them. Also removed the `set` method since you can convert and assign from `MicroSeconds`
+   simply with `From` and `into()`.
  * Stream: Changed the `get_device_name` method to return a `Cow<str>` instead of a `CStr`
  * Avoided creating owned copies of static strings in a few places, returning `Cow<str>` instead.
    This includes `channelmap::Position::to_string`, `channelmap::Map::to_name`,

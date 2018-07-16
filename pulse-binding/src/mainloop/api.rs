@@ -160,7 +160,7 @@ pub trait Mainloop {
     /// ```rust,ignore
     /// use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event(
-    ///     &(Timeval::new_tod().add(MicroSeconds(5 * MICROS_PER_SEC))),
+    ///     &(Timeval::new_tod() + MicroSeconds(5 * MICROS_PER_SEC)),
     ///     Box::new(|| { println!("Timer event fired!"); }));
     /// ```
     ///

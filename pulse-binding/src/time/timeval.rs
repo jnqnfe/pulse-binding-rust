@@ -93,24 +93,6 @@ impl Timeval {
         MicroSeconds(unsafe { capi::pa_timeval_age(&self.0) })
     }
 
-    /// Add the specified time in microseconds
-    pub fn add(&mut self, t: MicroSeconds) -> &mut Self {
-        unsafe { capi::pa_timeval_add(&mut self.0, t.0); }
-        self
-    }
-
-    /// Subtract the specified time in microseconds
-    pub fn sub(&mut self, t: MicroSeconds) -> &mut Self {
-        unsafe { capi::pa_timeval_sub(&mut self.0, t.0); }
-        self
-    }
-
-    /// Set to the specified value, given in microseconds
-    pub fn set(&mut self, t: MicroSeconds) -> &mut Self {
-        unsafe { capi::pa_timeval_store(&mut self.0, t.0); }
-        self
-    }
-
     /// Set to the specified (monotonic) value
     ///
     /// The `rtclock` boolean is used for indicating support of the rtclock (monotonic time). If
@@ -124,7 +106,7 @@ impl Timeval {
 
         assert_ne!(v, USEC_INVALID);
 
-        self.set(v);
+        *self = v.into();
 
         match rtclock {
             true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK; },
