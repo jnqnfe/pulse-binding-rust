@@ -23,7 +23,7 @@ use libc::timeval;
 use super::events::io::{IoEvent, IoEventRef, IoEventInternal, IoEventFlagSet};
 use super::events::timer::{TimeEvent, TimeEventRef, TimeEventInternal};
 use super::events::deferred::{DeferEvent, DeferEventRef, DeferEventInternal};
-use time::{Timeval, MicroSeconds, USEC_INVALID};
+use time::{UnixTs, MonotonicTs, Timeval, USEC_INVALID};
 
 pub(crate) use capi::pa_mainloop_api as ApiInternal;
 
@@ -158,14 +158,14 @@ pub trait Mainloop {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC};
+    /// use pulse::time::{UnixTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event(
-    ///     &(Timeval::new_tod() + MicroSeconds(5 * MICROS_PER_SEC)),
+    ///     &(UnixTs::now() + MicroSeconds(5 * MICROS_PER_SEC)),
     ///     Box::new(|| { println!("Timer event fired!"); }));
     /// ```
     ///
     /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
-    fn new_timer_event(&mut self, tv: &Timeval,
+    fn new_timer_event(&mut self, tv: &UnixTs,
         mut callback: Box<FnMut(TimeEventRef<Self::MI>) + 'static>) -> Option<TimeEvent<Self::MI>>
     {
         let inner_for_wrapper = self.inner();
@@ -180,7 +180,7 @@ pub trait Mainloop {
         let inner = self.inner();
         let api = inner.get_api();
         let fn_ptr = api.time_new.unwrap();
-        let ptr = fn_ptr(api, &tv.0, cb_fn, cb_data);
+        let ptr = fn_ptr(api, &(tv.0).0, cb_fn, cb_data);
         if ptr.is_null() {
             return None;
         }
@@ -192,9 +192,6 @@ pub trait Mainloop {
     /// Asserts that `t` is not `USEC_INVALID`
     ///
     /// This is an alternative to the `new_timer_event` method, taking a monotonic based time value.
-    /// Note that this takes the time value as a `MicroSeconds` value, rather than `&Timeval`,
-    /// however beware that simply converting between the two representations is **not** enough to
-    /// also convert the value between monotonic and non-monotonic.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -213,10 +210,10 @@ pub trait Mainloop {
     /// ```
     ///
     /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
-    fn new_timer_event_rt(&mut self, t: MicroSeconds,
+    fn new_timer_event_rt(&mut self, t: MonotonicTs,
         mut callback: Box<FnMut(TimeEventRef<Self::MI>) + 'static>) -> Option<TimeEvent<Self::MI>>
     {
-        assert_ne!(t, USEC_INVALID);
+        assert_ne!(t.0, USEC_INVALID);
 
         let inner_for_wrapper = self.inner();
         let wrapper_cb = Box::new(move |ptr| {
@@ -230,7 +227,7 @@ pub trait Mainloop {
         let inner = self.inner();
 
         let mut tv = Timeval::new_zero();
-        tv.set_rt(t, inner.supports_rtclock());
+        tv.set_rt(t.0, inner.supports_rtclock());
 
         let api = inner.get_api();
         let fn_ptr = api.time_new.unwrap();
