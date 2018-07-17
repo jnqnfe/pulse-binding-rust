@@ -1,4 +1,4 @@
-# ??? (???)
+# 2.1 (July 17, 2018)
 
 project:
 
@@ -74,13 +74,13 @@ pulse-glib-mainloop-binding:
 
  * Mainloop API objects now correctly treated as immutable, per above
 
-pulse-sys:
+pulse-sys (1.3):
 
  * Mainloop API objects now correctly treated as immutable, per above
  * Default-enabled inclusion of the `pa_encoding_from_string` function symbol, which was missing
    from PA's symbol file and thus not available in the client library before v12.
 
-pulse-glib-mainloop-sys:
+pulse-glib-mainloop-sys (1.3):
 
  * Mainloop API objects now correctly treated as immutable, per above
 

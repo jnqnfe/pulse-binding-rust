@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-glib-binding"
-version = "2.0.1"
+version = "2.1.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
@@ -10,8 +10,8 @@ A Rust language binding for the PulseAudio libpulse-mainloop-glib library.
 keywords = ["binding", "pulse", "pulseaudio", "pulse-mainloop-glib", "audio"]
 
 [dependencies]
-libpulse-binding = { path = "../pulse-binding", version = "2.0" }
-libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.2" }
+libpulse-binding = { path = "../pulse-binding", version = "2.1" }
+libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.3" }
 
 [features]
 
