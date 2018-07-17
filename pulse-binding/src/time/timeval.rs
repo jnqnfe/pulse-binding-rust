@@ -21,7 +21,7 @@ use libc;
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
-use super::{MonotonicTs, MicroSeconds, USEC_INVALID};
+use super::{UnixTs, MonotonicTs, MicroSeconds, USEC_INVALID};
 
 /// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
 const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
@@ -71,19 +71,6 @@ impl Timeval {
         Timeval::new(0, 0)
     }
 
-    /// Create a new instance, with value of 'time of day'.
-    pub fn new_tod() -> Self {
-        let mut tv = Timeval(libc::timeval { tv_sec: 0, tv_usec: 0 });
-        tv.get_time_of_day();
-        tv
-    }
-
-    /// Obtain the current wallclock timestamp, just like UNIX gettimeofday().
-    pub fn get_time_of_day(&mut self) -> &mut Self {
-        unsafe { capi::pa_gettimeofday(&mut self.0) };
-        self
-    }
-
     /// Calculate the difference between the two specified timeval structs.
     pub fn diff(a: &Self, b: &Self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_diff(&a.0, &b.0) })
@@ -119,7 +106,7 @@ impl Timeval {
     pub(crate) fn wallclock_from_rtclock(&mut self) -> &mut Self {
         /* This is a copy of PA's internal `wallclock_from_rtclock()` function */
 
-        let wc_now = Timeval::new_tod();
+        let wc_now = (UnixTs::now()).0;
         let rt_now = Timeval::from((MonotonicTs::now()).0);
 
         match rt_now.cmp(self) {
