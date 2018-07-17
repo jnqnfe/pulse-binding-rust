@@ -15,52 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! # Expressing Time
-//!
-//! Time can be expressed to PulseAudio in two forms, either Unix time ("wallclock"), or real-time
-//! (monotonic). Furthermore we have two different structs for representing time values, [`Timeval`]
-//! and [`MicroSeconds`].
-//!
-//! Just like the PulseAudio C API, in this binding we tend to use [`Timeval`] for expressing Unix
-//! time, and [`MicroSeconds`] for monotonic time. It is important to understand that the two
-//! different structs are **not** what distinguishes between the two time value types.
-//!
-//! The `From` trait has been implemented for convenience allowing easy conversion between these two
-//! structs, however these do **not** convert the values they hold between Unix time and monotonic
-//! time.
-//!
-//! You must be careful when supplying a time value to a function that you are supplying a time
-//! value of the correct type. Note that functions taking monotonic time typically have `rt` in
-//! their name.
-//!
-//! Unix based times will typically be an offset from the current wall-clock time (time-of-day).
-//! You can get a new [`Timeval`] object set with this value using it's [`new_tod`] associated
-//! function. Monotonic based times should be an offset from the current monotonic system time,
-//! which can be obtained via the [`rtclock_now`] function.
-//!
-//! # Examples
-//!
-//! ```rust,ignore
-//! use pulse::time::{Timeval, MicroSeconds, MICROS_PER_SEC, rtclock_now};
-//!
-//! // A `Timeval` holding a Unix timestamp, representing the current time-of-day, plus five seconds
-//! let unix_tv = Timeval::new_tod() + MicroSeconds(5 * MICROS_PER_SEC);
-//!
-//! // Converting to `MicroSeconds`, still a Unix timestamp
-//! let unix_usecs = MicroSeconds::from(unix_tv);
-//!
-//! // A monotonic timestamp, representing the current system time, plus five seconds
-//! let rt_usecs = rtclock_now() + MicroSeconds(5 * MICROS_PER_SEC);
-//!
-//! // Converting to `Timeval`, still a monotonic timestamp
-//! let rt_tv = Timeval::from(rt_usecs);
-//! ```
-//!
-//! [`Timeval`]: struct.Timeval.html
-//! [`MicroSeconds`]: struct.MicroSeconds.html
-//! [`new_tod`]: struct.Timeval.html#method.new_tod
-//! [`rtclock_now`]: fn.rtclock_now.html
-
 mod microseconds;
 mod monotonic;
 mod timeval;

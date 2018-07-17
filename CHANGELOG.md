@@ -58,7 +58,6 @@ pulse-binding:
    (As mentioned above, the underlying symbol was missing before PA v12, leaving this previously
    untested, and it unfortunately turned out to have been broken).
  * Simplified callback proxy / setup code (internal change only)
- * Added documentation discussing Unix and monotonic time to the `timeval` (now `time`) mod
  * Context: Purged documentation discussing ref counting
  * Context: Moved documentation discussing mainloop abstraction to the `mainloop` mod
  * Mainloop: Added documentation discussing callback execution
