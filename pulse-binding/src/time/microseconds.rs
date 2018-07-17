@@ -17,6 +17,7 @@
 
 use std;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
+use std::time::Duration;
 
 /// Microseconds. This is an unsigned 64-bit type.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
@@ -31,8 +32,18 @@ impl MicroSeconds {
         self.0.checked_add(other.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
+        let usecs = MicroSeconds::from(rhs);
+        self.0.checked_add(usecs.0).and_then(|i| Some(MicroSeconds(i)))
+    }
+
     pub fn checked_sub(self, other: Self) -> Option<Self> {
         self.0.checked_sub(other.0).and_then(|i| Some(MicroSeconds(i)))
+    }
+
+    pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
+        let usecs = MicroSeconds::from(rhs);
+        self.0.checked_sub(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
@@ -61,6 +72,19 @@ impl AddAssign for MicroSeconds {
     }
 }
 
+impl Add<Duration> for MicroSeconds {
+    type Output = Self;
+
+    fn add(self, rhs: Duration) -> Self {
+        self.checked_add_duration(rhs).unwrap()
+    }
+}
+impl AddAssign<Duration> for MicroSeconds {
+    fn add_assign(&mut self, rhs: Duration) {
+        *self = self.checked_add_duration(rhs).unwrap();
+    }
+}
+
 impl Sub for MicroSeconds {
     type Output = Self;
 
@@ -71,6 +95,19 @@ impl Sub for MicroSeconds {
 impl SubAssign for MicroSeconds {
     fn sub_assign(&mut self, rhs: Self) {
         *self = *self - rhs;
+    }
+}
+
+impl Sub<Duration> for MicroSeconds {
+    type Output = Self;
+
+    fn sub(self, rhs: Duration) -> Self {
+        self.checked_sub_duration(rhs).unwrap()
+    }
+}
+impl SubAssign<Duration> for MicroSeconds {
+    fn sub_assign(&mut self, rhs: Duration) {
+        *self = self.checked_sub_duration(rhs).unwrap();
     }
 }
 

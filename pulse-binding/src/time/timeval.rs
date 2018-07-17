@@ -20,6 +20,7 @@ use capi;
 use libc;
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
+use std::time::Duration;
 use super::{MonotonicTs, MicroSeconds, USEC_INVALID};
 
 /// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
@@ -141,6 +142,12 @@ impl Timeval {
         self_us.checked_add(rhs).and_then(|i| Some(i.into()))
     }
 
+    pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        let rhs_us = MicroSeconds::from(rhs);
+        self_us.checked_add(rhs_us).and_then(|i| Some(i.into()))
+    }
+
     pub fn checked_sub(self, other: Self) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         let other_us = MicroSeconds::from(other);
@@ -150,6 +157,12 @@ impl Timeval {
     pub fn checked_sub_us(self, rhs: MicroSeconds) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_sub(rhs).and_then(|i| Some(i.into()))
+    }
+
+    pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
+        let self_us = MicroSeconds::from(self);
+        let rhs_us = MicroSeconds::from(rhs);
+        self_us.checked_sub(rhs_us).and_then(|i| Some(i.into()))
     }
 
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
@@ -194,6 +207,19 @@ impl AddAssign<MicroSeconds> for Timeval {
     }
 }
 
+impl Add<Duration> for Timeval {
+    type Output = Self;
+
+    fn add(self, rhs: Duration) -> Self {
+        self.checked_add_duration(rhs).unwrap()
+    }
+}
+impl AddAssign<Duration> for Timeval {
+    fn add_assign(&mut self, rhs: Duration) {
+        *self = self.checked_add_duration(rhs).unwrap();
+    }
+}
+
 impl Sub for Timeval {
     type Output = Self;
 
@@ -217,6 +243,19 @@ impl Sub<MicroSeconds> for Timeval {
 impl SubAssign<MicroSeconds> for Timeval {
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = self.checked_sub_us(rhs).unwrap();
+    }
+}
+
+impl Sub<Duration> for Timeval {
+    type Output = Self;
+
+    fn sub(self, rhs: Duration) -> Self {
+        self.checked_sub_duration(rhs).unwrap()
+    }
+}
+impl SubAssign<Duration> for Timeval {
+    fn sub_assign(&mut self, rhs: Duration) {
+        *self = self.checked_sub_duration(rhs).unwrap();
     }
 }
 
