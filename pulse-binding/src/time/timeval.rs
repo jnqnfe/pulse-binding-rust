@@ -109,10 +109,10 @@ impl Timeval {
         let wc_now = (UnixTs::now()).0;
         let rt_now = Timeval::from((MonotonicTs::now()).0);
 
-        match rt_now.cmp(self) {
-            Ordering::Less => { wc_now.add(Timeval::diff(self, &rt_now)); },
-            _              => { wc_now.sub(Timeval::diff(&rt_now, self)); },
-        }
+        let _ = match rt_now.cmp(self) {
+            Ordering::Less => { wc_now.add(Timeval::diff(self, &rt_now)) },
+            _              => { wc_now.sub(Timeval::diff(&rt_now, self)) },
+        };
 
         *self = wc_now;
         self

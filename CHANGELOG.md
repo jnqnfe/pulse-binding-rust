@@ -4,6 +4,7 @@ pulse-binding:
 
  * Mainloop/standard: Fixed a typo - renamed `InterateResult` to `IterateResult`. Thanks to
    @HyperHamster on github for reporting.
+ * Time/timeval: Fixed a couple of compile time warnings
 
 # 2.1 (July 17, 2018)
 
