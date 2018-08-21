@@ -65,7 +65,7 @@
 //! use pulse::context::Context;
 //! use pulse::stream::Stream;
 //! use pulse::proplist::Proplist;
-//! use pulse::mainloop::standard::InterateResult;
+//! use pulse::mainloop::standard::IterateResult;
 //! use pulse::def::Retval;
 //!
 //! fn main() {
@@ -95,12 +95,12 @@
 //!     // Wait for context to be ready
 //!     loop {
 //!         match mainloop.borrow_mut().iterate(false) {
-//!             InterateResult::Quit(_) |
-//!             InterateResult::Err(_) => {
+//!             IterateResult::Quit(_) |
+//!             IterateResult::Err(_) => {
 //!                 eprintln!("iterate state was not success, quitting...");
 //!                 return;
 //!             },
-//!             InterateResult::Success(_) => {},
+//!             IterateResult::Success(_) => {},
 //!         }
 //!         match context.borrow().get_state() {
 //!             pulse::context::State::Ready => { break; },
@@ -126,12 +126,12 @@
 //!     // Wait for stream to be ready
 //!     loop {
 //!         match mainloop.borrow_mut().iterate(false) {
-//!             InterateResult::Quit(_) |
-//!             InterateResult::Err(_) => {
+//!             IterateResult::Quit(_) |
+//!             IterateResult::Err(_) => {
 //!                 eprintln!("iterate state was not success, quitting...");
 //!                 return;
 //!             },
-//!             InterateResult::Success(_) => {},
+//!             IterateResult::Success(_) => {},
 //!         }
 //!         match stream.borrow().get_state() {
 //!             pulse::stream::State::Ready => { break; },
@@ -149,12 +149,12 @@
 //!     let drained = Rc::new(atomic::AtomicBool::new(false));
 //!     loop {
 //!         match mainloop.borrow_mut().iterate(false) {
-//!             InterateResult::Quit(_) |
-//!             InterateResult::Err(_) => {
+//!             IterateResult::Quit(_) |
+//!             IterateResult::Err(_) => {
 //!                 eprintln!("iterate state was not success, quitting...");
 //!                 return;
 //!             },
-//!             InterateResult::Success(_) => {},
+//!             IterateResult::Success(_) => {},
 //!         }
 //!
 //!         // Write some data with stream.write()
@@ -172,12 +172,12 @@
 //!         };
 //!         while !drained.compare_and_swap(true, false, atomic::Ordering::Relaxed) {
 //!             match mainloop.borrow_mut().iterate(false) {
-//!                 InterateResult::Quit(_) |
-//!                 InterateResult::Err(_) => {
+//!                 IterateResult::Quit(_) |
+//!                 IterateResult::Err(_) => {
 //!                     eprintln!("iterate state was not success, quitting...");
 //!                     return;
 //!                 },
-//!                 InterateResult::Success(_) => {},
+//!                 IterateResult::Success(_) => {},
 //!             }
 //!         }
 //!
@@ -221,7 +221,7 @@ pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
 
 /// Return type for [`Mainloop::iterate`](struct.Mainloop.html#method.iterate).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum InterateResult {
+pub enum IterateResult {
     /// Success, with number of sources dispatched
     Success(u32),
     /// Quit was called, with quit's retval
@@ -230,12 +230,12 @@ pub enum InterateResult {
     Err(PAErr),
 }
 
-impl InterateResult {
+impl IterateResult {
     /// Returns `true` if the result is a `Success` value.
     #[inline]
     pub fn is_success(&self) -> bool {
         match *self {
-            InterateResult::Success(_) => true,
+            IterateResult::Success(_) => true,
             _ => false,
         }
     }
@@ -244,7 +244,7 @@ impl InterateResult {
     #[inline]
     pub fn is_quit(&self) -> bool {
         match *self {
-            InterateResult::Quit(_) => true,
+            IterateResult::Quit(_) => true,
             _ => false,
         }
     }
@@ -253,7 +253,7 @@ impl InterateResult {
     #[inline]
     pub fn is_error(&self) -> bool {
         match *self {
-            InterateResult::Err(_) => true,
+            IterateResult::Err(_) => true,
             _ => false,
         }
     }
@@ -359,18 +359,18 @@ impl Mainloop {
     ///
     /// If `block` is `true`, block for events if none are queued.
     ///
-    /// Returns an [`InterateResult`](enum.InterateResult.html) variant:
+    /// Returns an [`IterateResult`](enum.IterateResult.html) variant:
     ///
-    /// * On success, returns `InterateResult::Success` containing the number of sources dispatched
+    /// * On success, returns `IterateResult::Success` containing the number of sources dispatched
     ///   in this iteration.
-    /// * If exit was requested, returns `InterateResult::Quit` containing quit's retval.
-    /// * On error, returns `InterateResult::Err` containing error value.
-    pub fn iterate(&mut self, block: bool) -> InterateResult {
+    /// * If exit was requested, returns `IterateResult::Quit` containing quit's retval.
+    /// * On error, returns `IterateResult::Err` containing error value.
+    pub fn iterate(&mut self, block: bool) -> IterateResult {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_iterate((*self._inner).ptr, block as i32, &mut retval) } {
-            r if r >= 0 => InterateResult::Success(r as u32),
-            -2 => InterateResult::Quit(::def::Retval(retval)),
-            e => InterateResult::Err(PAErr(e)),
+            r if r >= 0 => IterateResult::Success(r as u32),
+            -2 => IterateResult::Quit(::def::Retval(retval)),
+            e => IterateResult::Err(PAErr(e)),
         }
     }
 

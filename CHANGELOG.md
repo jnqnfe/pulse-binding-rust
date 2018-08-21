@@ -1,6 +1,9 @@
 # ?? (?? ??, ????)
 
+pulse-binding:
 
+ * Mainloop/standard: Fixed a typo - renamed `InterateResult` to `IterateResult`. Thanks to
+   @HyperHamster on github for reporting.
 
 # 2.1 (July 17, 2018)
 
