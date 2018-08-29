@@ -1,6 +1,9 @@
 # ?? (?? ??, ????)
 
+pulse-binding:
 
+ * time/Timeval: (Hopefully) fixed reported compilation errors on macOS and raspberry pi platforms.
+   Thanks to @noahbkim on github for reporting and @ssendev for the suggested solution.
 
 # 2.2 (August 21, 2018)
 

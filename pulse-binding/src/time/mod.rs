@@ -20,6 +20,7 @@ mod monotonic;
 mod timeval;
 mod unix;
 
+use libc;
 use capi;
 use std::time::Duration;
 
@@ -52,7 +53,7 @@ impl From<MicroSeconds> for Timeval {
     fn from(t: MicroSeconds) -> Self {
         let secs = t.0 / MICROS_PER_SEC;
         let usecs = t.0 % MICROS_PER_SEC;
-        Timeval::new(secs as i64, usecs as i64)
+        Timeval::new(secs as libc::time_t, usecs as libc::suseconds_t)
     }
 }
 
@@ -71,7 +72,7 @@ impl From<MicroSeconds> for Duration {
 
 impl From<Duration> for Timeval {
     fn from(t: Duration) -> Self {
-        Timeval::new(t.as_secs() as i64, (t.subsec_nanos() / NANOS_PER_MILLI) as i64)
+        Timeval::new(t.as_secs() as libc::time_t, (t.subsec_nanos() / NANOS_PER_MILLI) as libc::suseconds_t)
     }
 }
 impl From<Timeval> for Duration {

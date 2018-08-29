@@ -97,7 +97,7 @@ impl Timeval {
         *self = v.into();
 
         match rtclock {
-            true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK; },
+            true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK as libc::suseconds_t; },
             false => { self.wallclock_from_rtclock(); },
         }
         self
