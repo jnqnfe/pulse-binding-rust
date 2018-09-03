@@ -1,6 +1,6 @@
 # ?? (?? ?, ????)
 
-
+ * Added homepage and repo links for published crates, thanks to @berkus on github for the patch
 
 # 2.2.1 (29 August, 2018)
 
