@@ -9,6 +9,8 @@ A Rust language linking library for the PulseAudio libpulse library.
 keywords = ["sys", "binding", "pulse", "pulseaudio", "audio"]
 links = "pulse"
 build = "build.rs"
+homepage = "https://github.com/jnqnfe/pulse-binding-rust"
+repository = "https://github.com/jnqnfe/pulse-binding-rust"
 
 [dependencies]
 libc = "0.2"

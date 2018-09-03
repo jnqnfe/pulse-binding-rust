@@ -9,6 +9,8 @@ A Rust language linking library for the PulseAudio libpulse-mainloop-glib librar
 keywords = ["binding", "pulse", "pulseaudio", "pulse-mainloop-glib", "audio"]
 links = "pulse-mainloop-glib"
 build = "build.rs"
+homepage = "https://github.com/jnqnfe/pulse-binding-rust"
+repository = "https://github.com/jnqnfe/pulse-binding-rust"
 
 [dependencies]
 libpulse-sys = { path = "../pulse-sys", version = "1.3" }
