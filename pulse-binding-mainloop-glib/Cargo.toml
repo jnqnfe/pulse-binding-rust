@@ -16,6 +16,9 @@ libpulse-binding = { path = "../pulse-binding", version = "2.2" }
 libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.3" }
 
 [features]
+default = ["pa_encoding_from_string"]
+#include format::Encoding::from_string method, for which the underlying C API symbol was missing before PA v12
+pa_encoding_from_string = ["libpulse-binding/pa_encoding_from_string"]
 
 [badges]
 travis-ci = { repository = "jnqnfe/pulse-binding-rust" }

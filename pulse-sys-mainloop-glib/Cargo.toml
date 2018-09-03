@@ -16,6 +16,9 @@ repository = "https://github.com/jnqnfe/pulse-binding-rust"
 libpulse-sys = { path = "../pulse-sys", version = "1.3" }
 
 [features]
+default = ["pa_encoding_from_string"]
+#include format::Encoding::from_string method, for which the underlying C API symbol was missing before PA v12
+pa_encoding_from_string = ["libpulse-sys/pa_encoding_from_string"]
 
 [badges]
 travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
