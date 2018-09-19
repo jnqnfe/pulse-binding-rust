@@ -1,6 +1,6 @@
 # ?? (?? ??, ????)
 
- * Fixed `pa_encoding_from_string` feature control propagation
+ * Fixed feature control
 
 # 2.2.2 (September 03, 2018)
 
