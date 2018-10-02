@@ -1,21 +1,21 @@
-# 2.2.3 (September 20, 2018)
+# 2.2.3 (September 20th, 2018)
 
  * Fixed feature control
 
-# 2.2.2 (September 03, 2018)
+# 2.2.2 (September 3rd, 2018)
 
  * Added homepage and repo links for published crates, thanks to @berkus on github for the patch
  * Expanded the `pa_encoding_from_string` feature across extended `simple` and `glib` crates, to
    properly control it across dependencies. Thanks to @thejpster on github for reporting.
 
-# 2.2.1 (29 August, 2018)
+# 2.2.1 (August 29th, 2018)
 
 pulse-binding:
 
  * time/Timeval: (Hopefully) fixed reported compilation errors on macOS and raspberry pi platforms.
    Thanks to @noahbkim on github for reporting and @ssendev for the suggested solution.
 
-# 2.2 (August 21, 2018)
+# 2.2 (August 21st, 2018)
 
 pulse-binding:
 
@@ -23,7 +23,7 @@ pulse-binding:
    @HyperHamster on github for reporting.
  * Time/timeval: Fixed a couple of compile time warnings
 
-# 2.1 (July 17, 2018)
+# 2.1 (July 17th, 2018)
 
 project:
 
