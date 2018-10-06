@@ -1,22 +1,4 @@
-[package]
-name = "workspace"
-version = "0.0.0"
-authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
-readme = "README.md"
-description = """
-Dummy bin crate - Acts as a workspace, and groups all crates together (as dependencies) for building in one go.
-"""
-publish = false
-
 [workspace]
+members = [ "pulse-binding", "pulse-binding-simple", "pulse-binding-mainloop-glib",
+            "pulse-sys", "pulse-sys-simple", "pulse-sys-mainloop-glib" ]
 
-[dependencies]
-libpulse-binding = { path = "pulse-binding" }
-libpulse-simple-binding = { path = "pulse-binding-simple" }
-libpulse-glib-binding = { path = "pulse-binding-mainloop-glib" }
-libpulse-sys = { path = "pulse-sys" }
-libpulse-simple-sys = { path = "pulse-sys-simple" }
-libpulse-mainloop-glib-sys = { path = "pulse-sys-mainloop-glib" }
-
-[badges]
-travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
