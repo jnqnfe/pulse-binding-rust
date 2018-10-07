@@ -54,7 +54,7 @@ pulse-binding:
  * Stream: Removed the `get_context` method.
    This method returned a 'weak' wrapper object, where 'weak' means that it deliberately will not
    decrement the ref count of the underlying C object on drop. This was exactly what was wanted
-   back in v1.x, however in v2.x we introduced closure based callbacks, and the `Context` object
+   back in v1.x, however in v2.0 we introduced closure based callbacks, and the `Context` object
    (wrapper) was extended to hold saved multi-use callbacks. This causes a problem. If you use this
    `get_context` method to get a weak ref, then use it to change a multi-use callback, the new
    callback gets saved into the 'weak' object, and then you need both that and the original context
@@ -113,7 +113,7 @@ pulse-glib-mainloop-sys (1.3):
 
 pulse-binding:
 
- * Updated declared version compatibility
+ * Updated declared PA version compatibility
  * Operation: Documented possible memory leak
  * Proplist: Fixed debug output to use comma separator rather than newline (for consistency in
    dumping introspection data), and output in list style instead of mixed struct/list style.
@@ -121,7 +121,7 @@ pulse-binding:
 
 pulse-sys (1.2.1):
 
- * Updated declared version compatibility
+ * Updated declared PA version compatibility
 
 pulse-glib-mainloop-binding:
 
@@ -150,12 +150,12 @@ pulse-binding:
  * Removed `Option` wrapper around `Operation` objects, using assertion that the inner pointer is
    not null.
  * Context: Handful of methods changed to take immutable `self`. Patches were previously sent in to
-   apply `const` to a lot of pointers in the C API, which have been accepted. Some context related
-   functions were not changed simply because of an artefact relating to validation checks.
-   Additional patches solving this have now been sent in. This change has been reflected here. (No
-   need to worry about whether or not these are accepted, though discussion indicates they will, nor
-   for a new version of PA to be released; logically they should be immutable, and we do not need to
-   propagate this unfortunate artefact).
+   PA itself to apply `const` to a lot of pointers in the C API, which have been accepted. Some
+   context related functions were not changed then simply because of an artefact relating to
+   validation checks. Additional patches solving this have now been sent in. This change has been
+   reflected here. (No need to worry about whether or not these are accepted, though discussion
+   indicates they will, nor for a new version of PA to be released; logically they should be
+   immutable, and we do not need to propagate this unfortunate artefact).
  * Format: Simplified. The inner pointer to a raw `InfoInternal` object (mistakenly hidden in v1.1,
    restored in v1.2.2) has been hidden, replaced with cleaner set/get methods. A method already
    existed for setting the encoding; one has now also been added for reading it, saving users from
@@ -210,7 +210,7 @@ pulse-binding:
     - Moved the `strerror` function to be a `PAErr` method
     - Renamed the `sterror` method of `PAErr` and `Code` to `to_string`
     - Converted the error `CStr` to `String` for users; no need to make users do it
-    - Added `PAErr` <=> `Code` `From` impls
+    - Added `PAErr` ↔ `Code` `From` impls
  * Simplified volume handling:
     - `Volume` and `VolumeDB` are now wrappers rather than type aliases
     - Added the `VolumeLinear` wrapper. I had mistakenly taken floating point volumes to all be dB
@@ -227,14 +227,14 @@ pulse-binding:
       `BufferResult` object.
     - Minor doc fixes
  * Derived more common traits for a handful of structs/enums
- * Implemented `PartialEq` for `::channelmap::Map` and `::volume::CVolume`
+ * Implemented `PartialEq` for `channelmap::Map` and `volume::CVolume`
  * Removed `Copy` and `Clone` derives from `def::SpawnApi`
  * Improved time handling:
     - Added `Timeval` wrapper
-    - Introduced `MicroSeconds` `u64` wrapper, replacing use of `::sample::Usecs` (now removed)
+    - Introduced `MicroSeconds` as an `u64` wrapper, replacing use of `sample::Usecs` (now removed)
     - Tidied up conversion constants. Note, names (and in some cases types) have changed.
-    - Re-exported `libc::timeval` (primarily for timer event callback use) from `::timeval` instead
-      of `::mainloop::events::timer`.
+    - Re-exported `libc::timeval` (primarily for timer event callback use) from the `timeval` mod
+      instead of `mainloop::events::timer`.
  * Added and put to use wrapper for 'quit return values'
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
    to avoid unnecessary conversion, but users most likely would prefer `Strings`s, and there should
@@ -287,14 +287,14 @@ pulse-sys:
 
 pulse-binding:
 
- * Fixed and simplified Proplist iteration:
+ * Fixed and simplified `Proplist` iteration:
     - Fixed an infinite loop bug: I misread the documentation, it's the return value from the C
       function call that will be NULL when it reaches the end of the list, not the state variable.
     - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
       cannot be hidden within the iterate function, it causes an infinite loop whereby the function
       always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
     - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
-      an actual Rust Iterator object, which makes iterating much more simple and tidy.
+      an actual Rust `Iterator` object, which makes iterating much more simple and tidy.
  * CVolume: Made `self` for `is_[muted|norm]` immutable
  * Stream: Fixed unwanted double option wrapping of callback fn ptr with write methods
  * Stream: Combined `write_ext_free` `free_cb_data` param with `free_cb` as tuple, as done elsewhere
@@ -311,11 +311,16 @@ pulse-sys:
 
 project:
 
- * Now using explicit test script for Travis, rather than relying on default, to ensure that the
-   `--all` flag is passed to `cargo test`, which I thought was already done, but seems not from the
-   logs and thus tests were not actually being done.
- * Fixed Travis failures - added missing `libpulse-mainloop-glib0` dependency to test environment.
- * Properly fixed Travis tests - added pulseaudio dependency and get it started in test environment.
+ * Fixed Travis testing. Tests were not actually being run, giving a misleading positive result, and
+   fixing that then highlighted problems with the test environment which took a few iterations to
+   resolve (hence the 'd' in the version number from premature assumptions of resolving the
+   problem).
+    - Fixed tests not actually being run. I had incorrectly presumed that tests for all sub-crate
+      dependencies of the workspace crate would be run automatically, but reviewing the logs
+      highlighted that this was not the case; an explicit test script passing the `--all` flag to
+      `cargo test` was needed.
+    - Added missing `libpulse-mainloop-glib0` library to test environment
+    - Actually added `pulseaudio` to the test environment and added command to start it
 
 # 1.0.3 (February 10th, 2018)
 
@@ -330,7 +335,7 @@ pulse-binding:
 
 # 1.0.1 (February 2nd, 2018)
 
- * Fixed toml file license string `LGPL-2.1` => `LGPL-2.1+`
+ * Fixed toml file license string `LGPL-2.1` → `LGPL-2.1+`
  * Fixed toml file missing author email address
  * Removed obsolete readme doc links
 
