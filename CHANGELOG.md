@@ -1,3 +1,11 @@
+# ?? (???? ??, ????)
+
+project:
+
+ * Travis: Simplified and now avoids sudo
+ * Workspace: Simplified - specification of an actual `[package]` section it turns out is redundant
+   alongside a `[workspace]` section.
+
 # 2.2.3 (September 20th, 2018)
 
  * Fixed feature control
