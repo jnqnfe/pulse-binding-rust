@@ -1,7 +1,6 @@
 # ???? (???? ??, ????)
 
- * Removed broken attempt to include license file in bundled package, using exclude list instead to
-   still avoid certain files.
+ * Fixed broken attempt to include license file in bundled package
 
 # 1.3.3 (October 8th, 2018)
 
