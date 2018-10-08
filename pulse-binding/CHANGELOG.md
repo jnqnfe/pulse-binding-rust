@@ -1,4 +1,4 @@
-# ???? (???? ??, ????)
+# 2.2.5 (October 8th, 2018)
 
  * Fixed broken attempt to include license file in bundled package
 
