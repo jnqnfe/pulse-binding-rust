@@ -10,6 +10,7 @@ A Rust language binding for the PulseAudio libpulse-mainloop-glib library.
 keywords = ["binding", "pulse", "pulseaudio", "pulse-mainloop-glib", "audio"]
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
+include = ["src/**/*", "Cargo.toml", "CHANGELOG.md", "../LICENSE-LGPL"]
 
 [dependencies]
 libpulse-binding = { path = "../pulse-binding", version = "2.2", default-features = false }

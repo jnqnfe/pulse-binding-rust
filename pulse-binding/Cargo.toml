@@ -10,6 +10,7 @@ A Rust language binding for the PulseAudio libpulse library.
 keywords = ["binding", "pulse", "pulseaudio", "audio"]
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
+include = ["src/**/*", "Cargo.toml", "CHANGELOG.md", "../LICENSE-LGPL"]
 
 [dependencies]
 libc = "0.2"

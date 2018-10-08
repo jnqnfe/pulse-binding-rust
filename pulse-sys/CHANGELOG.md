@@ -1,6 +1,7 @@
 # ?? (???? ??, ????)
 
  * Added dedicated changelog, split off from the old single project overview one
+ * Include copy of license file in bundled package and exclude the `.gitignore` file
 
 # 1.3.1 (September 3rd, 2018)
 
