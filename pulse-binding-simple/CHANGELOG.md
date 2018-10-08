@@ -1,4 +1,4 @@
-# ?? (???? ??, ????)
+# 2.2.4 (October 8th, 2018)
 
  * Added dedicated changelog, split off from the old single project overview one
  * Include copy of license file in bundled package and exclude the `.gitignore` file

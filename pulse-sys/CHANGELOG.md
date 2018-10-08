@@ -1,7 +1,9 @@
-# ?? (???? ??, ????)
+# 1.3.3 (October 8th, 2018)
 
  * Added dedicated changelog, split off from the old single project overview one
  * Include copy of license file in bundled package and exclude the `.gitignore` file
+
+Note, version number 1.3.2 skipped, bumping number into line with the other crates
 
 # 1.3.1 (September 3rd, 2018)
 

@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-mainloop-glib-sys"
-version = "1.3.2"
+version = "1.3.3"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 description = """

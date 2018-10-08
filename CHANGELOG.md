@@ -2,7 +2,7 @@ This changelog now only covers changes that are not specific to the Rust crates 
 repository, i.e. project changes only, and maintains an overall project version number. See the
 changelog files of the individual crates for crate specific changelog details.
 
-# ?? (???? ??, ????)
+# 2.2.4 (October 8th, 2018)
 
  * Travis: Simplified and now avoids sudo
  * Workspace: Simplified - specification of an actual `[package]` section it turns out is redundant
@@ -10,6 +10,8 @@ changelog files of the individual crates for crate specific changelog details.
  * Split the changelog file into separate changelogs for each crate and this one for the overall
    project for greater clarity. The overall project version number with associated git tags is still
    a potential source of confusion however.
+
+Note, intermediate version numbers were crate specific only
 
 # 2.1 (July 17th, 2018)
 
