@@ -11,7 +11,7 @@ links = "pulse"
 build = "build.rs"
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
-include = ["src/**/*", "build.rs", "Cargo.toml", "CHANGELOG.md", "../LICENSE-LGPL"]
+exclude = [".gitignore"]
 
 [dependencies]
 libc = "0.2"

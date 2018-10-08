@@ -11,7 +11,7 @@ links = "pulse-simple"
 build = "build.rs"
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
-include = ["src/**/*", "build.rs", "Cargo.toml", "CHANGELOG.md", "../LICENSE-LGPL"]
+exclude = [".gitignore"]
 
 [dependencies]
 libpulse-sys = { path = "../pulse-sys", version = "1.3", default-features = false }
