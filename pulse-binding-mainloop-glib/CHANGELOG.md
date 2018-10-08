@@ -1,0 +1,61 @@
+# ?? (???? ??, ????)
+
+ * Added dedicated changelog, split off from the old single project overview one
+
+# 2.2.3 (September 20th, 2018)
+
+ * Fixed feature control
+
+# 2.2.2 (September 3rd, 2018)
+
+ * Added homepage and repo links, thanks to @berkus on github for the patch
+ * Expanded the `pa_encoding_from_string` feature to properly control it across dependencies. Thanks
+   to @thejpster on github for reporting.
+
+Note, version number 2.2.1 skipped, bumping number into line with the main binding crate
+
+# 2.2 (August 21st, 2018)
+
+ * Updated `libpulse-binding` version dependency (2.1 → 2.2)
+
+# 2.1 (July 17th, 2018)
+
+ * Mainloop API objects now correctly treated as immutable, per related change in version 2.1 of
+   `libpulse-binding`.
+ * Implemented new signals trait from version 2.1 of the main binding
+ * Updated `libpulse-binding` version dependency (2.0 → 2.1)
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.2 → 1.3)
+
+# 2.0.1 (June 26th, 2018)
+
+ * Doc typo fix
+ * Updated version in `README` usage example
+
+# 2.0 (June 16th, 2018)
+
+ * Updated `libpulse-binding` version dependency (1.2 → 2.0)
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.1 → 1.2)
+
+# 1.2 (June 1st, 2018)
+
+ * Now returning `get_api` pointer as ref, as done with standard and threaded mainloops
+ * Updated `libpulse-binding` version dependency (1.1 → 1.2)
+
+# 1.1 (May 27th, 2018)
+
+ * Updated `libpulse-binding` version dependency (1.0 → 1.1)
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.0 → 1.1)
+
+# 1.0.2 (February 9th, 2018)
+
+ * Added travis badge
+
+# 1.0.1 (February 2nd, 2018)
+
+ * Fixed toml file license string `LGPL-2.1` → `LGPL-2.1+`
+ * Fixed toml file missing author email address
+ * Removed obsolete readme doc links
+
+# 1.0 (January 24th, 2018)
+
+ * Original release
