@@ -1,10 +1,6 @@
-//! Connection contexts for asynchronous communication with a server.
-//! 
-//! A `pa_context` object wraps a connection to a PulseAudio server using its native protocol.
-
-// This file is part of the PulseAudio Rust language linking library.
+// Copyright 2017 Lyndon Brown
 //
-// Copyright (c) 2017 Lyndon Brown
+// This file is part of the PulseAudio Rust language linking library.
 //
 // This library is free software; you can redistribute it and/or modify it under the terms of the
 // GNU Lesser General Public License as published by the Free Software Foundation; either version
@@ -16,6 +12,10 @@
 //
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
+
+//! Connection contexts for asynchronous communication with a server.
+//! 
+//! A `pa_context` object wraps a connection to a PulseAudio server using its native protocol.
 
 pub use ext_device_manager::*;
 pub use ext_device_restore::*;

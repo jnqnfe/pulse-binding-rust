@@ -1,8 +1,6 @@
-//! Routines for daemon introspection.
-
-// This file is part of the PulseAudio Rust language binding.
+// Copyright 2017 Lyndon Brown
 //
-// Copyright (c) 2017 Lyndon Brown
+// This file is part of the PulseAudio Rust language binding.
 //
 // This library is free software; you can redistribute it and/or modify it under the terms of the
 // GNU Lesser General Public License as published by the Free Software Foundation; either version
@@ -15,6 +13,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
+//! Routines for daemon introspection.
+//!
 //! # Overview
 //!
 //! Sometimes it is necessary to query and modify global settings in the server. For this,

@@ -1,11 +1,6 @@
-//! UTF-8 validation functions.
-//!
-//! Bindings are not provided here for most of the PulseAudio UTF-8 functions since Rust has built
-//! in UTF-8 handling and thus they should be entirely unnecessary.
-
-// This file is part of the PulseAudio Rust language binding.
+// Copyright 2017 Lyndon Brown
 //
-// Copyright (c) 2017 Lyndon Brown
+// This file is part of the PulseAudio Rust language binding.
 //
 // This library is free software; you can redistribute it and/or modify it under the terms of the
 // GNU Lesser General Public License as published by the Free Software Foundation; either version
@@ -17,6 +12,11 @@
 //
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
+
+//! UTF-8 validation functions.
+//!
+//! Bindings are not provided here for most of the PulseAudio UTF-8 functions since Rust has built
+//! in UTF-8 handling and thus they should be entirely unnecessary.
 
 use capi;
 use std::os::raw::{c_char, c_void};
