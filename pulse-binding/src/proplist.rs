@@ -347,9 +347,7 @@ impl Proplist {
         }
         c_keys_ptrs.push(null());
 
-        match unsafe { capi::pa_proplist_unset_many(self.ptr,
-            c_keys_ptrs.as_ptr()) }
-        {
+        match unsafe { capi::pa_proplist_unset_many(self.ptr, c_keys_ptrs.as_ptr()) } {
             r if r < 0 => None,
             r => Some(r as u32),
         }

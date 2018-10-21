@@ -320,10 +320,7 @@ impl Mainloop {
     /// behaviour. Only positive values should be provided, negative values will have the same
     /// effect as `None`.
     pub fn prepare(&mut self, timeout: Option<i32>) -> Result<(), PAErr> {
-        let t: i32 = match timeout {
-            Some(t) => t ,
-            None => -1,
-        };
+        let t = timeout.unwrap_or(-1);
         match unsafe { capi::pa_mainloop_prepare((*self._inner).ptr, t) } {
             0 => Ok(()),
             e => Err(PAErr(e)),

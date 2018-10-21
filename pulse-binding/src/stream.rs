@@ -906,17 +906,18 @@ impl Stream {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
-        let mut nbytes_tmp: usize = match nbytes {
-            Some(nbytes) => nbytes,
-            None => std::usize::MAX,
-        };
+        let mut nbytes_tmp = nbytes.unwrap_or(std::usize::MAX);
         match unsafe { capi::pa_stream_begin_write(self.ptr, &mut data_ptr, &mut nbytes_tmp) } {
-            0 if data_ptr.is_null() => Ok(None),
             0 => {
-                let slice = unsafe {
-                    std::slice::from_raw_parts_mut(data_ptr as *mut u8, nbytes_tmp)
-                };
-                Ok(Some(slice))
+                match data_ptr.is_null() {
+                    true => Ok(None),
+                    false => {
+                        let slice = unsafe {
+                            std::slice::from_raw_parts_mut(data_ptr as *mut u8, nbytes_tmp)
+                        };
+                        Ok(Some(slice))
+                    },
+                }
             },
             e => Err(PAErr(e)),
         }
@@ -1047,11 +1048,14 @@ impl Stream {
         // Note, C function returns an i32, but documentation does not mention any use of it, so we
         // discard it.
         match unsafe { capi::pa_stream_peek(self.ptr, &mut data_ptr, &mut nbytes) } {
-            0 if data_ptr.is_null() && nbytes == 0 => Ok(PeekResult::Empty),
-            0 if data_ptr.is_null() => Ok(PeekResult::Hole(nbytes)),
             0 => {
-                let slice = unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) };
-                Ok(PeekResult::Data(slice))
+                if data_ptr.is_null() {
+                    match nbytes { 0 => Ok(PeekResult::Empty), _ => Ok(PeekResult::Hole(nbytes)) }
+                }
+                else {
+                    let slice = unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) };
+                    Ok(PeekResult::Data(slice))
+                }
             },
             e => Err(PAErr(e)),
         }
@@ -1426,11 +1430,9 @@ impl Stream {
         let mut r_usecs = MicroSeconds(0);
         let mut negative: i32 = 0;
         match unsafe { capi::pa_stream_get_latency(self.ptr, &mut r_usecs.0, &mut negative) } {
-            0 => {
-                match negative {
-                    1 => Ok(Latency::Negative(r_usecs)),
-                    _ => Ok(Latency::Positive(r_usecs)),
-                }
+            0 => match negative {
+                1 => Ok(Latency::Negative(r_usecs)),
+                _ => Ok(Latency::Positive(r_usecs)),
             },
             e if e == PAErr::from(::error::Code::NoData).0 => Ok(Latency::None),
             e => Err(PAErr(e)),

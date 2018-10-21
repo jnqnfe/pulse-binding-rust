@@ -384,16 +384,8 @@ impl ChannelVolumes {
     /// If `with` is `None`, multiplies with itself. This is only valid for software volumes!
     /// Returns pointer to self.
     pub fn sw_multiply(&mut self, with: Option<&Self>) -> &mut Self {
-        match with {
-            Some(with) => unsafe {
-                capi::pa_sw_cvolume_multiply(std::mem::transmute(&self), std::mem::transmute(&self),
-                    std::mem::transmute(with))
-            },
-            None => unsafe {
-                capi::pa_sw_cvolume_multiply(std::mem::transmute(&self), std::mem::transmute(&self),
-                    std::mem::transmute(&self))
-            },
-        };
+        unsafe { capi::pa_sw_cvolume_multiply(std::mem::transmute(&self),
+            std::mem::transmute(&self), std::mem::transmute(with.unwrap_or(&*self))) };
         self
     }
 
