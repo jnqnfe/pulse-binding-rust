@@ -85,7 +85,6 @@ pub type pa_context_success_cb_t = Option<extern "C" fn(c: *mut pa_context, succ
 
 pub type pa_context_event_cb_t = Option<extern "C" fn(c: *mut pa_context, name: *const c_char, p: *mut ::proplist::pa_proplist, userdata: *mut c_void)>;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_context_new(mainloop: *const ::mainloop::api::pa_mainloop_api, name: *const c_char) -> *mut pa_context;
     pub fn pa_context_new_with_proplist(mainloop: *const ::mainloop::api::pa_mainloop_api, name: *const c_char, proplist: *const ::proplist::pa_proplist) -> *mut pa_context;

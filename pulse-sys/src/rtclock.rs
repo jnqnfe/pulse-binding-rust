@@ -14,8 +14,6 @@
 // if not, see <http://www.gnu.org/licenses/>.
 
 //! Monotonic clock utilities.
-
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_rtclock_now() -> ::sample::pa_usec_t;
 }

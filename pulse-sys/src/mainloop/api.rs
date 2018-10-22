@@ -72,7 +72,6 @@ pub struct pa_mainloop_api {
 
 pub type pa_mainloop_api_once_cb = Option<extern "C" fn(m: *const pa_mainloop_api, userdata: *mut c_void)>;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_mainloop_api_once(m: *const pa_mainloop_api, callback: pa_mainloop_api_once_cb, userdata: *mut c_void);
 }

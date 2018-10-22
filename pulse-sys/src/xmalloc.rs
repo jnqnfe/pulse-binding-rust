@@ -46,7 +46,6 @@ pub unsafe fn pa_xrenew(p: *mut c_void, n: usize, k: usize) -> *mut c_void {
     pa_xrealloc(p, n*k)
 }
 
-#[link(name="pulse")]
 extern "C" {
     /// Allocate the specified number of bytes, just like `malloc()` does.
     /// However, in case of OOM, terminate.

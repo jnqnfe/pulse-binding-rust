@@ -29,7 +29,6 @@ pub const PA_USEC_INVALID: ::sample::pa_usec_t = std::u64::MAX;
 
 pub const PA_USEC_MAX: ::sample::pa_usec_t = std::u64::MAX - 1;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_gettimeofday(tv: *mut timeval) -> *mut timeval;
     pub fn pa_timeval_diff(a: *const timeval, b: *const timeval) -> ::sample::pa_usec_t;

@@ -17,7 +17,6 @@
 
 use std::os::raw::c_char;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_utf8_valid(s: *const c_char) -> *mut c_char;
     pub fn pa_ascii_valid(s: *const c_char) -> *mut c_char;

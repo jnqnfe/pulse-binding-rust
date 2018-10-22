@@ -29,7 +29,6 @@ pub enum GMainContext {}
 /// An opaque GLIB main loop object
 pub enum pa_glib_mainloop {}
 
-#[link(name="pulse-mainloop-glib")]
 extern "C" {
     pub fn pa_glib_mainloop_new(c: *mut GMainContext) -> *mut pa_glib_mainloop;
     pub fn pa_glib_mainloop_free(g: *mut pa_glib_mainloop);

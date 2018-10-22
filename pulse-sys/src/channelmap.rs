@@ -194,7 +194,6 @@ pub struct pa_channel_map {
 
 pub const PA_CHANNEL_MAP_SNPRINT_MAX: usize = 336;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_channel_map_init(m: *mut pa_channel_map) -> *mut pa_channel_map;
     pub fn pa_channel_map_init_mono(m: *mut pa_channel_map) -> *mut pa_channel_map;

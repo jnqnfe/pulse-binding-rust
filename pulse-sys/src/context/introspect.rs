@@ -306,7 +306,6 @@ pub struct pa_sample_info {
 
 pub type pa_sample_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_sample_info, eol: i32, userdata: *mut c_void)>;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_context_get_sink_info_by_name(c: *mut pa_context, name: *const c_char, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
     pub fn pa_context_get_sink_info_by_index(c: *mut pa_context, idx: u32, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;

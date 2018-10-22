@@ -19,7 +19,6 @@ use std::os::raw::{c_char, c_void};
 
 pub type pa_context_play_sample_cb_t = Option<extern "C" fn(c: *mut super::pa_context, idx: u32, userdata: *mut c_void)>;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_context_remove_sample(c: *mut super::pa_context, name: *const c_char, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
 

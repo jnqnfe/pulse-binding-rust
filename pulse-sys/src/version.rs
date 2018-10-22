@@ -38,7 +38,6 @@ pub fn pa_check_version(major: u8, minor: u8, micro: u8) -> bool {
      (PA_MAJOR == major && PA_MINOR == minor && PA_MICRO >= micro))
 }
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_get_library_version() -> *const c_char;
 }

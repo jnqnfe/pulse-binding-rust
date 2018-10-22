@@ -20,7 +20,6 @@ use std::os::raw::c_char;
 /// An opaque threaded main loop object
 pub enum pa_threaded_mainloop {}
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_threaded_mainloop_new() -> *mut pa_threaded_mainloop;
     pub fn pa_threaded_mainloop_free(m: *mut pa_threaded_mainloop);

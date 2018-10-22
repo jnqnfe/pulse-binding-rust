@@ -118,7 +118,6 @@ pub type pa_stream_notify_cb_t = Option<extern "C" fn(p: *mut pa_stream, userdat
 
 pub type pa_stream_event_cb_t = Option<extern "C" fn(p: *mut pa_stream, name: *const c_char, pl: *mut ::proplist::pa_proplist, userdata: *mut c_void)>;
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_stream_connect_upload(s: *mut pa_stream, length: usize) -> i32;
     pub fn pa_stream_finish_upload(s: *mut pa_stream) -> i32;

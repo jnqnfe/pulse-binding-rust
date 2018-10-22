@@ -17,7 +17,6 @@
 
 use std::os::raw::{c_char, c_ulong};
 
-#[link(name="pulse")]
 extern "C" {
     pub fn pa_get_user_name(s: *mut c_char, l: usize) -> *mut c_char;
     pub fn pa_get_host_name(s: *mut c_char, l: usize) -> *mut c_char;
