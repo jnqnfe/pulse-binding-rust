@@ -1,3 +1,7 @@
+# 2.2.6 (October 28th, 2018)
+
+ * Minor tweaks, improving code clarity and such
+
 # 2.2.5 (October 8th, 2018)
 
  * Fixed broken attempt to include license file in bundled package
