@@ -1,6 +1,16 @@
-This changelog now only covers changes that are not specific to the Rust crates that live in this
-repository, i.e. project changes only, and maintains an overall project version number. See the
-changelog files of the individual crates for crate specific changelog details.
+Project/repo changelog.
+
+This changelog previously covered all changes in this repository, but now each Rust crate has its
+own specific changelog in its own subdirectory. This changelog covers general changes not suitable
+for inclusion in those changelogs.
+
+The version number specified here reflects that of the overall project, most closely related to the
+primary `pulse-binding` crate (but is only updated here when there are changes to document here).
+When the project was begun, a single common version number seemed to be the most logical thing to
+have, with no expectation that so much work would end up being done and that version numbers of the
+binding/sys crates would diverge so much. Tagging was done based on this, and later continued to
+be done based on the primary `pulse-binding` crate. I am aware that this is an unfortunate potential
+source of confusion now.
 
 # 2.2.4 (October 8th, 2018)
 
