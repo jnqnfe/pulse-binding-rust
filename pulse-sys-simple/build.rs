@@ -3,7 +3,13 @@ extern crate pkg_config;
 
 #[cfg(target_os="linux")]
 fn main() {
-    pkg_config::Config::new().atleast_version("10.0").probe("libpulse-simple").unwrap();
+    let min_version = "10.0";
+    // Try package-config first
+    let pc = pkg_config::Config::new().atleast_version(min_version).probe("libpulse-simple");
+    // Fallback to hard-coded on error (useful if user does not have *.pc file installed)
+    if pc.is_err() {
+        println!("cargo:rustc-link-lib=pulse-simple::libpulse-simple.so.0");
+    }
 }
 
 #[cfg(not(target_os="linux"))]
