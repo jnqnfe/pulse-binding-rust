@@ -1,5 +1,12 @@
 # <unreleased>
 
+ * Improved the `version` mod:
+    - Constants now vary depending upon backwards compatibility flags, correctly indicating the
+      newest supported PA version.
+    - Added the `Compatibility` enum and `get_compatibility` function
+    - Renamed `BINDING_TARGET_VERSION` to `TARGET_VERSION_STRING`
+    - Introduced `TARGET_VERSION` and deprecated `MAJOR`, `MINOR` and `MICRO`
+    - Deprecated `get_headers_version`
  * Clarified PA version compatibility in `version` mod
  * Clarified `pa_encoding_from_string` feature purpose
 
