@@ -3,6 +3,7 @@
  * Switched to using package-config for linking (though retaining the direct linking as a fallback
    for those without the necessary *.pc files installed). Thanks to @JohnAZoidberg on github for
    the original patch.
+ * Clarified `pa_encoding_from_string` feature purpose
 
 # 1.3.4 (October 8th, 2018)
 

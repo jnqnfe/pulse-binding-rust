@@ -18,6 +18,22 @@ header files. They provide:
    structures, for instance providing wrappers for PulseAudio objects with drop trait
    implementations that automatically free the object upon going out of scope, ala smart pointers.
 
+PulseAudio Version Compatibility
+=============================
+
+This project always intends to provide compatibility with the latest stable version of PulseAudio.
+It also however provides backwards compatibility with a limited number of past major releases.
+
+Currently:
+
+ - The version primarily targeted is: `12.x`
+ - We have backwards compatibility with version: `11.x` (and it is believed also `10.x`). To use
+   with such an older version, the `pa_encoding_from_string` feature flag must be disabled.
+
+Note, the name of the `pa_encoding_from_string` feature flag is an artefact resulting from an issue
+with a missing symbol in PA versions before 12.x. The intention the next time a new PA version
+brings API changes is to provide 'backwards compatibility' feature flags with more logical names.
+
 Author
 ======
 

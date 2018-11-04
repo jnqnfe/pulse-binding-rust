@@ -12,6 +12,12 @@ binding/sys crates would diverge so much. Tagging was done based on this, and la
 be done based on the primary `pulse-binding` crate. I am aware that this is an unfortunate potential
 source of confusion now.
 
+# <unreleased>
+
+ * Clarified PA version compatibility in readme
+
+Note, intermediate version numbers were crate specific only
+
 # 2.2.4 (October 8th, 2018)
 
  * Travis: Simplified and now avoids sudo

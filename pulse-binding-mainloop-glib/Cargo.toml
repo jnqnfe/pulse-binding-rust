@@ -18,7 +18,7 @@ libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1
 
 [features]
 default = ["pa_encoding_from_string"]
-#include format::Encoding::from_string method, for which the underlying C API symbol was missing before PA v12
+#Disable this feature for backwards compatibility with PA < v12
 pa_encoding_from_string = ["libpulse-binding/pa_encoding_from_string", "libpulse-mainloop-glib-sys/pa_encoding_from_string"]
 
 [badges]

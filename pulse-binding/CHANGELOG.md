@@ -1,3 +1,8 @@
+# <unreleased>
+
+ * Clarified PA version compatibility in `version` mod
+ * Clarified `pa_encoding_from_string` feature purpose
+
 # 2.2.6 (October 28th, 2018)
 
  * Minor tweaks, improving code clarity and such

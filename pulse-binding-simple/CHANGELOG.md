@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Clarified `pa_encoding_from_string` feature purpose
+
 # 2.2.5 (October 8th, 2018)
 
  * Fixed broken attempt to include license file in bundled package

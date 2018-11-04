@@ -20,7 +20,7 @@ pkg-config = "0.3"
 
 [features]
 default = ["pa_encoding_from_string"]
-#include pa_encoding_from_string function, symbol for which might be missing before PA v12
+#Disable this feature for backwards compatibility with PA < v12
 pa_encoding_from_string = []
 
 [badges]
