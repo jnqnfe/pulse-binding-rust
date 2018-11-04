@@ -1,9 +1,10 @@
-# <unreleased>
+# 1.4.0 (November 4th, 2018)
 
  * Switched to using package-config for linking (though retaining the direct linking as a fallback
    for those without the necessary *.pc files installed). Thanks to @JohnAZoidberg on github for
    the original patch.
  * Clarified `pa_encoding_from_string` feature purpose
+ * Updated `libpulse-sys` version dependency (1.3 → 1.4)
 
 # 1.3.4 (October 8th, 2018)
 

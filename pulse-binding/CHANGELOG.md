@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.3.0 (November 4th, 2018)
 
  * Improved the `version` mod:
     - Constants now vary depending upon backwards compatibility flags, correctly indicating the
@@ -9,6 +9,7 @@
     - Deprecated `get_headers_version`
  * Clarified PA version compatibility in `version` mod
  * Clarified `pa_encoding_from_string` feature purpose
+ * Updated `libpulse-sys` version dependency (1.3 → 1.4)
 
 # 2.2.6 (October 28th, 2018)
 

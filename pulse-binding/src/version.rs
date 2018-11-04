@@ -31,7 +31,7 @@
 //!   `pa_encoding_from_string` feature flag is disabled.
 //!
 //! When feature flags are used for backwards compatibility, the versions defined here (as of
-//! `<ver>`) are adjusted to return the newest compatible major version.
+//! version `2.3`) are adjusted to return the newest compatible major version.
 //!
 //! The `get_library_version` function always obtains at runtime the version of the actual PA
 //! library in use.
@@ -69,7 +69,7 @@ mod actual {
     pub const TARGET_VERSION: (u8, u8) = (11, 0);
 }
 
-#[deprecated(note="use `TARGET_VERSION_STRING` instead")]
+#[deprecated(since = "2.3.0", note="use `TARGET_VERSION_STRING` instead")]
 pub const BINDING_TARGET_VERSION: &str = TARGET_VERSION_STRING;
 
 /// The current API version. Please note that this is only ever increased on incompatible API
@@ -79,11 +79,11 @@ pub const API_VERSION: u8 = 12;
 /// The current protocol version.
 pub const PROTOCOL_VERSION: u16 = 32;
 
-#[deprecated(note="use `TARGET_VERSION` instead")]
+#[deprecated(since = "2.3.0", note="use `TARGET_VERSION` instead")]
 pub const MAJOR: u8 = TARGET_VERSION.0;
-#[deprecated(note="use `TARGET_VERSION` instead")]
+#[deprecated(since = "2.3.0", note="use `TARGET_VERSION` instead")]
 pub const MINOR: u8 = TARGET_VERSION.1;
-#[deprecated(note="not useful, always zero")]
+#[deprecated(since = "2.3.0", note="not useful, always zero")]
 pub const MICRO: u8 = 0;
 
 /// Returns indication of PA version compatibility support, depending upon feature flags used
@@ -93,7 +93,7 @@ pub fn get_compatibility() -> Compatibility {
 }
 
 /// Returns `BINDING_TARGET_VERSION`
-#[deprecated(note="not useful, confusing name, use `TARGET_VERSION_STRING` directly or `get_compatibility()` instead")]
+#[deprecated(since = "2.3.0", note="not useful, confusing name, use `TARGET_VERSION_STRING` directly or `get_compatibility()` instead")]
 #[inline(always)]
 pub fn get_headers_version() -> &'static str {
     #[allow(deprecated)]

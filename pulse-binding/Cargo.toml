@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-binding"
-version = "2.2.6"
+version = "2.3.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
@@ -14,7 +14,7 @@ exclude = ["README.md"]
 
 [dependencies]
 libc = "0.2"
-libpulse-sys = { path = "../pulse-sys", version = "1.3", default-features = false }
+libpulse-sys = { path = "../pulse-sys", version = "1.4", default-features = false }
 
 [features]
 default = ["pa_encoding_from_string"]

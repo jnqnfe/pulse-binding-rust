@@ -12,7 +12,7 @@ binding/sys crates would diverge so much. Tagging was done based on this, and la
 be done based on the primary `pulse-binding` crate. I am aware that this is an unfortunate potential
 source of confusion now.
 
-# <unreleased>
+# 2.3.0 (November 4th, 2018)
 
  * Clarified PA version compatibility in readme
 

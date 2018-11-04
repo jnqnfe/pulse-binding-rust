@@ -1,6 +1,8 @@
-# <unreleased>
+# 2.3.0 (November 4th, 2018)
 
  * Clarified `pa_encoding_from_string` feature purpose
+ * Updated `libpulse-binding` version dependency (2.2 → 2.3)
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.3 → 1.4)
 
 # 2.2.5 (October 8th, 2018)
 

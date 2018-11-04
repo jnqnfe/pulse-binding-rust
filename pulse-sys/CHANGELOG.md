@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.4.0 (November 4th, 2018)
 
  * Switched to using package-config for linking (though retaining the direct linking as a fallback
    for those without the necessary *.pc files installed). Thanks to @JohnAZoidberg on github for
