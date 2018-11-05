@@ -281,7 +281,7 @@ pub fn channels_are_valid(channels: u8) -> bool {
     unsafe { capi::pa_channels_valid(channels) != 0 }
 }
 
-/// Pretty print a byte size value (i.e. "2.5 MiB")
+/// Pretty print a byte size value (i.e. “2.5 MiB”)
 pub fn bytes_print(bytes: u32) -> String {
     const PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
     let mut tmp = Vec::with_capacity(PRINT_MAX);

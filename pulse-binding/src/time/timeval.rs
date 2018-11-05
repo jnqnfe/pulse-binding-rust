@@ -23,7 +23,7 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, S
 use std::time::Duration;
 use super::{UnixTs, MonotonicTs, MicroSeconds, USEC_INVALID};
 
-/// Bit to set in `timeval`'s `tv_usec` attribute to mark that the `timeval` is in monotonic time
+/// Bit to set in `timeval`’s `tv_usec` attribute to mark that the `timeval` is in monotonic time
 const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
 
 /// Wrapper for `libc::timeval`, attaching various methods and trait implementations
@@ -84,13 +84,13 @@ impl Timeval {
     /// Set to the specified (monotonic) value
     ///
     /// The `rtclock` boolean is used for indicating support of the rtclock (monotonic time). If
-    /// `true` then the conversion from `MicroSeconds` to `Timeval` is done, and a special 'rt' flag
-    /// bit is set in `Timeval`'s inner `tv_usec` attribute. If `false`, then instead the timestamp
+    /// `true` then the conversion from `MicroSeconds` to `Timeval` is done, and a special ‘rt’ flag
+    /// bit is set in `Timeval`’s inner `tv_usec` attribute. If `false`, then instead the timestamp
     /// is converted to a Unix wallclock timestamp.
     ///
     /// Asserts that `v` is not `USEC_INVALID`
     pub(crate) fn set_rt(&mut self, v: MicroSeconds, rtclock: bool) -> &mut Self {
-        /* This is a copy of PA's internal `pa_timeval_rtstore()` function */
+        /* This is a copy of PA’s internal `pa_timeval_rtstore()` function */
 
         assert_ne!(v, USEC_INVALID);
 
@@ -104,7 +104,7 @@ impl Timeval {
     }
 
     pub(crate) fn wallclock_from_rtclock(&mut self) -> &mut Self {
-        /* This is a copy of PA's internal `wallclock_from_rtclock()` function */
+        /* This is a copy of PA’s internal `wallclock_from_rtclock()` function */
 
         let wc_now = (UnixTs::now()).0;
         let rt_now = Timeval::from((MonotonicTs::now()).0);

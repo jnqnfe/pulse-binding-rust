@@ -45,7 +45,7 @@
 //!
 //! let op = my_context.subscribe(
 //!     interest,   // Our interest mask
-//!     None        // We won't bother with a success callback in this example
+//!     None        // We won’t bother with a success callback in this example
 //! );
 //! ```
 //!
@@ -102,7 +102,7 @@ pub enum Facility {
     /// Global server change, only occurring with
     /// [`Operation::Changed`](enum.Operation.html#Changed.v).
     Server = 7,
-    /* NOTE: value '8' previously assigned, obsoleted */
+    /* NOTE: value `8` previously assigned, obsoleted */
     Card = 9,
 }
 
@@ -129,7 +129,7 @@ impl Facility {
             5 => Some(Facility::Client),
             6 => Some(Facility::SampleCache),
             7 => Some(Facility::Server),
-            /* NOTE: value '8' previously assigned, obsoleted */
+            /* NOTE: value `8` previously assigned, obsoleted */
             9 => Some(Facility::Card),
             _ => None,
         }
@@ -192,7 +192,7 @@ impl Context {
     /// components of the event type respectively (the underlying C API provides this information
     /// combined into a single integer, here we extract the two component parts for you); these are
     /// wrapped in `Option` wrappers should the given values ever not map to the enum variants, but
-    /// it's probably safe to always just `unwrap()` them). The third parameter is an associated
+    /// it’s probably safe to always just `unwrap()` them). The third parameter is an associated
     /// index value.
     pub fn set_subscribe_callback(&mut self,
         callback: Option<Box<FnMut(Option<Facility>, Option<Operation>, u32) + 'static>>)

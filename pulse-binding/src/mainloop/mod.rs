@@ -36,10 +36,10 @@
 //!
 //! The implementations shipped with PulseAudio are:
 //!
-//! * [`Standard`]: A minimal but fast implementation based on the C library's poll() function.
-//! * [`Threaded`]: A special version of the previous implementation where all of PulseAudio's
+//! * [`Standard`]: A minimal but fast implementation based on the C library’s poll() function.
+//! * [`Threaded`]: A special version of the previous implementation where all of PulseAudio’s
 //!   internal handling runs in a separate thread.
-//! * 'Glib': A wrapper around GLib's main loop. This is provided in the separate
+//! * ‘Glib’: A wrapper around GLib’s main loop. This is provided in the separate
 //!   `libpulse_glib_binding` crate.
 //!
 //! UNIX signals may be hooked to a main loop using the functionality from [`::mainloop::signal`].
@@ -51,19 +51,19 @@
 //! ## Execution
 //!
 //! As described in the [standard mainloop documentation], there are three phases to mainloop
-//! execution, and the third - 'dispatch' - is when user callbacks get executed.
+//! execution, and the third - ‘dispatch’ - is when user callbacks get executed.
 //!
 //! It is important to understand that while it is *typical* that user callbacks are executed
-//! by the mainloop's dispatcher, callback execution is not exclusively done there; in some cases
+//! by the mainloop’s dispatcher, callback execution is not exclusively done there; in some cases
 //! callbacks get executed directly in synchronous function execution. For instance, if you set up
 //! a context state change callback, then try to connect the context object, execution of the
-//! 'connect' function call involves (internally within the PulseAudio client library) direct
+//! ‘connect’ function call involves (internally within the PulseAudio client library) direct
 //! execution of this callback in setting the initial connection state. After returning, the
-//! callback is then on only executed asynchronously from the mainloop's dispatcher.
+//! callback is then on only executed asynchronously from the mainloop’s dispatcher.
 //!
 //! While execution using the [`Standard`] mainloop is entirely synchronous, the [`Threaded`]
 //! mainloop implementation runs the standard mainloop in a separate thread and callback execution
-//! occurs asynchronously, requiring careful use of the mainloop's `lock` method. When writing
+//! occurs asynchronously, requiring careful use of the mainloop’s `lock` method. When writing
 //! callbacks with the [`Threaded`] mainloop, users must beware the potential that in a few cases
 //! the callback may be executed in two different scenarios, and with different threads. Note that
 //! the threaded mainloop has an [`in_thread`] method for determining whether or not the thread it
@@ -80,11 +80,11 @@
 //!
 //! Normally when holding multiple references to objects across threads in Rust you would use an
 //! `Arc` wrapper. However, with the [`Threaded`] mainloop, you may be able to get away with using
-//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use it's `lock`
+//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use it’s `lock`
 //! method to synchronise access to objects, and so you know that at any one moment either your
 //! thread (when you take the lock) **or** the event loop thread hold the lock, never both, and thus
 //! only one thread is ever working with objects at any one time, and since Rust actually has no
-//! idea that more than one thread is involved (hidden in the C library's implementation), you can
+//! idea that more than one thread is involved (hidden in the C library’s implementation), you can
 //! safely get away with using `Rc`.
 //!
 //! [`Standard`]: standard/index.html

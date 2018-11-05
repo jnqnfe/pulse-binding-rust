@@ -66,7 +66,7 @@ pub struct DeviceRestore {
     cb_ptrs: CallbackPointers,
 }
 
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]
 struct CallbackPointers {

@@ -114,7 +114,7 @@ impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, P
 /// `Box`); from this you may assume that a pointer is already available. However, this is a pointer
 /// to a trait object, and these are special in Rust, they are twice the size of a normal pointer
 /// because in actual fact it is implemented as a pair of pointers (one to a type instance and one
-/// to a 'vtable'). We can only pass a normal sized pointer through the C API, so we must further
+/// to a ‘vtable’). We can only pass a normal sized pointer through the C API, so we must further
 /// box it, producing `Box<Box<Closure>>` which we convert to `*mut Box<Closure>` and then further
 /// to simply `*mut c_void`.
 pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<ClosureProto>

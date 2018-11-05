@@ -20,12 +20,12 @@
 //! Sometimes it is necessary to query and modify global settings in the server. For this,
 //! PulseAudio has the introspection API. It can list sinks, sources, samples and other aspects of
 //! the server. It can also modify the attributes of the server that will affect operations on a
-//! global level, and not just the application's context.
+//! global level, and not just the application’s context.
 //!
 //! # Usage
 //!
 //! The introspection routines are exposed as methods on an [`Introspector`] object held by the
-//! [`Context`] object, and can be accessed via the [`Context`] object's [`introspect`] method.
+//! [`Context`] object, and can be accessed via the [`Context`] object’s [`introspect`] method.
 //!
 //! # Querying
 //!
@@ -48,7 +48,7 @@
 //!
 //! # Server Information
 //!
-//! The server can be queried about its name, the environment it's running on and the currently
+//! The server can be queried about its name, the environment it’s running on and the currently
 //! active global defaults. Calling [`Introspector::get_server_info`] provides access to a
 //! [`ServerInfo`] structure containing all of these.
 //!
@@ -357,7 +357,7 @@ pub struct SinkInfo<'a> {
     pub proplist: ::proplist::Proplist,
     /// The latency this device has been configured to.
     pub configured_latency: MicroSeconds,
-    /// Some kind of "base" volume that refers to unamplified/unattenuated volume in the context of
+    /// Some kind of “base” volume that refers to unamplified/unattenuated volume in the context of
     /// the output device.
     pub base_volume: ::volume::Volume,
     /// State.
@@ -737,7 +737,7 @@ pub struct SourceInfo<'a> {
     pub proplist: ::proplist::Proplist,
     /// The latency this device has been configured to.
     pub configured_latency: MicroSeconds,
-    /// Some kind of "base" volume that refers to unamplified/unattenuated volume in the context of
+    /// Some kind of “base” volume that refers to unamplified/unattenuated volume in the context of
     /// the input device.
     pub base_volume: ::volume::Volume,
     /// State.
@@ -1059,7 +1059,7 @@ pub struct ServerInfo<'a> {
     pub host_name: Option<Cow<'a, str>>,
     /// Version string of the daemon.
     pub server_version: Option<Cow<'a, str>>,
-    /// Server package name (usually "pulseaudio").
+    /// Server package name (usually “pulseaudio”).
     pub server_name: Option<Cow<'a, str>>,
     /// Default sample specification.
     pub sample_spec: ::sample::Spec,
@@ -1406,9 +1406,9 @@ pub struct CardProfileInfo2<'a> {
     /// The higher this value is, the more useful this profile is as a default.
     pub priority: u32,
 
-    /// Is this profile available? If this is `false`, meaning "unavailable", then it makes no sense
-    /// to try to activate this profile. If this is `true`, it's still not a guarantee that
-    /// activating the profile will result in anything useful, it just means that the server isn't
+    /// Is this profile available? If this is `false`, meaning “unavailable”, then it makes no sense
+    /// to try to activate this profile. If this is `true`, it’s still not a guarantee that
+    /// activating the profile will result in anything useful, it just means that the server isn’t
     /// aware of any reason why the profile would definitely be useless.
     pub available: bool,
 }
@@ -1739,9 +1739,9 @@ pub struct SinkInputInfo<'a> {
     pub proplist: ::proplist::Proplist,
     /// Stream corked.
     pub corked: bool,
-    /// Stream has volume. If not set, then the meaning of this struct's volume member is unspecified.
+    /// Stream has volume. If not set, then the meaning of this struct’s volume member is unspecified.
     pub has_volume: bool,
-    /// The volume can be set. If not set, the volume can still change even though clients can't
+    /// The volume can be set. If not set, the volume can still change even though clients can’t
     /// control the volume.
     pub volume_writable: bool,
     /// Stream format information.
@@ -1968,9 +1968,9 @@ pub struct SourceOutputInfo<'a> {
     pub volume: ::volume::ChannelVolumes,
     /// Stream muted.
     pub mute: bool,
-    /// Stream has volume. If not set, then the meaning of this struct's volume member is unspecified.
+    /// Stream has volume. If not set, then the meaning of this struct’s volume member is unspecified.
     pub has_volume: bool,
-    /// The volume can be set. If not set, the volume can still change even though clients can't
+    /// The volume can be set. If not set, the volume can still change even though clients can’t
     /// control the volume.
     pub volume_writable: bool,
     /// Stream format information.

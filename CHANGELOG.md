@@ -49,7 +49,7 @@ Note, intermediate version numbers were crate specific only
 
  * Fixed Travis testing. Tests were not actually being run, giving a misleading positive result, and
    fixing that then highlighted problems with the test environment which took a few iterations to
-   resolve (hence the 'd' in the version number from premature assumptions of resolving the
+   resolve (hence the ‘d’ in the version number from premature assumptions of resolving the
    problem).
     - Fixed tests not actually being run. I had incorrectly presumed that tests for all sub-crate
       dependencies of the workspace crate would be run automatically, but reviewing the logs

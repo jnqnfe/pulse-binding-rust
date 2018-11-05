@@ -176,9 +176,9 @@ pub struct pa_card_profile_info2 {
     /// The higher this value is, the more useful this profile is as a default.
     pub priority: u32,
 
-    /// Is this profile available? If this is zero, meaning "unavailable", then it makes no sense to
-    /// try to activate this profile. If this is non-zero, it's still not a guarantee that
-    /// activating the profile will result in anything useful, it just means that the server isn't
+    /// Is this profile available? If this is zero, meaning “unavailable”, then it makes no sense to
+    /// try to activate this profile. If this is non-zero, it’s still not a guarantee that
+    /// activating the profile will result in anything useful, it just means that the server isn’t
     /// aware of any reason why the profile would definitely be useless.
     pub available: i32,
 }

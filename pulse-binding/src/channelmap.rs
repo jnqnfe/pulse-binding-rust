@@ -66,37 +66,37 @@ pub enum Position {
     Invalid = -1,
     Mono = 0,
 
-    /// Apple, Dolby call this 'Left'
+    /// Apple, Dolby call this ‘Left’
     FrontLeft,
-    /// Apple, Dolby call this 'Right'
+    /// Apple, Dolby call this ‘Right’
     FrontRight,
-    /// Apple, Dolby call this 'Center'
+    /// Apple, Dolby call this ‘Center’
     FrontCenter,
 
-    /// Microsoft calls this 'Back Center', Apple calls this 'Center Surround',
-    /// Dolby calls this 'Surround Rear Center'
+    /// Microsoft calls this ‘Back Center’, Apple calls this ‘Center Surround’,
+    /// Dolby calls this ‘Surround Rear Center’
     RearCenter,
-    /// Microsoft calls this 'Back Left', Apple calls this 'Left Surround',
-    /// Dolby calls this 'Surround Rear Left'
+    /// Microsoft calls this ‘Back Left’, Apple calls this ‘Left Surround’,
+    /// Dolby calls this ‘Surround Rear Left’
     RearLeft,
-    /// Microsoft calls this 'Back Right', Apple calls this 'Right Surround',
-    /// Dolby calls this 'Surround Rear Right'
+    /// Microsoft calls this ‘Back Right’, Apple calls this ‘Right Surround’,
+    /// Dolby calls this ‘Surround Rear Right’
     RearRight,
 
-    /// Aka subwoofer. Microsoft calls this 'Low Frequency',
-    /// Apple calls this 'LFEScreen'
+    /// Aka subwoofer. Microsoft calls this ‘Low Frequency’,
+    /// Apple calls this ‘LFEScreen’
     Lfe,
 
-    /// Apple, Dolby call this 'Left Center'
+    /// Apple, Dolby call this ‘Left Center’
     FrontLeftOfCenter,
-    /// Apple, Dolby call this 'Right Center'
+    /// Apple, Dolby call this ‘Right Center’
     FrontRightOfCenter,
 
-    /// Apple calls this 'Left Surround Direct',
-    /// Dolby calls this 'Surround Left'
+    /// Apple calls this ‘Left Surround Direct’,
+    /// Dolby calls this ‘Surround Left’
     SideLeft,
-    /// Apple calls this 'Right Surround Direct',
-    /// Dolby calls this 'Surround Right'
+    /// Apple calls this ‘Right Surround Direct’,
+    /// Dolby calls this ‘Surround Right’
     SideRight,
 
     Aux0,
@@ -132,21 +132,21 @@ pub enum Position {
     Aux30,
     Aux31,
 
-    /// Apple calls this 'Top Center Surround'
+    /// Apple calls this ‘Top Center Surround’
     TopCenter,
 
-    /// Apple calls this 'Vertical Height Left'
+    /// Apple calls this ‘Vertical Height Left’
     TopFrontLeft,
-    /// Apple calls this 'Vertical Height Right'
+    /// Apple calls this ‘Vertical Height Right’
     TopFrontRight,
-    /// Apple calls this 'Vertical Height Center'
+    /// Apple calls this ‘Vertical Height Center’
     TopFrontCenter,
 
-    /// Microsoft and Apple call this 'Top Back Left'
+    /// Microsoft and Apple call this ‘Top Back Left’
     TopRearLeft,
-    /// Microsoft and Apple call this 'Top Back Right'
+    /// Microsoft and Apple call this ‘Top Back Right’
     TopRearRight,
-    /// Microsoft and Apple call this 'Top Back Center'
+    /// Microsoft and Apple call this ‘Top Back Center’
     TopRearCenter,
 }
 
@@ -322,27 +322,27 @@ impl Map {
             std::mem::transmute(of)) != 0 }
     }
 
-    /// Checks whether or not it makes sense to apply a volume "balance" with this mapping, i.e. if
+    /// Checks whether or not it makes sense to apply a volume “balance” with this mapping, i.e. if
     /// there are left/right channels available.
     pub fn can_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_balance(std::mem::transmute(self)) != 0 }
     }
 
-    /// Checks whether or not it makes sense to apply a volume "fade" (i.e. "balance" between front
+    /// Checks whether or not it makes sense to apply a volume “fade” (i.e. “balance” between front
     /// and rear) with this mapping, i.e. if there are front/rear channels available.
     pub fn can_fade(&self) -> bool {
         unsafe { capi::pa_channel_map_can_fade(std::mem::transmute(self)) != 0 }
     }
 
-    /// Checks whether or not it makes sense to apply a volume "LFE balance" (i.e. "balance" between
+    /// Checks whether or not it makes sense to apply a volume “LFE balance” (i.e. “balance” between
     /// LFE and non-LFE channels) with this mapping, i.e. if there are LFE and non-LFE channels
     /// available.
     pub fn can_lfe_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_lfe_balance(std::mem::transmute(self)) != 0 }
     }
 
-    /// Tries to find a well-known channel mapping name for this channel mapping, i.e. "stereo",
-    /// "surround-71" and so on. This name can be parsed with
+    /// Tries to find a well-known channel mapping name for this channel mapping, i.e. “stereo”,
+    /// “surround-71” and so on. This name can be parsed with
     /// [`new_from_string`](#method.new_from_string).
     pub fn to_name(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_map_to_name(std::mem::transmute(self)) };
@@ -353,7 +353,7 @@ impl Map {
     }
 
     /// Similar to [`to_name`](#method.to_name), but returning prettier, human readable text labels,
-    /// i.e. "Stereo", "Surround 7.1" and so on.
+    /// i.e. “Stereo”, “Surround 7.1” and so on.
     pub fn to_pretty_name(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_map_to_pretty_name(std::mem::transmute(self)) };
         if ptr.is_null() {

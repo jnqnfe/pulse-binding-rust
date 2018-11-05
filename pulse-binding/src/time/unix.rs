@@ -25,7 +25,7 @@ use super::{Timeval, MicroSeconds};
 pub struct UnixTs(pub(crate) Timeval);
 
 impl UnixTs {
-    /// Current 'time of day'
+    /// Current ‘time of day’
     pub fn now() -> Self {
         let mut tv = Timeval::new_zero();
         unsafe { capi::pa_gettimeofday(&mut tv.0) };

@@ -125,7 +125,7 @@ impl Encoding {
 
     /// Converts a string of the form returned by [`to_string`](#method.to_string) back to an
     /// `Encoding`.
-    //XXX: The C API symbol was missing from PA's symbol file before PA v12, so using feature flag
+    //XXX: The C API symbol was missing from PA’s symbol file before PA v12, so using feature flag
     #[cfg(feature = "pa_encoding_from_string")]
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -165,7 +165,7 @@ impl Info {
     /// Utility function to take a [`::sample::Spec`] and generate the corresponding `Info`.
     ///
     /// Note that if you want the server to choose some of the stream parameters, for example the
-    /// sample rate, so that they match the device parameters, then you shouldn't use this function.
+    /// sample rate, so that they match the device parameters, then you shouldn’t use this function.
     /// In order to allow the server to choose a parameter value, that parameter must be left
     /// unspecified in the `Info` object, and this function always specifies all parameters. An
     /// exception is the channel map: if you pass `None` for the channel map, then the channel map
@@ -194,8 +194,8 @@ impl Info {
         unsafe {
             Self {
                 ptr: ptr,
-                // Note, yes, this should be the weak version, the 'free' function for a format info
-                // object free's its own proplist!
+                // Note, yes, this should be the weak version, the ‘free’ function for a format info
+                // object free’s its own proplist!
                 properties: ::proplist::Proplist::from_raw_weak((*ptr).list),
                 weak: false,
             }
@@ -203,7 +203,7 @@ impl Info {
     }
 
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
-    /// This is the 'weak' version, which avoids destroying the internal object when dropped.
+    /// This is the ‘weak’ version, which avoids destroying the internal object when dropped.
     pub(crate) fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         unsafe {
@@ -227,8 +227,8 @@ impl Info {
 
     /// Returns whether the format represented by self is a subset of the format represented by
     /// `with`. This means that `with` must have all the fields that self does, but the reverse need
-    /// not be true. This is typically expected to be used to check if a stream's format is
-    /// compatible with a given sink. In such a case, self would be the sink's format and `with`
+    /// not be true. This is typically expected to be used to check if a stream’s format is
+    /// compatible with a given sink. In such a case, self would be the sink’s format and `with`
     /// would be the streams.
     pub fn is_compatible_with(&self, with: &Self) -> bool {
         unsafe { capi::pa_format_info_is_compatible(std::mem::transmute(&self.ptr),
@@ -250,7 +250,7 @@ impl Info {
     /// a given `Info`.
     ///
     /// The conversion for PCM formats is straight-forward. For non-PCM formats, if there is a fixed
-    /// size-time conversion (i.e. all IEC61937-encapsulated formats), a "fake" sample spec whose
+    /// size-time conversion (i.e. all IEC61937-encapsulated formats), a “fake” sample spec whose
     /// size-time conversion corresponds to this format is provided and the channel map argument is
     /// ignored. For formats with variable size-time conversion, this function will fail.
     ///
@@ -500,7 +500,7 @@ impl Drop for Info {
 }
 
 impl Clone for Info {
-    /// Returns a new `Info` struct and representing the same format. If this is called on a 'weak'
+    /// Returns a new `Info` struct and representing the same format. If this is called on a ‘weak’
     /// instance, a non-weak object is returned.
     fn clone(&self) -> Self {
         let ptr = unsafe { capi::pa_format_info_copy(std::mem::transmute(&self.ptr)) };

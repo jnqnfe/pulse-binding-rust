@@ -33,7 +33,7 @@ Note, version number 1.3.2 skipped, bumping number into line with the other crat
  * Mainloop API objects now correctly treated as immutable, per related change in version 2.1 of
    `libpulse-binding`.
  * Default-enabled inclusion of the `pa_encoding_from_string` function symbol, which was missing
-   from PA's symbol file and thus not available in the client library before v12.
+   from PA’s symbol file and thus not available in the client library before v12.
 
 # 1.2.1 (June 26th, 2018)
 

@@ -30,7 +30,7 @@ use capi::pa_ext_stream_restore_info as InfoInternal;
 /// module-stream-restore.
 #[derive(Debug)]
 pub struct Info<'a> {
-    /// Identifier string of the stream. A string like "sink-input-by-role:" or similar followed by
+    /// Identifier string of the stream. A string like “sink-input-by-role:” or similar followed by
     /// some arbitrary property value.
     pub name: Option<Cow<'a, str>>,
     /// The channel map for the volume field, if applicable.
@@ -73,7 +73,7 @@ pub struct StreamRestore {
     cb_ptrs: CallbackPointers,
 }
 
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]
 struct CallbackPointers {

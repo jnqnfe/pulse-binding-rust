@@ -46,7 +46,7 @@
 //!     "sample2",            // Name of my sample
 //!     None,                 // Use default sink
 //!     volume::VOLUME_NORM,  // Full volume
-//!     None                  // Don't need a callback
+//!     None                  // Don’t need a callback
 //! );
 //! ```
 //!

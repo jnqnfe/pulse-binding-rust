@@ -17,7 +17,7 @@
 //!
 //! # Overview
 //!
-//! This 'standard' (minimal) main loop implementation is based on the poll() system call. It
+//! This ‘standard’ (minimal) main loop implementation is based on the poll() system call. It
 //! supports the functions defined in the main loop abstraction ([`::mainloop::api`]) and very
 //! little else.
 //!
@@ -30,12 +30,12 @@
 //! [`Mainloop::get_api`] is used.
 //!
 //! Destruction of the [`Mainloop`] object is done automatically when the object falls out of scope.
-//! (Rust's `Drop` trait has been implemented and takes care of it).
+//! (Rust’s `Drop` trait has been implemented and takes care of it).
 //!
 //! # Iteration
 //!
 //! The main loop is designed around the concept of iterations. Each iteration consists of three
-//! steps that repeat during the application's entire lifetime:
+//! steps that repeat during the application’s entire lifetime:
 //!
 //! * Prepare - Build a list of file descriptors that need to be monitored and calculate the next
 //!   timeout.
@@ -145,7 +145,7 @@
 //!     }
 //!
 //!     // Our main loop
-//! #   let mut count = 0; // For automatic unit tests, we'll spin a few times
+//! #   let mut count = 0; // For automatic unit tests, we’ll spin a few times
 //!     let drained = Rc::new(atomic::AtomicBool::new(false));
 //!     loop {
 //!         match mainloop.borrow_mut().iterate(false) {
@@ -224,7 +224,7 @@ pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
 pub enum IterateResult {
     /// Success, with number of sources dispatched
     Success(u32),
-    /// Quit was called, with quit's retval
+    /// Quit was called, with quit’s retval
     Quit(::def::Retval),
     /// An error occurred, with error value
     Err(PAErr),
@@ -344,7 +344,7 @@ impl Mainloop {
         }
     }
 
-    /// Return the return value as specified with the main loop's [`quit`](#method.quit) routine.
+    /// Return the return value as specified with the main loop’s [`quit`](#method.quit) routine.
     pub fn get_retval(&self) -> ::def::Retval {
         ::def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
     }
@@ -360,7 +360,7 @@ impl Mainloop {
     ///
     /// * On success, returns `IterateResult::Success` containing the number of sources dispatched
     ///   in this iteration.
-    /// * If exit was requested, returns `IterateResult::Quit` containing quit's retval.
+    /// * If exit was requested, returns `IterateResult::Quit` containing quit’s retval.
     /// * On error, returns `IterateResult::Err` containing error value.
     pub fn iterate(&mut self, block: bool) -> IterateResult {
         let mut retval: i32 = 0;
@@ -371,11 +371,11 @@ impl Mainloop {
         }
     }
 
-    /// Run unlimited iterations of the main loop object until the main loop's
+    /// Run unlimited iterations of the main loop object until the main loop’s
     /// [`quit`](#method.quit) routine is called.
     ///
-    /// On success, returns `Ok` containing quit's return value. On error returns `Err` containing a
-    /// tuple of the error value and quit's return value.
+    /// On success, returns `Ok` containing quit’s return value. On error returns `Err` containing a
+    /// tuple of the error value and quit’s return value.
     pub fn run(&mut self) -> Result<::def::Retval, (PAErr, ::def::Retval)> {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_run((*self._inner).ptr, &mut retval) } {

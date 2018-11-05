@@ -52,7 +52,7 @@ impl<'a> RolePriorityInfo<'a> {
 /// module-device-manager.
 #[derive(Debug)]
 pub struct Info<'a> {
-    /// Identifier string of the device. A string like "sink:" or similar followed by the name of
+    /// Identifier string of the device. A string like “sink:” or similar followed by the name of
     /// the device.
     pub name: Option<Cow<'a, str>>,
     /// The description of the device when it was last seen, if applicable and saved.
@@ -111,7 +111,7 @@ pub struct DeviceManager {
     cb_ptrs: CallbackPointers,
 }
 
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]
 struct CallbackPointers {

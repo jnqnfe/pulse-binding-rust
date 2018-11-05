@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! PulseAudio Rust language binding library for the 'GLIB mainloop' component.
+//! PulseAudio Rust language binding library for the ‘GLIB mainloop’ component.
 //!
 //! This component provides a wrapper around the GLIB main loop. Use this to embed PulseAudio into
 //! your GLIB/GTK+/GNOME programs.
@@ -21,10 +21,10 @@
 //! # About
 //!
 //! This library is a binding that allows Rust code to connect to the PulseAudio sound server via
-//! PulseAudio's existing C API. This binding provides a safe(r) Rust interface which might be
+//! PulseAudio’s existing C API. This binding provides a safe(r) Rust interface which might be
 //! preferred over the raw C API provided by the underlying `sys` linking crate.
 //!
-//! This crate provides an interface to PulseAudio's 'GLIB mainloop' component, and should be used
+//! This crate provides an interface to PulseAudio’s ‘GLIB mainloop’ component, and should be used
 //! in addition to the general `libpulse_binding` crate.
 //!
 //! # Introduction
@@ -35,7 +35,7 @@
 //!
 //! # Usage
 //!
-//! Firstly, add a dependency on the crate in your program's `Cargo.toml` file. Secondly, import the
+//! Firstly, add a dependency on the crate in your program’s `Cargo.toml` file. Secondly, import the
 //! crate along with the general `libpulse_binding` crate to the root of your program:
 //!
 //! ```rust,ignore
@@ -61,9 +61,9 @@ use pulse::mainloop::api::MainloopInternalType;
 
 pub use capi::GMainContext;
 
-/* Note, we cannot simply use the object defined in the 'sys' crate, since either the type or the
+/* Note, we cannot simply use the object defined in the ‘sys’ crate, since either the type or the
  * trait need to be defined locally in order to link them. Thus, we create the below type (an empty
- * one, just used as an opaque pointer), and transmute to the 'sys' crate one.
+ * one, just used as an opaque pointer), and transmute to the ‘sys’ crate one.
  */
 
 /// An opaque GLIB main loop object

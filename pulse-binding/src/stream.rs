@@ -75,7 +75,7 @@
 //! and additional latencies will be adjusted in a way that it matches `tlength` resp. `fragsize`.
 //! Set [`flags::ADJUST_LATENCY`] if you want to control the overall playback latency for your
 //! stream. Unset it if you want to control only the latency induced by the server-side, rewritable
-//! playback buffer. The server will try to fulfill the client's latency requests as good as
+//! playback buffer. The server will try to fulfill the client’s latency requests as good as
 //! possible. However if the underlying hardware cannot change the hardware buffer length or only in
 //! a limited range, the actually resulting latency might be different from what the client
 //! requested. Thus, for synchronization clients always need to check the actual measured latency
@@ -198,12 +198,12 @@
 //! synchronously. If stream operations like [`Stream::cork`] are issued on one of the synchronized
 //! streams, they are simultaneously issued on the others.
 //!
-//! To synchronize a stream to another, just pass the "master" stream as the last argument to
-//! [`Stream::connect_playback`]. To make sure that the freshly created stream doesn't start
+//! To synchronize a stream to another, just pass the “master” stream as the last argument to
+//! [`Stream::connect_playback`]. To make sure that the freshly created stream doesn’t start
 //! playback right-away, make sure to pass [`flags::START_CORKED`] and, after all streams have been
 //! created, uncork them all with a single call to [`Stream::uncork`] for the master stream.
 //!
-//! To make sure that a particular stream doesn't stop to play when a server side buffer underrun
+//! To make sure that a particular stream doesn’t stop to play when a server side buffer underrun
 //! happens on it while the other synchronized streams continue playing and hence deviate, you need
 //! to pass a [`::def::BufferAttr`] with `prebuf` set to `0` when connecting.
 //!
@@ -280,7 +280,7 @@ pub struct Stream {
     cb_ptrs: CallbackPointers,
 }
 
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]
 struct CallbackPointers {
@@ -369,10 +369,10 @@ pub mod flags {
     /// [`Stream::get_time`]: ../struct.Stream.html#method.get_time
     pub const INTERPOLATE_TIMING: FlagSet = capi::PA_STREAM_INTERPOLATE_TIMING;
 
-    /// Don't force the time to increase monotonically. If this option is enabled,
+    /// Don’t force the time to increase monotonically. If this option is enabled,
     /// [`Stream::get_time`] will not necessarily return always monotonically increasing time
     /// values on each call. This may confuse applications which cannot deal with time going
-    /// 'backwards', but has the advantage that bad transport latency estimations that caused the
+    /// ‘backwards’, but has the advantage that bad transport latency estimations that caused the
     /// time to jump ahead can be corrected quickly, without the need to wait.
     ///
     /// [`Stream::get_time`]: ../struct.Stream.html#method.get_time
@@ -387,11 +387,11 @@ pub mod flags {
     /// [`Stream::get_latency`]: ../struct.Stream.html#method.get_latency
     pub const AUTO_TIMING_UPDATE: FlagSet = capi::PA_STREAM_AUTO_TIMING_UPDATE;
 
-    /// Don't remap channels by their name, instead map them simply by their index. Implies
+    /// Don’t remap channels by their name, instead map them simply by their index. Implies
     /// [`NO_REMIX_CHANNELS`](constant.NO_REMIX_CHANNELS.html).
     pub const NO_REMAP_CHANNELS: FlagSet = capi::PA_STREAM_NO_REMAP_CHANNELS;
 
-    /// When remapping channels by name, don't upmix or downmix them to related channels. Copy them
+    /// When remapping channels by name, don’t upmix or downmix them to related channels. Copy them
     /// into matching channels of the device 1:1.
     pub const NO_REMIX_CHANNELS: FlagSet = capi::PA_STREAM_NO_REMIX_CHANNELS;
 
@@ -405,7 +405,7 @@ pub mod flags {
     /// When creating streams with [`Stream::new_extended`], this flag has no effect. If you specify
     /// a format with PCM encoding, and you want the server to choose the sample format, then you
     /// should leave the sample format unspecified in the [`::format::Info`] object. This also means
-    /// that you can't use [`::format::Info::new_from_sample_spec`], because that function always
+    /// that you can’t use [`::format::Info::new_from_sample_spec`], because that function always
     /// sets the sample format.
     ///
     /// [`Stream::get_sample_spec`]: ../struct.Stream.html#method.get_sample_spec
@@ -421,7 +421,7 @@ pub mod flags {
     /// When creating streams with [`Stream::new_extended`], this flag has no effect. If you specify
     /// a format with PCM encoding, and you want the server to choose the sample rate, then you
     /// should leave the rate unspecified in the [`::format::Info`] object. This also means that you
-    /// can't use [`::format::Info::new_from_sample_spec`], because that function always sets the
+    /// can’t use [`::format::Info::new_from_sample_spec`], because that function always sets the
     /// sample rate.
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
@@ -437,7 +437,7 @@ pub mod flags {
     /// When creating streams with [`Stream::new_extended`], this flag has no effect. If you specify
     /// a format with PCM encoding, and you want the server to choose the channel count and/or
     /// channel map, then you should leave the channels and/or the channel map unspecified in the
-    /// [`::format::Info`] object. This also means that you can't use
+    /// [`::format::Info`] object. This also means that you can’t use
     /// [`::format::Info::new_from_sample_spec`], because that function always sets the channel
     /// count (but if you only want to leave the channel map unspecified, then
     /// [`::format::Info::new_from_sample_spec`] works, because the channel map parameter is
@@ -449,7 +449,7 @@ pub mod flags {
     /// [`::format::Info::new_from_sample_spec`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_CHANNELS: FlagSet = capi::PA_STREAM_FIX_CHANNELS;
 
-    /// Don't allow moving of this stream to another sink/device. Useful if you use any of the
+    /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
     /// `Fix*` flags and want to make sure that resampling never takes place -- which might happen
     /// if the stream is moved to another sink/source with a different sample spec/channel map.
     pub const DONT_MOVE: FlagSet = capi::PA_STREAM_DONT_MOVE;
@@ -476,7 +476,7 @@ pub mod flags {
     /// [`::def::BufferAttr`]: ../../def/struct.BufferAttr.html
     pub const ADJUST_LATENCY: FlagSet = capi::PA_STREAM_ADJUST_LATENCY;
 
-    /// Enable compatibility mode for legacy clients that rely on a "classic" hardware device
+    /// Enable compatibility mode for legacy clients that rely on a “classic” hardware device
     /// fragment-style playback model. If this option is set, the `minreq` value of the buffer
     /// metrics gets a new meaning: instead of just specifying that no requests asking for less new
     /// data than this value will be made to the client it will also guarantee that requests are
@@ -490,7 +490,7 @@ pub mod flags {
     /// [`::def::BufferAttr`]: ../../def/struct.BufferAttr.html
     pub const EARLY_REQUESTS: FlagSet = capi::PA_STREAM_EARLY_REQUESTS;
 
-    /// If set this stream won't be taken into account when it is checked whether the device this
+    /// If set this stream won’t be taken into account when it is checked whether the device this
     /// stream is connected to should auto-suspend.
     pub const DONT_INHIBIT_AUTO_SUSPEND: FlagSet = capi::PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND;
 
@@ -505,7 +505,7 @@ pub mod flags {
     /// stream, make sure this stream is terminated.
     pub const FAIL_ON_SUSPEND: FlagSet = capi::PA_STREAM_FAIL_ON_SUSPEND;
 
-    /// If a volume is passed when this stream is created, consider it relative to the sink's
+    /// If a volume is passed when this stream is created, consider it relative to the sink’s
     /// current volume, never as absolute device volume. If this is not specified the volume will be
     /// consider absolute when the sink is in flat volume mode, relative otherwise.
     pub const RELATIVE_VOLUME: FlagSet = capi::PA_STREAM_RELATIVE_VOLUME;
@@ -748,15 +748,15 @@ impl Stream {
     /// devices to make other sinks/sources or capabilities available to be able to accept the
     /// stream.
     ///
-    /// Before PA 0.9.20 it was not defined whether the 'volume' parameter was interpreted relative
-    /// to the sink's current volume or treated as an absolute device volume. Since PA 0.9.20 it is
+    /// Before PA 0.9.20 it was not defined whether the ‘volume’ parameter was interpreted relative
+    /// to the sink’s current volume or treated as an absolute device volume. Since PA 0.9.20 it is
     /// an absolute volume when the sink is in flat volume mode, and relative otherwise, thus making
     /// sure the volume passed here has always the same semantics as the volume passed to
     /// [`::context::introspect::Introspector::set_sink_input_volume`]. It is possible to figure out
     /// whether flat volume mode is in effect for a given sink by calling
     /// [`::context::introspect::Introspector::get_sink_info_by_name`].
     ///
-    /// Since PA 5.0, it's possible to specify a single-channel volume even if the stream has
+    /// Since PA 5.0, it’s possible to specify a single-channel volume even if the stream has
     /// multiple channels. In that case the same volume is applied to all channels.
     ///
     /// # Params
@@ -871,7 +871,7 @@ impl Stream {
     /// Prepare writing data to the server (for playback streams).
     ///
     /// This function may be used to optimize the number of memory copies when doing playback
-    /// ("zero-copy"). It is recommended to call this function before each call to [`write`]. It is
+    /// (“zero-copy”). It is recommended to call this function before each call to [`write`]. It is
     /// used to obtain a chunk of PA internally allocated memory, into which you can directly write
     /// your data before calling [`write`] to actually execute the write.
     ///
@@ -894,7 +894,7 @@ impl Stream {
     ///
     /// The memory should **not** be explicitly freed by the caller.
     ///
-    /// An invocation of [`write`] should "quickly" follow a [`begin_write`]. It is not recommended
+    /// An invocation of [`write`] should “quickly” follow a [`begin_write`]. It is not recommended
     /// letting an unbounded amount of time pass after calling [`begin_write`] and before calling
     /// [`write`]. Calling [`begin_write`] twice without calling [`write`] or [`cancel_write`] in
     /// between will return exactly the same `data` pointer and `nbytes` values.
@@ -959,12 +959,12 @@ impl Stream {
     ///
     /// # Params
     ///
-    /// * `data`: The data to write. The length must be in multiples of the stream's sample spec
+    /// * `data`: The data to write. The length must be in multiples of the stream’s sample spec
     ///   frame size.
     /// * `free_cb`: A cleanup routine for the data or `None` to request an internal copy of the
     ///   data.
     /// * `offset`: Offset for seeking. Must be `0` for upload streams. Must be in multiples of the
-    ///   stream's sample spec frame size.
+    ///   stream’s sample spec frame size.
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
@@ -993,7 +993,7 @@ impl Stream {
     ///
     /// # Params
     ///
-    /// * `data`: The data to write. The length must be in multiples of the stream's sample spec
+    /// * `data`: The data to write. The length must be in multiples of the stream’s sample spec
     ///   frame size.
     /// * `free_cb`: A cleanup routine for the data or `None` to request an internal copy of the
     ///   data. If provided, the accompanying data pointer will be supplied to the callback.
@@ -1028,7 +1028,7 @@ impl Stream {
     ///    than a complete fragment). This is pointing into an internal buffer, so obviously you
     ///    must make a copy of it if you want to keep it.
     ///  * If there is no data at the current read index, it means that either the buffer is empty
-    ///    or it contains a hole (that is, the write index is ahead of the read index but there's no
+    ///    or it contains a hole (that is, the write index is ahead of the read index but there’s no
     ///    data where the read index points at). If the buffer is empty, the [`Empty`] result
     ///    variant will be returned. If there is a hole, the [`Hole`] variant will be returned,
     ///    containing the length of the hole in bytes.
@@ -1076,7 +1076,7 @@ impl Stream {
 
     /// Return the number of bytes requested by the server that have not yet been written.
     ///
-    /// It is possible to write more than this amount, up to the stream's [`buffer_attr.maxlength`]
+    /// It is possible to write more than this amount, up to the stream’s [`buffer_attr.maxlength`]
     /// bytes. This is usually not desirable, though, as it would increase stream latency to be
     /// higher than requested ([`buffer_attr.tlength`]).
     ///
@@ -1241,7 +1241,7 @@ impl Stream {
     ///
     /// The callback is given a name which represents what event occurred. The set of defined events
     /// can be extended at any time. Also, server modules may introduce additional message types so
-    /// make sure that your callback function ignores messages it doesn't know. Some well known
+    /// make sure that your callback function ignores messages it doesn’t know. Some well known
     /// event names can be found in the [`event_names`](event_names/index.html) submodule. It is
     /// also given an (owned) property list.
     pub fn set_event_callback(&mut self, callback: Option<Box<FnMut(String, Proplist) + 'static>>) {
@@ -1308,7 +1308,7 @@ impl Stream {
 
     /// Flush the playback or record buffer of this stream.
     ///
-    /// This discards any audio data in the buffer. Most of the time you're better off using the
+    /// This discards any audio data in the buffer. Most of the time you’re better off using the
     /// parameter `seek` of [`write`](#method.write) instead of this function.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
@@ -1386,9 +1386,9 @@ impl Stream {
     /// returned value is always greater or equal to the value returned by the last call). This
     /// behaviour can be disabled by using [`flags::NOT_MONOTONIC`]. This may be desirable to better
     /// deal with bad estimations of transport latencies, but may have strange effects if the
-    /// application is not able to deal with time going 'backwards'.
+    /// application is not able to deal with time going ‘backwards’.
     ///
-    /// The time interpolator activated by [`flags::INTERPOLATE_TIMING`] favours 'smooth' time
+    /// The time interpolator activated by [`flags::INTERPOLATE_TIMING`] favours ‘smooth’ time
     /// graphs over accurate ones to improve the smoothness of UI operations that are tied to the
     /// audio clock. If accuracy is more important to you, you might need to estimate your timing
     /// based on the data from [`get_timing_info`] yourself or not work with interpolated timing at
@@ -1460,19 +1460,19 @@ impl Stream {
         unsafe { std::mem::transmute(ptr) }
     }
 
-    /// Return a pointer to the stream's sample specification.
+    /// Return a pointer to the stream’s sample specification.
     pub fn get_sample_spec<'a>(&mut self) -> Option<&'a ::sample::Spec> {
         let ptr = unsafe { capi::pa_stream_get_sample_spec(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
 
-    /// Return a pointer to the stream's channel map.
+    /// Return a pointer to the stream’s channel map.
     pub fn get_channel_map<'a>(&mut self) -> Option<&'a ::channelmap::Map> {
         let ptr = unsafe { capi::pa_stream_get_channel_map(self.ptr) };
         unsafe { std::mem::transmute(ptr) }
     }
 
-    /// Return a pointer to the stream's format.
+    /// Return a pointer to the stream’s format.
     pub fn get_format_info(&self) -> Option<::format::Info> {
         let ptr = unsafe { capi::pa_stream_get_format_info(self.ptr) };
         if ptr.is_null() {

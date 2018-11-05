@@ -18,7 +18,7 @@
 //! # About
 //!
 //! This library is a binding that allows Rust code to connect to the PulseAudio sound server via
-//! PulseAudio's existing C API. This binding provides a safe(r) Rust interface which might be
+//! PulseAudio’s existing C API. This binding provides a safe(r) Rust interface which might be
 //! preferred over the raw C API provided by the underlying `sys` linking crate.
 //!
 //! The documentation below and throughout this crate have been largely lifted from the C API header
@@ -101,7 +101,7 @@
 //!
 //! # Usage
 //!
-//! Firstly, add a dependency on the crate in your program's `Cargo.toml` file. Secondly, import the
+//! Firstly, add a dependency on the crate in your program’s `Cargo.toml` file. Secondly, import the
 //! crate to the root of your program:
 //!
 //! ```rust,ignore

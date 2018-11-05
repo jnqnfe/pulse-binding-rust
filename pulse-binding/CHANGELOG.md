@@ -52,7 +52,7 @@
  * Time: Replaced `rtclock::now` with `MonotonicTs::now`
  * Mainloop: Events now take closures for callbacks, like the rest of the API
  * Operation: Fixed possible memory leak with cancellation
- * Context: Now takes a ref to the mainloop instead of the mainloop's API in creation methods
+ * Context: Now takes a ref to the mainloop instead of the mainloop’s API in creation methods
  * Mainloop/api: Moved the `mainloop_api_once` method to the `Mainloop` trait from the mainloop API
    structure, and renamed it to `once_event`.
  * Mainloop/signals: Converted to a trait and implemented on mainloops, rather than being
@@ -67,12 +67,12 @@
  * Context: Removed `rttime_restart` method, made obsolete by the new `restart_rt` method on the
    event itself.
  * Stream: Removed the `get_context` method.
-   This method returned a 'weak' wrapper object, where 'weak' means that it deliberately will not
+   This method returned a ‘weak’ wrapper object, where ‘weak’ means that it deliberately will not
    decrement the ref count of the underlying C object on drop. This was exactly what was wanted
    back in v1.x, however in v2.0 we introduced closure based callbacks, and the `Context` object
    (wrapper) was extended to hold saved multi-use callbacks. This causes a problem. If you use this
    `get_context` method to get a weak ref, then use it to change a multi-use callback, the new
-   callback gets saved into the 'weak' object, and then you need both that and the original context
+   callback gets saved into the ‘weak’ object, and then you need both that and the original context
    object wrapper to both exist for the lifetime that you want the new callback to remain in use.
    Not ideal, and not obvious. To fix it would require that `Stream` creation methods take the
    `Context` with an `Rc` wrapper so it can hold onto a cloned `Rc` ref, instead of taking a
@@ -119,15 +119,15 @@
 # 2.0 (June 16th, 2018)
 
  * Changed handling of callbacks to support closures!
-   Now you can simply supply a closure, instead of an "extern C" function and a raw `c_void` data
-   pointer, in almost any place across the binding's API that takes a callback. (Note, there are a
+   Now you can simply supply a closure, instead of an `extern C` function and a raw `c_void` data
+   pointer, in almost any place across the binding’s API that takes a callback. (Note, there are a
    few places that have not been changed: Tackling the mainloop API stuff has been postponed to look
-   at later; same for the stream write method's optional 'free' callback; the `SpawnApi` has no
-   userdata arg and thus cannot be done, which is not a big deal; finally the standard mainloop's
-   function for specifying an alternate 'poll' function has been left, at least for now).
+   at later; same for the stream write method’s optional ‘free’ callback; the `SpawnApi` has no
+   userdata arg and thus cannot be done, which is not a big deal; finally the standard mainloop’s
+   function for specifying an alternate ‘poll’ function has been left, at least for now).
  * Introspection: Big clean up.
    Previously we simply transmuted from the raw C structs, which was very efficient, and some
-   attributes (like enums) transmuted perfectly to binding counterparts thus were 'clean'. A lot of
+   attributes (like enums) transmuted perfectly to binding counterparts thus were ‘clean’. A lot of
    attributes however were ugly, exposing raw pointers, particularly with strings and lists. Now
    instead a proper conversion is done. This takes more effort, but gives a much more pleasant to
    use interface. Note, the `Debug` trait has been implemented, thus combined with the new support
@@ -152,13 +152,13 @@
  * Introspection: Removed unnecessary converters.
    The `From` trait was implemented for introspection objects in both directions between the binding
    and the sys instances. While this is necessary for the sys to binding direction, the other really
-   wasn't needed.
+   wasn’t needed.
  * Subscribe: Purged autoload API (deprecated since 2009)
  * Updated `libpulse-sys` version dependency (1.1 → 1.2)
 
 # 1.2.2 (June 16th, 2018)
 
- * Format: Restored access to `Info`'s `ptr` attribute
+ * Format: Restored access to `Info`’s `ptr` attribute
 
 # 1.2.1 (June 15th, 2018)
 
@@ -172,8 +172,8 @@
 
  * Fixed lifetime issues with a handful of stream methods
  * Fixed lifetime issues with `get_api` mainloop method
- * mainloop/standard: Fixed `run` method's return data. Incorrectly was returning function call
-   result, while claiming in the documentation that this was the quit retval, which wasn't returned
+ * mainloop/standard: Fixed `run` method’s return data. Incorrectly was returning function call
+   result, while claiming in the documentation that this was the quit retval, which wasn’t returned
    at all.
  * Tidied up error code handling:
     - Added `PAErr` wrapper for the `i32` error type, for cleaner interfaces
@@ -184,11 +184,11 @@
  * Simplified volume handling:
     - `Volume` and `VolumeDB` are now wrappers rather than type aliases
     - Added the `VolumeLinear` wrapper. I had mistakenly taken floating point volumes to all be dB
-      values, but there is actually a distinction between dB and 'linear factor', as per the C API
+      values, but there is actually a distinction between dB and ‘linear factor’, as per the C API
       conversion functions. This is now used in linear related conversions, which thus no longer
       incorrectly portray such values to be dB scale.
     - Renamed `DECIBEL_MININFTY` to `DECIBEL_MINUS_INFINITY`
-    - Renamed `CVolume`'s `inc` and `dec` methods to `increase` and `decrease` respectively for
+    - Renamed `CVolume`’s `inc` and `dec` methods to `increase` and `decrease` respectively for
       clarity (they are not increment/decrement).
  * Stream:
     - The buffer given by `begin_write` is now converted to a slice for you, rather than burdening
@@ -205,10 +205,10 @@
     - Tidied up conversion constants. Note, names (and in some cases types) have changed
     - Re-exported `libc::timeval` (primarily for timer event callback use) from the `timeval` mod
       instead of `mainloop::events::timer`.
- * Added and put to use wrapper for 'quit return values'
+ * Added and put to use wrapper for ‘quit return values’
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
    to avoid unnecessary conversion, but users most likely would prefer `Strings`s, and there should
-   definitely not be a problem with "lossy" utf8 conversion in these cases.
+   definitely not be a problem with “lossy” utf8 conversion in these cases.
  * Stream: Now returning unsigned from `get_underflow_index`
  * Hid string printing length constants, only used internally
  * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
@@ -235,11 +235,11 @@
 # 1.0.5 (May 27th, 2018)
 
  * Fixed and simplified `Proplist` iteration:
-    - Fixed an infinite loop bug: I misread the documentation, it's the return value from the C
+    - Fixed an infinite loop bug: I misread the documentation, it’s the return value from the C
       function call that will be NULL when it reaches the end of the list, not the state variable.
     - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
       cannot be hidden within the iterate function, it causes an infinite loop whereby the function
-      always just returns the first entry wrapped in `Some`. I don't know wtf I was thinking.
+      always just returns the first entry wrapped in `Some`. I don’t know wtf I was thinking.
     - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust `Iterator` object, which makes iterating much more simple and tidy.
  * CVolume: Made `self` for `is_[muted|norm]` immutable

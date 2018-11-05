@@ -162,12 +162,12 @@ impl Default for pa_channel_position_t {
 pub enum pa_channel_map_def_t {
     /// The mapping from RFC3551, which is based on AIFF-C.
     AIFF,
-    /// The default mapping used by ALSA. This mapping is probably not too useful since ALSA's
+    /// The default mapping used by ALSA. This mapping is probably not too useful since ALSA’s
     /// default channel mapping depends on the device string used.
     ALSA,
     /// Only aux channels.
     Aux,
-    /// Microsoft's WAVEFORMATEXTENSIBLE mapping. This mapping works as if all LSBs of dwChannelMask
+    /// Microsoft’s WAVEFORMATEXTENSIBLE mapping. This mapping works as if all LSBs of dwChannelMask
     /// are set.
     WAVEEx,
     /// The default channel mapping used by OSS as defined in the OSS 4.0 API specs. This mapping is

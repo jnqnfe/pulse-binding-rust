@@ -140,7 +140,7 @@ pub const PA_PROP_WINDOW_VPOS: &str = "window.vpos";
 
 /// For streams that belong to a window on the screen: if the windowing system supports multiple
 /// desktops, a comma separated list of indexes of the desktops this window is visible on. If this
-/// property is an empty string, it is visible on all desktops (i.e. 'sticky'). The first desktop is
+/// property is an empty string, it is visible on all desktops (i.e. ‘sticky’). The first desktop is
 /// zero. E.g. "0,2,3".
 pub const PA_PROP_WINDOW_DESKTOP: &str = "window.desktop";
 
@@ -198,7 +198,7 @@ pub const PA_PROP_APPLICATION_PROCESS_MACHINE_ID: &str = "application.process.ma
 /// $XDG_SESSION_ID. E.g. "5".
 pub const PA_PROP_APPLICATION_PROCESS_SESSION_ID: &str = "application.process.session_id";
 
-/// For devices: device string in the underlying audio layer's format. E.g. "surround51:0".
+/// For devices: device string in the underlying audio layer’s format. E.g. "surround51:0".
 pub const PA_PROP_DEVICE_STRING: &str = "device.string";
 
 /// For devices: API this device is accessed with. E.g. "alsa".
@@ -208,7 +208,7 @@ pub const PA_PROP_DEVICE_API: &str = "device.api";
 /// E.g. "Foobar Industries USB Headset 2000+ Ultra".
 pub const PA_PROP_DEVICE_DESCRIPTION: &str = "device.description";
 
-/// For devices: bus path to the device in the OS' format.
+/// For devices: bus path to the device in the OS’ format.
 /// E.g. "/sys/bus/pci/devices/0000:00:1f.2".
 pub const PA_PROP_DEVICE_BUS_PATH: &str = "device.bus_path";
 
@@ -267,14 +267,14 @@ pub const PA_PROP_DEVICE_INTENDED_ROLES: &str = "device.intended_roles";
 /// "Analog Stereo", ...
 pub const PA_PROP_DEVICE_PROFILE_DESCRIPTION: &str = "device.profile.description";
 
-/// For modules: the author's name, formatted as UTF-8 string. E.g. "Lennart Poettering".
+/// For modules: the author’s name, formatted as UTF-8 string. E.g. "Lennart Poettering".
 pub const PA_PROP_MODULE_AUTHOR: &str = "module.author";
 
-/// For modules: a human readable one-line description of the module's purpose formatted as UTF-8.
+/// For modules: a human readable one-line description of the module’s purpose formatted as UTF-8.
 /// E.g. "Frobnicate sounds with a flux compensator".
 pub const PA_PROP_MODULE_DESCRIPTION: &str = "module.description";
 
-/// For modules: a human readable usage description of the module's arguments formatted as UTF-8.
+/// For modules: a human readable usage description of the module’s arguments formatted as UTF-8.
 pub const PA_PROP_MODULE_USAGE: &str = "module.usage";
 
 /// For modules: a version string for the module. E.g. "0.9.15".
@@ -299,7 +299,7 @@ pub enum pa_proplist {}
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum pa_update_mode_t {
-    /// Replace the entire property list with the new one. Don't keep any of the old data around.
+    /// Replace the entire property list with the new one. Don’t keep any of the old data around.
     Set,
 
     /// Merge new property list into the existing one, not replacing any old entries if they share a

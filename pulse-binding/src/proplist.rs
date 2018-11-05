@@ -101,10 +101,10 @@ pub mod properties {
     pub use capi::PA_PROP_FORMAT_RATE as FORMAT_RATE;
     pub use capi::PA_PROP_FORMAT_CHANNELS as FORMAT_CHANNELS;
 
-    /* These need defining here, rather than 'pub use', in order to correctly link to other things
+    /* These need defining here, rather than `pub use`, in order to correctly link to other things
      * in their doc comments */
 
-    /// For streams: the name of a filter that is desired, e.g. "echo-cancel" or "equalizer-sink".
+    /// For streams: the name of a filter that is desired, e.g. “echo-cancel” or “equalizer-sink”.
     /// Differs from [`FILTER_WANT`] in that it forces PulseAudio to apply the filter, regardless of
     /// whether PulseAudio thinks it makes sense to do so or not. If this is set, [`FILTER_WANT`] is
     /// ignored. In other words, you almost certainly do not want to use this.
@@ -149,7 +149,7 @@ impl std::fmt::Debug for Proplist {
     }
 }
 
-/// Proplist iterator, used for iterating over the list's keys. Returned by the
+/// Proplist iterator, used for iterating over the list’s keys. Returned by the
 /// [`iterate`](struct.Proplist.html#method.iterate) method.
 pub struct Iterator {
     /// The actual C proplist object.
@@ -216,7 +216,7 @@ impl Proplist {
     }
 
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
-    /// pointer. This is the 'weak' version, which avoids destroying the internal object when
+    /// pointer. This is the ‘weak’ version, which avoids destroying the internal object when
     /// dropped.
     pub(crate) fn from_raw_weak(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
@@ -311,7 +311,7 @@ impl Proplist {
         Some(unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) })
     }
 
-    /// Merge property list "other" into self, adhering to the merge mode specified.
+    /// Merge property list “other” into self, adhering to the merge mode specified.
     pub fn merge(&mut self, other: &Self, mode: UpdateMode) {
         unsafe { capi::pa_proplist_update(self.ptr, mode, other.ptr); }
     }
@@ -353,7 +353,7 @@ impl Proplist {
         }
     }
 
-    /// Get an immutable iterator over the list's keys.
+    /// Get an immutable iterator over the list’s keys.
     ///
     /// The property list should not be modified during iteration through the list, with the
     /// exception of deleting the current entry. The keys in the property list do not have any
@@ -458,7 +458,7 @@ impl Drop for Proplist {
 
 impl Clone for Proplist {
     /// Allocate a new property list and copy over every single entry from the specified list. If
-    /// this is called on a 'weak' instance, a non-weak object is returned.
+    /// this is called on a ‘weak’ instance, a non-weak object is returned.
     fn clone(&self) -> Self {
         Self::from_raw(unsafe { capi::pa_proplist_copy(self.ptr) })
     }

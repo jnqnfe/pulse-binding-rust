@@ -40,15 +40,15 @@
 //! [`Mainloop`] object can be destroyed.
 //!
 //! Destruction of the [`Mainloop`] object is done automatically when the object falls out of scope.
-//! (Rust's `Drop` trait has been implemented and takes care of it).
+//! (Rust’s `Drop` trait has been implemented and takes care of it).
 //!
 //! # Locking
 //!
-//! Since the PulseAudio API doesn't allow concurrent accesses to objects, a locking scheme must be
+//! Since the PulseAudio API doesn’t allow concurrent accesses to objects, a locking scheme must be
 //! used to guarantee safe usage. The threaded main loop API provides such a scheme through the
 //! functions [`Mainloop::lock`] and [`Mainloop::unlock`].
 //!
-//! The lock is recursive, so it's safe to use it multiple times from the same thread. Just make
+//! The lock is recursive, so it’s safe to use it multiple times from the same thread. Just make
 //! sure you call [`Mainloop::unlock`] the same number of times you called [`Mainloop::lock`].
 //!
 //! The lock needs to be held whenever you call any PulseAudio function that uses an object
@@ -86,7 +86,7 @@
 //!
 //! The easiest way to turn the callback based operations into synchronous ones, is to simply wait
 //! for the callback to be called and continue from there. This is the approach chosen in
-//! PulseAudio's threaded API.
+//! PulseAudio’s threaded API.
 //!
 //! ## Basic callbacks
 //!
@@ -334,7 +334,7 @@
 //!     mainloop.borrow_mut().unlock();
 //!
 //!     // Our main loop
-//! #   let mut count = 0; // For automatic unit tests, we'll spin a few times
+//! #   let mut count = 0; // For automatic unit tests, we’ll spin a few times
 //!     loop {
 //!         mainloop.borrow_mut().lock();
 //!
@@ -508,7 +508,7 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }
     }
 
-    /// Return the return value as specified with the main loop's `quit` routine (used internally by
+    /// Return the return value as specified with the main loop’s `quit` routine (used internally by
     /// threaded mainloop).
     pub fn get_retval(&self) -> ::def::Retval {
         ::def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })

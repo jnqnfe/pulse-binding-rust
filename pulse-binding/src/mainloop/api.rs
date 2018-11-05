@@ -81,9 +81,9 @@ impl<T> Drop for MainloopInner<T>
     }
 }
 
-/// This is the actual implementation of the 'inner type' trait.
+/// This is the actual implementation of the ‘inner type’ trait.
 ///
-/// It is not possible to replace this with 'default' method implementations within the trait itself
+/// It is not possible to replace this with ‘default’ method implementations within the trait itself
 /// since the trait does not know about the existence of the struct attributes being accessed.
 impl<T> MainloopInnerType for MainloopInner<T>
     where T: MainloopInternalType
@@ -120,7 +120,7 @@ pub trait Mainloop {
     /// The given callback must accept three parameters, an [`IoEventRef`] object, a copy of the
     /// given file descriptor, and an event flag set, indicating the event(s) that occurred. The
     /// [`DeferEventRef`] object gives you some opportunity to manage the event source from within
-    /// it's callback execution.
+    /// it’s callback execution.
     ///
     /// [`IoEventRef`]: ../events/io/struct.IoEventRef.html
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
@@ -153,7 +153,7 @@ pub trait Mainloop {
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
     /// The callback must take a [`TimeEventRef`] object, which gives you some opportunity to
-    /// manage the event source from within it's callback execution.
+    /// manage the event source from within it’s callback execution.
     ///
     /// Example event set to fire in five seconds time:
     ///
@@ -198,7 +198,7 @@ pub trait Mainloop {
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
     /// The callback must take a [`TimeEventRef`] object, which gives you some opportunity to
-    /// manage the event source from within it's callback execution.
+    /// manage the event source from within it’s callback execution.
     ///
     /// Example event set to fire in five seconds time:
     ///
@@ -245,7 +245,7 @@ pub trait Mainloop {
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
     /// The callback must take a [`DeferEventRef`] object, which gives you some opportunity to
-    /// manage the event source from within it's callback execution.
+    /// manage the event source from within it’s callback execution.
     ///
     /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
     fn new_deferred_event(&mut self, mut callback: Box<FnMut(DeferEventRef<Self::MI>) + 'static>
@@ -271,8 +271,8 @@ pub trait Mainloop {
     }
 
     /// Run the specified callback once from the main loop using an anonymous defer event.
-    /// If the mainloop runs in a different thread, you need to follow the mainloop implementation's
-    /// rules regarding how to safely create defer events. In particular, if you're using
+    /// If the mainloop runs in a different thread, you need to follow the mainloop implementation’s
+    /// rules regarding how to safely create defer events. In particular, if you’re using
     /// [`::mainloop::threaded`](../threaded/index.html), you must lock the mainloop before calling
     /// this function.
     fn once_event(&mut self, callback: Box<FnMut() + 'static>) {
@@ -371,7 +371,7 @@ impl<'a> From<&'a MainloopApi> for *const ApiInternal {
     }
 }
 
-/// Proxy for anonymous 'once' deferred event callbacks.
+/// Proxy for anonymous ‘once’ deferred event callbacks.
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn once_cb_proxy(_: *const ApiInternal, userdata: *mut c_void) {

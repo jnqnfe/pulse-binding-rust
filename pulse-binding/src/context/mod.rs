@@ -57,7 +57,7 @@
 //!
 //! # Functions
 //!
-//! The sound server's functionality can be divided into a number of subsections:
+//! The sound server’s functionality can be divided into a number of subsections:
 //!
 //! * [`::stream`]
 //! * [`::context::scache`]
@@ -109,7 +109,7 @@ pub struct Context {
     cb_ptrs: CallbackPointers,
 }
 
-/// Holds copies of callback closure pointers, for those that are "multi-use" (may be fired multiple
+/// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]
 struct CallbackPointers {
@@ -132,7 +132,7 @@ type ExtSubscribeCb = ::callbacks::MultiUseCallback<FnMut(),
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum State {
-    /// The context hasn't been connected yet.
+    /// The context hasn’t been connected yet.
     Unconnected,
     /// A connection is being established.
     Connecting,
@@ -180,7 +180,7 @@ pub mod flags {
     pub const NOFLAGS: FlagSet = capi::PA_CONTEXT_NOFLAGS;
     /// Disable autospawning of the PulseAudio daemon if required.
     pub const NOAUTOSPAWN: FlagSet = capi::PA_CONTEXT_NOAUTOSPAWN;
-    /// Don't fail if the daemon is not available when
+    /// Don’t fail if the daemon is not available when
     /// [`Context::connect`](../struct.Context.html#method.connect) is called, instead enter
     /// [`State::Connecting`](../enum.State.html#Connecting.v) state and wait for the daemon to
     /// appear.
@@ -239,7 +239,7 @@ impl Context {
     ///
     /// The callback is given a name which represents what event occurred. The set of defined events
     /// can be extended at any time. Also, server modules may introduce additional message types so
-    /// make sure that your callback function ignores messages it doesn't know. It is also given an
+    /// make sure that your callback function ignores messages it doesn’t know. It is also given an
     /// (owned) property list.
     pub fn set_event_callback(&mut self, callback: Option<Box<FnMut(String, Proplist) + 'static>>) {
         let saved = &mut self.cb_ptrs.event;
@@ -267,10 +267,10 @@ impl Context {
     ///
     /// If server is `None`, connect to the default server. This routine may but will not always
     /// return synchronously on error. Use [`set_state_callback`](#method.set_state_callback) to be
-    /// notified when the connection is established. If `flags` doesn't have
-    /// [`flags::NOAUTOSPAWN`](flags/constant.NOAUTOSPAWN.html) set and no specific server is specified
-    /// or accessible, a new daemon is spawned. If `api` is not `None`, the functions specified in
-    /// the structure are used when forking a new child process.
+    /// notified when the connection is established. If `flags` doesn’t have
+    /// [`flags::NOAUTOSPAWN`](flags/constant.NOAUTOSPAWN.html) set and no specific server is
+    /// specified or accessible, a new daemon is spawned. If `api` is not `None`, the functions
+    /// specified in the structure are used when forking a new child process.
     pub fn connect(&mut self, server: Option<&str>, flags: FlagSet, api: Option<&::def::SpawnApi>
         ) -> Result<(), PAErr>
     {
@@ -540,8 +540,8 @@ impl Context {
 
     /// Load the authentication cookie from a file.
     ///
-    /// This function is primarily meant for PulseAudio's own tunnel modules, which need to load the
-    /// cookie from a custom location. Applications don't usually need to care about the cookie at
+    /// This function is primarily meant for PulseAudio’s own tunnel modules, which need to load the
+    /// cookie from a custom location. Applications don’t usually need to care about the cookie at
     /// all, but if it happens that you know what the authentication cookie is and your application
     /// needs to load it from a non-standard location, feel free to use this function.
     pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), PAErr> {

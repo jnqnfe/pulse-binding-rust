@@ -31,7 +31,7 @@
 //! it depends on the server configuration. With flat volumes enabled, it means the maximum volume
 //! that the sound hardware is capable of, which is usually so high that you absolutely must not set
 //! sink input volume to 100% unless the the user explicitly requests that (note that usually you
-//! shouldn't set the volume anyway if the user doesn't explicitly request it, instead, let
+//! shouldn’t set the volume anyway if the user doesn’t explicitly request it, instead, let
 //! PulseAudio decide the volume for the sink input). With flat volumes disabled the sink input
 //! volume is relative to the sink volume, so 100% sink input volume means that the sink input is
 //! played at the current sink volume level. In this case 100% is often a good default volume for a
@@ -50,10 +50,10 @@
 //!
 //! For simple multiplication, [`Volume::multiply`] and [`ChannelVolumes::sw_multiply`] can be used.
 //!
-//! It's often unknown what scale hardware volumes relate to. Don't use the above functions on sink
+//! It’s often unknown what scale hardware volumes relate to. Don’t use the above functions on sink
 //! and source volumes, unless the sink or source in question has the
 //! [`::def::sink_flags::DECIBEL_VOLUME`] or [`::def::source_flags::DECIBEL_VOLUME`] flag set. The
-//! conversion functions are rarely needed anyway, most of the time it's sufficient to treat all
+//! conversion functions are rarely needed anyway, most of the time it’s sufficient to treat all
 //! volumes as opaque with a range from [`VOLUME_MUTED`] \(0%) to [`VOLUME_NORM`] \(100%).
 //!
 //! [`Volume`]: struct.Volume.html
@@ -446,7 +446,7 @@ impl ChannelVolumes {
             std::mem::transmute(cm)) != 0 }
     }
 
-    /// Calculate a 'balance' value for the specified volume with the specified channel map.
+    /// Calculate a ‘balance’ value for the specified volume with the specified channel map.
     ///
     /// The return value will range from `-1.0` (left) to `+1.0` (right). If no balance value is
     /// applicable to this channel map the return value will always be `0.0`. See
@@ -457,7 +457,7 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_get_balance(std::mem::transmute(self), std::mem::transmute(map)) }
     }
 
-    /// Adjust the 'balance' value for the specified volume with the specified channel map.
+    /// Adjust the ‘balance’ value for the specified volume with the specified channel map.
     ///
     /// The balance is a value between `-1.0` and `+1.0`. This operation might not be reversible!
     /// Also, after this call [`get_balance`] is not guaranteed to actually return the requested
@@ -478,7 +478,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Calculate a 'fade' value (i.e. 'balance' between front and rear) for the specified volume
+    /// Calculate a ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
     /// with the specified channel map.
     ///
     /// The return value will range from -1.0f (rear) to +1.0f (left). If no fade value is
@@ -490,7 +490,7 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_get_fade(std::mem::transmute(self), std::mem::transmute(map)) }
     }
 
-    /// Adjust the 'fade' value (i.e. 'balance' between front and rear) for the specified volume
+    /// Adjust the ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
     /// with the specified channel map.
     ///
     /// The balance is a value between `-1.0` and `+1.0`. This operation might not be reversible!
@@ -512,7 +512,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Calculate a 'lfe balance' value for the specified volume with the specified channel map.
+    /// Calculate a ‘lfe balance’ value for the specified volume with the specified channel map.
     ///
     /// The return value will range from `-1.0` (no lfe) to `+1.0` (only lfe), where `0.0` is
     /// balanced. If no value is applicable to this channel map the return value will always be
@@ -525,7 +525,7 @@ impl ChannelVolumes {
             std::mem::transmute(map)) }
     }
 
-    /// Adjust the 'LFE balance' value for the specified volume with the specified channel map.
+    /// Adjust the ‘LFE balance’ value for the specified volume with the specified channel map.
     ///
     /// The balance is a value between `-1.0` (no lfe) and `+1.0` (only lfe). This operation might
     /// not be reversible! Also, after this call [`get_lfe_balance`] is not guaranteed to actually

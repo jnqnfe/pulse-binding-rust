@@ -28,7 +28,7 @@ pub use capi::pa_operation_state_t as State;
 pub struct Operation<ClosureProto: ?Sized> {
     /// The actual C object.
     ptr: *mut OperationInternal,
-    /// The operation's associated closure callback.
+    /// The operation’s associated closure callback.
     /// This is a copy of the callback userdata pointer given in the C API function call that
     /// generated the operation instance (except not cast to void). It is saved here in case the
     /// user tries to cancel execution of the callback (with the `cancel` method), in which case we
@@ -60,7 +60,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     ///
     /// Beware! This will not necessarily cancel the execution of the operation on the server side.
     /// However it will make sure that the callback associated with this operation will not be
-    /// called any more, effectively disabling the operation from the client side's view.
+    /// called any more, effectively disabling the operation from the client side’s view.
     ///
     /// **Warning**, you should **never** attempt to use this to cancel a callback from within the
     /// execution of that callback itself. This should go without saying, since it makes absolutely
@@ -101,7 +101,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
 impl<ClosureProto: ?Sized> Drop for Operation<ClosureProto> {
     fn drop(&mut self) {
         // Note, we deliberately do not destroy the `saved_cb` closure here. That should only be
-        // destroyed either separately by a callback proxy, or by the `Operation`'s `cancel` method.
+        // destroyed either separately by a callback proxy, or by the `Operation`’s `cancel` method.
         unsafe { capi::pa_operation_unref(self.ptr) };
         self.ptr = null_mut::<OperationInternal>();
     }

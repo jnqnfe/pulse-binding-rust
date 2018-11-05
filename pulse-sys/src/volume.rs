@@ -35,7 +35,7 @@ pub fn pa_volume_ui_max() -> pa_volume_t {
     unsafe { pa_sw_volume_from_dB(11.0) }
 }
 
-/// Special 'invalid' volume
+/// Special ‘invalid’ volume
 pub const PA_VOLUME_INVALID: pa_volume_t = std::u32::MAX;
 
 /// This floor value is used as minus infinity when using

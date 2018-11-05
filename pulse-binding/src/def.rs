@@ -28,7 +28,7 @@ pub type FreeCb = extern "C" fn(p: *mut c_void);
 
 pub type RetvalActual = i32;
 
-/// A wrapper around integer 'quit return values' returned by PulseAudio.
+/// A wrapper around integer ‘quit return values’ returned by PulseAudio.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Retval(pub RetvalActual);
@@ -42,7 +42,7 @@ pub struct BufferAttr {
     /// Setting this to `std::u32::MAX` will initialize this to the maximum value supported by the
     /// server, which is recommended. In strict low-latency playback scenarios you might want to set
     /// this to a lower value, likely together with the [`stream::flags::ADJUST_LATENCY`] flag. If
-    /// you do so, you ensure that the latency doesn't grow beyond what is acceptable for the use
+    /// you do so, you ensure that the latency doesn’t grow beyond what is acceptable for the use
     /// case, at the cost of getting more underruns if the latency is lower than what the server can
     /// reliably handle.
     ///
@@ -63,7 +63,7 @@ pub struct BufferAttr {
     /// per-stream playback buffer size. When [`stream::flags::ADJUST_LATENCY`] is set, the overall
     /// latency of the sink plus the playback buffer size is configured to this value. Set
     /// [`stream::flags::ADJUST_LATENCY`] if you are interested in adjusting the overall latency.
-    /// Don't set it if you are interested in configuring the server-side per-stream playback buffer
+    /// Don’t set it if you are interested in configuring the server-side per-stream playback buffer
     /// size.
     ///
     /// [`stream::flags::ADJUST_LATENCY`]: ../stream/flags/constant.ADJUST_LATENCY.html
@@ -82,7 +82,7 @@ pub struct BufferAttr {
     /// negative.
     ///
     /// Start of playback can be forced using [`stream::Stream::trigger`] even though the prebuffer
-    /// size hasn't been reached. If a buffer underrun occurs, this prebuffering will be again
+    /// size hasn’t been reached. If a buffer underrun occurs, this prebuffering will be again
     /// enabled.
     ///
     /// [`stream::Stream::cork`]: ../stream/struct.Stream.html#method.cork
@@ -126,7 +126,7 @@ pub struct BufferAttr {
 ///
 /// (Where `buffer_usec` is defined as the result of passing ``write_index - read_index`` to
 /// [`sample::Spec::bytes_to_usec`]). The output buffer which `buffer_usec` relates to may be
-/// manipulated freely (with [`stream::Stream::write`]'s `seek` argument, [`stream::Stream::flush`]
+/// manipulated freely (with [`stream::Stream::write`]’s `seek` argument, [`stream::Stream::flush`]
 /// and friends), the buffers `sink_usec` and `source_usec` relate to are first-in first-out (FIFO)
 /// buffers which cannot be flushed or manipulated in any way. The total input latency a sample that
 /// is recorded takes to be delivered to the application is:
@@ -224,7 +224,7 @@ pub struct TimingInfo {
 ///
 /// This may be used to integrate auto spawned daemons into your application. For more information
 /// see [`context::Context::connect`]. When spawning a new child process the `waitpid()` is used on
-/// the child's PID. The spawn routine will not block or ignore SIGCHLD signals, since this cannot
+/// the child’s PID. The spawn routine will not block or ignore SIGCHLD signals, since this cannot
 /// be done in a thread compatible way. You might have to do this in prefork/postfork.
 ///
 /// [`context::Context::connect`]: ../context/struct.Context.html#method.connect
@@ -261,7 +261,7 @@ pub mod sink_flags {
     /// Supports latency querying
     pub const LATENCY: SinkFlagSet = capi::PA_SINK_LATENCY;
 
-    /// Is a hardware sink of some kind, in contrast to "virtual"/software sinks.
+    /// Is a hardware sink of some kind, in contrast to “virtual”/software sinks.
     pub const HARDWARE: SinkFlagSet = capi::PA_SINK_HARDWARE;
 
     /// Is a networked sink of some kind.
@@ -347,7 +347,7 @@ pub mod source_flags {
     /// Supports latency querying
     pub const LATENCY: SourceFlagSet = capi::PA_SOURCE_LATENCY;
 
-    /// Is a hardware source of some kind, in contrast to "virtual"/software source.
+    /// Is a hardware source of some kind, in contrast to “virtual”/software source.
     pub const HARDWARE: SourceFlagSet = capi::PA_SOURCE_HARDWARE;
 
     /// Is a networked source of some kind.
