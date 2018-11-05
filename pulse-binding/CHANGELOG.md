@@ -1,3 +1,9 @@
+# <unreleased>
+
+ * Channelmap/Map: Changed the `new_from_string` method return value to use a `Result` wrapper.
+   Previously failure was just ignored, expecting strings provided to always be valid, as obtained
+   from the `print` and `to_name` methods, but let's be more cautious.
+
 # 2.3.0 (November 4th, 2018)
 
  * Improved the `version` mod:

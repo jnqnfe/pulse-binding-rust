@@ -237,13 +237,17 @@ impl Map {
     /// Parse a channel position list or well-known mapping name into a channel map structure. This
     /// turns the output of [`print`](#method.print) and [`to_name`](#method.to_name) back into a
     /// `Map`.
-    pub fn new_from_string(s: &str) -> Self {
+    pub fn new_from_string(s: &str) -> Result<Self, ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_str = CString::new(s.clone()).unwrap();
         let mut map: Self = Self::default();
-        unsafe { capi::pa_channel_map_parse(std::mem::transmute(&mut map), c_str.as_ptr()) };
-        map
+        unsafe {
+            if capi::pa_channel_map_parse(std::mem::transmute(&mut map), c_str.as_ptr()).is_null() {
+                return Err(());
+            }
+        }
+        Ok(map)
     }
 
     /// Initialize the specified channel map and return a pointer to it. The map will have a defined
@@ -276,7 +280,7 @@ impl Map {
             if capi::pa_channel_map_init_auto(std::mem::transmute(&self), channels, def).is_null() {
                 return None;
             }
-        };
+        }
         Some(self)
     }
 
