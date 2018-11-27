@@ -1610,7 +1610,12 @@ impl Stream {
 
 impl Drop for Stream {
     fn drop(&mut self) {
-        self.disconnect().unwrap();
+        self.disconnect()
+            .or_else(|e| match ::error::Code::from(e) {
+                ::error::Code::BadState => Ok(()),
+                _ => Err(e),
+            })
+            .unwrap();
         unsafe { capi::pa_stream_unref(self.ptr) };
         self.ptr = null_mut::<StreamInternal>();
     }
