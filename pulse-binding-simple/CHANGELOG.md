@@ -1,3 +1,7 @@
+# 2.4.0 (November 28th, 2018)
+
+ * Updated `libpulse-binding` version dependency (2.3 → 2.4)
+
 # 2.3.0 (November 4th, 2018)
 
  * Clarified `pa_encoding_from_string` feature purpose

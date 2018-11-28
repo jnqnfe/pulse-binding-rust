@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.4.0 (November 28th, 2018)
 
  * Channelmap/Map: Changed the `new_from_string` method return value to use a `Result` wrapper.
    Previously failure was just ignored, expecting strings provided to always be valid, as obtained
