@@ -1634,7 +1634,9 @@ impl Stream {
 
 impl Drop for Stream {
     fn drop(&mut self) {
-        self.disconnect().unwrap();
+        // Throw away the `Result` from disconnecting, it may legitimately be bad if stream failed.
+        // See https://github.com/jnqnfe/pulse-binding-rust/issues/11
+        let _ = self.disconnect();
         unsafe { capi::pa_stream_unref(self.ptr) };
         self.ptr = null_mut::<StreamInternal>();
     }

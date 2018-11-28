@@ -8,6 +8,9 @@
    Thanks to @0xpr03 on github for noticing a discrepancy.
  * Restored the `Option` wrapper to the `Context::drain` return value. It was incorrectly removed
    from this function at the same time as legitimately being removed form many others.
+ * Changed the `Drop` implementation on `Stream` to no longer unwrap the `Result` returned by the
+   `disconnect()` attempt it makes. This should fix the problem encountered by @futpib on github,
+   reported here: https://github.com/jnqnfe/pulse-binding-rust/issues/11
 
 # 2.3.0 (November 4th, 2018)
 
