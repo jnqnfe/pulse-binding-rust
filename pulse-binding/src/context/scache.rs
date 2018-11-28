@@ -76,6 +76,8 @@ impl Context {
     /// Returns an operation object which may be used to cancel the operation while it is running.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn remove_sample<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -102,6 +104,8 @@ impl Context {
     ///   [`::volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
     ///   side which is a good idea.
     /// * `callback`: Optional success callback. It must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
@@ -145,6 +149,8 @@ impl Context {
     /// * `callback`: Optional success callback. It must accept an `u32` index value wrapper in a
     ///   `Result`. The index is the index of the sink input object. `Err` is given instead on
     ///    failure.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,

@@ -3,6 +3,9 @@
  * Channelmap/Map: Changed the `new_from_string` method return value to use a `Result` wrapper.
    Previously failure was just ignored, expecting strings provided to always be valid, as obtained
    from the `print` and `to_name` methods, but let's be more cautious.
+ * Updated out-of-date return info for a large number of functions, particularly introspection
+   ones, which had not been updated following the removal of the `Option` wrapper back in v2.0.
+   Thanks to @0xpr03 on github for noticing a discrepancy.
 
 # 2.3.0 (November 4th, 2018)
 

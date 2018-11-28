@@ -97,6 +97,8 @@ impl StreamRestore {
     }
 
     /// Test if this extension module is available in the server.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn test<F>(&mut self, callback: F) -> Operation<FnMut(u32)>
         where F: FnMut(u32) + 'static
     {
@@ -108,6 +110,8 @@ impl StreamRestore {
     }
 
     /// Read all entries from the stream database.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn read<F>(&mut self, callback: F) -> Operation<FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
@@ -121,6 +125,8 @@ impl StreamRestore {
     /// Store entries in the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn write<F>(&mut self, mode: ::proplist::UpdateMode, data: &[&Info],
         apply_immediately: bool, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -138,6 +144,8 @@ impl StreamRestore {
     /// Delete entries from the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn delete<F>(&mut self, streams: &[&str], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -166,6 +174,8 @@ impl StreamRestore {
     /// Subscribe to changes in the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {

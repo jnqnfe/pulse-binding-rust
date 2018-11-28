@@ -95,6 +95,8 @@ impl DeviceRestore {
     /// Test if this extension module is available in the server.
     ///
     /// The callback must accept an integer, which indicates version.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn test<F>(&mut self, callback: F) -> Operation<FnMut(u32)>
         where F: FnMut(u32) + 'static
     {
@@ -108,6 +110,8 @@ impl DeviceRestore {
     /// Subscribe to changes in the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -135,6 +139,8 @@ impl DeviceRestore {
     }
 
     /// Read the formats for all present devices from the device database.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn read_formats_all<F>(&mut self, callback: F) -> Operation<FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
@@ -146,6 +152,8 @@ impl DeviceRestore {
     }
 
     /// Read an entry from the device database.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
@@ -160,6 +168,8 @@ impl DeviceRestore {
     /// Read an entry from the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn save_formats<F>(&mut self, type_: ::def::Device, index: u32,
         formats: &mut [&mut ::format::Info], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static

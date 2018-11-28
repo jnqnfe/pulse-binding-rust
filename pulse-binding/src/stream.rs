@@ -1103,6 +1103,8 @@ impl Stream {
     /// the buffer. Please note that only one drain operation per stream may be issued at a time.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn drain(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
@@ -1117,6 +1119,8 @@ impl Stream {
     /// [`get_latency`] to get cleaned up values.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`get_timing_info`]: #method.get_timing_info
     /// [`get_time`]: #method.get_time
@@ -1275,6 +1279,8 @@ impl Stream {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
+    /// Panics if the underlying C function returns a null pointer.
+    ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn cork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
@@ -1296,6 +1302,8 @@ impl Stream {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
+    /// Panics if the underlying C function returns a null pointer.
+    ///
     /// [`is_corked`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn uncork(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
@@ -1312,6 +1320,8 @@ impl Stream {
     /// parameter `seek` of [`write`](#method.write) instead of this function.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn flush(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
@@ -1324,6 +1334,8 @@ impl Stream {
     /// playback streams only.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
     pub fn prebuf(&mut self, callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)> {
@@ -1341,6 +1353,8 @@ impl Stream {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
+    /// Panics if the underlying C function returns a null pointer.
+    ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
     pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
         ) -> Operation<FnMut(bool)>
@@ -1355,6 +1369,8 @@ impl Stream {
     /// Rename the stream.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn set_name(&mut self, name: &str, callback: Option<Box<FnMut(bool) + 'static>>
         ) -> Operation<FnMut(bool)>
     {
@@ -1506,6 +1522,8 @@ impl Stream {
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
+    /// Panics if the underlying C function returns a null pointer.
+    ///
     /// [`get_buffer_attr`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
     pub fn set_buffer_attr<F>(&mut self, attr: &::def::BufferAttr, callback: F
@@ -1525,6 +1543,8 @@ impl Stream {
     /// you plan to use this function. Only valid after the stream has been connected successfully.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
@@ -1546,6 +1566,8 @@ impl Stream {
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
+    /// Panics if the underlying C function returns a null pointer.
+    ///
     /// [`new_with_proplist`]: #method.new_with_proplist
     pub fn update_proplist<F>(&mut self, mode: ::proplist::UpdateMode, proplist: &mut Proplist,
         callback: F) -> Operation<FnMut(bool)>
@@ -1561,6 +1583,8 @@ impl Stream {
     /// Update the property list of the sink input/source output of this stream, remove entries.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn remove_proplist<F>(&mut self, keys: &[&str], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {

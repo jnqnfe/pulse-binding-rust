@@ -303,6 +303,8 @@ impl Context {
 
     /// Drain the context.
     /// If there is nothing to drain, the function returns `None`.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn drain<F>(&mut self, callback: F) -> Operation<FnMut()>
         where F: FnMut() + 'static
     {
@@ -318,6 +320,8 @@ impl Context {
     /// before returning a success notification.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn exit_daemon<F>(&mut self, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -330,6 +334,8 @@ impl Context {
     /// Set the name of the default sink.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -347,6 +353,8 @@ impl Context {
     /// Set the name of the default source.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -372,6 +380,8 @@ impl Context {
     }
 
     /// Set a different application name for context on the server.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -416,6 +426,8 @@ impl Context {
     /// [`new_with_proplist`](#method.new_with_proplist) as possible instead a posteriori with this
     /// function, since that information may then be used to route streams of the client to the
     /// right device.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, p: &Proplist, callback: F
         ) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -428,6 +440,8 @@ impl Context {
     }
 
     /// Update the property list of the client, remove entries.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {

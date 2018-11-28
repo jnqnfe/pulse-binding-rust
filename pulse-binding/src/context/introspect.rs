@@ -449,7 +449,7 @@ impl<'a> SinkInfo<'a> {
 impl Introspector {
     /// Get information about a sink by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_name<F>(&self, name: &str, callback: F
         ) -> Operation<FnMut(ListResult<&SinkInfo>)>
         where F: FnMut(ListResult<&SinkInfo>) + 'static
@@ -467,7 +467,7 @@ impl Introspector {
 
     /// Get information about a sink by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_index<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&SinkInfo>)>
         where F: FnMut(ListResult<&SinkInfo>) + 'static
@@ -481,7 +481,7 @@ impl Introspector {
 
     /// Get the complete sink list.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_info_list<F>(&self, callback: F) -> Operation<FnMut(ListResult<&SinkInfo>)>
         where F: FnMut(ListResult<&SinkInfo>) + 'static
     {
@@ -494,7 +494,7 @@ impl Introspector {
 
     /// Set the volume of a sink device specified by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_volume_by_index(&mut self, index: u32, volume: &::volume::ChannelVolumes,
@@ -510,7 +510,7 @@ impl Introspector {
 
     /// Set the volume of a sink device specified by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
@@ -530,7 +530,7 @@ impl Introspector {
 
     /// Set the mute switch of a sink device specified by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_mute_by_index(&mut self, index: u32, mute: bool,
@@ -546,7 +546,7 @@ impl Introspector {
 
     /// Set the mute switch of a sink device specified by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_mute_by_name(&mut self, name: &str, mute: bool,
@@ -566,7 +566,7 @@ impl Introspector {
 
     /// Suspend/Resume a sink.
     /// 
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_sink_by_name(&mut self, sink_name: &str, suspend: bool,
@@ -587,7 +587,7 @@ impl Introspector {
     /// Suspend/Resume a sink.
     ///
     /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
-    /// be suspended. Returns `None` on error, i.e. invalid arguments or state.
+    /// be suspended. Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_sink_by_index(&mut self, index: u32, suspend: bool,
@@ -603,7 +603,7 @@ impl Introspector {
 
     /// Change the profile of a sink.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_port_by_index(&mut self, index: u32, port: &str,
@@ -623,7 +623,7 @@ impl Introspector {
 
     /// Change the profile of a sink.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_port_by_name(&mut self, name: &str, port: &str,
@@ -832,7 +832,7 @@ impl<'a> SourceInfo<'a> {
 impl Introspector {
     /// Get information about a source by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_name<F>(&self, name: &str, callback: F
         ) -> Operation<FnMut(ListResult<&SourceInfo>)>
         where F: FnMut(ListResult<&SourceInfo>) + 'static
@@ -850,7 +850,7 @@ impl Introspector {
 
     /// Get information about a source by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_index<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&SourceInfo>)>
         where F: FnMut(ListResult<&SourceInfo>) + 'static
@@ -864,7 +864,7 @@ impl Introspector {
 
     /// Get the complete source list.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_info_list<F>(&self, callback: F) -> Operation<FnMut(ListResult<&SourceInfo>)>
         where F: FnMut(ListResult<&SourceInfo>) + 'static
     {
@@ -877,7 +877,7 @@ impl Introspector {
 
     /// Set the volume of a source device specified by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_volume_by_index(&mut self, index: u32, volume: &::volume::ChannelVolumes,
@@ -893,7 +893,7 @@ impl Introspector {
 
     /// Set the volume of a source device specified by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
@@ -913,7 +913,7 @@ impl Introspector {
 
     /// Set the mute switch of a source device specified by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_mute_by_index(&mut self, index: u32, mute: bool,
@@ -929,7 +929,7 @@ impl Introspector {
 
     /// Set the mute switch of a source device specified by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_mute_by_name(&mut self, name: &str, mute: bool,
@@ -949,7 +949,7 @@ impl Introspector {
 
     /// Suspend/Resume a source.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_source_by_name(&mut self, name: &str, suspend: bool,
@@ -970,7 +970,7 @@ impl Introspector {
     /// Suspend/Resume a source.
     ///
     /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
-    /// will be suspended. Returns `None` on error, i.e. invalid arguments or state.
+    /// will be suspended. Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_source_by_index(&mut self, index: u32, suspend: bool,
@@ -986,7 +986,7 @@ impl Introspector {
 
     /// Change the profile of a source.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_port_by_index(&mut self, index: u32, port: &str,
@@ -1006,7 +1006,7 @@ impl Introspector {
 
     /// Change the profile of a source.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_port_by_name(&mut self, name: &str, port: &str,
@@ -1114,7 +1114,7 @@ impl<'a> ServerInfo<'a> {
 impl Introspector {
     /// Get some information about the server.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_server_info<F>(&self, callback: F) -> Operation<FnMut(&ServerInfo)>
         where F: FnMut(&ServerInfo) + 'static
     {
@@ -1190,7 +1190,7 @@ impl<'a> ModuleInfo<'a> {
 impl Introspector {
     /// Get some information about a module by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_module_info<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&ModuleInfo>)>
         where F: FnMut(ListResult<&ModuleInfo>) + 'static
@@ -1204,7 +1204,7 @@ impl Introspector {
 
     /// Get the complete list of currently loaded modules.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_module_info_list<F>(&self, callback: F) -> Operation<FnMut(ListResult<&ModuleInfo>)>
         where F: FnMut(ListResult<&ModuleInfo>) + 'static
     {
@@ -1217,7 +1217,7 @@ impl Introspector {
 
     /// Load a module.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state. The callback is provided with the
+    /// Panics on error, i.e. invalid arguments or state. The callback is provided with the
     /// index.
     pub fn load_module<F>(&mut self, name: &str, argument: &str, callback: F
         ) -> Operation<FnMut(u32)>
@@ -1237,7 +1237,7 @@ impl Introspector {
 
     /// Unload a module.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn unload_module<F>(&mut self, index: u32, callback: F) -> Operation<FnMut(bool)>
@@ -1327,7 +1327,7 @@ impl<'a> ClientInfo<'a> {
 impl Introspector {
     /// Get information about a client by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_client_info<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&ClientInfo>)>
         where F: FnMut(ListResult<&ClientInfo>) + 'static
@@ -1341,7 +1341,7 @@ impl Introspector {
 
     /// Get the complete client list.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_client_info_list<F>(&self, callback: F) -> Operation<FnMut(ListResult<&ClientInfo>)>
         where F: FnMut(ListResult<&ClientInfo>) + 'static
     {
@@ -1354,7 +1354,7 @@ impl Introspector {
 
     /// Kill a client.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn kill_client<F>(&mut self, index: u32, callback: F) -> Operation<FnMut(bool)>
@@ -1572,7 +1572,7 @@ impl<'a> CardInfo<'a> {
 impl Introspector {
     /// Get information about a card by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_index<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&CardInfo>)>
         where F: FnMut(ListResult<&CardInfo>) + 'static
@@ -1586,7 +1586,7 @@ impl Introspector {
 
     /// Get information about a card by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_name<F>(&self, name: &str, callback: F
         ) -> Operation<FnMut(ListResult<&CardInfo>)>
         where F: FnMut(ListResult<&CardInfo>) + 'static
@@ -1604,7 +1604,7 @@ impl Introspector {
 
     /// Get the complete card list.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_card_info_list<F>(&self, callback: F) -> Operation<FnMut(ListResult<&CardInfo>)>
         where F: FnMut(ListResult<&CardInfo>) + 'static
     {
@@ -1617,7 +1617,7 @@ impl Introspector {
 
     /// Change the profile of a card.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_card_profile_by_index(&mut self, index: u32, profile: &str,
@@ -1637,7 +1637,7 @@ impl Introspector {
 
     /// Change the profile of a card.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_card_profile_by_name(&mut self, name: &str, profile: &str,
@@ -1658,7 +1658,7 @@ impl Introspector {
 
     /// Set the latency offset of a port.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_port_latency_offset(&mut self, card_name: &str, port_name: &str, offset: i64,
@@ -1795,7 +1795,7 @@ impl<'a> SinkInputInfo<'a> {
 impl Introspector {
     /// Get some information about a sink input by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&SinkInputInfo>)>
         where F: FnMut(ListResult<&SinkInputInfo>) + 'static
@@ -1810,7 +1810,7 @@ impl Introspector {
 
     /// Get the complete sink input list.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info_list<F>(&self, callback: F
         ) -> Operation<FnMut(ListResult<&SinkInputInfo>)>
         where F: FnMut(ListResult<&SinkInputInfo>) + 'static
@@ -1825,7 +1825,7 @@ impl Introspector {
 
     /// Move the specified sink input to a different sink.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_sink_input_by_name(&mut self, index: u32, sink_name: &str,
@@ -1845,7 +1845,7 @@ impl Introspector {
 
     /// Move the specified sink input to a different sink.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_sink_input_by_index(&mut self, index: u32, sink_index: u32,
@@ -1861,7 +1861,7 @@ impl Introspector {
 
     /// Set the volume of a sink input stream.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_input_volume(&mut self, index: u32, volume: &::volume::ChannelVolumes,
@@ -1877,7 +1877,7 @@ impl Introspector {
 
     /// Set the mute switch of a sink input stream.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_input_mute(&mut self, index: u32, mute: bool,
@@ -1893,7 +1893,7 @@ impl Introspector {
 
     /// Kill a sink input.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn kill_sink_input<F>(&mut self, index: u32, callback: F) -> Operation<FnMut(bool)>
@@ -2024,7 +2024,7 @@ impl<'a> SourceOutputInfo<'a> {
 impl Introspector {
     /// Get information about a source output by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_output_info<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&SourceOutputInfo>)>
         where F: FnMut(ListResult<&SourceOutputInfo>) + 'static
@@ -2039,7 +2039,7 @@ impl Introspector {
 
     /// Get the complete list of source outputs.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_output_info_list<F>(&self, callback: F
         ) -> Operation<FnMut(ListResult<&SourceOutputInfo>)>
         where F: FnMut(ListResult<&SourceOutputInfo>) + 'static
@@ -2054,7 +2054,7 @@ impl Introspector {
 
     /// Move the specified source output to a different source.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_source_output_by_name(&mut self, index: u32, source_name: &str,
@@ -2074,7 +2074,7 @@ impl Introspector {
 
     /// Move the specified source output to a different source.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_source_output_by_index(&mut self, index: u32, source_index: u32,
@@ -2090,7 +2090,7 @@ impl Introspector {
 
     /// Set the volume of a source output stream.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_output_volume(&mut self, index: u32, volume: &::volume::ChannelVolumes,
@@ -2106,7 +2106,7 @@ impl Introspector {
 
     /// Set the mute switch of a source output stream.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_output_mute(&mut self, index: u32, mute: bool,
@@ -2122,7 +2122,7 @@ impl Introspector {
 
     /// Kill a source output.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
     pub fn kill_source_output<F>(&mut self, index: u32, callback: F) -> Operation<FnMut(bool)>
@@ -2160,7 +2160,7 @@ fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const Sourc
 impl Introspector {
     /// Get daemon memory block statistics.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn stat<F>(&self, callback: F) -> Operation<FnMut(&StatInfo)>
         where F: FnMut(&StatInfo) + 'static
     {
@@ -2244,7 +2244,7 @@ impl<'a> SampleInfo<'a> {
 impl Introspector {
     /// Get information about a sample by its name.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_name<F>(&self, name: &str, callback: F
         ) -> Operation<FnMut(ListResult<&SampleInfo>)>
         where F: FnMut(ListResult<&SampleInfo>) + 'static
@@ -2262,7 +2262,7 @@ impl Introspector {
 
     /// Get information about a sample by its index.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_index<F>(&self, index: u32, callback: F
         ) -> Operation<FnMut(ListResult<&SampleInfo>)>
         where F: FnMut(ListResult<&SampleInfo>) + 'static
@@ -2276,7 +2276,7 @@ impl Introspector {
 
     /// Get the complete list of samples stored in the daemon.
     ///
-    /// Returns `None` on error, i.e. invalid arguments or state.
+    /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sample_info_list<F>(&self, callback: F) -> Operation<FnMut(ListResult<&SampleInfo>)>
         where F: FnMut(ListResult<&SampleInfo>) + 'static
     {

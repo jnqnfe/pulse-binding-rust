@@ -135,6 +135,8 @@ impl DeviceManager {
     }
 
     /// Test if this extension module is available in the server.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn test<F>(&mut self, callback: F) -> Operation<FnMut(u32)>
         where F: FnMut(u32) + 'static
     {
@@ -146,6 +148,8 @@ impl DeviceManager {
     }
 
     /// Read all entries from the device database.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn read<F>(&mut self, callback: F) -> Operation<FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
@@ -159,6 +163,8 @@ impl DeviceManager {
     /// Sets the description for a device.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F
         ) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -180,6 +186,8 @@ impl DeviceManager {
     /// Delete entries from the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -208,6 +216,8 @@ impl DeviceManager {
     /// Enable the role-based device-priority routing mode.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F
         ) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -224,6 +234,8 @@ impl DeviceManager {
     /// Prefer a given device in the priority list.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F
         ) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -256,6 +268,8 @@ impl DeviceManager {
     /// Subscribe to changes in the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
+    ///
+    /// Panics if the underlying C function returns a null pointer.
     pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
