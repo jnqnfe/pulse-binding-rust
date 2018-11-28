@@ -302,16 +302,28 @@ impl Context {
     }
 
     /// Drain the context.
+    ///
     /// If there is nothing to drain, the function returns `None`.
     ///
-    /// Panics if the underlying C function returns a null pointer.
-    pub fn drain<F>(&mut self, callback: F) -> Operation<FnMut()>
+    /// Note that it can also return `None` under other conditions. Many functions in the C API
+    /// perform internal state validation checks and return a null pointer if they detect a problem,
+    /// just as they return a null pointer on invalid input. Other functions panic on getting a null
+    /// pointer return, however this function is unique in a null pointer also signalling something
+    /// useful, and it is not possible to tell the difference. However, while I fell the need to be
+    /// clear about the possibility, I believe that such invalid state conditions should only occur
+    /// if there were a serious bug within PA, thus you are probably safe to just ignore this and
+    /// always take a `None` return to indicate only that there is nothing to drain.
+    pub fn drain<F>(&mut self, callback: F) -> Option<Operation<FnMut()>>
         where F: FnMut() + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut()>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
-        assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut()>)
+        // NOTE: this function is unique in NEEDING the `Option` wrapper on the return value, since
+        // a null pointer may be returned if there is nothing to drain! Do not remove it!
+        if ptr.is_null() {
+            return None;
+        }
+        Some(Operation::from_raw(ptr, cb_data as *mut Box<FnMut()>))
     }
 
     /// Tell the daemon to exit.

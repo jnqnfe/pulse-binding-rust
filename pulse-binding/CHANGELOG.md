@@ -6,6 +6,8 @@
  * Updated out-of-date return info for a large number of functions, particularly introspection
    ones, which had not been updated following the removal of the `Option` wrapper back in v2.0.
    Thanks to @0xpr03 on github for noticing a discrepancy.
+ * Restored the `Option` wrapper to the `Context::drain` return value. It was incorrectly removed
+   from this function at the same time as legitimately being removed form many others.
 
 # 2.3.0 (November 4th, 2018)
 
