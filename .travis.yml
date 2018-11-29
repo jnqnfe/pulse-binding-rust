@@ -14,5 +14,9 @@ addons:
       - libpulse-mainloop-glib0
 script:
   - dbus-launch pulseaudio --start
-  - cargo build --verbose --all
-  - cargo test --verbose --all
+  # Check PA v10 & v11 support
+  - cargo build --no-default-features --verbose --all
+  - cargo test --no-default-features --verbose --all
+  # Check PA v12+ support
+  - cargo build --features pa_encoding_from_string --verbose --all
+  - cargo test --features pa_encoding_from_string --verbose --all

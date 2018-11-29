@@ -12,6 +12,11 @@ binding/sys crates would diverge so much. Tagging was done based on this, and la
 be done based on the primary `pulse-binding` crate. I am aware that this is an unfortunate potential
 source of confusion now.
 
+# <unreleased>
+
+ * Travis: Expanded coverage to check different feature configurations, thus checking our support
+   for PA v10/11 as well as 12.
+
 # 2.3.0 (November 4th, 2018)
 
  * Clarified PA version compatibility in readme
