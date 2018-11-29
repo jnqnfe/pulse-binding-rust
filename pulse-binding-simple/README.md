@@ -9,8 +9,8 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-libpulse_binding = "2.0"
-libpulse_simple_binding = "2.0"
+libpulse-binding = "2.0"
+libpulse-simple-binding = "2.0"
 ```
 
 and this to your crate root:
