@@ -175,7 +175,7 @@ impl Context {
             ::callbacks::get_su_capi_params::<_, _>(callback, play_sample_success_cb_proxy);
         let ptr = unsafe {
             capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
-                proplist.ptr, cb_fn, cb_data)
+                proplist.0.ptr, cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<FnMut(Result<u32, ()>)>)

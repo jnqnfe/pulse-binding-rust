@@ -1,5 +1,16 @@
 # ??? (??? ??, ????)
 
+**Note: This includes a security fix!**
+
+ * Proplist: Fixed potential use-after-free with `proplist::Iterator` (not to be confused with the
+   `std::iter::Iterator` trait). An instance of this object type is created from a `Proplist` object
+   and holds a copy of the same raw pointer to the underlying C object; the `Proplist` object had
+   sole responsibility for destroying it via its `Drop` implementation. There was no actual lifetime
+   association however linking the lifetime of the `Iterator` object to the `Proplist` object, and
+   thus it was possible for the `Proplist` object to be destroyed first, leaving the `Iterator`
+   object working on a freed C object. This is unlikely to have been done in actual user code, but
+   would have been trivial to achieve, including simply by using the `into_iter()` function. This
+   affects versions all the way back to 1.0.5.
  * Time: Simplified converting `Duration` to `MicroSeconds` or `Timeval` using
    `Duration::subsec_millis()`.
  * Proplist: Made `Iterator::new()` private, since it’s very unlikely anyone needs it

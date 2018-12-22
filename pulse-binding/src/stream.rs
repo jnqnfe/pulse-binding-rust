@@ -610,7 +610,7 @@ impl Stream {
 
         let ptr = unsafe {
             capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss),
-                p_map, proplist.ptr)
+                p_map, proplist.0.ptr)
         };
         if ptr.is_null() {
             return None;
@@ -644,7 +644,7 @@ impl Stream {
 
         let ptr = unsafe {
             capi::pa_stream_new_extended(ctx.ptr, c_name.as_ptr(), info_ptrs.as_ptr(),
-                info_ptrs.len() as u32, proplist.ptr)
+                info_ptrs.len() as u32, proplist.0.ptr)
         };
         if ptr.is_null() {
             return None;
@@ -1576,7 +1576,7 @@ impl Stream {
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
-        let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.ptr,
+        let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.0.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)

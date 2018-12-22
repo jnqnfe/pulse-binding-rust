@@ -213,7 +213,7 @@ impl Context {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_new_with_proplist(
-            std::mem::transmute(mainloop.inner().get_api()), c_name.as_ptr(), proplist.ptr) };
+            std::mem::transmute(mainloop.inner().get_api()), c_name.as_ptr(), proplist.0.ptr) };
         if ptr.is_null() {
             return None;
         }
@@ -440,12 +440,12 @@ impl Context {
     /// right device.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, p: &Proplist, callback: F)
+    pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, pl: &Proplist, callback: F)
         -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
-        let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, p.ptr,
+        let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, pl.0.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
