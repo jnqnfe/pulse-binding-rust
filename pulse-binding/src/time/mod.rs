@@ -59,9 +59,7 @@ impl From<MicroSeconds> for Timeval {
 
 impl From<Duration> for MicroSeconds {
     fn from(t: Duration) -> Self {
-        let mut usecs = t.as_secs() * MILLIS_PER_SEC;
-        usecs += (t.subsec_nanos() / NANOS_PER_MILLI) as u64;
-        MicroSeconds(usecs)
+        MicroSeconds((t.as_secs() * MILLIS_PER_SEC) + t.subsec_millis() as u64)
     }
 }
 impl From<MicroSeconds> for Duration {
@@ -72,7 +70,7 @@ impl From<MicroSeconds> for Duration {
 
 impl From<Duration> for Timeval {
     fn from(t: Duration) -> Self {
-        Timeval::new(t.as_secs() as libc::time_t, (t.subsec_nanos() / NANOS_PER_MILLI) as libc::suseconds_t)
+        Timeval::new(t.as_secs() as libc::time_t, t.subsec_millis() as libc::suseconds_t)
     }
 }
 impl From<Timeval> for Duration {

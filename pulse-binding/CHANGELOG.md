@@ -1,3 +1,8 @@
+# ??? (??? ??, ????)
+
+ * Time: Simplified converting `Duration` to `MicroSeconds` or `Timeval` using
+   `Duration::subsec_millis()`.
+
 # 2.4.0 (November 28th, 2018)
 
  * Channelmap/Map: Changed the `new_from_string` method return value to use a `Result` wrapper.
