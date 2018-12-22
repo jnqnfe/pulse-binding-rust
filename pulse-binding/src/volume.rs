@@ -323,8 +323,8 @@ impl ChannelVolumes {
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
-    pub fn avg_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>
-        ) -> Volume
+    pub fn avg_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
+        -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_avg_mask(std::mem::transmute(self),
@@ -342,8 +342,8 @@ impl ChannelVolumes {
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
-    pub fn max_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>
-        ) -> Volume
+    pub fn max_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
+        -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_max_mask(std::mem::transmute(self),
@@ -361,8 +361,8 @@ impl ChannelVolumes {
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
-    pub fn min_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>
-        ) -> Volume
+    pub fn min_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
+        -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_min_mask(std::mem::transmute(self),
@@ -537,8 +537,8 @@ impl ChannelVolumes {
     ///
     /// [`get_lfe_balance`]: #method.get_lfe_balance
     /// [`::channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
-    pub fn set_lfe_balance(&mut self, map: &::channelmap::Map, new_balance: f32
-        ) -> Option<&mut Self>
+    pub fn set_lfe_balance(&mut self, map: &::channelmap::Map, new_balance: f32)
+        -> Option<&mut Self>
     {
         let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(std::mem::transmute(&self),
             std::mem::transmute(map), new_balance) };
@@ -588,8 +588,8 @@ impl ChannelVolumes {
     /// [`::channelmap::Map::has_position`]. On success, returns pointer to self.
     ///
     /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
-    pub fn set_position(&mut self, map: &::channelmap::Map, t: ::channelmap::Position, v: Volume
-        ) -> Option<&mut Self>
+    pub fn set_position(&mut self, map: &::channelmap::Map, t: ::channelmap::Position, v: Volume)
+        -> Option<&mut Self>
     {
         // Note: C function returns NULL on invalid data or no channel at position specified (no
         // change needed). We could ignore failure and always return self ptr, but it does not seem

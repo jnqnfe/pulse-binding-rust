@@ -70,8 +70,8 @@ pub(crate) type EventCb =
 impl<T> IoEvent<T>
     where T: MainloopInnerType
 {
-    pub(crate) fn from_raw(ptr: *mut IoEventInternal, mainloop_inner: Rc<T>, callback: EventCb
-        ) -> Self
+    pub(crate) fn from_raw(ptr: *mut IoEventInternal, mainloop_inner: Rc<T>, callback: EventCb)
+        -> Self
     {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }

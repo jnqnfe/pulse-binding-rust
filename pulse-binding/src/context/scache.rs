@@ -155,8 +155,8 @@ impl Context {
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
         volume: ::volume::Volume, proplist: &::proplist::Proplist,
-        callback: Option<Box<FnMut(Result<u32, ()>) + 'static>>
-        ) -> Operation<FnMut(Result<u32, ()>)>
+        callback: Option<Box<FnMut(Result<u32, ()>) + 'static>>)
+        -> Operation<FnMut(Result<u32, ()>)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!

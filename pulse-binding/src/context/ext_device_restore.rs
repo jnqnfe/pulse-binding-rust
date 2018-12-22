@@ -154,8 +154,8 @@ impl DeviceRestore {
     /// Read an entry from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&Info>)>
+    pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));

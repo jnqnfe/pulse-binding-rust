@@ -174,8 +174,8 @@ impl Info {
     /// Returns `None` on failure.
     ///
     /// [`::sample::Spec`]: ../sample/struct.Spec.html
-    pub fn new_from_sample_spec(ss: &::sample::Spec, map: Option<&::channelmap::Map>
-        ) -> Option<Self>
+    pub fn new_from_sample_spec(ss: &::sample::Spec, map: Option<&::channelmap::Map>)
+        -> Option<Self>
     {
         let p_map: *const capi::pa_channel_map = match map {
             Some(map) => unsafe { std::mem::transmute(map) },
@@ -256,8 +256,8 @@ impl Info {
     ///
     /// [`::sample::Spec`]: ../sample/struct.Spec.html
     /// [`::channelmap::Map`]: ../channelmap/struct.Map.html
-    pub fn to_sample_spec(&self, ss: &mut ::sample::Spec, map: &mut ::channelmap::Map
-        ) -> Result<(), PAErr>
+    pub fn to_sample_spec(&self, ss: &mut ::sample::Spec, map: &mut ::channelmap::Map)
+        -> Result<(), PAErr>
     {
         match unsafe { capi::pa_format_info_to_sample_spec(std::mem::transmute(&self.ptr),
             std::mem::transmute(ss), std::mem::transmute(map)) }

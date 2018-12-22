@@ -174,8 +174,8 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F
-        ) -> ::operation::Operation<FnMut(bool)>
+    pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F)
+        -> ::operation::Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));

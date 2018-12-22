@@ -271,8 +271,8 @@ impl Context {
     /// [`flags::NOAUTOSPAWN`](flags/constant.NOAUTOSPAWN.html) set and no specific server is
     /// specified or accessible, a new daemon is spawned. If `api` is not `None`, the functions
     /// specified in the structure are used when forking a new child process.
-    pub fn connect(&mut self, server: Option<&str>, flags: FlagSet, api: Option<&::def::SpawnApi>
-        ) -> Result<(), PAErr>
+    pub fn connect(&mut self, server: Option<&str>, flags: FlagSet, api: Option<&::def::SpawnApi>)
+        -> Result<(), PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -440,8 +440,8 @@ impl Context {
     /// right device.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, p: &Proplist, callback: F
-        ) -> Operation<FnMut(bool)>
+    pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, p: &Proplist, callback: F)
+        -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));

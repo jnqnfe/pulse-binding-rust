@@ -20,9 +20,7 @@ use std::os::raw::c_char;
 pub type pa_channel_position_mask_t = u64;
 
 #[inline(always)]
-pub fn pa_channel_position_mask(pos: pa_channel_position_t
-    ) -> pa_channel_position_mask_t
-{
+pub fn pa_channel_position_mask(pos: pa_channel_position_t) -> pa_channel_position_mask_t {
     1u64 << (pos as pa_channel_position_mask_t)
 }
 

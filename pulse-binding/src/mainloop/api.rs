@@ -124,8 +124,8 @@ pub trait Mainloop {
     ///
     /// [`IoEventRef`]: ../events/io/struct.IoEventRef.html
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
-        mut callback: Box<FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>
-        ) -> Option<IoEvent<Self::MI>>
+        mut callback: Box<FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>)
+        -> Option<IoEvent<Self::MI>>
     {
         let inner_for_wrapper = self.inner();
         let wrapper_cb = Box::new(move |ptr, fd, flags| {
@@ -248,8 +248,8 @@ pub trait Mainloop {
     /// manage the event source from within it’s callback execution.
     ///
     /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
-    fn new_deferred_event(&mut self, mut callback: Box<FnMut(DeferEventRef<Self::MI>) + 'static>
-        ) -> Option<DeferEvent<Self::MI>>
+    fn new_deferred_event(&mut self, mut callback: Box<FnMut(DeferEventRef<Self::MI>) + 'static>)
+        -> Option<DeferEvent<Self::MI>>
     {
         let inner_for_wrapper = self.inner();
         let wrapper_cb = Box::new(move |ptr| {

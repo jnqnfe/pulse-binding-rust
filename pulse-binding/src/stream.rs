@@ -775,8 +775,8 @@ impl Stream {
     /// [`::context::introspect::Introspector::get_sink_info_by_name`]:
     /// ../context/struct.Context.html#method.get_sink_info_by_name
     pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&::def::BufferAttr>,
-        flags: FlagSet, volume: Option<&::volume::ChannelVolumes>, sync_stream: Option<&mut Self>
-        ) -> Result<(), PAErr>
+        flags: FlagSet, volume: Option<&::volume::ChannelVolumes>, sync_stream: Option<&mut Self>)
+        -> Result<(), PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -902,7 +902,9 @@ impl Stream {
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
     /// [`write`]: #method.write
-    pub fn begin_write<'a>(&mut self, nbytes: Option<usize>) -> Result<Option<&'a mut [u8]>, PAErr> {
+    pub fn begin_write<'a>(&mut self, nbytes: Option<usize>)
+        -> Result<Option<&'a mut [u8]>, PAErr>
+    {
         let mut data_ptr = null_mut::<c_void>();
         // If user asks for size to be automatically chosen by PA, we pass in std::usize::MAX
         // (-1 as size_t) to signal this.
@@ -970,8 +972,8 @@ impl Stream {
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`begin_write`]: #method.begin_write
     /// [`write`]: #method.write
-    pub fn write(&mut self, data: &[u8], free_cb: Option<::def::FreeCb>, offset: i64, seek: SeekMode
-        ) -> Result<(), PAErr>
+    pub fn write(&mut self, data: &[u8], free_cb: Option<::def::FreeCb>, offset: i64,
+        seek: SeekMode) -> Result<(), PAErr>
     {
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
@@ -1125,8 +1127,8 @@ impl Stream {
     /// [`get_timing_info`]: #method.get_timing_info
     /// [`get_time`]: #method.get_time
     /// [`get_latency`]: #method.get_latency
-    pub fn update_timing_info(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
-        ) -> Operation<FnMut(bool)>
+    pub fn update_timing_info(&mut self, callback: Option<Box<FnMut(bool) + 'static>>)
+        -> Operation<FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
@@ -1356,8 +1358,8 @@ impl Stream {
     /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`::def::BufferAttr`]: ../def/struct.BufferAttr.html
-    pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>
-        ) -> Operation<FnMut(bool)>
+    pub fn trigger(&mut self, callback: Option<Box<FnMut(bool) + 'static>>)
+        -> Operation<FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, success_cb_proxy);
@@ -1371,8 +1373,8 @@ impl Stream {
     /// The optional callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_name(&mut self, name: &str, callback: Option<Box<FnMut(bool) + 'static>>
-        ) -> Operation<FnMut(bool)>
+    pub fn set_name(&mut self, name: &str, callback: Option<Box<FnMut(bool) + 'static>>)
+        -> Operation<FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
@@ -1526,8 +1528,8 @@ impl Stream {
     ///
     /// [`get_buffer_attr`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-    pub fn set_buffer_attr<F>(&mut self, attr: &::def::BufferAttr, callback: F
-        ) -> Operation<FnMut(bool)>
+    pub fn set_buffer_attr<F>(&mut self, attr: &::def::BufferAttr, callback: F)
+        -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));

@@ -48,8 +48,8 @@ pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(*mut DeferEventInt
 impl<T> DeferEvent<T>
     where T: MainloopInnerType
 {
-    pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>, callback: EventCb
-        ) -> Self
+    pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>, callback: EventCb)
+        -> Self
     {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }

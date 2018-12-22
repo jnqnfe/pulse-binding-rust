@@ -140,10 +140,9 @@ impl Simple {
     /// * `ss`: The sample type to use.
     /// * `map`: The channel map to use, or `None` for default.
     /// * `attr`: Buffering attributes, or `None` for default.
-    pub fn new(server: Option<&str>, name: &str, dir: pulse::stream::Direction,
-        dev: Option<&str>, stream_name: &str, ss: &pulse::sample::Spec,
-        map: Option<&pulse::channelmap::Map>, attr: Option<&pulse::def::BufferAttr>
-        ) -> Result<Self, PAErr>
+    pub fn new(server: Option<&str>, name: &str, dir: pulse::stream::Direction, dev: Option<&str>,
+        stream_name: &str, ss: &pulse::sample::Spec, map: Option<&pulse::channelmap::Map>,
+        attr: Option<&pulse::def::BufferAttr>) -> Result<Self, PAErr>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

@@ -80,8 +80,8 @@ pub mod event_operations {
 }
 
 /// Returns `true` if an event type `t` matches an event mask bitfield
-pub fn pa_subscription_match_flags(m: pa_subscription_mask_t,
-    t: pa_subscription_event_type_t) -> bool
+pub fn pa_subscription_match_flags(m: pa_subscription_mask_t, t: pa_subscription_event_type_t)
+    -> bool
 {
     (m & (1 << (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK))) != 0
 }

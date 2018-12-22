@@ -45,8 +45,8 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     /// Create a new `Operation` from an existing [`OperationInternal`](enum.OperationInternal.html)
     /// pointer. We also take a copy of the closure callback pointer, in order to free the memory
     /// on cancellation.
-    pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>
-        ) -> Self
+    pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>)
+        -> Self
     {
         assert_eq!(false, ptr.is_null());
         let saved_cb_actual = match saved_cb.is_null() {

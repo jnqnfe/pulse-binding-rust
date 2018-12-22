@@ -450,8 +450,8 @@ impl Introspector {
     /// Get information about a sink by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_by_name<F>(&self, name: &str, callback: F
-        ) -> Operation<FnMut(ListResult<&SinkInfo>)>
+    pub fn get_sink_info_by_name<F>(&self, name: &str, callback: F)
+        -> Operation<FnMut(ListResult<&SinkInfo>)>
         where F: FnMut(ListResult<&SinkInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -468,8 +468,8 @@ impl Introspector {
     /// Get information about a sink by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_sink_info_by_index<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&SinkInfo>)>
+    pub fn get_sink_info_by_index<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&SinkInfo>)>
         where F: FnMut(ListResult<&SinkInfo>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&SinkInfo>)>(Box::new(callback));
@@ -833,8 +833,8 @@ impl Introspector {
     /// Get information about a source by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_source_info_by_name<F>(&self, name: &str, callback: F
-        ) -> Operation<FnMut(ListResult<&SourceInfo>)>
+    pub fn get_source_info_by_name<F>(&self, name: &str, callback: F)
+        -> Operation<FnMut(ListResult<&SourceInfo>)>
         where F: FnMut(ListResult<&SourceInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -851,8 +851,8 @@ impl Introspector {
     /// Get information about a source by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_source_info_by_index<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&SourceInfo>)>
+    pub fn get_source_info_by_index<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&SourceInfo>)>
         where F: FnMut(ListResult<&SourceInfo>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&SourceInfo>)>(Box::new(callback));
@@ -1191,8 +1191,8 @@ impl Introspector {
     /// Get some information about a module by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_module_info<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&ModuleInfo>)>
+    pub fn get_module_info<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&ModuleInfo>)>
         where F: FnMut(ListResult<&ModuleInfo>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&ModuleInfo>)>(Box::new(callback));
@@ -1219,8 +1219,8 @@ impl Introspector {
     ///
     /// Panics on error, i.e. invalid arguments or state. The callback is provided with the
     /// index.
-    pub fn load_module<F>(&mut self, name: &str, argument: &str, callback: F
-        ) -> Operation<FnMut(u32)>
+    pub fn load_module<F>(&mut self, name: &str, argument: &str, callback: F)
+        -> Operation<FnMut(u32)>
         where F: FnMut(u32) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1328,8 +1328,8 @@ impl Introspector {
     /// Get information about a client by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_client_info<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&ClientInfo>)>
+    pub fn get_client_info<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&ClientInfo>)>
         where F: FnMut(ListResult<&ClientInfo>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&ClientInfo>)>(Box::new(callback));
@@ -1573,8 +1573,8 @@ impl Introspector {
     /// Get information about a card by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_card_info_by_index<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&CardInfo>)>
+    pub fn get_card_info_by_index<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&CardInfo>)>
         where F: FnMut(ListResult<&CardInfo>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&CardInfo>)>(Box::new(callback));
@@ -1587,8 +1587,8 @@ impl Introspector {
     /// Get information about a card by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_card_info_by_name<F>(&self, name: &str, callback: F
-        ) -> Operation<FnMut(ListResult<&CardInfo>)>
+    pub fn get_card_info_by_name<F>(&self, name: &str, callback: F)
+        -> Operation<FnMut(ListResult<&CardInfo>)>
         where F: FnMut(ListResult<&CardInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -1796,8 +1796,8 @@ impl Introspector {
     /// Get some information about a sink input by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_sink_input_info<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&SinkInputInfo>)>
+    pub fn get_sink_input_info<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&SinkInputInfo>)>
         where F: FnMut(ListResult<&SinkInputInfo>) + 'static
     {
         let cb_data =
@@ -1811,8 +1811,8 @@ impl Introspector {
     /// Get the complete sink input list.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_sink_input_info_list<F>(&self, callback: F
-        ) -> Operation<FnMut(ListResult<&SinkInputInfo>)>
+    pub fn get_sink_input_info_list<F>(&self, callback: F)
+        -> Operation<FnMut(ListResult<&SinkInputInfo>)>
         where F: FnMut(ListResult<&SinkInputInfo>) + 'static
     {
         let cb_data =
@@ -2025,8 +2025,8 @@ impl Introspector {
     /// Get information about a source output by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_source_output_info<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&SourceOutputInfo>)>
+    pub fn get_source_output_info<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&SourceOutputInfo>)>
         where F: FnMut(ListResult<&SourceOutputInfo>) + 'static
     {
         let cb_data =
@@ -2040,8 +2040,8 @@ impl Introspector {
     /// Get the complete list of source outputs.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_source_output_info_list<F>(&self, callback: F
-        ) -> Operation<FnMut(ListResult<&SourceOutputInfo>)>
+    pub fn get_source_output_info_list<F>(&self, callback: F)
+        -> Operation<FnMut(ListResult<&SourceOutputInfo>)>
         where F: FnMut(ListResult<&SourceOutputInfo>) + 'static
     {
         let cb_data =
@@ -2245,8 +2245,8 @@ impl Introspector {
     /// Get information about a sample by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_sample_info_by_name<F>(&self, name: &str, callback: F
-        ) -> Operation<FnMut(ListResult<&SampleInfo>)>
+    pub fn get_sample_info_by_name<F>(&self, name: &str, callback: F)
+        -> Operation<FnMut(ListResult<&SampleInfo>)>
         where F: FnMut(ListResult<&SampleInfo>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -2263,8 +2263,8 @@ impl Introspector {
     /// Get information about a sample by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_sample_info_by_index<F>(&self, index: u32, callback: F
-        ) -> Operation<FnMut(ListResult<&SampleInfo>)>
+    pub fn get_sample_info_by_index<F>(&self, index: u32, callback: F)
+        -> Operation<FnMut(ListResult<&SampleInfo>)>
         where F: FnMut(ListResult<&SampleInfo>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&SampleInfo>)>(Box::new(callback));

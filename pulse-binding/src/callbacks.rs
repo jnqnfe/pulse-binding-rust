@@ -43,7 +43,9 @@ pub enum ListResult<T> {
 /// }
 /// ```
 #[inline]
-pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>) -> (Option<T>, *mut c_void) {
+pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>)
+    -> (Option<T>, *mut c_void)
+{
     match cb {
         Some((f, d)) => (Some(f), d),
         None => (None, null_mut::<c_void>()),
@@ -117,8 +119,8 @@ impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, P
 /// to a ‘vtable’). We can only pass a normal sized pointer through the C API, so we must further
 /// box it, producing `Box<Box<Closure>>` which we convert to `*mut Box<Closure>` and then further
 /// to simply `*mut c_void`.
-pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<ClosureProto>
-    ) -> *mut c_void
+pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<ClosureProto>)
+    -> *mut c_void
 {
     Box::into_raw(Box::new(callback)) as *mut c_void
 }
@@ -158,8 +160,8 @@ pub(crate) enum ListInstanceCallback<'a, ClosureProto: 'a + ?Sized> {
 /// Used by multi-use-list style callback proxies. Provide this with the `eol` parameter, and the
 /// userdata (closure) pointer parameter, and it will return either a reference to the closure or
 /// the owned closure, depending upon whether or not `eol` signals end-of-list/error.
-pub(crate) fn callback_for_list_instance<'a, ClosureProto: ?Sized>(eol: i32, ptr: *mut c_void
-    ) -> ListInstanceCallback<'a, ClosureProto>
+pub(crate) fn callback_for_list_instance<'a, ClosureProto: ?Sized>(eol: i32, ptr: *mut c_void)
+    -> ListInstanceCallback<'a, ClosureProto>
 {
     assert!(!ptr.is_null());
     match eol {

@@ -165,8 +165,8 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F
-        ) -> Operation<FnMut(bool)>
+    pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F)
+        -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -218,8 +218,8 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F
-        ) -> Operation<FnMut(bool)>
+    pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F)
+        -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
@@ -236,8 +236,8 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F
-        ) -> Operation<FnMut(bool)>
+    pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F)
+        -> Operation<FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
