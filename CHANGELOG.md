@@ -16,6 +16,7 @@ source of confusion now.
 
  * Travis: Expanded coverage to check different feature configurations, thus checking our support
    for PA v10/11 as well as 12.
+ * Travis: Added rustc version 1.27 as a minimum supported compiler version to the matrix
 
 # 2.3.0 (November 4th, 2018)
 
