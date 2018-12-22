@@ -150,7 +150,7 @@ impl std::fmt::Debug for Proplist {
 }
 
 /// Proplist iterator, used for iterating over the list’s keys. Returned by the
-/// [`iterate`](struct.Proplist.html#method.iterate) method.
+/// [`iter`](struct.Proplist.html#method.iter) method.
 pub struct Iterator {
     /// The actual C proplist object.
     ptr: *const ProplistInternal,
