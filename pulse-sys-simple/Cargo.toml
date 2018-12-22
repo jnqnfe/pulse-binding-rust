@@ -19,9 +19,15 @@ libpulse-sys = { path = "../pulse-sys", version = "1.4", default-features = fals
 pkg-config = "0.3"
 
 [features]
-default = ["pa_encoding_from_string"]
-#Disable this feature for backwards compatibility with PA < v12
-pa_encoding_from_string = ["libpulse-sys/pa_encoding_from_string"]
+default = ["latest_pa_compatibility"]
+
+# PA version compatibility selection
+# See the overall project `README.md` file for explanation.
+latest_pa_compatibility = ["pa_v12_compatibility"]
+pa_v12_compatibility = ["libpulse-sys/pa_v12_compatibility"]
+
+# DEPRECATED, use `pa_v12_compatibility` instead
+pa_encoding_from_string = ["pa_v12_compatibility"]
 
 [badges]
 travis-ci = { repository = "jnqnfe/pulse-binding-rust" }

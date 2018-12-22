@@ -3,7 +3,7 @@ extern crate pkg_config;
 
 #[cfg(target_os="linux")]
 fn main() {
-    let min_version = match cfg!(feature="pa_encoding_from_string") {
+    let min_version = match cfg!(feature="pa_v12_compatibility") {
         true => "12.0",
         false => "10.0",
     };

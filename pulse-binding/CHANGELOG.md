@@ -14,6 +14,8 @@
  * Time: Simplified converting `Duration` to `MicroSeconds` or `Timeval` using
    `Duration::subsec_millis()`.
  * Proplist: Made `Iterator::new()` private, since it’s very unlikely anyone needs it
+ * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
+   `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
 
 # 2.4.0 (November 28th, 2018)
 

@@ -1,3 +1,8 @@
+# ??? (??? ??, ????)
+
+ * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
+   `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
+
 # 1.4.0 (November 4th, 2018)
 
  * Switched to using package-config for linking (though retaining the direct linking as a fallback

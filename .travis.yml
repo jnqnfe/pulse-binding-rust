@@ -19,5 +19,5 @@ script:
   - cargo build --no-default-features --verbose --all
   - cargo test --no-default-features --verbose --all
   # Check PA v12+ support
-  - cargo build --features pa_encoding_from_string --verbose --all
-  - cargo test --features pa_encoding_from_string --verbose --all
+  - cargo build --features pa_v12_compatibility --verbose --all
+  - cargo test --features pa_v12_compatibility --verbose --all

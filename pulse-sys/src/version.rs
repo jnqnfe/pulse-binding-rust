@@ -40,7 +40,7 @@ use std::os::raw::c_char;
 pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION};
 
 // Current
-#[cfg(feature="pa_encoding_from_string")]
+#[cfg(feature="pa_v12_compatibility")]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::Latest;
 
@@ -54,7 +54,7 @@ mod actual {
 }
 
 // Pre-v12
-#[cfg(not(feature="pa_encoding_from_string"))]
+#[cfg(not(feature="pa_v12_compatibility"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV12;
 

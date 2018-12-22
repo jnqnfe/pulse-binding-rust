@@ -1,3 +1,8 @@
+# ??? (??? ??, ????)
+
+ * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
+   `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
+
 # 2.4.0 (November 28th, 2018)
 
  * Updated `libpulse-binding` version dependency (2.3 → 2.4)

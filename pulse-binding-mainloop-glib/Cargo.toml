@@ -17,9 +17,15 @@ libpulse-binding = { path = "../pulse-binding", version = "2.4", default-feature
 libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.4", default-features = false }
 
 [features]
-default = ["pa_encoding_from_string"]
-#Disable this feature for backwards compatibility with PA < v12
-pa_encoding_from_string = ["libpulse-binding/pa_encoding_from_string", "libpulse-mainloop-glib-sys/pa_encoding_from_string"]
+default = ["latest_pa_compatibility"]
+
+# PA version compatibility selection
+# See the overall project `README.md` file for explanation.
+latest_pa_compatibility = ["pa_v12_compatibility"]
+pa_v12_compatibility = ["libpulse-binding/pa_v12_compatibility", "libpulse-mainloop-glib-sys/pa_v12_compatibility"]
+
+# DEPRECATED, use `pa_v12_compatibility` instead
+pa_encoding_from_string = ["pa_v12_compatibility"]
 
 [badges]
 travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
