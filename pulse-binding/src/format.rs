@@ -94,18 +94,6 @@ pub(crate) struct InfoInternal {
     pub list: *mut ::proplist::ProplistInternal,
 }
 
-impl From<capi::pa_format_info> for InfoInternal {
-    fn from(i: capi::pa_format_info) -> Self {
-        unsafe { std::mem::transmute(i) }
-    }
-}
-
-impl From<InfoInternal> for capi::pa_format_info {
-    fn from(i: InfoInternal) -> Self {
-        unsafe { std::mem::transmute(i) }
-    }
-}
-
 impl std::fmt::Debug for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "Info {{ encoding: {:?}, properties: {:?} }}", self.get_encoding(),
