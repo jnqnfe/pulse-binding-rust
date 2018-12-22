@@ -12,12 +12,14 @@ binding/sys crates would diverge so much. Tagging was done based on this, and la
 be done based on the primary `pulse-binding` crate. I am aware that this is an unfortunate potential
 source of confusion now.
 
-# <unreleased>
+# 2.5.0 (December 22nd, 2018)
 
  * Travis: Expanded coverage to check different feature configurations, thus checking our support
    for PA v10/11 as well as 12.
  * Travis: Added rustc version 1.27 as a minimum supported compiler version to the matrix
  * Readme: Updated discussion of version compatibility and related feature flags
+
+Note, intermediate version numbers were crate specific only
 
 # 2.3.0 (November 4th, 2018)
 

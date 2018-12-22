@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-sys"
-version = "1.4.0"
+version = "1.5.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 description = """

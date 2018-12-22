@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-simple-sys"
-version = "1.4.0"
+version = "1.5.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 description = """
@@ -13,7 +13,7 @@ homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
 
 [dependencies]
-libpulse-sys = { path = "../pulse-sys", version = "1.4", default-features = false }
+libpulse-sys = { path = "../pulse-sys", version = "1.5", default-features = false }
 
 [target.'cfg(target_os="linux")'.build-dependencies]
 pkg-config = "0.3"

@@ -1,7 +1,8 @@
-# ??? (??? ??, ????)
+# 1.5.0 (December 22nd, 2018)
 
  * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
    `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
+ * Updated `libpulse-sys` version dependency (1.4 → 1.5)
 
 # 1.4.0 (November 4th, 2018)
 
