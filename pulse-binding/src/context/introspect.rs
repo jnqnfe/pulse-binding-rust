@@ -255,6 +255,9 @@ pub struct Introspector {
     context: *mut super::ContextInternal,
 }
 
+unsafe impl Send for Introspector {}
+unsafe impl Sync for Introspector {}
+
 impl Context {
     /// Returns an introspection object linked to the current context, giving access to
     /// introspection routines. See [`::context::introspect`](introspect/index.html).

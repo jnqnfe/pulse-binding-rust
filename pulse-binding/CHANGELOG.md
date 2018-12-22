@@ -11,6 +11,16 @@
    object working on a freed C object. This is unlikely to have been done in actual user code, but
    would have been trivial to achieve, including simply by using the `into_iter()` function. This
    affects versions all the way back to 1.0.5.
+ * Enabled `Send`+`Sync` for various types.
+   This was previously not done due to uncertainty as to whether or not it was safe to do so, but I
+   have now reconsidered it and arrived at the conclusion that it should be okay: With the threaded
+   mainloop, a lock must be held when using objects; this is taken by the mainloop dispatcher when
+   executing callbacks, and otherwise must be taken by the user before using objects within any
+   thread. With that locking mechanism, it should be safe I presume for these objects to be marked
+   Send+Sync. It is not ideal that the user can so easily just forget to grab the lock, as opposed
+   to the Rust design of `Arc<Mutex<_>>` forcing unlocking to get at things, but it’s not certain
+   that we can easily really do anything to address this. So long as users stick to the principle of
+   grabbing the mainloop lock though, they should be fine.
  * Time: Simplified converting `Duration` to `MicroSeconds` or `Timeval` using
    `Duration::subsec_millis()`.
  * Proplist: Made `Iterator::new()` private, since it’s very unlikely anyone needs it

@@ -85,6 +85,9 @@ pub struct Info {
     weak: bool,
 }
 
+unsafe impl Send for Info {}
+unsafe impl Sync for Info {}
+
 /// The raw C structure (with documentation)
 #[repr(C)]
 pub(crate) struct InfoInternal {

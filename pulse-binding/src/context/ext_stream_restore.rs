@@ -73,6 +73,9 @@ pub struct StreamRestore {
     cb_ptrs: CallbackPointers,
 }
 
+unsafe impl Send for StreamRestore {}
+unsafe impl Sync for StreamRestore {}
+
 /// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]

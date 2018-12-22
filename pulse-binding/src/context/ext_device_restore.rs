@@ -66,6 +66,9 @@ pub struct DeviceRestore {
     cb_ptrs: CallbackPointers,
 }
 
+unsafe impl Send for DeviceRestore {}
+unsafe impl Sync for DeviceRestore {}
+
 /// Holds copies of callback closure pointers, for those that are “multi-use” (may be fired multiple
 /// times), for freeing at the appropriate time.
 #[derive(Default)]

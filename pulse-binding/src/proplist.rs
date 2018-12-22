@@ -139,6 +139,9 @@ pub mod properties {
 /// values.
 pub struct Proplist(pub(crate) ProplistInner);
 
+unsafe impl Send for Proplist {}
+unsafe impl Sync for Proplist {}
+
 /// Inner type holding ownership over actual C object, necessary to guard against use-after-free
 /// issues with respect to the related `Iterator` object.
 pub(crate) struct ProplistInner {

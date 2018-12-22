@@ -38,6 +38,9 @@ pub struct Operation<ClosureProto: ?Sized> {
     state_cb: NotifyCb,
 }
 
+unsafe impl<ClosureProto: ?Sized> Send for Operation<ClosureProto> {}
+unsafe impl<ClosureProto: ?Sized> Sync for Operation<ClosureProto> {}
+
 type NotifyCb = ::callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut OperationInternal, *mut c_void)>;
 
