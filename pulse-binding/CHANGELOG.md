@@ -2,6 +2,7 @@
 
  * Time: Simplified converting `Duration` to `MicroSeconds` or `Timeval` using
    `Duration::subsec_millis()`.
+ * Proplist: Made `Iterator::new()` private, since it’s very unlikely anyone needs it
 
 # 2.4.0 (November 28th, 2018)
 

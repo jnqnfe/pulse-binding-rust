@@ -159,7 +159,7 @@ pub struct Iterator {
 }
 
 impl Iterator {
-    pub fn new(pl: *const ProplistInternal) -> Self {
+    fn new(pl: *const ProplistInternal) -> Self {
         Self { ptr: pl, state: null_mut::<c_void>() }
     }
 }
