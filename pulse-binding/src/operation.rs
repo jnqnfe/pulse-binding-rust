@@ -38,7 +38,7 @@ pub struct Operation<ClosureProto: ?Sized> {
     state_cb: NotifyCb,
 }
 
-type NotifyCb = ::callbacks::MultiUseCallback<FnMut(),
+type NotifyCb = ::callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut OperationInternal, *mut c_void)>;
 
 impl<ClosureProto: ?Sized> Operation<ClosureProto> {
@@ -90,7 +90,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     /// take a callback that is called when the operation finishes. Registering a state change
     /// callback is mainly useful, if you want to get called back also if the operation gets
     /// cancelled.
-    pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+    pub fn set_state_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.state_cb;
         *saved = NotifyCb::new(callback);
         let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy);

@@ -42,7 +42,7 @@ pub struct DeferEventRef<T: 'static>
     owner: Rc<T>,
 }
 
-pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(*mut DeferEventInternal),
+pub(crate) type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(*mut DeferEventInternal),
     extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal, userdata: *mut c_void)>;
 
 impl<T> DeferEvent<T>

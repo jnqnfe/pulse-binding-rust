@@ -53,7 +53,7 @@ pub struct TimeEventRef<T: 'static>
     owner: Rc<T>,
 }
 
-pub(crate) type EventCb = ::callbacks::MultiUseCallback<FnMut(*mut TimeEventInternal),
+pub(crate) type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(*mut TimeEventInternal),
     extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal, tv: *const timeval,
     userdata: *mut c_void)>;
 

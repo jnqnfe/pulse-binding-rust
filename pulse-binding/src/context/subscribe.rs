@@ -162,8 +162,8 @@ fn get_operation(value: EventType) -> Option<Operation> {
     Operation::from_int((value & OPERATION_MASK) as u32)
 }
 
-pub(super) type Callback = ::callbacks::MultiUseCallback<FnMut(Option<Facility>, Option<Operation>,
-    u32), extern "C" fn(*mut ContextInternal, EventType, u32, *mut c_void)>;
+pub(super) type Callback = ::callbacks::MultiUseCallback<dyn FnMut(Option<Facility>,
+    Option<Operation>, u32), extern "C" fn(*mut ContextInternal, EventType, u32, *mut c_void)>;
 
 impl Context {
     /// Enable event notification.
@@ -175,14 +175,14 @@ impl Context {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F)
-        -> ::operation::Operation<FnMut(bool)>
+        -> ::operation::Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(super::success_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        ::operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Set the context specific call back function that is called whenever a subscribed-to event
@@ -197,7 +197,7 @@ impl Context {
     /// it’s probably safe to always just `unwrap()` them). The third parameter is an associated
     /// index value.
     pub fn set_subscribe_callback(&mut self,
-        callback: Option<Box<FnMut(Option<Facility>, Option<Operation>, u32) + 'static>>)
+        callback: Option<Box<dyn FnMut(Option<Facility>, Option<Operation>, u32) + 'static>>)
     {
         let saved = &mut self.cb_ptrs.subscribe;
         *saved = Callback::new(callback);

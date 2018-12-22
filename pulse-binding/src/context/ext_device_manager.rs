@@ -137,27 +137,27 @@ impl DeviceManager {
     /// Test if this extension module is available in the server.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn test<F>(&mut self, callback: F) -> Operation<FnMut(u32)>
+    pub fn test<F>(&mut self, callback: F) -> Operation<dyn FnMut(u32)>
         where F: FnMut(u32) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(u32)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
     /// Read all entries from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn read<F>(&mut self, callback: F) -> Operation<FnMut(ListResult<&Info>)>
+    pub fn read<F>(&mut self, callback: F) -> Operation<dyn FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(ListResult<&Info>)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
     /// Sets the description for a device.
@@ -166,7 +166,7 @@ impl DeviceManager {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F)
-        -> Operation<FnMut(bool)>
+        -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -174,13 +174,13 @@ impl DeviceManager {
         let c_dev = CString::new(device.clone()).unwrap();
         let c_desc = CString::new(description.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_set_device_description(self.context, c_dev.as_ptr(),
                 c_desc.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Delete entries from the device database.
@@ -188,7 +188,7 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> Operation<FnMut(bool)>
+    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -206,11 +206,11 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_delete(self.context, c_dev_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Enable the role-based device-priority routing mode.
@@ -219,16 +219,16 @@ impl DeviceManager {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F)
-        -> Operation<FnMut(bool)>
+        -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_enable_role_device_priority_routing(self.context,
                 enable as i32, Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Prefer a given device in the priority list.
@@ -237,7 +237,7 @@ impl DeviceManager {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F)
-        -> Operation<FnMut(bool)>
+        -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -256,13 +256,13 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_reorder_devices_for_role(self.context, c_role.as_ptr(),
                 c_dev_ptrs.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Subscribe to changes in the device database.
@@ -270,14 +270,14 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<FnMut(bool)>
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
@@ -305,7 +305,7 @@ extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    match callback_for_list_instance::<FnMut(ListResult<&Info>)>(eol, userdata) {
+    match callback_for_list_instance::<dyn FnMut(ListResult<&Info>)>(eol, userdata) {
         ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
             let obj = Info::new_from_raw(i);

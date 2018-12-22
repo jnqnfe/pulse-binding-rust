@@ -118,14 +118,14 @@ struct CallbackPointers {
     event: EventCb,
 }
 
-type NotifyCb = ::callbacks::MultiUseCallback<FnMut(),
+type NotifyCb = ::callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut ContextInternal, *mut c_void)>;
 
-type EventCb = ::callbacks::MultiUseCallback<FnMut(String, Proplist),
+type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(String, Proplist),
     extern "C" fn(*mut ContextInternal, name: *const c_char, pl: *mut ::proplist::ProplistInternal,
         *mut c_void)>;
 
-type ExtSubscribeCb = ::callbacks::MultiUseCallback<FnMut(),
+type ExtSubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut ContextInternal, *mut c_void)>;
 
 /// The state of a connection context
@@ -228,7 +228,7 @@ impl Context {
     }
 
     /// Set a callback function that is called whenever the context status changes.
-    pub fn set_state_callback(&mut self, callback: Option<Box<FnMut() + 'static>>) {
+    pub fn set_state_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.set_state;
         *saved = NotifyCb::new(callback);
         let (cb_fn, cb_data) = saved.get_capi_params(notify_cb_proxy_multi);
@@ -241,7 +241,9 @@ impl Context {
     /// can be extended at any time. Also, server modules may introduce additional message types so
     /// make sure that your callback function ignores messages it doesn’t know. It is also given an
     /// (owned) property list.
-    pub fn set_event_callback(&mut self, callback: Option<Box<FnMut(String, Proplist) + 'static>>) {
+    pub fn set_event_callback(&mut self,
+        callback: Option<Box<dyn FnMut(String, Proplist) + 'static>>)
+    {
         let saved = &mut self.cb_ptrs.event;
         *saved = EventCb::new(callback);
         let (cb_fn, cb_data) = saved.get_capi_params(event_cb_proxy);
@@ -313,17 +315,17 @@ impl Context {
     /// clear about the possibility, I believe that such invalid state conditions should only occur
     /// if there were a serious bug within PA, thus you are probably safe to just ignore this and
     /// always take a `None` return to indicate only that there is nothing to drain.
-    pub fn drain<F>(&mut self, callback: F) -> Option<Operation<FnMut()>>
+    pub fn drain<F>(&mut self, callback: F) -> Option<Operation<dyn FnMut()>>
         where F: FnMut() + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut()>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut()>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
         // NOTE: this function is unique in NEEDING the `Option` wrapper on the return value, since
         // a null pointer may be returned if there is nothing to drain! Do not remove it!
         if ptr.is_null() {
             return None;
         }
-        Some(Operation::from_raw(ptr, cb_data as *mut Box<FnMut()>))
+        Some(Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut()>))
     }
 
     /// Tell the daemon to exit.
@@ -334,13 +336,13 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation<FnMut(bool)>
+    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Set the name of the default sink.
@@ -348,18 +350,18 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
+    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Set the name of the default source.
@@ -367,18 +369,18 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
+    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
@@ -394,18 +396,18 @@ impl Context {
     /// Set a different application name for context on the server.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
+    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Return the server name this context is connected to.
@@ -441,20 +443,20 @@ impl Context {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn proplist_update<F>(&mut self, mode: ::proplist::UpdateMode, pl: &Proplist, callback: F)
-        -> Operation<FnMut(bool)>
+        -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, pl.0.ptr,
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Update the property list of the client, remove entries.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<FnMut(bool)>
+    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -472,11 +474,11 @@ impl Context {
         }
         c_key_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Return the client index this context is identified in the server with.
@@ -596,7 +598,7 @@ extern "C"
 fn success_cb_proxy(_: *mut ContextInternal, success: i32, userdata: *mut c_void) {
     assert!(!userdata.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut(bool)>) };
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut(bool)>) };
     let success_actual = match success { 0 => false, _ => true };
     callback(success_actual);
 }
@@ -607,7 +609,7 @@ extern "C"
 fn notify_cb_proxy_single(_: *mut ContextInternal, userdata: *mut c_void) {
     assert!(!userdata.is_null());
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<FnMut()>) };
+    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut()>) };
     callback();
 }
 
@@ -643,7 +645,7 @@ fn event_cb_proxy(_: *mut ContextInternal, name: *const c_char,
 extern "C"
 fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_void) {
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<FnMut(u32)>(userdata);
+    let mut callback = ::callbacks::get_su_callback::<dyn FnMut(u32)>(userdata);
     callback(version);
 }
 

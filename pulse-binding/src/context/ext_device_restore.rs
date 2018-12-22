@@ -73,7 +73,7 @@ struct CallbackPointers {
     subscribe: SubscribeCb,
 }
 
-type SubscribeCb = ::callbacks::MultiUseCallback<FnMut(::def::Device, u32),
+type SubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(::def::Device, u32),
     extern "C" fn(*mut ContextInternal, ::def::Device, u32, *mut c_void)>;
 
 impl Context {
@@ -97,14 +97,14 @@ impl DeviceRestore {
     /// The callback must accept an integer, which indicates version.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn test<F>(&mut self, callback: F) -> Operation<FnMut(u32)>
+    pub fn test<F>(&mut self, callback: F) -> Operation<dyn FnMut(u32)>
         where F: FnMut(u32) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(u32)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(u32)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
     /// Subscribe to changes in the device database.
@@ -112,14 +112,14 @@ impl DeviceRestore {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<FnMut(bool)>
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
@@ -141,28 +141,28 @@ impl DeviceRestore {
     /// Read the formats for all present devices from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn read_formats_all<F>(&mut self, callback: F) -> Operation<FnMut(ListResult<&Info>)>
+    pub fn read_formats_all<F>(&mut self, callback: F) -> Operation<dyn FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context,
             Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(ListResult<&Info>)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
     /// Read an entry from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F)
-        -> Operation<FnMut(ListResult<&Info>)>
+        -> Operation<dyn FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<FnMut(ListResult<&Info>)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, index,
             Some(read_list_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(ListResult<&Info>)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
     /// Read an entry from the device database.
@@ -171,7 +171,7 @@ impl DeviceRestore {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn save_formats<F>(&mut self, type_: ::def::Device, index: u32,
-        formats: &mut [&mut ::format::Info], callback: F) -> Operation<FnMut(bool)>
+        formats: &mut [&mut ::format::Info], callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Capture array of pointers to the above ::format::InfoInternal objects
@@ -180,14 +180,14 @@ impl DeviceRestore {
             format_ptrs.push(unsafe { std::mem::transmute(&format.ptr) });
         }
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_restore_save_formats(self.context, type_, index,
                 format_ptrs.len() as u8, format_ptrs.as_ptr(), Some(super::success_cb_proxy),
                 cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
 
@@ -215,7 +215,7 @@ extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    match callback_for_list_instance::<FnMut(ListResult<&Info>)>(eol, userdata) {
+    match callback_for_list_instance::<dyn FnMut(ListResult<&Info>)>(eol, userdata) {
         ListInstanceCallback::Entry(callback) => {
             assert!(!i.is_null());
             let obj = Info::new_from_raw(i);

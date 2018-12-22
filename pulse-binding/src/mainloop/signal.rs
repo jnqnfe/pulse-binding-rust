@@ -40,7 +40,7 @@ pub struct Event {
     _signal_cb: SignalCb,
 }
 
-type SignalCb = ::callbacks::MultiUseCallback<FnMut(i32),
+type SignalCb = ::callbacks::MultiUseCallback<dyn FnMut(i32),
     extern "C" fn(*const ApiInternal, *mut EventInternal, i32, *mut c_void)>;
 
 /// Trait with signal handling, for mainloops

@@ -124,7 +124,7 @@ pub trait Mainloop {
     ///
     /// [`IoEventRef`]: ../events/io/struct.IoEventRef.html
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
-        mut callback: Box<FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>)
+        mut callback: Box<dyn FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>)
         -> Option<IoEvent<Self::MI>>
     {
         let inner_for_wrapper = self.inner();
@@ -166,7 +166,8 @@ pub trait Mainloop {
     ///
     /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
     fn new_timer_event(&mut self, tv: &UnixTs,
-        mut callback: Box<FnMut(TimeEventRef<Self::MI>) + 'static>) -> Option<TimeEvent<Self::MI>>
+        mut callback: Box<dyn FnMut(TimeEventRef<Self::MI>) + 'static>)
+        -> Option<TimeEvent<Self::MI>>
     {
         let inner_for_wrapper = self.inner();
         let wrapper_cb = Box::new(move |ptr| {
@@ -211,7 +212,8 @@ pub trait Mainloop {
     ///
     /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
     fn new_timer_event_rt(&mut self, t: MonotonicTs,
-        mut callback: Box<FnMut(TimeEventRef<Self::MI>) + 'static>) -> Option<TimeEvent<Self::MI>>
+        mut callback: Box<dyn FnMut(TimeEventRef<Self::MI>) + 'static>)
+        -> Option<TimeEvent<Self::MI>>
     {
         assert_ne!(t.0, USEC_INVALID);
 
@@ -248,7 +250,8 @@ pub trait Mainloop {
     /// manage the event source from within it’s callback execution.
     ///
     /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
-    fn new_deferred_event(&mut self, mut callback: Box<FnMut(DeferEventRef<Self::MI>) + 'static>)
+    fn new_deferred_event(&mut self,
+        mut callback: Box<dyn FnMut(DeferEventRef<Self::MI>) + 'static>)
         -> Option<DeferEvent<Self::MI>>
     {
         let inner_for_wrapper = self.inner();
@@ -275,7 +278,7 @@ pub trait Mainloop {
     /// rules regarding how to safely create defer events. In particular, if you’re using
     /// [`::mainloop::threaded`](../threaded/index.html), you must lock the mainloop before calling
     /// this function.
-    fn once_event(&mut self, callback: Box<FnMut() + 'static>) {
+    fn once_event(&mut self, callback: Box<dyn FnMut() + 'static>) {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(Some(callback), once_cb_proxy);
 
@@ -376,6 +379,6 @@ impl<'a> From<&'a MainloopApi> for *const ApiInternal {
 extern "C"
 fn once_cb_proxy(_: *const ApiInternal, userdata: *mut c_void) {
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<FnMut()>(userdata);
+    let mut callback = ::callbacks::get_su_callback::<dyn FnMut()>(userdata);
     callback();
 }

@@ -63,7 +63,7 @@ pub struct IoEventRef<T: 'static>
 }
 
 pub(crate) type EventCb =
-    ::callbacks::MultiUseCallback<FnMut(*mut IoEventInternal, i32, IoEventFlagSet),
+    ::callbacks::MultiUseCallback<dyn FnMut(*mut IoEventInternal, i32, IoEventFlagSet),
         extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32,
         events: IoEventFlagSet, userdata: *mut c_void)>;
 

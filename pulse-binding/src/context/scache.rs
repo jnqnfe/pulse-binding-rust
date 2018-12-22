@@ -78,18 +78,18 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn remove_sample<F>(&mut self, name: &str, callback: F) -> Operation<FnMut(bool)>
+    pub fn remove_sample<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Play a sample from the sample cache to the specified device.
@@ -109,7 +109,7 @@ impl Context {
     ///
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
-        callback: Option<Box<FnMut(bool) + 'static>>) -> Operation<FnMut(bool)>
+        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -129,7 +129,7 @@ impl Context {
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Play a sample from the sample cache to the specified device, allowing specification of a
@@ -155,8 +155,8 @@ impl Context {
     /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
         volume: ::volume::Volume, proplist: &::proplist::Proplist,
-        callback: Option<Box<FnMut(Result<u32, ()>) + 'static>>)
-        -> Operation<FnMut(Result<u32, ()>)>
+        callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)
+        -> Operation<dyn FnMut(Result<u32, ()>)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
@@ -178,7 +178,7 @@ impl Context {
                 proplist.0.ptr, cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
-        Operation::from_raw(ptr, cb_data as *mut Box<FnMut(Result<u32, ()>)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(Result<u32, ()>)>)
     }
 }
 
@@ -189,6 +189,6 @@ fn play_sample_success_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *
     let index_actual = match index { ::def::INVALID_INDEX => Err(()), i => Ok(i) };
 
     // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<FnMut(Result<u32, ()>)>(userdata);
+    let mut callback = ::callbacks::get_su_callback::<dyn FnMut(Result<u32, ()>)>(userdata);
     callback(index_actual);
 }
