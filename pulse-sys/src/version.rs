@@ -39,6 +39,17 @@
 use std::os::raw::c_char;
 pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION};
 
+/// PA version compatibility selection.
+///
+/// Used for indicating PA version compatibility support, which can vary depending upon feature
+/// flags.
+pub enum Compatibility {
+    /// Support for latest compatible version.
+    Latest,
+    /// Support for PA versions < 12 selected.
+    PreV12,
+}
+
 // Current
 #[cfg(feature="pa_v12_compatibility")]
 mod actual {
@@ -69,17 +80,6 @@ mod actual {
 
 #[deprecated(since = "1.4.0", note="use `TARGET_VERSION_STRING` instead")]
 pub const LINK_TARGET_VERSION: &str = TARGET_VERSION_STRING;
-
-/// PA version compatibility selection.
-///
-/// Used for indicating PA version compatibility support, which can vary depending upon feature
-/// flags.
-pub enum Compatibility {
-    /// Support for latest compatible version.
-    Latest,
-    /// Support for PA versions < 12 selected.
-    PreV12,
-}
 
 pub const PA_API_VERSION: u8 = 12;
 pub const PA_PROTOCOL_VERSION: u16 = 32;
