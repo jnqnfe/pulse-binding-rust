@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Specified edition in toml file
+
 # 2.7.0 (August 12th, 2019)
 
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
@@ -9,7 +13,6 @@
 # 2.6.1 (April 5th, 2019)
 
  * Enabled `Send`+`Sync` for `Simple`, thanks to @MOZGIII for the patch
-
 # 2.6.0 (March 10th, 2019)
 
  * Updated `libpulse-binding` version dependency (2.5 → 2.6)

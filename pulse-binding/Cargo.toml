@@ -11,6 +11,7 @@ keywords = ["binding", "pulse", "pulseaudio", "audio"]
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
+edition = "2015"
 
 [dependencies]
 libc = "0.2"

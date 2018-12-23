@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Specified edition in toml file
+
 # 1.7.0 (August 13th, 2019)
 
  * Addressed long standing todo item of linking `GMainContext` to an actual glib crate.
