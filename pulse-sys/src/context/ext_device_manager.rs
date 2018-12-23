@@ -17,6 +17,7 @@
 
 use std::os::raw::{c_char, c_void};
 use super::{pa_context, pa_context_success_cb_t};
+use crate::operation::pa_operation;
 
 #[repr(C)]
 pub struct pa_ext_device_manager_role_priority_info {
@@ -42,12 +43,12 @@ pub type pa_ext_device_manager_subscribe_cb_t = Option<extern "C" fn(c: *mut pa_
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_ext_device_manager_test(c: *mut pa_context, cb: pa_ext_device_manager_test_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_device_manager_read(c: *mut pa_context, cb: pa_ext_device_manager_read_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_device_manager_set_device_description(c: *mut pa_context, device: *const c_char, description: *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_device_manager_delete(c: *mut pa_context, s: *const *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_device_manager_enable_role_device_priority_routing(c: *mut pa_context, enable: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_device_manager_reorder_devices_for_role(c: *mut pa_context, role: *const c_char, devices: *const *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_device_manager_subscribe(c: *mut pa_context, enable: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_ext_device_manager_test(c: *mut pa_context, cb: pa_ext_device_manager_test_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_device_manager_read(c: *mut pa_context, cb: pa_ext_device_manager_read_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_device_manager_set_device_description(c: *mut pa_context, device: *const c_char, description: *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_device_manager_delete(c: *mut pa_context, s: *const *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_device_manager_enable_role_device_priority_routing(c: *mut pa_context, enable: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_device_manager_reorder_devices_for_role(c: *mut pa_context, role: *const c_char, devices: *const *const c_char, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_device_manager_subscribe(c: *mut pa_context, enable: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_ext_device_manager_set_subscribe_cb(c: *mut pa_context, cb: pa_ext_device_manager_subscribe_cb_t, userdata: *mut c_void);
 }

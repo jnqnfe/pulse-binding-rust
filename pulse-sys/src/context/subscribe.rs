@@ -16,6 +16,7 @@
 //! Daemon introspection event subscription subsystem.
 
 use std::os::raw::c_void;
+use crate::operation::pa_operation;
 
 /// The base integer type passed to the callback, from which the facility and operation components
 /// can be extracted.
@@ -90,6 +91,6 @@ pub type pa_context_subscribe_cb_t = Option<extern "C" fn(c: *mut super::pa_cont
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_context_subscribe(c: *mut super::pa_context, m: pa_subscription_mask_t, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_context_subscribe(c: *mut super::pa_context, m: pa_subscription_mask_t, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_context_set_subscribe_callback(c: *mut super::pa_context, cb: pa_context_subscribe_cb_t, userdata: *mut c_void);
 }

@@ -16,6 +16,11 @@
 //! Audio streams for input, output and sample upload.
 
 use std::os::raw::{c_char, c_void};
+use crate::sample::{pa_sample_spec, pa_usec_t};
+use crate::def::{pa_buffer_attr, pa_timing_info, pa_free_cb_t};
+use crate::proplist::{pa_proplist, pa_update_mode_t};
+use crate::{context::pa_context, channelmap::pa_channel_map, format::pa_format_info};
+use crate::{volume::pa_cvolume, operation::pa_operation};
 
 /// An opaque stream for playback or recording.
 #[repr(C)] pub struct pa_stream { _private: [u8; 0] }
@@ -116,38 +121,38 @@ pub type pa_stream_request_cb_t = Option<extern "C" fn(p: *mut pa_stream, nbytes
 
 pub type pa_stream_notify_cb_t = Option<extern "C" fn(p: *mut pa_stream, userdata: *mut c_void)>;
 
-pub type pa_stream_event_cb_t = Option<extern "C" fn(p: *mut pa_stream, name: *const c_char, pl: *mut ::proplist::pa_proplist, userdata: *mut c_void)>;
+pub type pa_stream_event_cb_t = Option<extern "C" fn(p: *mut pa_stream, name: *const c_char, pl: *mut pa_proplist, userdata: *mut c_void)>;
 
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_stream_connect_upload(s: *mut pa_stream, length: usize) -> i32;
     pub fn pa_stream_finish_upload(s: *mut pa_stream) -> i32;
 
-    pub fn pa_stream_new(c: *mut ::context::pa_context, name: *const c_char, ss: *const ::sample::pa_sample_spec, map: *const ::channelmap::pa_channel_map) -> *mut pa_stream;
-    pub fn pa_stream_new_with_proplist(c: *mut ::context::pa_context, name: *const c_char, ss: *const ::sample::pa_sample_spec, map: *const ::channelmap::pa_channel_map, p: *mut ::proplist::pa_proplist) -> *mut pa_stream;
-    pub fn pa_stream_new_extended(c: *mut ::context::pa_context, name: *const c_char, formats: *const *const ::format::pa_format_info, n_formats: u32, p: *mut ::proplist::pa_proplist) -> *mut pa_stream;
+    pub fn pa_stream_new(c: *mut pa_context, name: *const c_char, ss: *const pa_sample_spec, map: *const pa_channel_map) -> *mut pa_stream;
+    pub fn pa_stream_new_with_proplist(c: *mut pa_context, name: *const c_char, ss: *const pa_sample_spec, map: *const pa_channel_map, p: *mut pa_proplist) -> *mut pa_stream;
+    pub fn pa_stream_new_extended(c: *mut pa_context, name: *const c_char, formats: *const *const pa_format_info, n_formats: u32, p: *mut pa_proplist) -> *mut pa_stream;
     pub fn pa_stream_unref(s: *mut pa_stream);
     pub fn pa_stream_ref(s: *mut pa_stream) -> *mut pa_stream;
     pub fn pa_stream_get_state(s: *const pa_stream) -> pa_stream_state_t;
-    pub fn pa_stream_get_context(s: *const pa_stream) -> *mut ::context::pa_context;
+    pub fn pa_stream_get_context(s: *const pa_stream) -> *mut pa_context;
     pub fn pa_stream_get_index(s: *const pa_stream) -> u32;
     pub fn pa_stream_get_device_index(s: *const pa_stream) -> u32;
     pub fn pa_stream_get_device_name(s: *const pa_stream) -> *const c_char;
     pub fn pa_stream_is_suspended(s: *const pa_stream) -> i32;
     pub fn pa_stream_is_corked(s: *const pa_stream) -> i32;
-    pub fn pa_stream_connect_playback(s: *mut pa_stream, dev: *const c_char, attr: *const ::def::pa_buffer_attr, flags: pa_stream_flags_t, volume: *const ::volume::pa_cvolume, sync_stream: *mut pa_stream) -> i32;
-    pub fn pa_stream_connect_record(s: *mut pa_stream, dev: *const c_char, attr: *const ::def::pa_buffer_attr, flags: pa_stream_flags_t) -> i32;
+    pub fn pa_stream_connect_playback(s: *mut pa_stream, dev: *const c_char, attr: *const pa_buffer_attr, flags: pa_stream_flags_t, volume: *const pa_cvolume, sync_stream: *mut pa_stream) -> i32;
+    pub fn pa_stream_connect_record(s: *mut pa_stream, dev: *const c_char, attr: *const pa_buffer_attr, flags: pa_stream_flags_t) -> i32;
     pub fn pa_stream_disconnect(s: *mut pa_stream) -> i32;
     pub fn pa_stream_begin_write(s: *mut pa_stream, data: *mut *mut c_void, nbytes: *mut usize) -> i32;
     pub fn pa_stream_cancel_write(s: *mut pa_stream) -> i32;
-    pub fn pa_stream_write(s: *mut pa_stream, data: *const c_void, nbytes: usize, free_cb: ::def::pa_free_cb_t, offset: i64, seek: pa_seek_mode_t) -> i32;
-    pub fn pa_stream_write_ext_free(s: *mut pa_stream, data: *const c_void, nbytes: usize, free_cb: ::def::pa_free_cb_t, free_cb_data: *mut c_void, offset: i64, seek: pa_seek_mode_t) -> i32;
+    pub fn pa_stream_write(s: *mut pa_stream, data: *const c_void, nbytes: usize, free_cb: pa_free_cb_t, offset: i64, seek: pa_seek_mode_t) -> i32;
+    pub fn pa_stream_write_ext_free(s: *mut pa_stream, data: *const c_void, nbytes: usize, free_cb: pa_free_cb_t, free_cb_data: *mut c_void, offset: i64, seek: pa_seek_mode_t) -> i32;
     pub fn pa_stream_peek(s: *mut pa_stream, data: *mut *const c_void, nbytes: *mut usize) -> i32;
     pub fn pa_stream_drop(s: *mut pa_stream) -> i32;
     pub fn pa_stream_writable_size(s: *const pa_stream) -> usize;
     pub fn pa_stream_readable_size(s: *const pa_stream) -> usize;
-    pub fn pa_stream_drain(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_update_timing_info(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_stream_drain(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_update_timing_info(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_stream_set_state_callback(s: *mut pa_stream, cb: pa_stream_notify_cb_t, userdata: *mut c_void);
     pub fn pa_stream_set_write_callback(s: *mut pa_stream, cb: pa_stream_request_cb_t, userdata: *mut c_void);
     pub fn pa_stream_set_read_callback(s: *mut pa_stream, cb: pa_stream_request_cb_t, userdata: *mut c_void);
@@ -160,22 +165,22 @@ extern "C" {
     pub fn pa_stream_set_suspended_callback(s: *mut pa_stream, cb: pa_stream_notify_cb_t, userdata: *mut c_void);
     pub fn pa_stream_set_event_callback(s: *mut pa_stream, cb: pa_stream_event_cb_t, userdata: *mut c_void);
     pub fn pa_stream_set_buffer_attr_callback(s: *mut pa_stream, cb: pa_stream_notify_cb_t, userdata: *mut c_void);
-    pub fn pa_stream_cork(s: *mut pa_stream, b: i32, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_flush(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_prebuf(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_trigger(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_set_name(s: *mut pa_stream, name: *const c_char, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_get_time(s: *mut pa_stream, r_usec: *mut ::sample::pa_usec_t) -> i32;
-    pub fn pa_stream_get_latency(s: *mut pa_stream, r_usec: *mut ::sample::pa_usec_t, negative: *mut i32) -> i32;
-    pub fn pa_stream_get_timing_info(s: *mut pa_stream) -> *const ::def::pa_timing_info;
-    pub fn pa_stream_get_sample_spec(s: *mut pa_stream) -> *const ::sample::pa_sample_spec;
-    pub fn pa_stream_get_channel_map(s: *mut pa_stream) -> *const ::channelmap::pa_channel_map;
-    pub fn pa_stream_get_format_info(s: *const pa_stream) -> *mut ::format::pa_format_info;
-    pub fn pa_stream_get_buffer_attr(s: *mut pa_stream) -> *const ::def::pa_buffer_attr;
-    pub fn pa_stream_set_buffer_attr(s: *mut pa_stream, attr: *const ::def::pa_buffer_attr, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_update_sample_rate(s: *mut pa_stream, rate: u32, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_proplist_update(s: *mut pa_stream, mode: ::proplist::pa_update_mode_t, p: *mut ::proplist::pa_proplist, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_stream_proplist_remove(s: *mut pa_stream, keys: *const *const c_char, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_stream_cork(s: *mut pa_stream, b: i32, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_flush(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_prebuf(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_trigger(s: *mut pa_stream, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_set_name(s: *mut pa_stream, name: *const c_char, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_get_time(s: *mut pa_stream, r_usec: *mut pa_usec_t) -> i32;
+    pub fn pa_stream_get_latency(s: *mut pa_stream, r_usec: *mut pa_usec_t, negative: *mut i32) -> i32;
+    pub fn pa_stream_get_timing_info(s: *mut pa_stream) -> *const pa_timing_info;
+    pub fn pa_stream_get_sample_spec(s: *mut pa_stream) -> *const pa_sample_spec;
+    pub fn pa_stream_get_channel_map(s: *mut pa_stream) -> *const pa_channel_map;
+    pub fn pa_stream_get_format_info(s: *const pa_stream) -> *mut pa_format_info;
+    pub fn pa_stream_get_buffer_attr(s: *mut pa_stream) -> *const pa_buffer_attr;
+    pub fn pa_stream_set_buffer_attr(s: *mut pa_stream, attr: *const pa_buffer_attr, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_update_sample_rate(s: *mut pa_stream, rate: u32, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_proplist_update(s: *mut pa_stream, mode: pa_update_mode_t, p: *mut pa_proplist, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_stream_proplist_remove(s: *mut pa_stream, keys: *const *const c_char, cb: pa_stream_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_stream_set_monitor_stream(s: *mut pa_stream, sink_input_idx: u32) -> i32;
     pub fn pa_stream_get_monitor_stream(s: *const pa_stream) -> u32;
 }

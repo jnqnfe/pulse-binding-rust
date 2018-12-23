@@ -16,17 +16,18 @@
 //! UNIX signal support for main loops.
 
 use std::os::raw::c_void;
+use crate::mainloop::api::pa_mainloop_api;
 
 /// An opaque UNIX signal event source object.
 #[repr(C)] pub struct pa_signal_event { _private: [u8; 0] }
 
-pub type pa_signal_cb_t = Option<extern "C" fn(api: *const ::mainloop::api::pa_mainloop_api, e: *mut pa_signal_event, sig: i32, userdata: *mut c_void)>;
+pub type pa_signal_cb_t = Option<extern "C" fn(api: *const pa_mainloop_api, e: *mut pa_signal_event, sig: i32, userdata: *mut c_void)>;
 
-pub type pa_signal_destroy_cb_t = Option<extern "C" fn(api: *const ::mainloop::api::pa_mainloop_api, e: *mut pa_signal_event, userdata: *mut c_void)>;
+pub type pa_signal_destroy_cb_t = Option<extern "C" fn(api: *const pa_mainloop_api, e: *mut pa_signal_event, userdata: *mut c_void)>;
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_signal_init(api: *const ::mainloop::api::pa_mainloop_api) -> i32;
+    pub fn pa_signal_init(api: *const pa_mainloop_api) -> i32;
     pub fn pa_signal_done();
     pub fn pa_signal_new(sig: i32, callback: pa_signal_cb_t, userdata: *mut c_void) -> *mut pa_signal_event;
     pub fn pa_signal_free(e: *mut pa_signal_event);

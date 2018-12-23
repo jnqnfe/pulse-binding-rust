@@ -17,5 +17,5 @@
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_rtclock_now() -> ::sample::pa_usec_t;
+    pub fn pa_rtclock_now() -> crate::sample::pa_usec_t;
 }

@@ -15,8 +15,9 @@
 
 //! Constants and routines for volume handling.
 
-use std;
 use std::os::raw::c_char;
+use crate::channelmap::{pa_channel_map, pa_channel_position_mask_t, pa_channel_position_t};
+use crate::sample::pa_sample_spec;
 
 /// The basic volume type.
 pub type pa_volume_t = u32;
@@ -47,7 +48,7 @@ pub const PA_DECIBEL_MININFTY: f64 = -std::f64::INFINITY;
 #[derive(Copy, Clone, Default)]
 pub struct pa_cvolume {
     pub channels: u8,
-    pub values: [pa_volume_t; ::sample::PA_CHANNELS_MAX],
+    pub values: [pa_volume_t; crate::sample::PA_CHANNELS_MAX],
 }
 
 /// The maximum length of strings returned by [`pa_cvolume_snprint`](fn.pa_cvolume_snprint.htm).
@@ -126,18 +127,18 @@ extern "C" {
     pub fn pa_cvolume_set(a: *mut pa_cvolume, channels: u32, v: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_snprint(s: *mut c_char, l: usize, c: *const pa_cvolume) -> *mut c_char;
     pub fn pa_sw_cvolume_snprint_dB(s: *mut c_char, l: usize, c: *const pa_cvolume) -> *mut c_char;
-    pub fn pa_cvolume_snprint_verbose(s: *mut c_char, l: usize, c: *const pa_cvolume, map: *const ::channelmap::pa_channel_map, print_dB: i32) -> *mut c_char;
+    pub fn pa_cvolume_snprint_verbose(s: *mut c_char, l: usize, c: *const pa_cvolume, map: *const pa_channel_map, print_dB: i32) -> *mut c_char;
 
     pub fn pa_volume_snprint(s: *mut c_char, l: usize, v: pa_volume_t) -> *mut c_char;
     pub fn pa_sw_volume_snprint_dB(s: *mut c_char, l: usize, v: pa_volume_t) -> *mut c_char;
     pub fn pa_volume_snprint_verbose(s: *mut c_char, l: usize, v: pa_volume_t, print_dB: i32) -> *mut c_char;
 
     pub fn pa_cvolume_avg(a: *const pa_cvolume) -> pa_volume_t;
-    pub fn pa_cvolume_avg_mask(a: *const pa_cvolume, cm: *const ::channelmap::pa_channel_map, mask: ::channelmap::pa_channel_position_mask_t) -> pa_volume_t;
+    pub fn pa_cvolume_avg_mask(a: *const pa_cvolume, cm: *const pa_channel_map, mask: pa_channel_position_mask_t) -> pa_volume_t;
     pub fn pa_cvolume_max(a: *const pa_cvolume) -> pa_volume_t;
-    pub fn pa_cvolume_max_mask(a: *const pa_cvolume, cm: *const ::channelmap::pa_channel_map, mask: ::channelmap::pa_channel_position_mask_t) -> pa_volume_t;
+    pub fn pa_cvolume_max_mask(a: *const pa_cvolume, cm: *const pa_channel_map, mask: pa_channel_position_mask_t) -> pa_volume_t;
     pub fn pa_cvolume_min(a: *const pa_cvolume) -> pa_volume_t;
-    pub fn pa_cvolume_min_mask(a: *const pa_cvolume, cm: *const ::channelmap::pa_channel_map, mask: ::channelmap::pa_channel_position_mask_t) -> pa_volume_t;
+    pub fn pa_cvolume_min_mask(a: *const pa_cvolume, cm: *const pa_channel_map, mask: pa_channel_position_mask_t) -> pa_volume_t;
     pub fn pa_cvolume_valid(v: *const pa_cvolume) -> i32;
     pub fn pa_cvolume_channels_equal_to(a: *const pa_cvolume, v: pa_volume_t) -> i32;
 
@@ -152,19 +153,19 @@ extern "C" {
     pub fn pa_sw_volume_from_linear(v: f64) -> pa_volume_t;
     pub fn pa_sw_volume_to_linear(v: pa_volume_t) -> f64;
 
-    pub fn pa_cvolume_remap(v: *mut pa_cvolume, from: *const ::channelmap::pa_channel_map, to: *const ::channelmap::pa_channel_map) -> *mut pa_cvolume;
-    pub fn pa_cvolume_compatible(v: *const pa_cvolume, ss: *const ::sample::pa_sample_spec) -> i32;
-    pub fn pa_cvolume_compatible_with_channel_map(v: *const pa_cvolume, cm: *const ::channelmap::pa_channel_map) -> i32;
-    pub fn pa_cvolume_get_balance(v: *const pa_cvolume, map: *const ::channelmap::pa_channel_map) -> f32;
-    pub fn pa_cvolume_set_balance(v: *mut pa_cvolume, map: *const ::channelmap::pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
-    pub fn pa_cvolume_get_fade(v: *const pa_cvolume, map: *const ::channelmap::pa_channel_map) -> f32;
-    pub fn pa_cvolume_set_fade(v: *mut pa_cvolume, map: *const ::channelmap::pa_channel_map, new_fade: f32) -> *mut pa_cvolume;
-    pub fn pa_cvolume_get_lfe_balance(v: *const pa_cvolume, map: *const ::channelmap::pa_channel_map) -> f32;
-    pub fn pa_cvolume_set_lfe_balance(v: *mut pa_cvolume, map: *const ::channelmap::pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
+    pub fn pa_cvolume_remap(v: *mut pa_cvolume, from: *const pa_channel_map, to: *const pa_channel_map) -> *mut pa_cvolume;
+    pub fn pa_cvolume_compatible(v: *const pa_cvolume, ss: *const pa_sample_spec) -> i32;
+    pub fn pa_cvolume_compatible_with_channel_map(v: *const pa_cvolume, cm: *const pa_channel_map) -> i32;
+    pub fn pa_cvolume_get_balance(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
+    pub fn pa_cvolume_set_balance(v: *mut pa_cvolume, map: *const pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
+    pub fn pa_cvolume_get_fade(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
+    pub fn pa_cvolume_set_fade(v: *mut pa_cvolume, map: *const pa_channel_map, new_fade: f32) -> *mut pa_cvolume;
+    pub fn pa_cvolume_get_lfe_balance(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
+    pub fn pa_cvolume_set_lfe_balance(v: *mut pa_cvolume, map: *const pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
     pub fn pa_cvolume_scale(v: *mut pa_cvolume, max: pa_volume_t) -> *mut pa_cvolume;
-    pub fn pa_cvolume_scale_mask(v: *mut pa_cvolume, max: pa_volume_t, cm: *const ::channelmap::pa_channel_map, mask: ::channelmap::pa_channel_position_mask_t) -> *mut pa_cvolume;
-    pub fn pa_cvolume_set_position(cv: *mut pa_cvolume, map: *const ::channelmap::pa_channel_map, t: ::channelmap::pa_channel_position_t, v: pa_volume_t) -> *mut pa_cvolume;
-    pub fn pa_cvolume_get_position(cv: *const pa_cvolume, map: *const ::channelmap::pa_channel_map, t: ::channelmap::pa_channel_position_t) -> pa_volume_t;
+    pub fn pa_cvolume_scale_mask(v: *mut pa_cvolume, max: pa_volume_t, cm: *const pa_channel_map, mask: pa_channel_position_mask_t) -> *mut pa_cvolume;
+    pub fn pa_cvolume_set_position(cv: *mut pa_cvolume, map: *const pa_channel_map, t: pa_channel_position_t, v: pa_volume_t) -> *mut pa_cvolume;
+    pub fn pa_cvolume_get_position(cv: *const pa_cvolume, map: *const pa_channel_map, t: pa_channel_position_t) -> pa_volume_t;
     pub fn pa_cvolume_merge(dest: *mut pa_cvolume, a: *const pa_cvolume, b: *const pa_cvolume) -> *mut pa_cvolume;
     pub fn pa_cvolume_inc_clamp(v: *mut pa_cvolume, inc: pa_volume_t, limit: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_inc(v: *mut pa_cvolume, inc: pa_volume_t) -> *mut pa_cvolume;

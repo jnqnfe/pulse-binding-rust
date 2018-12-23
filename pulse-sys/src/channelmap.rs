@@ -16,6 +16,7 @@
 //! Constants and routines for handing channel mapping.
 
 use std::os::raw::c_char;
+use crate::sample::pa_sample_spec;
 
 pub type pa_channel_position_mask_t = u64;
 
@@ -187,7 +188,7 @@ pub const PA_CHANNEL_MAP_DEFAULT: pa_channel_map_def_t = pa_channel_map_def_t::A
 #[derive(Debug, Copy, Clone)]
 pub struct pa_channel_map {
     pub channels: u8,
-    pub map: [pa_channel_position_t; ::sample::PA_CHANNELS_MAX],
+    pub map: [pa_channel_position_t; crate::sample::PA_CHANNELS_MAX],
 }
 
 pub const PA_CHANNEL_MAP_SNPRINT_MAX: usize = 336;
@@ -206,7 +207,7 @@ extern "C" {
     pub fn pa_channel_map_parse(map: *mut pa_channel_map, s: *const c_char) -> *mut pa_channel_map;
     pub fn pa_channel_map_equal(a: *const pa_channel_map, b: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_valid(map: *const pa_channel_map) -> i32;
-    pub fn pa_channel_map_compatible(map: *const pa_channel_map, ss: *const ::sample::pa_sample_spec) -> i32;
+    pub fn pa_channel_map_compatible(map: *const pa_channel_map, ss: *const pa_sample_spec) -> i32;
     pub fn pa_channel_map_superset(a: *const pa_channel_map, b: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_can_balance(map: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_can_fade(map: *const pa_channel_map) -> i32;

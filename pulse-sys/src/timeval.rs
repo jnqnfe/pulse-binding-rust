@@ -15,28 +15,28 @@
 
 //! Utility functions for handling timeval calculations.
 
-use std;
 use libc::timeval;
+use crate::sample::pa_usec_t;
 
-pub const PA_MSEC_PER_SEC: ::sample::pa_usec_t = 1000;
-pub const PA_USEC_PER_SEC: ::sample::pa_usec_t = 1000000;
-pub const PA_NSEC_PER_SEC: u64 = 1000000000;
-pub const PA_USEC_PER_MSEC: ::sample::pa_usec_t = 1000;
-pub const PA_NSEC_PER_MSEC: u64 = 1000000;
+pub const PA_MSEC_PER_SEC: pa_usec_t = 1000;
+pub const PA_USEC_PER_SEC: pa_usec_t = 1_000_000;
+pub const PA_NSEC_PER_SEC: u64 = 1_000_000_000;
+pub const PA_USEC_PER_MSEC: pa_usec_t = 1000;
+pub const PA_NSEC_PER_MSEC: u64 = 1_000_000;
 pub const PA_NSEC_PER_USEC: u64 = 1000;
 
-pub const PA_USEC_INVALID: ::sample::pa_usec_t = std::u64::MAX;
+pub const PA_USEC_INVALID: pa_usec_t = std::u64::MAX;
 
-pub const PA_USEC_MAX: ::sample::pa_usec_t = std::u64::MAX - 1;
+pub const PA_USEC_MAX: pa_usec_t = std::u64::MAX - 1;
 
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_gettimeofday(tv: *mut timeval) -> *mut timeval;
-    pub fn pa_timeval_diff(a: *const timeval, b: *const timeval) -> ::sample::pa_usec_t;
+    pub fn pa_timeval_diff(a: *const timeval, b: *const timeval) -> pa_usec_t;
     pub fn pa_timeval_cmp(a: *const timeval, b: *const timeval) -> i32;
-    pub fn pa_timeval_age(tv: *const timeval) -> ::sample::pa_usec_t;
-    pub fn pa_timeval_add(tv: *mut timeval, v: ::sample::pa_usec_t) -> *mut timeval;
-    pub fn pa_timeval_sub(tv: *mut timeval, v: ::sample::pa_usec_t) -> *mut timeval;
-    pub fn pa_timeval_store(tv: *mut timeval, v: ::sample::pa_usec_t) -> *mut timeval;
-    pub fn pa_timeval_load(tv: *const timeval) -> ::sample::pa_usec_t;
+    pub fn pa_timeval_age(tv: *const timeval) -> pa_usec_t;
+    pub fn pa_timeval_add(tv: *mut timeval, v: pa_usec_t) -> *mut timeval;
+    pub fn pa_timeval_sub(tv: *mut timeval, v: pa_usec_t) -> *mut timeval;
+    pub fn pa_timeval_store(tv: *mut timeval, v: pa_usec_t) -> *mut timeval;
+    pub fn pa_timeval_load(tv: *const timeval) -> pa_usec_t;
 }

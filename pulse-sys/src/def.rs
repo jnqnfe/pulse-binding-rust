@@ -15,9 +15,9 @@
 
 //! Global definitions.
 
-use std;
 use std::os::raw::c_void;
 use libc::timeval;
+use crate::sample::pa_usec_t;
 
 /// An invalid index.
 pub const PA_INVALID_INDEX: u32 = std::u32::MAX;
@@ -47,16 +47,16 @@ pub struct pa_buffer_attr {
 pub struct pa_timing_info {
     pub timestamp: timeval,
     pub synchronized_clocks: i32,
-    pub sink_usec: ::sample::pa_usec_t,
-    pub source_usec: ::sample::pa_usec_t,
-    pub transport_usec: ::sample::pa_usec_t,
+    pub sink_usec: pa_usec_t,
+    pub source_usec: pa_usec_t,
+    pub transport_usec: pa_usec_t,
     pub playing: i32,
     pub write_index_corrupt: i32,
     pub write_index: i64,
     pub read_index_corrupt: i32,
     pub read_index: i64,
-    pub configured_sink_usec: ::sample::pa_usec_t,
-    pub configured_source_usec: ::sample::pa_usec_t,
+    pub configured_sink_usec: pa_usec_t,
+    pub configured_source_usec: pa_usec_t,
     pub since_underrun: i64,
 }
 

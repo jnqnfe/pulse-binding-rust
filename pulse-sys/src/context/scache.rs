@@ -16,14 +16,15 @@
 //! Sample cache mechanism.
 
 use std::os::raw::{c_char, c_void};
+use crate::{operation::pa_operation, proplist::pa_proplist, volume::pa_volume_t};
 
 pub type pa_context_play_sample_cb_t = Option<extern "C" fn(c: *mut super::pa_context, idx: u32, userdata: *mut c_void)>;
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_context_remove_sample(c: *mut super::pa_context, name: *const c_char, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_context_remove_sample(c: *mut super::pa_context, name: *const c_char, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
 
-    pub fn pa_context_play_sample(c: *mut super::pa_context, name: *const c_char, dev: *const c_char, volume: ::volume::pa_volume_t, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_context_play_sample(c: *mut super::pa_context, name: *const c_char, dev: *const c_char, volume: pa_volume_t, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
 
-    pub fn pa_context_play_sample_with_proplist(c: *mut super::pa_context, name: *const c_char, dev: *const c_char, volume: ::volume::pa_volume_t, proplist: *const ::proplist::pa_proplist, cb: pa_context_play_sample_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_context_play_sample_with_proplist(c: *mut super::pa_context, name: *const c_char, dev: *const c_char, volume: pa_volume_t, proplist: *const pa_proplist, cb: pa_context_play_sample_cb_t, userdata: *mut c_void) -> *mut pa_operation;
 }

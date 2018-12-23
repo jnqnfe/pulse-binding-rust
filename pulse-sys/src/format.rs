@@ -16,6 +16,8 @@
 //! Utility functions for handling a stream or sink format.
 
 use std::os::raw::c_char;
+use crate::sample::{pa_sample_spec, pa_sample_format_t};
+use crate::{proplist::pa_proplist, channelmap::pa_channel_map};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -53,7 +55,7 @@ impl Default for pa_encoding_t {
 #[repr(C)]
 pub struct pa_format_info {
     pub encoding: pa_encoding_t,
-    pub plist: *mut ::proplist::pa_proplist,
+    pub plist: *mut pa_proplist,
 }
 
 /// The maximum length of strings returned by [`pa_format_info_snprint`](fn.pa_format_info_snprint.html).
@@ -105,8 +107,8 @@ extern "C" {
     pub fn pa_format_info_is_compatible(first: *const pa_format_info, second: *const pa_format_info) -> i32;
     pub fn pa_format_info_snprint(s: *mut c_char, l: usize, f: *const pa_format_info) -> *mut c_char;
     pub fn pa_format_info_from_string(s: *const c_char) -> *mut pa_format_info;
-    pub fn pa_format_info_from_sample_spec(ss: *const ::sample::pa_sample_spec, map: *const ::channelmap::pa_channel_map) -> *mut pa_format_info;
-    pub fn pa_format_info_to_sample_spec(f: *const pa_format_info, ss: *mut ::sample::pa_sample_spec, map: *mut ::channelmap::pa_channel_map) -> i32;
+    pub fn pa_format_info_from_sample_spec(ss: *const pa_sample_spec, map: *const pa_channel_map) -> *mut pa_format_info;
+    pub fn pa_format_info_to_sample_spec(f: *const pa_format_info, ss: *mut pa_sample_spec, map: *mut pa_channel_map) -> i32;
     pub fn pa_format_info_get_prop_type(f: *const pa_format_info, key: *const c_char) -> pa_prop_type_t;
     pub fn pa_format_info_get_prop_int(f: *const pa_format_info, key: *const c_char, v: *mut i32) -> i32;
     pub fn pa_format_info_get_prop_int_range(f: *const pa_format_info, key: *const c_char, min: *mut i32, max: *mut i32) -> i32;
@@ -119,8 +121,8 @@ extern "C" {
     pub fn pa_format_info_set_prop_int_range(f: *mut pa_format_info, key: *const c_char, min: i32, max: i32);
     pub fn pa_format_info_set_prop_string(f: *mut pa_format_info, key: *const c_char, value: *const c_char);
     pub fn pa_format_info_set_prop_string_array(f: *mut pa_format_info, key: *const c_char, values: *const *const c_char, n_values: i32);
-    pub fn pa_format_info_set_sample_format(f: *mut pa_format_info, sf: ::sample::pa_sample_format_t);
+    pub fn pa_format_info_set_sample_format(f: *mut pa_format_info, sf: pa_sample_format_t);
     pub fn pa_format_info_set_rate(f: *mut pa_format_info, rate: i32);
     pub fn pa_format_info_set_channels(f: *mut pa_format_info, channels: i32);
-    pub fn pa_format_info_set_channel_map(f: *mut pa_format_info, map: *const ::channelmap::pa_channel_map);
+    pub fn pa_format_info_set_channel_map(f: *mut pa_format_info, map: *const pa_channel_map);
 }

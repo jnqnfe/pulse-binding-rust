@@ -17,12 +17,14 @@
 
 use std::os::raw::{c_char, c_void};
 use super::{pa_context, pa_context_success_cb_t};
+use crate::{operation::pa_operation, proplist::pa_update_mode_t};
+use crate::{volume::pa_cvolume, channelmap::pa_channel_map};
 
 #[repr(C)]
 pub struct pa_ext_stream_restore_info {
     pub name: *const c_char,
-    pub channel_map: ::channelmap::pa_channel_map,
-    pub volume: ::volume::pa_cvolume,
+    pub channel_map: pa_channel_map,
+    pub volume: pa_cvolume,
     pub device: *const c_char,
     pub mute: i32,
 }
@@ -35,10 +37,10 @@ pub type pa_ext_stream_restore_subscribe_cb_t = Option<extern "C" fn(c: *mut pa_
 
 #[link(name="pulse")]
 extern "C" {
-    pub fn pa_ext_stream_restore_test(c: *mut pa_context, cb: pa_ext_stream_restore_test_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_stream_restore_read(c: *mut pa_context, cb: pa_ext_stream_restore_read_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_stream_restore_write(c: *mut pa_context, mode: ::proplist::pa_update_mode_t, data: *const *const pa_ext_stream_restore_info, n: u32, apply_immediately: i32, cb: ::context::pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_stream_restore_delete(c: *mut pa_context, s: *const *const c_char, b: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
-    pub fn pa_ext_stream_restore_subscribe(c: *mut pa_context, enable: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut ::operation::pa_operation;
+    pub fn pa_ext_stream_restore_test(c: *mut pa_context, cb: pa_ext_stream_restore_test_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_stream_restore_read(c: *mut pa_context, cb: pa_ext_stream_restore_read_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_stream_restore_write(c: *mut pa_context, mode: pa_update_mode_t, data: *const *const pa_ext_stream_restore_info, n: u32, apply_immediately: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_stream_restore_delete(c: *mut pa_context, s: *const *const c_char, b: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+    pub fn pa_ext_stream_restore_subscribe(c: *mut pa_context, enable: i32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_ext_stream_restore_set_subscribe_cb(c: *mut pa_context, cb: pa_ext_stream_restore_subscribe_cb_t, userdata: *mut c_void);
 }

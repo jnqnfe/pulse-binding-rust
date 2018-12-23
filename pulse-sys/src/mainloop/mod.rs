@@ -15,13 +15,13 @@
 
 //! Main loop abstraction layer.
 
-pub use api::*;
-pub use signal::*;
-pub use standard::*;
-pub use threaded::*;
-
 pub mod api;
 pub mod signal;
 pub mod standard;
 pub mod threaded;
 
+// Re-export
+pub use self::api::*;
+pub use self::signal::*;
+pub use self::standard::*;
+pub use self::threaded::*;

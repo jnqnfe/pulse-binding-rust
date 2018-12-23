@@ -17,6 +17,7 @@
 
 use std::os::raw::{c_ulong, c_void};
 use libc::pollfd;
+use crate::mainloop::api::pa_mainloop_api;
 
 /// An opaque main loop object.
 #[repr(C)] pub struct pa_mainloop { _private: [u8; 0] }
@@ -33,7 +34,7 @@ extern "C" {
     pub fn pa_mainloop_get_retval(m: *const pa_mainloop) -> i32;
     pub fn pa_mainloop_iterate(m: *mut pa_mainloop, block: i32, retval: *mut i32) -> i32;
     pub fn pa_mainloop_run(m: *mut pa_mainloop, retval: *mut i32) -> i32;
-    pub fn pa_mainloop_get_api(m: *const pa_mainloop) -> *const super::api::pa_mainloop_api;
+    pub fn pa_mainloop_get_api(m: *const pa_mainloop) -> *const pa_mainloop_api;
     pub fn pa_mainloop_quit(m: *mut pa_mainloop, retval: i32);
     pub fn pa_mainloop_wakeup(m: *mut pa_mainloop);
 

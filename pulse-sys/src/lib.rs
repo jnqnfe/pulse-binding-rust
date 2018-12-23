@@ -31,25 +31,6 @@
 
 extern crate libc;
 
-pub use channelmap::*;
-pub use context::*;
-pub use def::*;
-pub use direction::*;
-pub use error::*;
-pub use format::*;
-pub use mainloop::*;
-pub use operation::*;
-pub use proplist::*;
-pub use rtclock::*;
-pub use sample::*;
-pub use stream::*;
-pub use timeval::*;
-pub use utf8::*;
-pub use util::*;
-pub use version::*;
-pub use volume::*;
-pub use xmalloc::*;
-
 pub mod channelmap;
 pub mod context;
 pub mod def;
@@ -69,3 +50,22 @@ pub mod version;
 pub mod volume;
 pub mod xmalloc;
 
+// Re-export
+pub use self::channelmap::*;
+pub use self::context::*;
+pub use self::def::*;
+pub use self::direction::*;
+pub use self::error::*;
+pub use self::format::*;
+pub use self::mainloop::*;
+pub use self::operation::*;
+pub use self::proplist::*;
+pub use self::rtclock::*;
+pub use self::sample::*;
+pub use self::stream::*;
+pub use self::timeval::*;
+pub use self::utf8::*;
+pub use self::util::*;
+pub use self::version::*;
+pub use self::volume::*;
+pub use self::xmalloc::*;
