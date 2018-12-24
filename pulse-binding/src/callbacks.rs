@@ -15,8 +15,9 @@
 
 //! Callback handling.
 
-use std;
 use std::os::raw::c_void;
+use std::ptr::null_mut;
+use std::marker::PhantomData;
 
 /// List result instance.
 ///
@@ -39,12 +40,12 @@ pub enum ListResult<T> {
 /// associated object). This is used for saving the pointer to it for such deferred destruction.
 pub(crate) struct MultiUseCallback<ClosureProto: ?Sized, ProxyProto> {
     saved: Option<*mut Box<ClosureProto>>,
-    proxy: std::marker::PhantomData<*const ProxyProto>,
+    proxy: PhantomData<*const ProxyProto>,
 }
 
 impl<ClosureProto: ?Sized, ProxyProto> Default for MultiUseCallback<ClosureProto, ProxyProto> {
     fn default() -> Self {
-        MultiUseCallback::<ClosureProto, ProxyProto> { saved: None, proxy: std::marker::PhantomData }
+        MultiUseCallback::<ClosureProto, ProxyProto> { saved: None, proxy: PhantomData }
     }
 }
 
@@ -57,7 +58,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
         match cb {
             Some(f) => MultiUseCallback::<ClosureProto, ProxyProto> {
                 saved: Some(Box::into_raw(Box::new(f))),
-                proxy: std::marker::PhantomData,
+                proxy: PhantomData,
             },
             None => Default::default(),
         }
@@ -67,7 +68,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
     pub fn get_capi_params(&self, proxy: ProxyProto) -> (Option<ProxyProto>, *mut c_void) {
         match self.saved {
             Some(ref f) => (Some(proxy), *f as *mut c_void),
-            None => (None, std::ptr::null_mut::<c_void>()),
+            None => (None, null_mut::<c_void>()),
         }
     }
 
@@ -123,7 +124,7 @@ pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
 {
     match callback {
         Some(f) => (Some(proxy), box_closure_get_capi_ptr::<ClosureProto>(f)),
-        None => (None, std::ptr::null_mut::<c_void>()),
+        None => (None, null_mut::<c_void>()),
     }
 }
 

@@ -18,8 +18,8 @@
 //! # Overview
 //!
 //! This ‘standard’ (minimal) main loop implementation is based on the poll() system call. It
-//! supports the functions defined in the main loop abstraction ([`::mainloop::api`]) and very
-//! little else.
+//! supports the functions defined in the main loop abstraction ([`mainloop::api`]) and very little
+//! else.
 //!
 //! This implementation is thread safe as long as you access the main loop object from a single
 //! thread only.
@@ -196,24 +196,25 @@
 //! }
 //! ```
 //!
-//! [`::mainloop::api`]: ../api/index.html
+//! [`mainloop::api`]: ../api/index.html
 //! [`Mainloop`]: struct.Mainloop.html
 //! [`Mainloop::new`]: struct.Mainloop.html#method.new
 //! [`Mainloop::get_api`]: struct.Mainloop.html#method.get_api
 //! [`Mainloop::iterate`]: struct.Mainloop.html#method.iterate
 //! [`Mainloop::run`]: struct.Mainloop.html#method.run
 
-use std;
-use capi;
 use std::os::raw::{c_ulong, c_void};
 use std::rc::Rc;
 use std::ptr::null_mut;
 use libc::pollfd;
-use error::PAErr;
+use crate::def;
+use crate::error::PAErr;
+use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi, Mainloop as MainloopTrait};
+use crate::mainloop::signal::MainloopSignals;
 
 pub use capi::pa_mainloop as MainloopInternal;
 
-impl super::api::MainloopInternalType for MainloopInternal {}
+impl MainloopInternalType for MainloopInternal {}
 
 /// Generic prototype of a poll() like function.
 pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
@@ -225,7 +226,7 @@ pub enum IterateResult {
     /// Success, with number of sources dispatched.
     Success(u32),
     /// Quit was called, with quit’s retval.
-    Quit(::def::Retval),
+    Quit(def::Retval),
     /// An error occurred, with error value.
     Err(PAErr),
 }
@@ -268,11 +269,11 @@ impl IterateResult {
 /// outlive the mainloop object.
 pub struct Mainloop {
     /// The ref-counted inner data.
-    pub _inner: Rc<super::api::MainloopInner<MainloopInternal>>,
+    pub _inner: Rc<MainloopInner<MainloopInternal>>,
 }
 
-impl super::api::Mainloop for Mainloop {
-    type MI = super::api::MainloopInner<MainloopInternal>;
+impl MainloopTrait for Mainloop {
+    type MI = MainloopInner<MainloopInternal>;
 
     #[inline]
     fn inner(&self) -> Rc<super::api::MainloopInner<MainloopInternal>> {
@@ -280,13 +281,13 @@ impl super::api::Mainloop for Mainloop {
     }
 }
 
-impl super::signal::MainloopSignals for Mainloop {}
+impl MainloopSignals for Mainloop {}
 
-impl super::api::MainloopInner<MainloopInternal> {
+impl MainloopInner<MainloopInternal> {
     fn drop_actual(&mut self) {
         unsafe { capi::pa_mainloop_free(self.ptr) };
         self.ptr = null_mut::<MainloopInternal>();
-        self.api = null_mut::<::mainloop::api::MainloopApi>();
+        self.api = null_mut::<MainloopApi>();
     }
 }
 
@@ -302,10 +303,10 @@ impl Mainloop {
         Some(
             Self {
                 _inner: Rc::new(
-                    super::api::MainloopInner::<MainloopInternal> {
+                    MainloopInner::<MainloopInternal> {
                         ptr: ptr,
                         api: unsafe { std::mem::transmute(api_ptr) },
-                        dropfn: super::api::MainloopInner::<MainloopInternal>::drop_actual,
+                        dropfn: MainloopInner::<MainloopInternal>::drop_actual,
                         supports_rtclock: true,
                     }
                 ),
@@ -348,8 +349,8 @@ impl Mainloop {
 
     /// Gets the return value as specified with the main loop’s [`quit`](#method.quit) routine.
     #[inline]
-    pub fn get_retval(&self) -> ::def::Retval {
-        ::def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
+    pub fn get_retval(&self) -> def::Retval {
+        def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
     }
 
     /// Runs a single iteration of the main loop.
@@ -369,7 +370,7 @@ impl Mainloop {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_iterate((*self._inner).ptr, block as i32, &mut retval) } {
             r if r >= 0 => IterateResult::Success(r as u32),
-            -2 => IterateResult::Quit(::def::Retval(retval)),
+            -2 => IterateResult::Quit(def::Retval(retval)),
             e => IterateResult::Err(PAErr(e)),
         }
     }
@@ -379,11 +380,11 @@ impl Mainloop {
     ///
     /// On success, returns `Ok` containing quit’s return value. On error returns `Err` containing a
     /// tuple of the error value and quit’s return value.
-    pub fn run(&mut self) -> Result<::def::Retval, (PAErr, ::def::Retval)> {
+    pub fn run(&mut self) -> Result<def::Retval, (PAErr, def::Retval)> {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_run((*self._inner).ptr, &mut retval) } {
-            r if r >= 0 => Ok(::def::Retval(retval)),
-            r => Err((PAErr(r), ::def::Retval(retval))),
+            r if r >= 0 => Ok(def::Retval(retval)),
+            r => Err((PAErr(r), def::Retval(retval))),
         }
     }
 
@@ -396,7 +397,7 @@ impl Mainloop {
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
     #[inline]
-    pub fn get_api<'a>(&self) -> &'a ::mainloop::api::MainloopApi {
+    pub fn get_api<'a>(&self) -> &'a MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
@@ -404,7 +405,7 @@ impl Mainloop {
 
     /// Shuts down the main loop with the specified return value.
     #[inline]
-    pub fn quit(&mut self, retval: ::def::Retval) {
+    pub fn quit(&mut self, retval: def::Retval) {
         unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval.0); }
     }
 

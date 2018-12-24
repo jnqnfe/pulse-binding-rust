@@ -19,7 +19,7 @@
 //!
 //! The threaded main loop implementation is a special version of the standard main loop
 //! implementation. For the basic design, see the standard main loop documentation
-//! ([`::mainloop::standard`]).
+//! ([`mainloop::standard`]).
 //!
 //! The added feature in the threaded main loop is that it spawns a new thread that runs the real
 //! main loop in the background. This allows a synchronous application to use the asynchronous API
@@ -375,7 +375,7 @@
 //! }
 //! ```
 //!
-//! [`::mainloop::standard`]: ../standard/index.html
+//! [`mainloop::standard`]: ../standard/index.html
 //! [`Mainloop`]: struct.Mainloop.html
 //! [`Mainloop::new`]: struct.Mainloop.html#method.new
 //! [`Mainloop::start`]: struct.Mainloop.html#method.start
@@ -386,16 +386,17 @@
 //! [`Mainloop::signal`]: struct.Mainloop.html#method.signal
 //! [`Mainloop::accept`]: struct.Mainloop.html#method.accept
 
-use std;
-use capi;
 use std::rc::Rc;
 use std::ffi::CString;
 use std::ptr::null_mut;
-use error::PAErr;
+use crate::def;
+use crate::error::PAErr;
+use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi, Mainloop as MainloopTrait};
+use crate::mainloop::signal::MainloopSignals;
 
 pub use capi::pa_threaded_mainloop as MainloopInternal;
 
-impl super::api::MainloopInternalType for MainloopInternal {}
+impl MainloopInternalType for MainloopInternal {}
 
 /// This acts as a safe interface to the internal PA Mainloop.
 ///
@@ -406,25 +407,25 @@ impl super::api::MainloopInternalType for MainloopInternal {}
 /// outlive the mainloop object.
 pub struct Mainloop {
     /// The ref-counted inner data.
-    pub _inner: Rc<super::api::MainloopInner<MainloopInternal>>,
+    pub _inner: Rc<MainloopInner<MainloopInternal>>,
 }
 
-impl super::api::Mainloop for Mainloop {
-    type MI = super::api::MainloopInner<MainloopInternal>;
+impl MainloopTrait for Mainloop {
+    type MI = MainloopInner<MainloopInternal>;
 
     #[inline]
-    fn inner(&self) -> Rc<super::api::MainloopInner<MainloopInternal>> {
+    fn inner(&self) -> Rc<MainloopInner<MainloopInternal>> {
         Rc::clone(&self._inner)
     }
 }
 
-impl super::signal::MainloopSignals for Mainloop {}
+impl MainloopSignals for Mainloop {}
 
-impl super::api::MainloopInner<MainloopInternal> {
+impl MainloopInner<MainloopInternal> {
     fn drop_actual(&mut self) {
         unsafe { capi::pa_threaded_mainloop_free(self.ptr) };
         self.ptr = null_mut::<MainloopInternal>();
-        self.api = null_mut::<::mainloop::api::MainloopApi>();
+        self.api = null_mut::<MainloopApi>();
     }
 }
 
@@ -442,10 +443,10 @@ impl Mainloop {
         Some(
             Self {
                 _inner: Rc::new(
-                    super::api::MainloopInner::<MainloopInternal> {
+                    MainloopInner::<MainloopInternal> {
                         ptr: ptr,
                         api: unsafe { std::mem::transmute(api_ptr) },
-                        dropfn: super::api::MainloopInner::<MainloopInternal>::drop_actual,
+                        dropfn: MainloopInner::<MainloopInternal>::drop_actual,
                         supports_rtclock: true,
                     }
                 ),
@@ -524,8 +525,8 @@ impl Mainloop {
     /// Gets the return value as specified with the main loop’s `quit` routine (used internally by
     /// threaded mainloop).
     #[inline]
-    pub fn get_retval(&self) -> ::def::Retval {
-        ::def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })
+    pub fn get_retval(&self) -> def::Retval {
+        def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })
     }
 
     /// Gets the main loop abstraction layer vtable for this main loop.
@@ -538,7 +539,7 @@ impl Mainloop {
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
     #[inline]
-    pub fn get_api<'a>(&self) -> &'a ::mainloop::api::MainloopApi {
+    pub fn get_api<'a>(&self) -> &'a MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }

@@ -15,10 +15,9 @@
 
 //! Asynchronous operations.
 
-use std;
-use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
+use crate::callbacks;
 
 use capi::pa_operation as OperationInternal;
 pub use capi::pa_operation_state_t as State;
@@ -42,7 +41,7 @@ pub struct Operation<ClosureProto: ?Sized> {
 unsafe impl<ClosureProto: ?Sized> Send for Operation<ClosureProto> {}
 unsafe impl<ClosureProto: ?Sized> Sync for Operation<ClosureProto> {}
 
-type NotifyCb = ::callbacks::MultiUseCallback<dyn FnMut(),
+type NotifyCb = callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut OperationInternal, *mut c_void)>;
 
 impl<ClosureProto: ?Sized> Operation<ClosureProto> {

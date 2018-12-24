@@ -20,8 +20,6 @@ mod monotonic;
 mod timeval;
 mod unix;
 
-use libc;
-use capi;
 use std::time::Duration;
 
 pub use self::microseconds::*;

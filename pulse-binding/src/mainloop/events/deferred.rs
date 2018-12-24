@@ -15,10 +15,10 @@
 
 //! Main loop deferred events.
 
-use std;
 use std::os::raw::c_void;
 use std::rc::Rc;
-use super::super::api::{MainloopApi, MainloopInnerType};
+use crate::mainloop::api::{MainloopApi, MainloopInnerType};
+use crate::callbacks::MultiUseCallback;
 
 pub use capi::pa_defer_event as DeferEventInternal;
 
@@ -43,7 +43,7 @@ pub struct DeferEventRef<T: 'static>
     owner: Rc<T>,
 }
 
-pub(crate) type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(*mut DeferEventInternal),
+pub(crate) type EventCb = MultiUseCallback<dyn FnMut(*mut DeferEventInternal),
     extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal, userdata: *mut c_void)>;
 
 impl<T> DeferEvent<T>

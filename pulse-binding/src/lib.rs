@@ -45,7 +45,7 @@
 //! ## Asynchronous API
 //!
 //! Use this if you develop your programs in asynchronous, event loop based style or if you want to
-//! use the advanced features of the PulseAudio API. A guide can be found in the [`::mainloop`]
+//! use the advanced features of the PulseAudio API. A guide can be found in the [`mainloop`]
 //! module.
 //!
 //! By using the built-in threaded main loop, it is possible to achieve a pseudo-synchronous API,
@@ -110,10 +110,7 @@
 //!
 //! See sub-modules for further information.
 //!
-//! [`::mainloop`]: mainloop/index.html
-//! [`::error::Code`]: error/enum.Code.html
-//! [`::context::Context::errno`]: context/struct.Context.html#method.errno
-//! [`::error::strerror`]: error/fn.strerror.html
+//! [`mainloop`]: mainloop/index.html
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

@@ -15,25 +15,25 @@
 
 //! Routines for controlling module-device-restore.
 
-use std;
-use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
-use super::{ContextInternal, Context};
-use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
-use operation::Operation;
+use std::mem;
 use capi::pa_ext_device_restore_info as InfoInternal;
+use super::{ContextInternal, Context};
+use crate::{def, format};
+use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback, MultiUseCallback};
+use crate::operation::Operation;
 
 /// Stores information about one device in the device database that is maintained by
 /// module-device-manager.
 #[derive(Debug)]
 pub struct Info {
     /// Device type sink or source?
-    pub dtype: ::def::Device,
+    pub dtype: def::Device,
     /// The device index.
     pub index: u32,
     /// A set of formats.
-    pub formats: Vec<::format::Info>,
+    pub formats: Vec<format::Info>,
 }
 
 impl Info {
@@ -44,9 +44,9 @@ impl Info {
         let mut formats_vec = Vec::with_capacity(src.n_formats as usize);
         assert!(src.n_formats == 0 || !src.formats.is_null());
         for i in 0..src.n_formats as isize {
-            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut ::format::InfoInternal };
+            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut format::InfoInternal };
             if !indexed_ptr.is_null() {
-                formats_vec.push(::format::Info::from_raw_weak(indexed_ptr));
+                formats_vec.push(format::Info::from_raw_weak(indexed_ptr));
             }
         }
 
@@ -77,14 +77,14 @@ struct CallbackPointers {
     subscribe: SubscribeCb,
 }
 
-type SubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(::def::Device, u32),
-    extern "C" fn(*mut ContextInternal, ::def::Device, u32, *mut c_void)>;
+type SubscribeCb = MultiUseCallback<dyn FnMut(def::Device, u32),
+    extern "C" fn(*mut ContextInternal, def::Device, u32, *mut c_void)>;
 
 impl Context {
     /// Gets a device restore object linked to the current context, giving access to device restore
     /// routines.
     ///
-    /// See [`::context::ext_device_restore`](ext_device_restore/index.html).
+    /// See [`context::ext_device_restore`](ext_device_restore/index.html).
     pub fn device_restore(&self) -> DeviceRestore {
         unsafe { capi::pa_context_ref(self.ptr) };
         DeviceRestore::from_raw(self.ptr)
@@ -131,12 +131,12 @@ impl DeviceRestore {
     /// Sets the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
     ///
-    /// The callback must accept two parameters, firstly a [`::def::Device`] variant, and secondly an
+    /// The callback must accept two parameters, firstly a [`def::Device`] variant, and secondly an
     /// integer index.
     ///
-    /// [`::def::Device`]: ../../def/enum.Device.html
+    /// [`def::Device`]: ../../def/enum.Device.html
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
-        where F: FnMut(::def::Device, u32) + 'static
+        where F: FnMut(def::Device, u32) + 'static
     {
         let saved = &mut self.cb_ptrs.subscribe;
         *saved = SubscribeCb::new(Some(Box::new(callback)));
@@ -160,7 +160,7 @@ impl DeviceRestore {
     /// Reads an entry from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F)
+    pub fn read_formats<F>(&mut self, type_: def::Device, index: u32, callback: F)
         -> Operation<dyn FnMut(ListResult<&Info>)>
         where F: FnMut(ListResult<&Info>) + 'static
     {
@@ -176,14 +176,14 @@ impl DeviceRestore {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn save_formats<F>(&mut self, type_: ::def::Device, index: u32,
-        formats: &mut [&mut ::format::Info], callback: F) -> Operation<dyn FnMut(bool)>
+    pub fn save_formats<F>(&mut self, type_: def::Device, index: u32,
+        formats: &mut [&mut format::Info], callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
-        // Capture array of pointers to the above ::format::InfoInternal objects
+        // Capture array of pointers to the above `format::InfoInternal` objects
         let mut format_ptrs: Vec<*mut capi::pa_format_info> = Vec::with_capacity(formats.len());
         for format in formats {
-            format_ptrs.push(unsafe { std::mem::transmute(&format.ptr) });
+            format_ptrs.push(unsafe { mem::transmute(&format.ptr) });
         }
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
@@ -209,7 +209,7 @@ impl Drop for DeviceRestore {
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
-fn ext_subscribe_cb_proxy(_: *mut ContextInternal, type_: ::def::Device, index: u32,
+fn ext_subscribe_cb_proxy(_: *mut ContextInternal, type_: def::Device, index: u32,
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {

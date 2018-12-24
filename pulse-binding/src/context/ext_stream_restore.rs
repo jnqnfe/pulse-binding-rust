@@ -15,16 +15,16 @@
 
 //! Routines for controlling module-stream-restore.
 
-use std;
-use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::ptr::{null, null_mut};
-use super::{ContextInternal, Context};
-use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
-use operation::Operation;
+use std::mem;
 use capi::pa_ext_stream_restore_info as InfoInternal;
+use super::{ContextInternal, Context};
+use crate::{channelmap, proplist};
+use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use crate::{operation::Operation, volume::ChannelVolumes};
 
 /// Stores information about one entry in the stream database that is maintained by
 /// module-stream-restore.
@@ -34,9 +34,9 @@ pub struct Info<'a> {
     /// some arbitrary property value.
     pub name: Option<Cow<'a, str>>,
     /// The channel map for the volume field, if applicable.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
     /// The volume of the stream when it was seen last, if applicable and saved.
-    pub volume: ::volume::ChannelVolumes,
+    pub volume: ChannelVolumes,
     /// The sink/source of the stream when it was last seen, if applicable and saved.
     pub device: Option<Cow<'a, str>>,
     /// The boolean mute state of the stream when it was last seen, if applicable and saved.
@@ -53,8 +53,8 @@ impl<'a> Info<'a> {
                     false => Some(CStr::from_ptr(src.name).to_string_lossy()),
                     true => None,
                 },
-                channel_map: std::mem::transmute(src.channel_map),
-                volume: std::mem::transmute(src.volume),
+                channel_map: mem::transmute(src.channel_map),
+                volume: mem::transmute(src.volume),
                 device: match src.name.is_null() {
                     false => Some(CStr::from_ptr(src.device).to_string_lossy()),
                     true => None,
@@ -88,7 +88,7 @@ impl Context {
     /// Gets a stream restore object linked to the current context, giving access to stream restore
     /// routines.
     ///
-    /// See [`::context::ext_stream_restore`](ext_stream_restore/index.html).
+    /// See [`context::ext_stream_restore`](ext_stream_restore/index.html).
     pub fn stream_restore(&self) -> StreamRestore {
         unsafe { capi::pa_context_ref(self.ptr) };
         StreamRestore::from_raw(self.ptr)
@@ -133,15 +133,15 @@ impl StreamRestore {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn write<F>(&mut self, mode: ::proplist::UpdateMode, data: &[&Info],
+    pub fn write<F>(&mut self, mode: proplist::UpdateMode, data: &[&Info],
         apply_immediately: bool, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
-            capi::pa_ext_stream_restore_write(self.context, mode,
-                std::mem::transmute(data.as_ptr()), data.len() as u32, apply_immediately as i32,
-                Some(super::success_cb_proxy), cb_data)
+            capi::pa_ext_stream_restore_write(self.context, mode, mem::transmute(data.as_ptr()),
+                data.len() as u32, apply_immediately as i32, Some(super::success_cb_proxy),
+                cb_data)
         };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)

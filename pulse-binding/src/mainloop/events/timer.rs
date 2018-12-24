@@ -24,12 +24,12 @@
 //! Note that time events created with one form of time value can be freely restarted with the other
 //! form of time value.
 
-use std;
 use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
-use super::super::api::{MainloopApi, MainloopInnerType};
-use time::{UnixTs, MonotonicTs, Timeval, USEC_INVALID};
+use crate::mainloop::api::{MainloopApi, MainloopInnerType};
+use crate::time::{UnixTs, MonotonicTs, Timeval, USEC_INVALID};
+use crate::callbacks::MultiUseCallback;
 
 pub use capi::pa_time_event as TimeEventInternal;
 
@@ -54,7 +54,7 @@ pub struct TimeEventRef<T: 'static>
     owner: Rc<T>,
 }
 
-pub(crate) type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(*mut TimeEventInternal),
+pub(crate) type EventCb = MultiUseCallback<dyn FnMut(*mut TimeEventInternal),
     extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal, tv: *const timeval,
     userdata: *mut c_void)>;
 

@@ -15,13 +15,11 @@
 
 //! Property list constants and functions.
 
-use std;
-use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::marker::PhantomData;
-use error::PAErr;
+use crate::error::PAErr;
 
 pub(crate) use capi::pa_proplist as ProplistInternal;
 pub use capi::pa_update_mode_t as UpdateMode;

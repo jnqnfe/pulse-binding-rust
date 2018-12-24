@@ -61,7 +61,10 @@ use std::rc::Rc;
 use std::ptr::{null, null_mut};
 use glib_sys::GMainContext;
 use glib::{MainContext, translate::ToGlibPtr};
-use pulse::mainloop::api::MainloopInternalType;
+use std::mem;
+use pulse::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi};
+use pulse::mainloop::signal::MainloopSignals;
+use pulse::mainloop::api::Mainloop as MainloopTrait;
 
 /* Note, we cannot simply use the object defined in the ‘sys’ crate, since either the type or the
  * trait need to be defined locally in order to link them. Thus, we create the below type (an empty
@@ -82,24 +85,24 @@ impl MainloopInternalType for MainloopInternal {}
 /// outlive the mainloop object.
 pub struct Mainloop {
     /// The ref-counted inner data.
-    pub _inner: Rc<pulse::mainloop::api::MainloopInner<MainloopInternal>>,
+    pub _inner: Rc<MainloopInner<MainloopInternal>>,
 }
 
-impl pulse::mainloop::api::Mainloop for Mainloop {
-    type MI = pulse::mainloop::api::MainloopInner<MainloopInternal>;
+impl MainloopTrait for Mainloop {
+    type MI = MainloopInner<MainloopInternal>;
 
-    fn inner(&self) -> Rc<pulse::mainloop::api::MainloopInner<MainloopInternal>> {
+    fn inner(&self) -> Rc<MainloopInner<MainloopInternal>> {
         Rc::clone(&self._inner)
     }
 }
 
-impl pulse::mainloop::signal::MainloopSignals for Mainloop {}
+impl MainloopSignals for Mainloop {}
 
 /// Drop function for MainloopInner<MainloopInternal>.
-fn drop_actual(self_: &mut pulse::mainloop::api::MainloopInner<MainloopInternal>) {
-    unsafe { capi::pa_glib_mainloop_free(std::mem::transmute(&self_.ptr)) };
+fn drop_actual(self_: &mut MainloopInner<MainloopInternal>) {
+    unsafe { capi::pa_glib_mainloop_free(mem::transmute(&self_.ptr)) };
     self_.ptr = null_mut::<MainloopInternal>();
-    self_.api = null::<pulse::mainloop::api::MainloopApi>();
+    self_.api = null::<MainloopApi>();
 }
 
 impl Mainloop {
@@ -118,13 +121,13 @@ impl Mainloop {
             return None;
         }
         let api_ptr = unsafe {
-            std::mem::transmute(capi::pa_glib_mainloop_get_api(ptr))
+            mem::transmute(capi::pa_glib_mainloop_get_api(ptr))
         };
         Some(
             Self {
                 _inner: Rc::new(
-                    pulse::mainloop::api::MainloopInner::<MainloopInternal> {
-                        ptr: unsafe { std::mem::transmute(ptr) },
+                    MainloopInner::<MainloopInternal> {
+                        ptr: unsafe { mem::transmute(ptr) },
                         api: api_ptr,
                         dropfn: drop_actual,
                         supports_rtclock: false,
@@ -142,7 +145,7 @@ impl Mainloop {
     /// This is actually unnecessary through this binding. The pointer is retrieved automatically
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
-    pub fn get_api<'a>(&self) -> &'a pulse::mainloop::api::MainloopApi {
+    pub fn get_api<'a>(&self) -> &'a MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }

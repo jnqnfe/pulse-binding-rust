@@ -28,7 +28,7 @@
 //! * Timer events: Events that trigger after a fixed amount of time.
 //!
 //! The abstraction is represented as a number of function pointers in the
-//! [`::mainloop::api::MainloopApi`] structure.
+//! [`mainloop::api::MainloopApi`] structure.
 //!
 //! To actually be able to use these functions, an implementation needs to be coupled to the
 //! abstraction. There are three of these shipped with PulseAudio, but any other can be used with a
@@ -42,7 +42,7 @@
 //! * ‘Glib’: A wrapper around GLib’s main loop. This is provided in the separate
 //!   `libpulse_glib_binding` crate.
 //!
-//! UNIX signals may be hooked to a main loop using the functionality from [`::mainloop::signal`].
+//! UNIX signals may be hooked to a main loop using the functionality from [`mainloop::signal`].
 //! This relies only on the main loop abstraction and can therefore be used with any of the
 //! implementations.
 //!
@@ -89,8 +89,8 @@
 //!
 //! [`Standard`]: standard/index.html
 //! [`Threaded`]: threaded/index.html
-//! [`::mainloop::signal`]: signal/index.html
-//! [`::mainloop::api::MainloopApi`]: api/struct.MainloopApi.html
+//! [`mainloop::signal`]: signal/index.html
+//! [`mainloop::api::MainloopApi`]: api/struct.MainloopApi.html
 //! [standard mainloop documentation]: standard/index.html
 //! [`in_thread`]: threaded/struct.Mainloop.html#method.in_thread
 

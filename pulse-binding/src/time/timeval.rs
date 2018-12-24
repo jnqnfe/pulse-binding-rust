@@ -15,9 +15,6 @@
 
 //! Timeval.
 
-use std;
-use capi;
-use libc;
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;

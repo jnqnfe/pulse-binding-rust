@@ -23,13 +23,13 @@
 //! [`Info`]: struct.Info.html
 //! [`set_encoding`]: struct.Info.html#method.set_encoding
 
-use std;
-use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::borrow::Cow;
-use error::PAErr;
+use crate::{sample, channelmap};
+use crate::error::PAErr;
+use crate::proplist::{Proplist, ProplistInternal};
 
 pub use capi::pa_prop_type_t as PropType;
 
@@ -91,7 +91,7 @@ pub struct Info {
     /// The actual C object.
     pub(crate) ptr: *mut InfoInternal,
     /// Wrapped property list pointer.
-    properties: ::proplist::Proplist,
+    properties: Proplist,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks.
     weak: bool,
 }
@@ -106,7 +106,7 @@ pub(crate) struct InfoInternal {
     /// The encoding used for the format.
     pub encoding: Encoding,
     /// Additional encoding-specific properties such as sample rate, bitrate, etc.
-    pub list: *mut ::proplist::ProplistInternal,
+    pub list: *mut ProplistInternal,
 }
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
@@ -171,7 +171,7 @@ impl Info {
         }
     }
 
-    /// Utility function to take a [`::sample::Spec`] and generate the corresponding `Info`.
+    /// Utility function to take a [`sample::Spec`] and generate the corresponding `Info`.
     ///
     /// Note that if you want the server to choose some of the stream parameters, for example the
     /// sample rate, so that they match the device parameters, then you shouldn’t use this function.
@@ -182,8 +182,8 @@ impl Info {
     ///
     /// Returns `None` on failure.
     ///
-    /// [`::sample::Spec`]: ../sample/struct.Spec.html
-    pub fn new_from_sample_spec(ss: &::sample::Spec, map: Option<&::channelmap::Map>)
+    /// [`sample::Spec`]: ../sample/struct.Spec.html
+    pub fn new_from_sample_spec(ss: &sample::Spec, map: Option<&channelmap::Map>)
         -> Option<Self>
     {
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
@@ -202,7 +202,7 @@ impl Info {
                 ptr: ptr,
                 // Note, yes, this should be the weak version, the ‘free’ function for a format info
                 // object free’s its own proplist!
-                properties: ::proplist::Proplist::from_raw_weak((*ptr).list),
+                properties: Proplist::from_raw_weak((*ptr).list),
                 weak: false,
             }
         }
@@ -216,7 +216,7 @@ impl Info {
         unsafe {
             Self {
                 ptr: ptr,
-                properties: ::proplist::Proplist::from_raw_weak((*ptr).list),
+                properties: Proplist::from_raw_weak((*ptr).list),
                 weak: true,
             }
         }
@@ -258,17 +258,17 @@ impl Info {
         }
     }
 
-    /// Utility function to generate a [`::sample::Spec`] and [`::channelmap::Map`] corresponding to
-    /// a given `Info`.
+    /// Utility function to generate a [`sample::Spec`] and [`channelmap::Map`] corresponding to a
+    /// given `Info`.
     ///
     /// The conversion for PCM formats is straight-forward. For non-PCM formats, if there is a fixed
     /// size-time conversion (i.e. all IEC61937-encapsulated formats), a “fake” sample spec whose
     /// size-time conversion corresponds to this format is provided and the channel map argument is
     /// ignored. For formats with variable size-time conversion, this function will fail.
     ///
-    /// [`::sample::Spec`]: ../sample/struct.Spec.html
-    /// [`::channelmap::Map`]: ../channelmap/struct.Map.html
-    pub fn to_sample_spec(&self, ss: &mut ::sample::Spec, map: &mut ::channelmap::Map)
+    /// [`sample::Spec`]: ../sample/struct.Spec.html
+    /// [`channelmap::Map`]: ../channelmap/struct.Map.html
+    pub fn to_sample_spec(&self, ss: &mut sample::Spec, map: &mut channelmap::Map)
         -> Result<(), PAErr>
     {
         match unsafe { capi::pa_format_info_to_sample_spec(
@@ -293,13 +293,13 @@ impl Info {
 
     /// Gets an immutable reference to the property list.
     #[inline]
-    pub fn get_properties(&self) -> &::proplist::Proplist {
+    pub fn get_properties(&self) -> &Proplist {
         &self.properties
     }
 
     /// Gets a mutable reference to the property list.
     #[inline]
-    pub fn get_properties_mut(&mut self) -> &mut ::proplist::Proplist {
+    pub fn get_properties_mut(&mut self) -> &mut Proplist {
         &mut self.properties
     }
 
@@ -474,7 +474,7 @@ impl Info {
     /// will select the stream sample format. In that case the stream sample format will most likely
     /// match the device sample format, meaning that sample format conversion will be avoided.
     #[inline]
-    pub fn set_sample_format(&mut self, sf: ::sample::Format) {
+    pub fn set_sample_format(&mut self, sf: sample::Format) {
         unsafe { capi::pa_format_info_set_sample_format(self.ptr as *mut capi::pa_format_info,
             sf.into()); }
     }
@@ -507,7 +507,7 @@ impl Info {
     /// will select the stream channel map. In that case the stream channel map will most likely
     /// match the device channel map, meaning that remixing will be avoided.
     #[inline]
-    pub fn set_channel_map(&mut self, map: &::channelmap::Map) {
+    pub fn set_channel_map(&mut self, map: &channelmap::Map) {
         unsafe { capi::pa_format_info_set_channel_map(self.ptr as *mut capi::pa_format_info,
             map.as_ref()) }
     }

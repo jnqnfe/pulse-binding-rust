@@ -15,8 +15,6 @@
 
 //! Unix timestamps.
 
-use std;
-use capi;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 use super::{Timeval, MicroSeconds};
 

@@ -15,11 +15,10 @@
 
 //! Main loop IO events.
 
-use std;
-use capi;
 use std::os::raw::c_void;
 use std::rc::Rc;
-use super::super::api::{MainloopApi, MainloopInnerType};
+use crate::mainloop::api::{MainloopApi, MainloopInnerType};
+use crate::callbacks::MultiUseCallback;
 
 pub use capi::pa_io_event as IoEventInternal;
 
@@ -63,10 +62,9 @@ pub struct IoEventRef<T: 'static>
     owner: Rc<T>,
 }
 
-pub(crate) type EventCb =
-    ::callbacks::MultiUseCallback<dyn FnMut(*mut IoEventInternal, i32, IoEventFlagSet),
-        extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32,
-        events: IoEventFlagSet, userdata: *mut c_void)>;
+pub(crate) type EventCb = MultiUseCallback<dyn FnMut(*mut IoEventInternal, i32, IoEventFlagSet),
+    extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: IoEventFlagSet,
+    userdata: *mut c_void)>;
 
 impl<T> IoEvent<T>
     where T: MainloopInnerType

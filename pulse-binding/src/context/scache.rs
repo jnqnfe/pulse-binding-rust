@@ -23,17 +23,17 @@
 //!
 //! # Creation
 //!
-//! To create a sample, the normal stream API is used (see [`::stream`]). The function
-//! [`::stream::Stream::connect_upload`] will make sure the stream is stored as a sample on the
+//! To create a sample, the normal stream API is used (see [`stream`]). The function
+//! [`stream::Stream::connect_upload`] will make sure the stream is stored as a sample on the
 //! server.
 //!
-//! To complete the upload, [`::stream::Stream::finish_upload`] is called and the sample will
-//! receive the same name as the stream. If the upload should be aborted, simply call
-//! [`::stream::Stream::disconnect`].
+//! To complete the upload, [`stream::Stream::finish_upload`] is called and the sample will receive
+//! the same name as the stream. If the upload should be aborted, simply call
+//! [`stream::Stream::disconnect`].
 //!
 //! # Playing samples
 //!
-//! To play back a sample, simply call [`::context::Context::play_sample`]:
+//! To play back a sample, simply call [`context::Context::play_sample`]:
 //!
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
@@ -53,23 +53,22 @@
 //! # Removing samples
 //!
 //! When a sample is no longer needed, it should be removed on the server to save resources. The
-//! sample is deleted using [`::context::Context::remove_sample`].
+//! sample is deleted using [`context::Context::remove_sample`].
 //!
-//! [`::stream`]: ../../stream/index.html
-//! [`::stream::Stream::connect_upload`]: ../../stream/struct.Stream.html#method.connect_upload
-//! [`::stream::Stream::finish_upload`]: ../../stream/struct.Stream.html#method.finish_upload
-//! [`::stream::Stream::disconnect`]: ../../stream/struct.Stream.html#method.disconnect
-//! [`::context::Context::play_sample`]: ../struct.Context.html#method.play_sample
-//! [`::context::Context::remove_sample`]: ../struct.Context.html#method.remove_sample
+//! [`stream`]: ../../stream/index.html
+//! [`stream::Stream::connect_upload`]: ../../stream/struct.Stream.html#method.connect_upload
+//! [`stream::Stream::finish_upload`]: ../../stream/struct.Stream.html#method.finish_upload
+//! [`stream::Stream::disconnect`]: ../../stream/struct.Stream.html#method.disconnect
+//! [`context::Context::play_sample`]: ../struct.Context.html#method.play_sample
+//! [`context::Context::remove_sample`]: ../struct.Context.html#method.remove_sample
 
-use std;
-use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
 use std::ptr::null;
 use super::{ContextInternal, Context};
-use callbacks::box_closure_get_capi_ptr;
-use ::operation::Operation;
+use crate::def;
+use crate::callbacks::{box_closure_get_capi_ptr, get_su_capi_params, get_su_callback};
+use crate::{operation::Operation, volume::Volume, proplist::Proplist};
 
 impl Context {
     /// Removes a sample from the sample cache.
@@ -102,14 +101,14 @@ impl Context {
     /// * `name`: Name of the sample to play.
     /// * `dev`: Sink to play this sample on, or `None` for default.
     /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
-    ///   [`::volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
+    ///   [`volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
     ///   side which is a good idea.
     /// * `callback`: Optional success callback. It must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
-    pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: ::volume::Volume,
+    /// [`volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
+    pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: Volume,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -123,7 +122,7 @@ impl Context {
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -140,7 +139,7 @@ impl Context {
     /// * `name`: Name of the sample to play.
     /// * `dev`: Sink to play this sample on, or `None` for default.
     /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
-    ///   [`::volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
+    ///   [`volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
     ///   side which is a good idea.
     /// * `proplist`: Property list for this sound. The property list of the cached entry will have
     ///   this merged into it.
@@ -150,10 +149,9 @@ impl Context {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`::volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
-    pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
-        volume: ::volume::Volume, proplist: &::proplist::Proplist,
-        callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)
+    /// [`volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
+    pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>, volume: Volume,
+        proplist: &Proplist, callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)
         -> Operation<dyn FnMut(Result<u32, ()>)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -167,7 +165,7 @@ impl Context {
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, play_sample_success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, play_sample_success_cb_proxy);
         let ptr = unsafe {
             capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
                 proplist.0.ptr, cb_fn, cb_data)
@@ -182,10 +180,10 @@ impl Context {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn play_sample_success_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
-    let index_actual = match index { ::def::INVALID_INDEX => Err(()), i => Ok(i) };
+    let index_actual = match index { def::INVALID_INDEX => Err(()), i => Ok(i) };
     let _ = std::panic::catch_unwind(|| {
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(Result<u32, ()>)>(userdata);
+        let mut callback = get_su_callback::<dyn FnMut(Result<u32, ()>)>(userdata);
         (callback)(index_actual);
     });
 }

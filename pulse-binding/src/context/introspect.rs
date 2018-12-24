@@ -161,7 +161,7 @@
 //!
 //! If an application changes any volume, it should also listen to changes of the same volume
 //! originating from outside the application (e.g., from the system mixer application) and update
-//! its user interface accordingly. Use [`::subscribe`] to get such notifications.
+//! its user interface accordingly. Use [`subscribe`] to get such notifications.
 //!
 //! # Modules
 //!
@@ -173,8 +173,6 @@
 //! The only operation supported on clients is the possibility of kicking them off the server using
 //! [`Introspector::kill_client`].
 //!
-//! [`::subscribe`]: ../subscribe/index.html
-//!
 //! [`Context`]: ../struct.Context.html
 //! [`ListResult`]: ../../callbacks/enum.ListResult.html
 //! [`Introspector`]: struct.Introspector.html
@@ -185,8 +183,8 @@
 //! [`SinkInputInfo`]: struct.SinkInputInfo.html
 //! [`SourceInfo`]: struct.SourceInfo.html
 //! [`SourceOutputInfo`]: struct.SourceOutputInfo.html
-//! [`StatInfo`]: struct.StatInfo.html 
-//!
+//! [`StatInfo`]: struct.StatInfo.html
+//! [`subscribe`]: ../subscribe/index.html
 //! [`introspect`]: ../struct.Context.html#method.introspect
 //! [`Introspector::get_client_info_list`]: struct.Introspector.html#method.get_client_info_list
 //! [`Introspector::get_client_info`]: struct.Introspector.html#method.get_client_info
@@ -223,18 +221,11 @@
 //! [`Introspector::stat`]: struct.Introspector.html#method.stat
 //! [`Introspector::unload_module`]: struct.Introspector.html#method.unload_module
 
-use std;
-use capi;
+use std::mem;
 use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::ptr::null_mut;
-use super::{Context, ContextInternal};
-use time::MicroSeconds;
-use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
-use operation::Operation;
-use volume::Volume;
-
 use capi::pa_sink_port_info as SinkPortInfoInternal;
 use capi::pa_sink_info as SinkInfoInternal;
 use capi::pa_source_port_info as SourcePortInfoInternal;
@@ -248,6 +239,12 @@ use capi::pa_card_info as CardInfoInternal;
 use capi::pa_sink_input_info as SinkInputInfoInternal;
 use capi::pa_source_output_info as SourceOutputInfoInternal;
 use capi::pa_sample_info as SampleInfoInternal;
+use super::{Context, ContextInternal};
+use crate::{def, sample, channelmap, format, direction};
+use crate::time::MicroSeconds;
+use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, get_su_capi_params, get_su_callback, ListInstanceCallback};
+use crate::volume::{ChannelVolumes, Volume};
+use crate::{operation::Operation, proplist::Proplist};
 
 pub use capi::pa_stat_info as StatInfo;
 
@@ -263,7 +260,7 @@ impl Context {
     /// Gets an introspection object linked to the current context, giving access to introspection
     /// routines.
     ///
-    /// See [`::context::introspect`](introspect/index.html).
+    /// See [`context::introspect`](introspect/index.html).
     #[inline]
     pub fn introspect(&self) -> Introspector {
         unsafe { capi::pa_context_ref(self.ptr) };
@@ -304,7 +301,7 @@ pub struct SinkPortInfo<'a> {
     /// The higher this value is, the more useful this port is as a default.
     pub priority: u32,
     /// A flag indicating availability status of this port.
-    pub available: ::def::PortAvailable,
+    pub available: def::PortAvailable,
 }
 
 impl<'a> SinkPortInfo<'a> {
@@ -322,7 +319,7 @@ impl<'a> SinkPortInfo<'a> {
                     true => None,
                 },
                 priority: src.priority,
-                available: std::mem::transmute(src.available),
+                available: mem::transmute(src.available),
             }
         }
     }
@@ -341,13 +338,13 @@ pub struct SinkInfo<'a> {
     /// Description of this sink.
     pub description: Option<Cow<'a, str>>,
     /// Sample spec of this sink.
-    pub sample_spec: ::sample::Spec,
+    pub sample_spec: sample::Spec,
     /// Channel map.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
     /// Index of the owning module of this sink, or `None` if is invalid.
     pub owner_module: Option<u32>,
     /// Volume of the sink.
-    pub volume: ::volume::ChannelVolumes,
+    pub volume: ChannelVolumes,
     /// Mute switch of the sink.
     pub mute: bool,
     /// Index of the monitor source connected to this sink.
@@ -359,16 +356,16 @@ pub struct SinkInfo<'a> {
     /// Driver name.
     pub driver: Option<Cow<'a, str>>,
     /// Flags.
-    pub flags: ::def::SinkFlagSet,
+    pub flags: def::SinkFlagSet,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
     /// The latency this device has been configured to.
     pub configured_latency: MicroSeconds,
     /// Some kind of “base” volume that refers to unamplified/unattenuated volume in the context of
     /// the output device.
-    pub base_volume: ::volume::Volume,
+    pub base_volume: Volume,
     /// State.
-    pub state: ::def::SinkState,
+    pub state: def::SinkState,
     /// Number of volume steps for sinks which do not support arbitrary volumes.
     pub n_volume_steps: u32,
     /// Card index, or `None` if invalid.
@@ -378,7 +375,7 @@ pub struct SinkInfo<'a> {
     /// Pointer to active port in the set, or `None`.
     pub active_port: Option<Box<SinkPortInfo<'a>>>,
     /// Set of formats supported by the sink.
-    pub formats: Vec<::format::Info>,
+    pub formats: Vec<format::Info>,
 }
 
 impl<'a> SinkInfo<'a> {
@@ -397,9 +394,9 @@ impl<'a> SinkInfo<'a> {
         let mut formats_vec = Vec::with_capacity(src.n_formats as usize);
         assert!(src.n_formats == 0 || !src.formats.is_null());
         for i in 0..src.n_formats as isize {
-            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut ::format::InfoInternal };
+            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut format::InfoInternal };
             if !indexed_ptr.is_null() {
-                formats_vec.push(::format::Info::from_raw_weak(indexed_ptr));
+                formats_vec.push(format::Info::from_raw_weak(indexed_ptr));
             }
         }
 
@@ -417,7 +414,7 @@ impl<'a> SinkInfo<'a> {
                 sample_spec: src.sample_spec.into(),
                 channel_map: src.channel_map.into(),
                 owner_module: match src.owner_module {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 volume: src.volume.into(),
@@ -433,13 +430,13 @@ impl<'a> SinkInfo<'a> {
                     true => None,
                 },
                 flags: src.flags,
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
                 configured_latency: MicroSeconds(src.configured_latency),
                 base_volume: Volume(src.base_volume),
                 state: src.state.into(),
                 n_volume_steps: src.n_volume_steps,
                 card: match src.card {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 ports: port_vec,
@@ -504,11 +501,11 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn set_sink_volume_by_index(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+    pub fn set_sink_volume_by_index(&mut self, index: u32, volume: &ChannelVolumes,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -520,7 +517,7 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
+    pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &ChannelVolumes,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -528,7 +525,7 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_name(self.context, c_name.as_ptr(),
             volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -544,7 +541,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_index(self.context, index, mute as i32,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -564,7 +561,7 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -584,7 +581,7 @@ impl Introspector {
         let c_name = CString::new(sink_name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -593,7 +590,7 @@ impl Introspector {
 
     /// Suspends/Resumes a sink.
     ///
-    /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
+    /// If `index` is [`def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
     /// be suspended. Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
@@ -601,7 +598,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_index(self.context, index,
             suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -621,7 +618,7 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_port_by_index(self.context, index,
             c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -642,7 +639,7 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -686,7 +683,7 @@ pub struct SourcePortInfo<'a> {
     /// The higher this value is, the more useful this port is as a default.
     pub priority: u32,
     /// A flag indicating availability status of this port.
-    pub available: ::def::PortAvailable,
+    pub available: def::PortAvailable,
 }
 
 impl<'a> SourcePortInfo<'a> {
@@ -704,7 +701,7 @@ impl<'a> SourcePortInfo<'a> {
                     true => None,
                 },
                 priority: src.priority,
-                available: std::mem::transmute(src.available),
+                available: mem::transmute(src.available),
             }
         }
     }
@@ -723,13 +720,13 @@ pub struct SourceInfo<'a> {
     /// Description of this source.
     pub description: Option<Cow<'a, str>>,
     /// Sample spec of this source.
-    pub sample_spec: ::sample::Spec,
+    pub sample_spec: sample::Spec,
     /// Channel map.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
     /// Owning module index, or `None`.
     pub owner_module: Option<u32>,
     /// Volume of the source.
-    pub volume: ::volume::ChannelVolumes,
+    pub volume: ChannelVolumes,
     /// Mute switch of the sink.
     pub mute: bool,
     /// If this is a monitor source, the index of the owning sink, otherwise `None`.
@@ -741,16 +738,16 @@ pub struct SourceInfo<'a> {
     /// Driver name.
     pub driver: Option<Cow<'a, str>>,
     /// Flags.
-    pub flags: ::def::SourceFlagSet,
+    pub flags: def::SourceFlagSet,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
     /// The latency this device has been configured to.
     pub configured_latency: MicroSeconds,
     /// Some kind of “base” volume that refers to unamplified/unattenuated volume in the context of
     /// the input device.
-    pub base_volume: ::volume::Volume,
+    pub base_volume: Volume,
     /// State.
-    pub state: ::def::SourceState,
+    pub state: def::SourceState,
     /// Number of volume steps for sources which do not support arbitrary volumes.
     pub n_volume_steps: u32,
     /// Card index, or `None`.
@@ -760,7 +757,7 @@ pub struct SourceInfo<'a> {
     /// Pointer to active port in the set, or `None`.
     pub active_port: Option<Box<SourcePortInfo<'a>>>,
     /// Set of formats supported by the sink.
-    pub formats: Vec<::format::Info>,
+    pub formats: Vec<format::Info>,
 }
 
 impl<'a> SourceInfo<'a> {
@@ -779,9 +776,9 @@ impl<'a> SourceInfo<'a> {
         let mut formats_vec = Vec::with_capacity(src.n_formats as usize);
         assert!(src.n_formats == 0 || !src.formats.is_null());
         for i in 0..src.n_formats as isize {
-            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut ::format::InfoInternal };
+            let indexed_ptr = unsafe { (*src.formats.offset(i)) as *mut format::InfoInternal };
             if !indexed_ptr.is_null() {
-                formats_vec.push(::format::Info::from_raw_weak(indexed_ptr));
+                formats_vec.push(format::Info::from_raw_weak(indexed_ptr));
             }
         }
 
@@ -799,13 +796,13 @@ impl<'a> SourceInfo<'a> {
                 sample_spec: src.sample_spec.into(),
                 channel_map: src.channel_map.into(),
                 owner_module: match src.owner_module {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 volume: src.volume.into(),
                 mute: match src.mute { 0 => false, _ => true },
                 monitor_of_sink: match src.monitor_of_sink {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 monitor_of_sink_name: match src.monitor_of_sink_name.is_null() {
@@ -818,13 +815,13 @@ impl<'a> SourceInfo<'a> {
                     true => None,
                 },
                 flags: src.flags,
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
                 configured_latency: MicroSeconds(src.configured_latency),
-                base_volume: ::volume::Volume(src.base_volume),
+                base_volume: Volume(src.base_volume),
                 state: src.state.into(),
                 n_volume_steps: src.n_volume_steps,
                 card: match src.card {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 ports: port_vec,
@@ -890,11 +887,11 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn set_source_volume_by_index(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+    pub fn set_source_volume_by_index(&mut self, index: u32, volume: &ChannelVolumes,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -906,7 +903,7 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn set_source_volume_by_name(&mut self, name: &str, volume: &::volume::ChannelVolumes,
+    pub fn set_source_volume_by_name(&mut self, name: &str, volume: &ChannelVolumes,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -914,7 +911,7 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context,
             c_name.as_ptr(), volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -930,7 +927,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_index(self.context, index,
             mute as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -950,7 +947,7 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -970,7 +967,7 @@ impl Introspector {
         let c_name = CString::new(name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_source_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -979,7 +976,7 @@ impl Introspector {
 
     /// Suspends/Resumes a source.
     ///
-    /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
+    /// If `index` is [`def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
     /// will be suspended. Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
@@ -987,7 +984,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_source_by_index(self.context, index,
             suspend as i32, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1007,7 +1004,7 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_port_by_index(self.context, index,
             c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1028,7 +1025,7 @@ impl Introspector {
         let c_port = CString::new(port.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1075,7 +1072,7 @@ pub struct ServerInfo<'a> {
     /// Server package name (usually “pulseaudio”).
     pub server_name: Option<Cow<'a, str>>,
     /// Default sample specification.
-    pub sample_spec: ::sample::Spec,
+    pub sample_spec: sample::Spec,
     /// Name of default sink.
     pub default_sink_name: Option<Cow<'a, str>>,
     /// Name of default source.
@@ -1083,7 +1080,7 @@ pub struct ServerInfo<'a> {
     /// A random cookie for identifying this instance of PulseAudio.
     pub cookie: u32,
     /// Default channel map.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
 }
 
 impl<'a> ServerInfo<'a> {
@@ -1150,7 +1147,7 @@ fn get_server_info_cb_proxy(_: *mut ContextInternal, i: *const ServerInfoInterna
         let obj = ServerInfo::new_from_raw(i);
 
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(&ServerInfo)>(userdata);
+        let mut callback = get_su_callback::<dyn FnMut(&ServerInfo)>(userdata);
         (callback)(&obj);
     });
 }
@@ -1174,7 +1171,7 @@ pub struct ModuleInfo<'a> {
     /// Usage counter or `None` if invalid.
     pub n_used: Option<u32>,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
 }
 
 impl<'a> ModuleInfo<'a> {
@@ -1193,10 +1190,10 @@ impl<'a> ModuleInfo<'a> {
                     true => None,
                 },
                 n_used: match src.n_used {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
             }
         }
     }
@@ -1294,7 +1291,7 @@ extern "C"
 fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
     let _ = std::panic::catch_unwind(|| {
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(u32)>(userdata);
+        let mut callback = get_su_callback::<dyn FnMut(u32)>(userdata);
         (callback)(index);
     });
 }
@@ -1318,7 +1315,7 @@ pub struct ClientInfo<'a> {
     /// Driver name.
     pub driver: Option<Cow<'a, str>>,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
 }
 
 impl<'a> ClientInfo<'a> {
@@ -1333,14 +1330,14 @@ impl<'a> ClientInfo<'a> {
                     true => None,
                 },
                 owner_module: match src.owner_module {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 driver: match src.driver.is_null() {
                     false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
                     true => None,
                 },
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
             }
         }
     }
@@ -1475,11 +1472,11 @@ pub struct CardPortInfo<'a> {
     /// The higher this value is, the more useful this port is as a default.
     pub priority: u32,
     /// Availability status of this port.
-    pub available: ::def::PortAvailable,
+    pub available: def::PortAvailable,
     /// The direction of this port.
-    pub direction: ::direction::FlagSet,
+    pub direction: direction::FlagSet,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
     /// Latency offset of the port that gets added to the sink/source latency when the port is
     /// active.
     pub latency_offset: i64,
@@ -1512,9 +1509,9 @@ impl<'a> CardPortInfo<'a> {
                     true => None,
                 },
                 priority: src.priority,
-                available: std::mem::transmute(src.available),
+                available: mem::transmute(src.available),
                 direction: src.direction,
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
                 latency_offset: src.latency_offset,
                 profiles: profiles_vec,
             }
@@ -1537,7 +1534,7 @@ pub struct CardInfo<'a> {
     /// Driver name.
     pub driver: Option<Cow<'a, str>>,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
     /// Set of ports.
     pub ports: Vec<CardPortInfo<'a>>,
     /// Set of available profiles.
@@ -1576,14 +1573,14 @@ impl<'a> CardInfo<'a> {
                     true => None,
                 },
                 owner_module: match src.owner_module {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 driver: match src.driver.is_null() {
                     false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
                     true => None,
                 },
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
                 ports: ports_vec,
                 profiles: profiles_vec,
                 active_profile: match src.active_profile2.is_null() {
@@ -1654,7 +1651,7 @@ impl Introspector {
         let c_profile = CString::new(profile.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_card_profile_by_index(self.context, index,
             c_profile.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1675,7 +1672,7 @@ impl Introspector {
         let c_profile = CString::new(profile.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_card_profile_by_name(self.context, c_name.as_ptr(),
             c_profile.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1696,7 +1693,7 @@ impl Introspector {
         let c_port = CString::new(port_name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_port_latency_offset(self.context, c_name.as_ptr(),
             c_port.as_ptr(), offset, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1747,16 +1744,16 @@ pub struct SinkInputInfo<'a> {
     /// Index of the connected sink.
     pub sink: u32,
     /// The sample specification of the sink input.
-    pub sample_spec: ::sample::Spec,
+    pub sample_spec: sample::Spec,
     /// Channel map.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
     /// The volume of this sink input.
-    pub volume: ::volume::ChannelVolumes,
+    pub volume: ChannelVolumes,
     /// Latency due to buffering in sink input, see
-    /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
+    /// [`def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
     pub buffer_usec: MicroSeconds,
     /// Latency of the sink device, see
-    /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
+    /// [`def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
     pub sink_usec: MicroSeconds,
     /// The resampling method used by this sink input.
     pub resample_method: Option<Cow<'a, str>>,
@@ -1765,7 +1762,7 @@ pub struct SinkInputInfo<'a> {
     /// Stream muted.
     pub mute: bool,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
     /// Stream corked.
     pub corked: bool,
     /// Stream has volume. If not set, then the meaning of this struct’s volume member is unspecified.
@@ -1774,7 +1771,7 @@ pub struct SinkInputInfo<'a> {
     /// control the volume.
     pub volume_writable: bool,
     /// Stream format information.
-    pub format: ::format::Info,
+    pub format: format::Info,
 }
 
 impl<'a> SinkInputInfo<'a> {
@@ -1789,11 +1786,11 @@ impl<'a> SinkInputInfo<'a> {
                     true => None,
                 },
                 owner_module: match src.owner_module {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 client: match src.client {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 sink: src.sink,
@@ -1811,11 +1808,11 @@ impl<'a> SinkInputInfo<'a> {
                     true => None,
                 },
                 mute: match src.mute { 0 => false, _ => true },
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
                 corked: match src.corked { 0 => false, _ => true },
                 has_volume: match src.has_volume { 0 => false, _ => true },
                 volume_writable: match src.volume_writable { 0 => false, _ => true },
-                format: ::format::Info::from_raw_weak(src.format as *mut ::format::InfoInternal),
+                format: format::Info::from_raw_weak(src.format as *mut format::InfoInternal),
             }
         }
     }
@@ -1865,7 +1862,7 @@ impl Introspector {
         let c_name = CString::new(sink_name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_name(self.context, index,
             c_name.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1881,7 +1878,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_index(self.context, index,
             sink_index, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1893,11 +1890,11 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn set_sink_input_volume(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+    pub fn set_sink_input_volume(&mut self, index: u32, volume: &ChannelVolumes,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1913,7 +1910,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_mute(self.context, index, mute as i32,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -1979,25 +1976,25 @@ pub struct SourceOutputInfo<'a> {
     /// Index of the connected source.
     pub source: u32,
     /// The sample specification of the source output.
-    pub sample_spec: ::sample::Spec,
+    pub sample_spec: sample::Spec,
     /// Channel map.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
     /// Latency due to buffering in the source output, see
-    /// [`::def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
+    /// [`def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
     pub buffer_usec: MicroSeconds,
-    /// Latency of the source device, see [`::def::TimingInfo`](../../def/struct.TimingInfo.html)
-    /// for details.
+    /// Latency of the source device, see [`def::TimingInfo`](../../def/struct.TimingInfo.html) for
+    /// details.
     pub source_usec: MicroSeconds,
     /// The resampling method used by this source output.
     pub resample_method: Option<Cow<'a, str>>,
     /// Driver name.
     pub driver: Option<Cow<'a, str>>,
     /// Property list.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
     /// Stream corked.
     pub corked: bool,
     /// The volume of this source output.
-    pub volume: ::volume::ChannelVolumes,
+    pub volume: ChannelVolumes,
     /// Stream muted.
     pub mute: bool,
     /// Stream has volume. If not set, then the meaning of this struct’s volume member is unspecified.
@@ -2006,7 +2003,7 @@ pub struct SourceOutputInfo<'a> {
     /// control the volume.
     pub volume_writable: bool,
     /// Stream format information.
-    pub format: ::format::Info,
+    pub format: format::Info,
 }
 
 impl<'a> SourceOutputInfo<'a> {
@@ -2021,11 +2018,11 @@ impl<'a> SourceOutputInfo<'a> {
                     true => None,
                 },
                 owner_module: match src.owner_module {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 client: match src.client {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 source: src.source,
@@ -2041,13 +2038,13 @@ impl<'a> SourceOutputInfo<'a> {
                     false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
                     true => None,
                 },
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
                 corked: match src.corked { 0 => false, _ => true },
                 volume: src.volume.into(),
                 mute: match src.mute { 0 => false, _ => true },
                 has_volume: match src.has_volume { 0 => false, _ => true },
                 volume_writable: match src.volume_writable { 0 => false, _ => true },
-                format: ::format::Info::from_raw_weak(src.format as *mut ::format::InfoInternal),
+                format: format::Info::from_raw_weak(src.format as *mut format::InfoInternal),
             }
         }
     }
@@ -2097,7 +2094,7 @@ impl Introspector {
         let c_name = CString::new(source_name.clone()).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_source_output_by_name(self.context, index,
             c_name.as_ptr(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -2113,7 +2110,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_source_output_by_index(self.context, index,
             source_index, cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -2125,11 +2122,11 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
-    pub fn set_source_output_volume(&mut self, index: u32, volume: &::volume::ChannelVolumes,
+    pub fn set_source_output_volume(&mut self, index: u32, volume: &ChannelVolumes,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -2145,7 +2142,7 @@ impl Introspector {
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
+            get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_mute(self.context, index, mute as i32,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
@@ -2215,7 +2212,7 @@ fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata:
     let _ = std::panic::catch_unwind(|| {
         assert!(!i.is_null());
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(&StatInfo)>(userdata);
+        let mut callback = get_su_callback::<dyn FnMut(&StatInfo)>(userdata);
         (callback)(unsafe { i.as_ref().unwrap() });
     });
 }
@@ -2235,11 +2232,11 @@ pub struct SampleInfo<'a> {
     /// Name of this entry.
     pub name: Option<Cow<'a, str>>,
     /// Default volume of this entry.
-    pub volume: ::volume::ChannelVolumes,
+    pub volume: ChannelVolumes,
     /// Sample specification of the sample.
-    pub sample_spec: ::sample::Spec,
+    pub sample_spec: sample::Spec,
     /// The channel map.
-    pub channel_map: ::channelmap::Map,
+    pub channel_map: channelmap::Map,
     /// Duration of this entry.
     pub duration: MicroSeconds,
     /// Length of this sample in bytes.
@@ -2249,7 +2246,7 @@ pub struct SampleInfo<'a> {
     /// In case this is a lazy cache entry, the filename for the sound file to be loaded on demand.
     pub filename: Option<Cow<'a, str>>,
     /// Property list for this sample.
-    pub proplist: ::proplist::Proplist,
+    pub proplist: Proplist,
 }
 
 impl<'a> SampleInfo<'a> {
@@ -2273,7 +2270,7 @@ impl<'a> SampleInfo<'a> {
                     false => Some(CStr::from_ptr(src.filename).to_string_lossy()),
                     true => None,
                 },
-                proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
+                proplist: Proplist::from_raw_weak(src.proplist),
             }
         }
     }

@@ -15,8 +15,6 @@
 
 //! Error management.
 
-use std;
-use capi;
 use std::ffi::CStr;
 
 type ErrorInt = i32;

@@ -15,10 +15,8 @@
 
 //! Global definitions.
 
-use std;
-use capi;
 use std::os::raw::c_void;
-use time::{Timeval, MicroSeconds};
+use crate::time::{Timeval, MicroSeconds};
 
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;
 pub use capi::pa_device_type_t as Device;
@@ -325,10 +323,10 @@ pub mod sink_flags {
     /// sink has initialized.
     pub const HW_MUTE_CTRL: SinkFlagSet = capi::PA_SINK_HW_MUTE_CTRL;
 
-    /// Volume can be translated to dB with [`::volume::sw_volume_to_db`]. This is a dynamic flag
+    /// Volume can be translated to dB with [`volume::sw_volume_to_db`]. This is a dynamic flag
     /// and may change at runtime after the sink has initialized.
     ///
-    /// [`::volume::sw_volume_to_db`]: ../../volume/fn.sw_volume_to_db.html
+    /// [`volume::sw_volume_to_db`]: ../../volume/fn.sw_volume_to_db.html
     pub const DECIBEL_VOLUME: SinkFlagSet = capi::PA_SINK_DECIBEL_VOLUME;
 
     /// This sink is in flat volume mode, i.e. always the maximum of the volume  of all connected
@@ -424,12 +422,12 @@ pub mod source_flags {
     /// source has initialized.
     pub const HW_MUTE_CTRL: SourceFlagSet = capi::PA_SOURCE_HW_MUTE_CTRL;
 
-    /// Volume can be translated to dB with [`::volume::sw_volume_to_db`]. This is a dynamic flag
-    /// and may change at runtime after the sink has initialized. Volume can be translated to dB
-    /// with [`::volume::sw_volume_to_db`]. This is a dynamic flag and may change at runtime after
-    /// the source has initialized.
+    /// Volume can be translated to dB with [`volume::sw_volume_to_db`]. This is a dynamic flag and
+    /// may change at runtime after the sink has initialized. Volume can be translated to dB with
+    /// [`volume::sw_volume_to_db`]. This is a dynamic flag and may change at runtime after the
+    /// source has initialized.
     ///
-    /// [`::volume::sw_volume_to_db`]: ../../volume/fn.sw_volume_to_db.html
+    /// [`volume::sw_volume_to_db`]: ../../volume/fn.sw_volume_to_db.html
     pub const DECIBEL_VOLUME: SourceFlagSet = capi::PA_SOURCE_DECIBEL_VOLUME;
 
     /// The latency can be adjusted dynamically depending on the needs of the connected streams.

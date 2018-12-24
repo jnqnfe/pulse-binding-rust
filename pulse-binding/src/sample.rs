@@ -50,7 +50,7 @@
 //!
 //! PulseAudio supports up to 32 individual channels. The order of the channels is up to the
 //! application, but they must be continuous. To map channels to speakers, see
-//! [`::channelmap`](../channelmap/index.html).
+//! [`channelmap`](../channelmap/index.html).
 //!
 //! # Calculations
 //!
@@ -69,11 +69,9 @@
 //! [`Spec::sample_size`]: struct.Spec.html#method.sample_size
 //! [`Spec::bytes_to_usec`]: struct.Spec.html#method.bytes_to_usec
 
-use std;
-use capi;
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
-use time::MicroSeconds;
+use crate::time::MicroSeconds;
 
 pub use capi::PA_CHANNELS_MAX as CHANNELS_MAX;
 pub use capi::PA_RATE_MAX as RATE_MAX;

@@ -43,10 +43,9 @@
 //! [`Map::init_auto`]: struct.Map.html#method.init_auto
 //! [`Map::init_extend`]: struct.Map.html#method.init_extend
 
-use std;
-use capi;
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
+use crate::sample;
 
 pub use capi::pa_channel_map_def_t as MapDef;
 
@@ -190,7 +189,7 @@ pub struct Map {
     /// Number of channels mapped.
     pub channels: u8,
     /// Channel labels.
-    pub map: [Position; ::sample::CHANNELS_MAX],
+    pub map: [Position; sample::CHANNELS_MAX],
 }
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
@@ -230,7 +229,7 @@ impl Default for Map {
     fn default() -> Self {
         Self {
             channels: 0,
-            map: [Position::Invalid; ::sample::CHANNELS_MAX],
+            map: [Position::Invalid; sample::CHANNELS_MAX],
         }
     }
 }
@@ -325,7 +324,7 @@ impl Map {
     /// This call will fail (return `None`) if there is no default channel map known for this
     /// specific number of channels and mapping.
     pub fn init_auto(&mut self, channels: u32, def: MapDef) -> Option<&mut Self> {
-        debug_assert!(channels as usize <= ::sample::CHANNELS_MAX);
+        debug_assert!(channels as usize <= sample::CHANNELS_MAX);
         unsafe {
             if capi::pa_channel_map_init_auto(self.as_mut(), channels, def).is_null() {
                 return None;
@@ -338,7 +337,7 @@ impl Map {
     /// known with the specified parameters it will synthesize a mapping based on a known mapping
     /// with fewer channels and fill up the rest with AUX0...AUX31 channels.
     pub fn init_extend(&mut self, channels: u32, def: MapDef) -> &mut Self {
-        debug_assert!(channels as usize <= ::sample::CHANNELS_MAX);
+        debug_assert!(channels as usize <= sample::CHANNELS_MAX);
         unsafe { capi::pa_channel_map_init_extend(self.as_mut(), channels, def) };
         self
     }
@@ -368,7 +367,7 @@ impl Map {
 
     /// Checks whether or not the specified map is compatible with the specified sample spec.
     #[inline]
-    pub fn is_compatible_with_sample_spec(&self, ss: &::sample::Spec) -> bool {
+    pub fn is_compatible_with_sample_spec(&self, ss: &sample::Spec) -> bool {
         unsafe { capi::pa_channel_map_compatible(self.as_ref(), ss.as_ref()) != 0 }
     }
 

@@ -15,7 +15,6 @@
 
 //! MicroSeconds.
 
-use std;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
 

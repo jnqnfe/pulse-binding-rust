@@ -15,7 +15,6 @@
 
 //! Utility functions for Direction.
 
-use capi;
 use std::ffi::CStr;
 
 pub type FlagSet = capi::direction::pa_direction_t;

@@ -15,17 +15,16 @@
 
 //! Routines for controlling module-device-manager.
 
-use std;
-use capi;
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::os::raw::{c_char, c_void};
 use std::ptr::{null, null_mut};
-use super::{ContextInternal, Context};
-use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
-use operation::Operation;
 use capi::pa_ext_device_manager_info as InfoInternal;
 use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfoInternal;
+use super::{ContextInternal, Context};
+use crate::def;
+use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use crate::operation::Operation;
 
 #[derive(Debug)]
 pub struct RolePriorityInfo<'a> {
@@ -95,7 +94,7 @@ impl<'a> Info<'a> {
                     true => None,
                 },
                 index: match src.index {
-                    ::def::INVALID_INDEX => None,
+                    def::INVALID_INDEX => None,
                     i => Some(i),
                 },
                 role_priorities: rp_vec,
@@ -127,7 +126,7 @@ impl Context {
     /// Gets a device manager object linked to the current context, giving access to device manager
     /// routines.
     ///
-    /// See [`::context::ext_device_manager`](ext_device_manager/index.html).
+    /// See [`context::ext_device_manager`](ext_device_manager/index.html).
     pub fn device_manager(&self) -> DeviceManager {
         unsafe { capi::pa_context_ref(self.ptr) };
         DeviceManager::from_raw(self.ptr)

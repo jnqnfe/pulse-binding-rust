@@ -19,17 +19,16 @@
 //!
 //! In contrast to other main loop event sources such as timer and IO events, UNIX signal support
 //! requires modification of the global process environment. Due to this the generic main loop
-//! abstraction layer as defined in [`::mainloop::api`](../api/index.html) doesn’t have direct
-//! support for UNIX signals. However, you may hook signal support into an abstract main loop via
-//! the routines defined herein.
+//! abstraction layer as defined in [`mainloop::api`](../api/index.html) doesn’t have direct support
+//! for UNIX signals. However, you may hook signal support into an abstract main loop via the
+//! routines defined herein.
 
-use std;
-use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
-use error::PAErr;
-use super::api::{ApiInternal, MainloopInnerType};
 use capi::pa_signal_event as EventInternal;
+use crate::error::PAErr;
+use crate::callbacks::MultiUseCallback;
+use crate::mainloop::api::{ApiInternal, MainloopInnerType, Mainloop as MainloopTrait};
 
 /// An opaque UNIX signal event source object.
 ///
@@ -41,11 +40,11 @@ pub struct Event {
     _signal_cb: SignalCb,
 }
 
-type SignalCb = ::callbacks::MultiUseCallback<dyn FnMut(i32),
-    extern "C" fn(*const ApiInternal, *mut EventInternal, i32, *mut c_void)>;
+type SignalCb = MultiUseCallback<dyn FnMut(i32), extern "C" fn(*const ApiInternal,
+    *mut EventInternal, i32, *mut c_void)>;
 
 /// Trait with signal handling, for mainloops.
-pub trait MainloopSignals : ::mainloop::api::Mainloop {
+pub trait MainloopSignals : MainloopTrait {
     /// Initializes the UNIX signal subsystem and bind it to the specified main loop.
     fn init_signals(&mut self) -> Result<(), PAErr> {
         let inner = self.inner();

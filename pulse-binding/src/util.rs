@@ -15,7 +15,6 @@
 
 //! Assorted utility functions.
 
-use capi;
 use std::ffi::CStr;
 
 macro_rules! fn_string_with_buffer {

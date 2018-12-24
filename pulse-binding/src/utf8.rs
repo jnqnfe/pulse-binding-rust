@@ -18,7 +18,6 @@
 //! Bindings are not provided here for most of the PulseAudio UTF-8 functions since Rust has built
 //! in UTF-8 handling and thus they should be entirely unnecessary.
 
-use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 

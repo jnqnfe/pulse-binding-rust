@@ -37,7 +37,7 @@
 //! played at the current sink volume level. In this case 100% is often a good default volume for a
 //! sink input, although you still should let PulseAudio decide the default volume. It is possible
 //! to figure out whether flat volume mode is in effect for a given sink by calling
-//! [`::context::introspect::Introspector::get_sink_info_by_name`].
+//! [`context::introspect::Introspector::get_sink_info_by_name`].
 //!
 //! # Calculations
 //!
@@ -52,7 +52,7 @@
 //!
 //! It’s often unknown what scale hardware volumes relate to. Don’t use the above functions on sink
 //! and source volumes, unless the sink or source in question has the
-//! [`::def::sink_flags::DECIBEL_VOLUME`] or [`::def::source_flags::DECIBEL_VOLUME`] flag set. The
+//! [`def::sink_flags::DECIBEL_VOLUME`] or [`def::source_flags::DECIBEL_VOLUME`] flag set. The
 //! conversion functions are rarely needed anyway, most of the time it’s sufficient to treat all
 //! volumes as opaque with a range from [`VOLUME_MUTED`] \(0%) to [`VOLUME_NORM`] \(100%).
 //!
@@ -60,19 +60,18 @@
 //! [`VolumeDB`]: struct.VolumeDB.html
 //! [`VolumeLinear`]: struct.VolumeLinear.html
 //! [`ChannelVolumes`]: struct.ChannelVolumes.html
-//! [`::context::introspect::Introspector::get_sink_info_by_name`]:
+//! [`context::introspect::Introspector::get_sink_info_by_name`]:
 //! ../context/introspect/struct.Introspector.html#method.get_sink_info_by_name
 //! [`Volume::multiply`]: struct.Volume.html#method.multiply
 //! [`ChannelVolumes::sw_multiply`]: struct.ChannelVolumes.html#method.sw_multiply
 //! [`VOLUME_MUTED`]: constant.VOLUME_MUTED.html
 //! [`VOLUME_NORM`]: constant.VOLUME_NORM.html
-//! [`::def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
-//! [`::def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
+//! [`def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
+//! [`def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
 
-use std;
-use capi;
 use std::ffi::CStr;
 use std::ptr::null;
+use crate::{channelmap, sample};
 
 pub const VOLUME_NORM: Volume = Volume(capi::PA_VOLUME_NORM);
 pub const VOLUME_MUTED: Volume = Volume(capi::PA_VOLUME_MUTED);
@@ -117,7 +116,7 @@ pub struct ChannelVolumes {
     /// Number of channels.
     pub channels: u8,
     /// Per-channel volume.
-    pub values: [Volume; ::sample::CHANNELS_MAX],
+    pub values: [Volume; sample::CHANNELS_MAX],
 }
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
@@ -403,12 +402,12 @@ impl ChannelVolumes {
     ///
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
-    /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     #[inline]
-    pub fn avg_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
+    pub fn avg_mask(&self, cm: &channelmap::Map, mask: Option<channelmap::PositionMask>)
         -> Volume
     {
-        let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
+        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_avg_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
@@ -423,12 +422,12 @@ impl ChannelVolumes {
     ///
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
-    /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     #[inline]
-    pub fn max_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
+    pub fn max_mask(&self, cm: &channelmap::Map, mask: Option<channelmap::PositionMask>)
         -> Volume
     {
-        let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
+        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_max_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
@@ -443,12 +442,12 @@ impl ChannelVolumes {
     ///
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
-    /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     #[inline]
-    pub fn min_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
+    pub fn min_mask(&self, cm: &channelmap::Map, mask: Option<channelmap::PositionMask>)
         -> Volume
     {
-        let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
+        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_min_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
@@ -503,20 +502,20 @@ impl ChannelVolumes {
     ///
     /// Returns pointer to self.
     #[inline]
-    pub fn remap(&mut self, from: &::channelmap::Map, to: &::channelmap::Map) -> &mut Self {
+    pub fn remap(&mut self, from: &channelmap::Map, to: &channelmap::Map) -> &mut Self {
         unsafe { capi::pa_cvolume_remap(self.as_mut(), from.as_ref(), to.as_ref()) };
         self
     }
 
     /// Checks if the specified volume is compatible with the specified sample spec.
     #[inline]
-    pub fn is_compatible_with_ss(&self, ss: &::sample::Spec) -> bool {
+    pub fn is_compatible_with_ss(&self, ss: &sample::Spec) -> bool {
         unsafe { capi::pa_cvolume_compatible(self.as_ref(), ss.as_ref()) != 0 }
     }
 
     /// Checks if the specified volume is compatible with the specified channel map.
     #[inline]
-    pub fn is_compatible_with_cm(&self, cm: &::channelmap::Map) -> bool {
+    pub fn is_compatible_with_cm(&self, cm: &channelmap::Map) -> bool {
         unsafe { capi::pa_cvolume_compatible_with_channel_map(self.as_ref(), cm.as_ref()) != 0 }
     }
 
@@ -524,11 +523,11 @@ impl ChannelVolumes {
     ///
     /// The return value will range from `-1.0` (left) to `+1.0` (right). If no balance value is
     /// applicable to this channel map the return value will always be `0.0`. See
-    /// [`::channelmap::Map::can_balance`].
+    /// [`channelmap::Map::can_balance`].
     ///
-    /// [`::channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
+    /// [`channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
     #[inline]
-    pub fn get_balance(&self, map: &::channelmap::Map) -> f32 {
+    pub fn get_balance(&self, map: &channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_balance(self.as_ref(), map.as_ref()) }
     }
 
@@ -538,14 +537,14 @@ impl ChannelVolumes {
     /// Also, after this call [`get_balance`] is not guaranteed to actually return the requested
     /// balance value (e.g. when the input volume was zero anyway for all channels). If no balance
     /// value is applicable to this channel map the volume will not be modified. See
-    /// [`::channelmap::Map::can_balance`].
+    /// [`channelmap::Map::can_balance`].
     ///
     /// Returns pointer to self, or `None` on error.
     ///
     /// [`get_balance`]: #method.get_balance
-    /// [`::channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
+    /// [`channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
     #[inline]
-    pub fn set_balance(&mut self, map: &::channelmap::Map, new_balance: f32) -> Option<&mut Self> {
+    pub fn set_balance(&mut self, map: &channelmap::Map, new_balance: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_balance(self.as_mut(), map.as_ref(), new_balance) };
         match ptr.is_null() { false => Some(self), true => None }
     }
@@ -555,11 +554,11 @@ impl ChannelVolumes {
     ///
     /// The return value will range from -1.0f (rear) to +1.0f (left). If no fade value is
     /// applicable to this channel map the return value will always be `0.0`. See
-    /// [`::channelmap::Map::can_fade`].
+    /// [`channelmap::Map::can_fade`].
     ///
-    /// [`::channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
+    /// [`channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
     #[inline]
-    pub fn get_fade(&self, map: &::channelmap::Map) -> f32 {
+    pub fn get_fade(&self, map: &channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_fade(self.as_ref(), map.as_ref()) }
     }
 
@@ -570,14 +569,14 @@ impl ChannelVolumes {
     /// Also, after this call [`get_fade`] is not guaranteed to actually return the requested fade
     /// value (e.g. when the input volume was zero anyway for all channels). If no fade value is
     /// applicable to this channel map the volume will not be modified. See
-    /// [`::channelmap::Map::can_fade`].
+    /// [`channelmap::Map::can_fade`].
     ///
     /// Returns pointer to self, or `None` on error.
     ///
     /// [`get_fade`]: #method.get_fade
-    /// [`::channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
+    /// [`channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
     #[inline]
-    pub fn set_fade(&mut self, map: &::channelmap::Map, new_fade: f32) -> Option<&mut Self> {
+    pub fn set_fade(&mut self, map: &channelmap::Map, new_fade: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_fade(self.as_mut(), map.as_ref(), new_fade) };
         match ptr.is_null() { false => Some(self), true => None }
     }
@@ -586,12 +585,12 @@ impl ChannelVolumes {
     ///
     /// The return value will range from `-1.0` (no lfe) to `+1.0` (only lfe), where `0.0` is
     /// balanced. If no value is applicable to this channel map the return value will always be
-    /// `0.0`. See [`::channelmap::Map::can_lfe_balance`].
+    /// `0.0`. See [`channelmap::Map::can_lfe_balance`].
     ///
-    /// [`::channelmap::Map::can_lfe_balance`]:
+    /// [`channelmap::Map::can_lfe_balance`]:
     /// ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
-    pub fn get_lfe_balance(&self, map: &::channelmap::Map) -> f32 {
+    pub fn get_lfe_balance(&self, map: &channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
 
@@ -601,14 +600,14 @@ impl ChannelVolumes {
     /// not be reversible! Also, after this call [`get_lfe_balance`] is not guaranteed to actually
     /// return the requested value (e.g. when the input volume was zero anyway for all channels). If
     /// no lfe balance value is applicable to this channel map the volume will not be modified. See
-    /// [`::channelmap::Map::can_lfe_balance`].
+    /// [`channelmap::Map::can_lfe_balance`].
     ///
     /// Returns pointer to self, or `None` on error.
     ///
     /// [`get_lfe_balance`]: #method.get_lfe_balance
-    /// [`::channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
+    /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
-    pub fn set_lfe_balance(&mut self, map: &::channelmap::Map, new_balance: f32)
+    pub fn set_lfe_balance(&mut self, map: &channelmap::Map, new_balance: f32)
         -> Option<&mut Self>
     {
         let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(self.as_mut(), map.as_ref(),
@@ -633,14 +632,14 @@ impl ChannelVolumes {
     /// the channel volumes are kept.
     ///
     /// If `mask` is `None`, has the same effect as passing
-    /// [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     ///
     /// Returns pointer to self, or `None` on error.
     #[inline]
-    pub fn scale_mask(&mut self, max: Volume, cm: &mut ::channelmap::Map,
-        mask: Option<::channelmap::PositionMask>) -> Option<&mut Self>
+    pub fn scale_mask(&mut self, max: Volume, cm: &mut channelmap::Map,
+        mask: Option<channelmap::PositionMask>) -> Option<&mut Self>
     {
-        let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
+        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
         let ptr = unsafe { capi::pa_cvolume_scale_mask(self.as_mut(), max.0, cm.as_ref(),
             mask_actual) };
         match ptr.is_null() { false => Some(self), true => None }
@@ -650,11 +649,11 @@ impl ChannelVolumes {
     ///
     /// Returns `None` if either invalid data was provided, or if there is no channel at the
     /// position specified. You can check if a channel map includes a specific position by calling
-    /// [`::channelmap::Map::has_position`]. On success, returns pointer to self.
+    /// [`channelmap::Map::has_position`]. On success, returns pointer to self.
     ///
-    /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
+    /// [`channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     #[inline]
-    pub fn set_position(&mut self, map: &::channelmap::Map, t: ::channelmap::Position, v: Volume)
+    pub fn set_position(&mut self, map: &channelmap::Map, t: channelmap::Position, v: Volume)
         -> Option<&mut Self>
     {
         // Note: C function returns NULL on invalid data or no channel at position specified (no
@@ -668,11 +667,11 @@ impl ChannelVolumes {
     /// Gets the maximum volume of all channels at the specified channel position.
     ///
     /// Will return `0` if there is no channel at the position specified. You can check if a channel
-    /// map includes a specific position by calling [`::channelmap::Map::has_position`].
+    /// map includes a specific position by calling [`channelmap::Map::has_position`].
     ///
-    /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
+    /// [`channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     #[inline]
-    pub fn get_position(&self, map: &::channelmap::Map, t: ::channelmap::Position) -> Volume {
+    pub fn get_position(&self, map: &channelmap::Map, t: channelmap::Position) -> Volume {
         Volume(unsafe { capi::pa_cvolume_get_position(self.as_ref(), map.as_ref(), t.into()) })
     }
 
@@ -750,7 +749,7 @@ impl ChannelVolumes {
     /// The volume for each channel is printed in several formats: the raw volume value,
     /// percentage, and if `print_db` is non-zero, also the dB value. If `map` is provided, the
     /// channel names will be printed.
-    pub fn print_verbose(&self, map: Option<&::channelmap::Map>, print_db: bool) -> String {
+    pub fn print_verbose(&self, map: Option<&channelmap::Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());

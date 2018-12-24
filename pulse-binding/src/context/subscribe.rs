@@ -21,11 +21,11 @@
 //! changes. The set of facilities and operations for which notifications are generated are
 //! enumerated in [`Facility`] and [`Operation`].
 //!
-//! The application sets the notification mask using [`::context::Context::subscribe`] and the
+//! The application sets the notification mask using [`context::Context::subscribe`] and the
 //! callback function that will be called whenever a notification occurs using
-//! [`::context::Context::set_subscribe_callback`].
+//! [`context::Context::set_subscribe_callback`].
 //!
-//! The mask provided to [`::context::Context::subscribe`] can be created by binary ORing a set of
+//! The mask provided to [`context::Context::subscribe`] can be created by binary ORing a set of
 //! values, either produced with [`Facility::to_interest_mask`], or more simply with the provided
 //! constants in the [`subscription_masks`] submodule.
 //!
@@ -52,15 +52,14 @@
 //! [`Facility`]: enum.Facility.html
 //! [`Operation`]: enum.Operation.html
 //! [`Facility::to_interest_mask`]: enum.Facility.html#method.to_interest_mask
-//! [`::context::Context::subscribe`]: ../struct.Context.html#method.subscribe
-//! [`::context::Context::set_subscribe_callback`]: ../struct.Context.html#method.set_subscribe_callback
+//! [`context::Context::subscribe`]: ../struct.Context.html#method.subscribe
+//! [`context::Context::set_subscribe_callback`]: ../struct.Context.html#method.set_subscribe_callback
 //! [`subscription_masks`]: subscription_masks/index.html
 
-use std;
-use capi;
 use std::os::raw::c_void;
 use super::{ContextInternal, Context};
-use callbacks::box_closure_get_capi_ptr;
+use crate::operation;
+use crate::callbacks::{box_closure_get_capi_ptr, MultiUseCallback};
 
 pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 pub use capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK as FACILITY_MASK;
@@ -166,8 +165,8 @@ fn get_operation(value: EventType) -> Option<Operation> {
     Operation::from_int((value & OPERATION_MASK) as u32)
 }
 
-pub(super) type Callback = ::callbacks::MultiUseCallback<dyn FnMut(Option<Facility>,
-    Option<Operation>, u32), extern "C" fn(*mut ContextInternal, EventType, u32, *mut c_void)>;
+pub(super) type Callback = MultiUseCallback<dyn FnMut(Option<Facility>, Option<Operation>, u32),
+    extern "C" fn(*mut ContextInternal, EventType, u32, *mut c_void)>;
 
 impl Context {
     /// Enables event notification.
@@ -180,14 +179,14 @@ impl Context {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F)
-        -> ::operation::Operation<dyn FnMut(bool)>
+        -> operation::Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(super::success_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
-        ::operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
     /// Sets the context specific call back function that is called whenever a subscribed-to event
