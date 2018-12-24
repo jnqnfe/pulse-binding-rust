@@ -19,6 +19,7 @@
     - `Volume::is_valid()`
     - `Timeval::new()` and `Timeval::new_zero()`
     - `subscribe::Facility::to_interest_mask()`
+ * Version: purged deprecated items
 
 # 2.7.1 (August 13th, 2019)
 

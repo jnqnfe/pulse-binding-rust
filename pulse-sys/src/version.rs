@@ -78,30 +78,13 @@ mod actual {
     pub const TARGET_VERSION: (u8, u8) = (11, 0);
 }
 
-#[deprecated(since = "1.4.0", note="use `TARGET_VERSION_STRING` instead")]
-pub const LINK_TARGET_VERSION: &str = TARGET_VERSION_STRING;
-
 pub const PA_API_VERSION: u8 = 12;
 pub const PA_PROTOCOL_VERSION: u16 = 32;
-
-#[deprecated(since = "1.4.0", note="use `TARGET_VERSION` instead")]
-pub const PA_MAJOR: u8 = TARGET_VERSION.0;
-#[deprecated(since = "1.4.0", note="use `TARGET_VERSION` instead")]
-pub const PA_MINOR: u8 = TARGET_VERSION.1;
-#[deprecated(since = "1.4.0", note="not useful, always zero")]
-pub const PA_MICRO: u8 = 0;
 
 /// Returns indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
 pub const fn get_compatibility() -> Compatibility {
     actual::COMPATIBILITY
-}
-
-#[deprecated(since = "1.4.0", note="not useful, confusing name, use `TARGET_VERSION_STRING` directly or `get_compatibility()` instead")]
-#[inline(always)]
-pub fn pa_get_headers_version() -> &'static str {
-    #[allow(deprecated)]
-    LINK_TARGET_VERSION
 }
 
 #[inline(always)]

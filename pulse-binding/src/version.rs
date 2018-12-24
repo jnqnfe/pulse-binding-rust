@@ -47,9 +47,6 @@ pub const TARGET_VERSION_STRING: &str = capi::version::TARGET_VERSION_STRING;
 /// binding is known to be compatible with.
 pub const TARGET_VERSION: (u8, u8) = capi::version::TARGET_VERSION;
 
-#[deprecated(since = "2.3.0", note="use `TARGET_VERSION_STRING` instead")]
-pub const BINDING_TARGET_VERSION: &str = TARGET_VERSION_STRING;
-
 /// The current API version, from the PA C header. Note, this seems to be separate from the PA
 /// version number, where is was `12` for the v0.9.11 release, and has not been changed since
 /// (c95d0d7dcbca0c531b972ece1004caad95c92936).
@@ -58,25 +55,10 @@ pub const API_VERSION: u8 = capi::version::PA_API_VERSION;
 /// The current protocol version.
 pub const PROTOCOL_VERSION: u16 = capi::version::PA_PROTOCOL_VERSION;
 
-#[deprecated(since = "2.3.0", note="use `TARGET_VERSION` instead")]
-pub const MAJOR: u8 = TARGET_VERSION.0;
-#[deprecated(since = "2.3.0", note="use `TARGET_VERSION` instead")]
-pub const MINOR: u8 = TARGET_VERSION.1;
-#[deprecated(since = "2.3.0", note="not useful, always zero")]
-pub const MICRO: u8 = 0;
-
 /// Gets an indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
 pub const fn get_compatibility() -> Compatibility {
     capi::version::get_compatibility()
-}
-
-/// Gets `BINDING_TARGET_VERSION`
-#[deprecated(since = "2.3.0", note="not useful, confusing name, use `TARGET_VERSION_STRING` directly or `get_compatibility()` instead")]
-#[inline(always)]
-pub fn get_headers_version() -> &'static str {
-    #[allow(deprecated)]
-    BINDING_TARGET_VERSION
 }
 
 /// Gets the version of the library actually in use at runtime.
