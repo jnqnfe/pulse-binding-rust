@@ -164,6 +164,7 @@ impl std::fmt::Debug for Proplist {
 /// thus prevent a use-after-free issue that would otherwise occur should the `Proplist` be
 /// destroyed first. Conversion from a `Proplist` via `into_iter` is okay though as responsibility
 /// for destruction is transfered to it.
+//XXX: Do **NOT** derive `Clone` for this, it will introduce a use-afer-free. To implement `Clone` properly would require an `Rc` wrapper around `ProplistInner`, but then if that would apply to `Proplist` also, that affects the `Send`+`Sync` properties of `Proplist` and anything using it.
 pub struct Iterator<'a> {
     /// The actual C proplist object.
     pl_ref: ProplistInner,
