@@ -15,6 +15,7 @@
 
 //! Main loop deferred events.
 
+use std;
 use std::os::raw::c_void;
 use std::rc::Rc;
 use super::super::api::{MainloopApi, MainloopInnerType};
@@ -104,6 +105,8 @@ impl<T> Drop for DeferEvent<T>
 pub(crate)
 extern "C"
 fn event_cb_proxy(_: *const MainloopApi, e: *mut DeferEventInternal, userdata: *mut c_void) {
-    let callback = EventCb::get_callback(userdata);
-    callback(e);
+    let _ = std::panic::catch_unwind(|| {
+        let callback = EventCb::get_callback(userdata);
+        (callback)(e);
+    });
 }

@@ -24,6 +24,7 @@
 //! Note that time events created with one form of time value can be freely restarted with the other
 //! form of time value.
 
+use std;
 use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
@@ -130,6 +131,8 @@ extern "C"
 fn event_cb_proxy(_: *const MainloopApi, e: *mut TimeEventInternal, _: *const timeval,
     userdata: *mut c_void)
 {
-    let callback = EventCb::get_callback(userdata);
-    callback(e);
+    let _ = std::panic::catch_unwind(|| {
+        let callback = EventCb::get_callback(userdata);
+        (callback)(e);
+    });
 }

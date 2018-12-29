@@ -208,8 +208,10 @@ extern "C"
 fn ext_subscribe_cb_proxy(_: *mut ContextInternal, type_: ::def::Device, index: u32,
     userdata: *mut c_void)
 {
-    let callback = SubscribeCb::get_callback(userdata);
-    callback(type_, index);
+    let _ = std::panic::catch_unwind(|| {
+        let callback = SubscribeCb::get_callback(userdata);
+        (callback)(type_, index);
+    });
 }
 
 /// Proxy for read list callbacks.
@@ -218,13 +220,15 @@ extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     userdata: *mut c_void)
 {
-    match callback_for_list_instance::<dyn FnMut(ListResult<&Info>)>(eol, userdata) {
-        ListInstanceCallback::Entry(callback) => {
-            assert!(!i.is_null());
-            let obj = Info::new_from_raw(i);
-            callback(ListResult::Item(&obj));
-        },
-        ListInstanceCallback::End(mut callback) => { callback(ListResult::End); },
-        ListInstanceCallback::Error(mut callback) => { callback(ListResult::Error); },
-    }
+    let _ = std::panic::catch_unwind(|| {
+        match callback_for_list_instance::<dyn FnMut(ListResult<&Info>)>(eol, userdata) {
+            ListInstanceCallback::Entry(callback) => {
+                assert!(!i.is_null());
+                let obj = Info::new_from_raw(i);
+                (callback)(ListResult::Item(&obj));
+            },
+            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
+            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
+        }
+    });
 }

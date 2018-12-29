@@ -15,6 +15,7 @@
 
 //! Main loop IO events.
 
+use std;
 use capi;
 use std::os::raw::c_void;
 use std::rc::Rc;
@@ -116,6 +117,8 @@ extern "C"
 fn event_cb_proxy(_: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: IoEventFlagSet,
     userdata: *mut c_void)
 {
-    let callback = EventCb::get_callback(userdata);
-    callback(e, fd, events);
+    let _ = std::panic::catch_unwind(|| {
+        let callback = EventCb::get_callback(userdata);
+        (callback)(e, fd, events);
+    });
 }

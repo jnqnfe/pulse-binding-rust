@@ -56,6 +56,7 @@
 //! [`::context::Context::set_subscribe_callback`]: ../struct.Context.html#method.set_subscribe_callback
 //! [`subscription_masks`]: subscription_masks/index.html
 
+use std;
 use capi;
 use std::os::raw::c_void;
 use super::{ContextInternal, Context};
@@ -211,8 +212,10 @@ impl Context {
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn cb_proxy(_: *mut ContextInternal, et: EventType, index: u32, userdata: *mut c_void) {
-    let facility = get_facility(et);
-    let operation = get_operation(et);
-    let callback = Callback::get_callback(userdata);
-    callback(facility, operation, index);
+    let _ = std::panic::catch_unwind(|| {
+        let facility = get_facility(et);
+        let operation = get_operation(et);
+        let callback = Callback::get_callback(userdata);
+        (callback)(facility, operation, index);
+    });
 }

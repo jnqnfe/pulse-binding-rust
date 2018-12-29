@@ -1663,10 +1663,12 @@ impl Drop for Stream {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void) {
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<dyn FnMut(bool)>(userdata);
     let success_actual = match success { 0 => false, _ => true };
-    callback(success_actual);
+    let _ = std::panic::catch_unwind(|| {
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(bool)>(userdata);
+        (callback)(success_actual);
+    });
 }
 
 /// Proxy for request callbacks.
@@ -1674,8 +1676,10 @@ fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void)
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn request_cb_proxy(_: *mut StreamInternal, nbytes: usize, userdata: *mut c_void) {
-    let callback = RequestCb::get_callback(userdata);
-    callback(nbytes);
+    let _ = std::panic::catch_unwind(|| {
+        let callback = RequestCb::get_callback(userdata);
+        (callback)(nbytes);
+    });
 }
 
 /// Proxy for notify callbacks.
@@ -1683,8 +1687,10 @@ fn request_cb_proxy(_: *mut StreamInternal, nbytes: usize, userdata: *mut c_void
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn notify_cb_proxy(_: *mut StreamInternal, userdata: *mut c_void) {
-    let callback = NotifyCb::get_callback(userdata);
-    callback();
+    let _ = std::panic::catch_unwind(|| {
+        let callback = NotifyCb::get_callback(userdata);
+        (callback)();
+    });
 }
 
 /// Proxy for event callbacks.
@@ -1694,13 +1700,15 @@ extern "C"
 fn event_cb_proxy(_: *mut StreamInternal, name: *const c_char,
     proplist: *mut ::proplist::ProplistInternal, userdata: *mut c_void)
 {
-    assert!(!name.is_null());
-    let n = {
-        let tmp = unsafe { CStr::from_ptr(name) };
-        tmp.to_string_lossy().into_owned()
-    };
-    let pl = Proplist::from_raw_weak(proplist);
+    let _ = std::panic::catch_unwind(|| {
+        assert!(!name.is_null());
+        let n = {
+            let tmp = unsafe { CStr::from_ptr(name) };
+            tmp.to_string_lossy().into_owned()
+        };
+        let pl = Proplist::from_raw_weak(proplist);
 
-    let callback = EventCb::get_callback(userdata);
-    callback(n, pl);
+        let callback = EventCb::get_callback(userdata);
+        (callback)(n, pl);
+    });
 }

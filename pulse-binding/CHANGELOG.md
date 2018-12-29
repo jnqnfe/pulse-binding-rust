@@ -1,3 +1,7 @@
+# ??? (???, ??, ????)
+
+ * Implemented use of `std::panic::catch_unwind` in callbacks
+
 # 2.5.0 (December 22nd, 2018)
 
 **Note: This includes a security fix!**

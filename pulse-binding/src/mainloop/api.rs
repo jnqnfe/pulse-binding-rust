@@ -378,7 +378,9 @@ impl<'a> From<&'a MainloopApi> for *const ApiInternal {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn once_cb_proxy(_: *const ApiInternal, userdata: *mut c_void) {
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<dyn FnMut()>(userdata);
-    callback();
+    let _ = std::panic::catch_unwind(|| {
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = ::callbacks::get_su_callback::<dyn FnMut()>(userdata);
+        (callback)();
+    });
 }

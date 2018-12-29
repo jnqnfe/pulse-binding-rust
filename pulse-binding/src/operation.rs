@@ -15,6 +15,7 @@
 
 //! Asynchronous operations.
 
+use std;
 use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
@@ -115,6 +116,8 @@ impl<ClosureProto: ?Sized> Drop for Operation<ClosureProto> {
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn notify_cb_proxy(_: *mut OperationInternal, userdata: *mut c_void) {
-    let callback = NotifyCb::get_callback(userdata);
-    callback();
+    let _ = std::panic::catch_unwind(|| {
+        let callback = NotifyCb::get_callback(userdata);
+        (callback)();
+    });
 }

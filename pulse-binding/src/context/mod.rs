@@ -599,21 +599,25 @@ impl Drop for Context {
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn success_cb_proxy(_: *mut ContextInternal, success: i32, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut(bool)>) };
     let success_actual = match success { 0 => false, _ => true };
-    callback(success_actual);
+    let _ = std::panic::catch_unwind(|| {
+        assert!(!userdata.is_null());
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut(bool)>) };
+        (callback)(success_actual);
+    });
 }
 
 /// Proxy for notification callbacks (single use).
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn notify_cb_proxy_single(_: *mut ContextInternal, userdata: *mut c_void) {
-    assert!(!userdata.is_null());
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut()>) };
-    callback();
+    let _ = std::panic::catch_unwind(|| {
+        assert!(!userdata.is_null());
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut()>) };
+        (callback)();
+    });
 }
 
 /// Proxy for notification callbacks (multi use).
@@ -621,8 +625,10 @@ fn notify_cb_proxy_single(_: *mut ContextInternal, userdata: *mut c_void) {
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn notify_cb_proxy_multi(_: *mut ContextInternal, userdata: *mut c_void) {
-    let callback = NotifyCb::get_callback(userdata);
-    callback();
+    let _ = std::panic::catch_unwind(|| {
+        let callback = NotifyCb::get_callback(userdata);
+        (callback)();
+    });
 }
 
 /// Proxy for event callbacks.
@@ -632,24 +638,28 @@ extern "C"
 fn event_cb_proxy(_: *mut ContextInternal, name: *const c_char,
     proplist: *mut ::proplist::ProplistInternal, userdata: *mut c_void)
 {
-    assert!(!name.is_null());
-    let n = {
-        let tmp = unsafe { CStr::from_ptr(name) };
-        tmp.to_string_lossy().into_owned()
-    };
-    let pl = Proplist::from_raw_weak(proplist);
+    let _ = std::panic::catch_unwind(|| {
+        assert!(!name.is_null());
+        let n = {
+            let tmp = unsafe { CStr::from_ptr(name) };
+            tmp.to_string_lossy().into_owned()
+        };
+        let pl = Proplist::from_raw_weak(proplist);
 
-    let callback = EventCb::get_callback(userdata);
-    callback(n, pl);
+        let callback = EventCb::get_callback(userdata);
+        (callback)(n, pl);
+    });
 }
 
 /// Proxy for extension test callbacks.
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_void) {
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<dyn FnMut(u32)>(userdata);
-    callback(version);
+    let _ = std::panic::catch_unwind(|| {
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(u32)>(userdata);
+        (callback)(version);
+    });
 }
 
 /// Proxy for extension subscribe callbacks.
@@ -657,6 +667,8 @@ fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_voi
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
 fn ext_subscribe_cb_proxy(_: *mut ContextInternal, userdata: *mut c_void) {
-    let callback = ExtSubscribeCb::get_callback(userdata);
-    callback();
+    let _ = std::panic::catch_unwind(|| {
+        let callback = ExtSubscribeCb::get_callback(userdata);
+        (callback)();
+    });
 }

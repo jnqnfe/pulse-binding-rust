@@ -62,6 +62,7 @@
 //! [`::context::Context::play_sample`]: ../struct.Context.html#method.play_sample
 //! [`::context::Context::remove_sample`]: ../struct.Context.html#method.remove_sample
 
+use std;
 use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
@@ -187,8 +188,9 @@ impl Context {
 extern "C"
 fn play_sample_success_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
     let index_actual = match index { ::def::INVALID_INDEX => Err(()), i => Ok(i) };
-
-    // Note, destroys closure callback after use - restoring outer box means it gets dropped
-    let mut callback = ::callbacks::get_su_callback::<dyn FnMut(Result<u32, ()>)>(userdata);
-    callback(index_actual);
+    let _ = std::panic::catch_unwind(|| {
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = ::callbacks::get_su_callback::<dyn FnMut(Result<u32, ()>)>(userdata);
+        (callback)(index_actual);
+    });
 }

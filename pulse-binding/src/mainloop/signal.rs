@@ -23,6 +23,7 @@
 //! support for UNIX signals. However, you may hook signal support into an abstract main loop via
 //! the routines defined herein.
 
+use std;
 use capi;
 use std::os::raw::c_void;
 use std::ptr::null_mut;
@@ -89,6 +90,8 @@ extern "C"
 fn signal_cb_proxy(_api: *const ApiInternal, _e: *mut EventInternal, sig: i32,
     userdata: *mut c_void)
 {
-    let callback = SignalCb::get_callback(userdata);
-    callback(sig);
+    let _ = std::panic::catch_unwind(|| {
+        let callback = SignalCb::get_callback(userdata);
+        (callback)(sig);
+    });
 }
