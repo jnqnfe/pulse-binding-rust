@@ -1,3 +1,7 @@
+# 2.6.0 (March 10th, 2019)
+
+ * Updated `libpulse-binding` version dependency (2.5 → 2.6)
+
 # 2.5.0 (December 22nd, 2018)
 
  * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated

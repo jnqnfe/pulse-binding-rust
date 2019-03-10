@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-glib-binding"
-version = "2.5.0"
+version = "2.6.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
@@ -13,7 +13,7 @@ repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
 
 [dependencies]
-libpulse-binding = { path = "../pulse-binding", version = "2.5", default-features = false }
+libpulse-binding = { path = "../pulse-binding", version = "2.6", default-features = false }
 libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.5", default-features = false }
 
 [features]
