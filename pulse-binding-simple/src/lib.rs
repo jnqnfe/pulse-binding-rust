@@ -127,6 +127,9 @@ pub struct Simple {
     ptr: *mut SimpleInternal,
 }
 
+unsafe impl Send for Simple {}
+unsafe impl Sync for Simple {}
+
 impl Simple {
     /// Create a new connection to the server.
     ///
