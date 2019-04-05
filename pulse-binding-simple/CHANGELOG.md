@@ -1,3 +1,7 @@
+# 2.6.1 (April 5th, 2019)
+
+ * Enabled `Send`+`Sync` for `Simple`, thanks to @MOZGIII for the patch
+
 # 2.6.0 (March 10th, 2019)
 
  * Updated `libpulse-binding` version dependency (2.5 → 2.6)
