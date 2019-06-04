@@ -5,6 +5,7 @@
  * Made the following `const` functions:
     - `version::get_compatibility()`
     - `channelmap::pa_channel_position_mask()`
+    - `volume::pa_volume_is_valid()`
 
 # 1.6.0 (August 12th, 2019)
 

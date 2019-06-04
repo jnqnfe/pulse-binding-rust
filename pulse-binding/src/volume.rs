@@ -261,7 +261,7 @@ impl Volume {
 
     /// Checks if volume is valid.
     #[inline]
-    pub fn is_valid(&self) -> bool {
+    pub const fn is_valid(&self) -> bool {
         capi::pa_volume_is_valid(self.0)
     }
 

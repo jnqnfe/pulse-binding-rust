@@ -94,7 +94,7 @@ pub const PA_SW_VOLUME_SNPRINT_DB_MAX: usize = 11;
 pub const PA_VOLUME_SNPRINT_VERBOSE_MAX: usize = 35;
 
 #[inline(always)]
-pub fn pa_volume_is_valid(v: pa_volume_t) -> bool {
+pub const fn pa_volume_is_valid(v: pa_volume_t) -> bool {
     v <= PA_VOLUME_MAX
 }
 

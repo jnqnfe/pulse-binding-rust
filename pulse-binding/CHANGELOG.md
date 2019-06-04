@@ -2,7 +2,9 @@
 
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file
- * Made `version::get_compatibility()` a const fn
+ * Made the following `const` functions:
+    - `version::get_compatibility()`
+    - `Volume::is_valid()`
 
 # 2.7.1 (August 13th, 2019)
 
