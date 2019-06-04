@@ -6,6 +6,7 @@
     - `version::get_compatibility()`
     - `channelmap::pa_channel_position_mask()`
     - `volume::pa_volume_is_valid()`
+    - `context::subscribe::pa_subscription_match_flags()`
 
 # 1.6.0 (August 12th, 2019)
 
