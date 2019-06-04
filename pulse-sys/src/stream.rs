@@ -18,7 +18,7 @@
 use std::os::raw::{c_char, c_void};
 
 /// An opaque stream for playback or recording.
-pub enum pa_stream {}
+#[repr(C)] pub struct pa_stream { _private: [u8; 0] }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

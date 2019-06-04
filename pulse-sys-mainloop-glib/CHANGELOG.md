@@ -1,3 +1,9 @@
+# <unreleased>
+
+ * Replaced use of empty enums for opaque types with a struct based alternative. According to the
+   Rust nomicon ([here](https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs))
+   the use of the empty enum trick is apparently undefined behaviour.
+
 # 1.5.0 (December 22nd, 2018)
 
  * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated

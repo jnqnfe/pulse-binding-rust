@@ -27,7 +27,7 @@ extern crate libpulse_sys as pulse;
 pub enum GMainContext {}
 
 /// An opaque GLIB main loop object
-pub enum pa_glib_mainloop {}
+#[repr(C)] pub struct pa_glib_mainloop { _private: [u8; 0] }
 
 #[link(name="pulse-mainloop-glib")]
 extern "C" {

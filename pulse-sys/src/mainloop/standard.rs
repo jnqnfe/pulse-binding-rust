@@ -19,7 +19,7 @@ use std::os::raw::{c_ulong, c_void};
 use libc::pollfd;
 
 /// An opaque main loop object
-pub enum pa_mainloop {}
+#[repr(C)] pub struct pa_mainloop { _private: [u8; 0] }
 
 pub type pa_poll_func = Option<extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32, userdata: *mut c_void) -> i32>;
 

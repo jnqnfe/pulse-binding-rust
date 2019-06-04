@@ -294,7 +294,7 @@ pub const PA_PROP_FORMAT_CHANNEL_MAP: &str = "format.channel_map";
 
 /// A property list object. Basically a dictionary with ASCII strings as keys and arbitrary data as
 /// values.
-pub enum pa_proplist {}
+#[repr(C)] pub struct pa_proplist { _private: [u8; 0] }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

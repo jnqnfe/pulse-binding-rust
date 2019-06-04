@@ -18,7 +18,7 @@
 use std::os::raw::c_char;
 
 /// An opaque threaded main loop object
-pub enum pa_threaded_mainloop {}
+#[repr(C)] pub struct pa_threaded_mainloop { _private: [u8; 0] }
 
 #[link(name="pulse")]
 extern "C" {

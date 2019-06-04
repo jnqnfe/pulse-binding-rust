@@ -18,7 +18,7 @@
 use std::os::raw::c_void;
 
 /// An asynchronous operation object
-pub enum pa_operation {}
+#[repr(C)] pub struct pa_operation { _private: [u8; 0] }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

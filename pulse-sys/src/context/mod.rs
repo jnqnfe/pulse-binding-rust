@@ -35,7 +35,7 @@ use std::os::raw::{c_char, c_void};
 use ::mainloop::api::{pa_time_event, pa_time_event_cb_t};
 
 /// An opaque connection context to a daemon
-pub enum pa_context {}
+#[repr(C)] pub struct pa_context { _private: [u8; 0] }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

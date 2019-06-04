@@ -33,18 +33,18 @@ pub mod io_event_flags {
 }
 
 /// An opaque IO event source object
-pub enum pa_io_event {}
+#[repr(C)] pub struct pa_io_event { _private: [u8; 0] }
 pub type pa_io_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_io_event, fd: i32, events: pa_io_event_flags_t, userdata: *mut c_void)>;
 pub type pa_io_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_io_event, userdata: *mut c_void)>;
 
 /// An opaque timer event source object
-pub enum pa_time_event {}
+#[repr(C)] pub struct pa_time_event { _private: [u8; 0] }
 pub type pa_time_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_time_event, tv: *const timeval, userdata: *mut c_void)>;
 pub type pa_time_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_time_event, userdata: *mut c_void)>;
 
 /// An opaque deferred event source object.
 /// Events of this type are triggered once in every main loop iteration
-pub enum pa_defer_event {}
+#[repr(C)] pub struct pa_defer_event { _private: [u8; 0] }
 pub type pa_defer_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_defer_event, userdata: *mut c_void)>;
 pub type pa_defer_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_defer_event, userdata: *mut c_void)>;
 

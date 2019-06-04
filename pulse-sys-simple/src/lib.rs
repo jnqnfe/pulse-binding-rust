@@ -25,7 +25,7 @@ extern crate libpulse_sys as pulse;
 use std::os::raw::{c_char, c_void};
 
 /// An opaque simple connection object
-pub enum pa_simple {}
+#[repr(C)] pub struct pa_simple { _private: [u8; 0] }
 
 #[link(name="pulse-simple")]
 extern "C" {
