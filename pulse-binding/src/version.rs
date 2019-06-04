@@ -67,7 +67,7 @@ pub const MICRO: u8 = 0;
 
 /// Gets an indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
-pub fn get_compatibility() -> Compatibility {
+pub const fn get_compatibility() -> Compatibility {
     capi::version::get_compatibility()
 }
 

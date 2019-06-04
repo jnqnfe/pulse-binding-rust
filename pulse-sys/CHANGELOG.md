@@ -2,6 +2,7 @@
 
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file
+ * Made `version::get_compatibility()` a const fn
 
 # 1.6.0 (August 12th, 2019)
 
