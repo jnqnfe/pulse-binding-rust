@@ -21,7 +21,7 @@ use crate::sample::pa_sample_spec;
 pub type pa_channel_position_mask_t = u64;
 
 #[inline(always)]
-pub fn pa_channel_position_mask(pos: pa_channel_position_t) -> pa_channel_position_mask_t {
+pub const fn pa_channel_position_mask(pos: pa_channel_position_t) -> pa_channel_position_mask_t {
     1u64 << (pos as pa_channel_position_mask_t)
 }
 
