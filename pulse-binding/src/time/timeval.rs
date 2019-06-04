@@ -61,13 +61,13 @@ impl std::fmt::Debug for Timeval {
 impl Timeval {
     /// Creates a new instance, with values provided.
     #[inline]
-    pub fn new(sec: libc::time_t, usec: libc::suseconds_t) -> Self {
+    pub const fn new(sec: libc::time_t, usec: libc::suseconds_t) -> Self {
         Timeval(libc::timeval { tv_sec: sec, tv_usec: usec })
     }
 
     /// Creates a new instance, with value of zero.
     #[inline]
-    pub fn new_zero() -> Self {
+    pub const fn new_zero() -> Self {
         Timeval::new(0, 0)
     }
 

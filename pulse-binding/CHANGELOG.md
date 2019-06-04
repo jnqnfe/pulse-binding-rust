@@ -5,6 +5,7 @@
  * Made the following `const` functions:
     - `version::get_compatibility()`
     - `Volume::is_valid()`
+    - `Timeval::new()` and `Timeval::new_zero()`
 
 # 2.7.1 (August 13th, 2019)
 
