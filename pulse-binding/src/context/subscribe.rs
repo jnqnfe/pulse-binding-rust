@@ -137,7 +137,7 @@ impl Facility {
 
     /// Converts to an interest mask.
     #[inline(always)]
-    pub fn to_interest_mask(self) -> InterestMaskSet {
+    pub const fn to_interest_mask(self) -> InterestMaskSet {
         1u32 << (self as u32)
     }
 }
