@@ -263,7 +263,6 @@
  * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
    thus more simple, and removed the `Option` result wrapper.
  * Changed several `sample::Format` related functions to methods
- * Updated `libpulse-sys` version dependency (1.1 → 1.2)
 
 # 1.1 (May 27th, 2018)
 
