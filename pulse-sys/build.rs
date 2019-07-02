@@ -6,7 +6,9 @@ fn main() {
     let lib_name = "libpulse";
     let fallback_name = "pulse::libpulse.so.0";
     let min_version = {
-        #[cfg(feature = "pa_v12")]
+        #[cfg(feature = "pa_v13")]
+        { "13.0" }
+        #[cfg(all(not(feature = "pa_v13"), feature = "pa_v12"))]
         { "12.0" }
         #[cfg(all(not(feature = "pa_v12"), feature = "pa_v8"))]
         { "8.0" }

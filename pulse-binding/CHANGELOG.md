@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Added PA v13 compatibility control feature
+
 # 2.11.1 (August 19th, 2019)
 
  * Fixed broken doc.rs documentation generation

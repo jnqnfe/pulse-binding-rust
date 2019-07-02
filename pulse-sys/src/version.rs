@@ -69,10 +69,21 @@ pub enum Compatibility {
     V8Plus,
     /// Support for PA version 12+ selected.
     V12Plus,
+    /// Support for PA version 13+ selected.
+    V13Plus,
 }
 
 // Latest
-#[cfg(any(feature = "pa_v12", all(feature = "dox", not(feature = "pa_v5"))))]
+#[cfg(any(feature = "pa_v13", all(feature = "dox", not(feature = "pa_v5"))))]
+mod actual {
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V13Plus;
+    pub const TARGET_VERSION_STRING: &str = "13.0.0";
+    pub const TARGET_VERSION: (u8, u8) = (13, 0);
+    pub const PA_PROTOCOL_VERSION: u16 = 33;
+}
+
+// Pre-v13
+#[cfg(all(not(feature = "pa_v13"), feature = "pa_v12"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V12Plus;
     pub const TARGET_VERSION_STRING: &str = "12.0.0";
