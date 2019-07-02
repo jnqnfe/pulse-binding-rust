@@ -1,5 +1,11 @@
 # <unreleased>
 
+ * Implemented PA v13 enhancements, including:
+    - Added `get_sample_format()`, `get_rate()`, `get_channel_count()` and `get_channel_map()` to
+      `format::Info`.
+    - Added `util::make_thread_realtime()`
+    - Added `Encoding::TRUEHD_IEC61937` and `Encoding::DTSHD_IEC61937`
+   A wrapper for `pa_threaded_mainloop_once_unlocked` has not been aded at this time.
  * Added PA v13 compatibility control feature
 
 # 2.11.1 (August 19th, 2019)

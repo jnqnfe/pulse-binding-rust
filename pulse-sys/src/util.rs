@@ -26,4 +26,6 @@ extern "C" {
     pub fn pa_get_binary_name(s: *mut c_char, l: usize) -> *mut c_char;
     pub fn pa_path_get_filename(p: *const c_char) -> *mut c_char;
     pub fn pa_msleep(t: c_ulong) -> i32;
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    pub fn pa_thread_make_realtime(rtprio: i32) -> i32;
 }

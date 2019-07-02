@@ -17,6 +17,8 @@
 
 #[cfg(any(feature = "pa_v5", feature = "dox"))]
 use std::os::raw::c_char;
+#[cfg(any(feature = "pa_v13", feature = "dox"))]
+use std::os::raw::{c_void};
 use crate::mainloop::api::pa_mainloop_api;
 
 /// An opaque threaded main loop object.
@@ -38,4 +40,6 @@ extern "C" {
     pub fn pa_threaded_mainloop_in_thread(m: *mut pa_threaded_mainloop) -> i32;
     #[cfg(any(feature = "pa_v5", feature = "dox"))]
     pub fn pa_threaded_mainloop_set_name(m: *mut pa_threaded_mainloop, name: *const c_char);
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    pub fn pa_threaded_mainloop_once_unlocked(m: *mut pa_threaded_mainloop, callback: extern "C" fn(m: *mut pa_threaded_mainloop, userdata: *mut c_void), userdata: *mut c_void);
 }

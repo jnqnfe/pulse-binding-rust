@@ -185,7 +185,7 @@ pub const PA_CHANNEL_MAP_OSS: pa_channel_map_def_t = pa_channel_map_def_t::OSS;
 pub const PA_CHANNEL_MAP_DEFAULT: pa_channel_map_def_t = pa_channel_map_def_t::AIFF;
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Default, Debug, Copy, Clone)]
 pub struct pa_channel_map {
     pub channels: u8,
     pub map: [pa_channel_position_t; crate::sample::PA_CHANNELS_MAX],

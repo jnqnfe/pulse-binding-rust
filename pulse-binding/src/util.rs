@@ -68,3 +68,17 @@ pub fn get_home_dir(l: usize) -> Option<String> {
 pub fn get_binary_name(l: usize) -> Option<String> {
     fn_string_with_buffer!(pa_get_binary_name, l)
 }
+
+/// Makes the calling thread realtime if we can.
+///
+/// On Linux, this uses RealTimeKit if available and POSIX APIs otherwise (the latter applies to
+/// other UNIX variants as well). This is also implemented for macOS and Windows.
+///
+/// Available since PA version 13.
+#[cfg(any(feature = "pa_v13", feature = "dox"))]
+pub fn make_thread_realtime(rtprio: i32) -> Result<(), ()> {
+    match unsafe { capi::pa_thread_make_realtime(rtprio) } {
+        0 => Ok(()),
+        _ => Err(()),
+    }
+}

@@ -1,5 +1,6 @@
 # <unreleased>
 
+ * Implemented PA v13 enhancements
  * Added PA v13 compatibility control feature
 
 # 1.9.1 (August 19th, 2019)

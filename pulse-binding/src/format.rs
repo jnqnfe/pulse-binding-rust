@@ -54,6 +54,16 @@ pub enum Encoding {
     DTS_IEC61937,
     /// MPEG-2 AAC data encapsulated in IEC 61937 header/padding.
     MPEG2_AAC_IEC61937,
+    /// Dolby TrueHD data encapsulated in IEC 61937 header/padding.
+    ///
+    /// Available since PA version 13.
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    TRUEHD_IEC61937,
+    /// DTS-HD Master Audio encapsulated in IEC 61937 header/padding.
+    ///
+    /// Available since PA version 13.
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    DTSHD_IEC61937,
 
     /// Represents an invalid encoding.
     Invalid = -1,
@@ -410,6 +420,75 @@ impl Info {
         unsafe { capi::pa_format_info_free_string_array(pp_str, count) };
         // Return vector of Strings
         Some(values)
+    }
+
+    /// Gets the sample format stored in the format info.
+    ///
+    /// Returns `Err` if the sample format property is not set at all, or is invalid.
+    ///
+    /// Available since PA version 13.
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    pub fn get_sample_format(&self) -> Result<crate::sample::Format, PAErr> {
+        let mut sf: capi::pa_sample_format_t = capi::PA_SAMPLE_INVALID;
+        match unsafe { capi::pa_format_info_get_sample_format(
+            self.ptr as *const capi::pa_format_info, &mut sf) }
+        {
+            0 => Ok(crate::sample::Format::from(sf)),
+            e => Err(PAErr(e)),
+        }
+    }
+
+    /// Gets the sample rate stored in the format info.
+    ///
+    /// Returns `Err` if the sample rate property is not set at all, or is invalid.
+    ///
+    /// Available since PA version 13.
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    pub fn get_rate(&self) -> Result<u32, PAErr> {
+        let mut rate: u32 = 0;
+        match unsafe { capi::pa_format_info_get_rate(self.ptr as *const capi::pa_format_info,
+            &mut rate) }
+        {
+            0 => Ok(rate),
+            e => Err(PAErr(e)),
+        }
+    }
+
+    /// Gets the channel count stored in the format info.
+    ///
+    /// Returns `Err` if the channels property is not set at all, or is invalid.
+    ///
+    /// Available since PA version 13.
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    pub fn get_channel_count(&self) -> Result<u8, PAErr> {
+        let mut channels: u8 = 0;
+        match unsafe { capi::pa_format_info_get_channels(self.ptr as *const capi::pa_format_info,
+            &mut channels) }
+        {
+            0 => Ok(channels),
+            e => Err(PAErr(e)),
+        }
+    }
+
+    /// Gets the channel map stored in the format info.
+    ///
+    /// Returns `Err` if the channel map property is not set at all, or if the string form it is
+    /// stored in within the property set fails to parse successfully.
+    ///
+    /// Available since PA version 13.
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    pub fn get_channel_map(&self) -> Result<crate::channelmap::Map, PAErr> {
+        // Returning the entire struct written to here may be a little less efficient than taking a
+        // pointer like the C API, but we avoid the possibility of leaving the user with an
+        // incomplete struct; parsing from string form is inefficient anyway, and we thus should not
+        // expect this to be done frequently anyway.
+        let mut map: capi::pa_channel_map = capi::pa_channel_map::default();
+        match unsafe { capi::pa_format_info_get_channel_map(
+            self.ptr as *const capi::pa_format_info, &mut map) }
+        {
+            0 => Ok(crate::channelmap::Map::from(map)),
+            e => Err(PAErr(e)),
+        }
     }
 
     /// Sets an integer property.
