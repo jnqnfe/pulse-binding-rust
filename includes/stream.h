@@ -342,17 +342,17 @@ void pa_stream_unref(pa_stream *s);
 pa_stream *pa_stream_ref(pa_stream *s);
 
 /** Return the current state of the stream. */
-pa_stream_state_t pa_stream_get_state(pa_stream *p);
+pa_stream_state_t pa_stream_get_state(const pa_stream *p);
 
 /** Return the context this stream is attached to. */
-pa_context* pa_stream_get_context(pa_stream *p);
+pa_context* pa_stream_get_context(const pa_stream *p);
 
 /** Return the sink input resp.\ source output index this stream is
  * identified in the server with. This is useful with the
  * introspection functions such as pa_context_get_sink_input_info()
  * or pa_context_get_source_output_info(). This returns PA_INVALID_INDEX
  * on failure. */
-uint32_t pa_stream_get_index(pa_stream *s);
+uint32_t pa_stream_get_index(const pa_stream *s);
 
 /** Return the index of the sink or source this stream is connected to
  * in the server. This is useful with the introspection
@@ -363,7 +363,7 @@ uint32_t pa_stream_get_index(pa_stream *s);
  * it is recommended to use pa_stream_set_moved_callback() to be notified
  * about this. This function will return with PA_INVALID_INDEX on failure,
  * including the being server older than 0.9.8. \since 0.9.8 */
-uint32_t pa_stream_get_device_index(pa_stream *s);
+uint32_t pa_stream_get_device_index(const pa_stream *s);
 
 /** Return the name of the sink or source this stream is connected to
  * in the server. This is useful with the introspection
@@ -374,17 +374,17 @@ uint32_t pa_stream_get_device_index(pa_stream *s);
  * it is recommended to use pa_stream_set_moved_callback() to be notified
  * about this. This function will fail when the server is older than
  * 0.9.8. \since 0.9.8 */
-const char *pa_stream_get_device_name(pa_stream *s);
+const char *pa_stream_get_device_name(const pa_stream *s);
 
 /** Return 1 if the sink or source this stream is connected to has
  * been suspended. This will return 0 if not, and a negative value on
  * error. This function will return with -PA_ERR_NOTSUPPORTED when the
  * server is older than 0.9.8. \since 0.9.8 */
-int pa_stream_is_suspended(pa_stream *s);
+int pa_stream_is_suspended(const pa_stream *s);
 
 /** Return 1 if the this stream has been corked. This will return 0 if
  * not, and a negative value on error. \since 0.9.11 */
-int pa_stream_is_corked(pa_stream *s);
+int pa_stream_is_corked(const pa_stream *s);
 
 /** Connect the stream to a sink. It is strongly recommended to pass
  * NULL in both \a dev and \a volume and to set neither
@@ -566,12 +566,12 @@ int pa_stream_drop(pa_stream *p);
  *
  * (size_t) -1 is returned on error.
  */
-size_t pa_stream_writable_size(pa_stream *p);
+size_t pa_stream_writable_size(const pa_stream *p);
 
 /** Return the number of bytes that may be read using pa_stream_peek().
  *
  * (size_t) -1 is returned on error. */
-size_t pa_stream_readable_size(pa_stream *p);
+size_t pa_stream_readable_size(const pa_stream *p);
 
 /** Drain a playback stream.  Use this for notification when the
  * playback buffer is empty after playing all the audio in the buffer.
@@ -602,7 +602,7 @@ void pa_stream_set_overflow_callback(pa_stream *p, pa_stream_notify_cb_t cb, voi
  * known (e.g.\ if no underflow has occurred, or server is older than 1.0).
  * Can be used inside the underflow callback to get information about the current underflow.
  * (Only for playback streams) \since 1.0 */
-int64_t pa_stream_get_underflow_index(pa_stream *p);
+int64_t pa_stream_get_underflow_index(const pa_stream *p);
 
 /** Set the callback function that is called when a buffer underflow happens. (Only for playback streams) */
 void pa_stream_set_underflow_callback(pa_stream *p, pa_stream_notify_cb_t cb, void *userdata);
@@ -751,7 +751,7 @@ const pa_sample_spec* pa_stream_get_sample_spec(pa_stream *s);
 const pa_channel_map* pa_stream_get_channel_map(pa_stream *s);
 
 /** Return a pointer to the stream's format. \since 1.0 */
-const pa_format_info* pa_stream_get_format_info(pa_stream *s);
+const pa_format_info* pa_stream_get_format_info(const pa_stream *s);
 
 /** Return the per-stream server-side buffer metrics of the
  * stream. Only valid after the stream has been connected successfully
@@ -801,7 +801,7 @@ int pa_stream_set_monitor_stream(pa_stream *s, uint32_t sink_input_idx);
 /** Return the sink input index previously set with
  * pa_stream_set_monitor_stream(). Returns PA_INVALID_INDEX
  * on failure. \since 0.9.11 */
-uint32_t pa_stream_get_monitor_stream(pa_stream *s);
+uint32_t pa_stream_get_monitor_stream(const pa_stream *s);
 
 PA_C_DECL_END
 

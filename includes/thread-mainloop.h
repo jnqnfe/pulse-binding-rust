@@ -299,7 +299,7 @@ void pa_threaded_mainloop_accept(pa_threaded_mainloop *m);
 
 /** Return the return value as specified with the main loop's
  * pa_mainloop_quit() routine. */
-int pa_threaded_mainloop_get_retval(pa_threaded_mainloop *m);
+int pa_threaded_mainloop_get_retval(const pa_threaded_mainloop *m);
 
 /** Return the main loop abstraction layer vtable for this main loop.
  * There is no need to free this object as it is owned by the loop
@@ -311,6 +311,16 @@ int pa_threaded_mainloop_in_thread(pa_threaded_mainloop *m);
 
 /** Sets the name of the thread. \since 5.0 */
 void pa_threaded_mainloop_set_name(pa_threaded_mainloop *m, const char *name);
+
+/** Runs the given callback in the mainloop thread without the lock held. The
+ * caller is responsible for ensuring that PulseAudio data structures are only
+ * accessed in a thread-safe way (that is, APIs that take pa_context and
+ * pa_stream are not thread-safe, and should not accessed without some
+ * synchronisation). This is the only situation in which
+ * pa_threaded_mainloop_lock() and pa_threaded_mainloop_unlock() may be used
+ * in the mainloop thread context. \since 13.0 */
+void pa_threaded_mainloop_once_unlocked(pa_threaded_mainloop *m, void (*callback)(pa_threaded_mainloop *m, void *userdata),
+        void *userdata);
 
 PA_C_DECL_END
 

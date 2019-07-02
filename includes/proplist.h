@@ -311,14 +311,14 @@ int pa_proplist_set(pa_proplist *p, const char *key, const void *data, size_t nb
  * the data is not valid UTF-8. Will return a NUL-terminated string in
  * an internally allocated buffer. The caller should make a copy of
  * the data before accessing the property list again. \since 0.9.11 */
-const char *pa_proplist_gets(pa_proplist *p, const char *key);
+const char *pa_proplist_gets(const pa_proplist *p, const char *key);
 
 /** Store the value for the specified key in \a data. Will store a
  * NUL-terminated string for string entries. The \a data pointer returned will
  * point to an internally allocated buffer. The caller should make a
  * copy of the data before the property list is accessed again.
  * Returns zero on success, negative on error. \since 0.9.11 */
-int pa_proplist_get(pa_proplist *p, const char *key, const void **data, size_t *nbytes);
+int pa_proplist_get(const pa_proplist *p, const char *key, const void **data, size_t *nbytes);
 
 /** Update mode enum for pa_proplist_update(). \since 0.9.11 */
 typedef enum pa_update_mode {
@@ -368,18 +368,18 @@ int pa_proplist_unset_many(pa_proplist *p, const char * const keys[]);
  * current entry. On each invocation this function will return the
  * key string for the next entry. The keys in the property list do not
  * have any particular order. \since 0.9.11 */
-const char *pa_proplist_iterate(pa_proplist *p, void **state);
+const char *pa_proplist_iterate(const pa_proplist *p, void **state);
 
 /** Format the property list nicely as a human readable string. This
  * works very much like pa_proplist_to_string_sep() and uses a newline
  * as separator and appends one final one. Call pa_xfree() on the
  * result. \since 0.9.11 */
-char *pa_proplist_to_string(pa_proplist *p);
+char *pa_proplist_to_string(const pa_proplist *p);
 
 /** Format the property list nicely as a human readable string and
  * choose the separator. Call pa_xfree() on the result. \since
  * 0.9.15 */
-char *pa_proplist_to_string_sep(pa_proplist *p, const char *sep);
+char *pa_proplist_to_string_sep(const pa_proplist *p, const char *sep);
 
 /** Allocate a new property list and assign key/value from a human
  * readable string. \since 0.9.15 */
@@ -387,7 +387,7 @@ pa_proplist *pa_proplist_from_string(const char *str);
 
 /** Returns 1 if an entry for the specified key exists in the
  * property list. Returns negative on error. \since 0.9.11 */
-int pa_proplist_contains(pa_proplist *p, const char *key);
+int pa_proplist_contains(const pa_proplist *p, const char *key);
 
 /** Remove all entries from the property list object. \since 0.9.11 */
 void pa_proplist_clear(pa_proplist *p);
@@ -397,14 +397,14 @@ void pa_proplist_clear(pa_proplist *p);
 pa_proplist* pa_proplist_copy(const pa_proplist *p);
 
 /** Return the number of entries in the property list. \since 0.9.15 */
-unsigned pa_proplist_size(pa_proplist *p);
+unsigned pa_proplist_size(const pa_proplist *p);
 
 /** Returns 0 when the proplist is empty, positive otherwise \since 0.9.15 */
-int pa_proplist_isempty(pa_proplist *p);
+int pa_proplist_isempty(const pa_proplist *p);
 
 /** Return non-zero when a and b have the same keys and values.
  * \since 0.9.16 */
-int pa_proplist_equal(pa_proplist *a, pa_proplist *b);
+int pa_proplist_equal(const pa_proplist *a, const pa_proplist *b);
 
 PA_C_DECL_END
 
