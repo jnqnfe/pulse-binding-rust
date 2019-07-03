@@ -11,7 +11,7 @@ links = "pulse-mainloop-glib"
 build = "build.rs"
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
-edition = "2015"
+edition = "2018"
 
 [dependencies]
 libpulse-sys = { path = "../pulse-sys", version = "1.6", default-features = false }
