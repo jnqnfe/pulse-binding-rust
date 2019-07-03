@@ -38,46 +38,25 @@
 
 use capi;
 use std::ffi::CStr;
-pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION};
 pub use capi::version::Compatibility;
 
-// Current
-#[cfg(feature="pa_v12_compatibility")]
-mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::Latest;
+/// The newest version of the PulseAudio client library this binding is known to be compatible with.
+pub const TARGET_VERSION_STRING: &str = capi::version::TARGET_VERSION_STRING;
 
-    /// The newest version of the PulseAudio client library this binding is known to be compatible
-    /// with.
-    pub const TARGET_VERSION_STRING: &str = "12.0.0";
-
-    /// The major and minor components of the newest version of the PulseAudio client library this
-    /// binding is known to be compatible with.
-    pub const TARGET_VERSION: (u8, u8) = (12, 0);
-}
-
-// Pre-v12
-#[cfg(not(feature="pa_v12_compatibility"))]
-mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV12;
-
-    /// The newest version of the PulseAudio client library this binding is known to be compatible
-    /// with.
-    pub const TARGET_VERSION_STRING: &str = "11.0.0";
-
-    /// The major and minor components of the newest version of the PulseAudio client library this
-    /// binding is known to be compatible with.
-    pub const TARGET_VERSION: (u8, u8) = (11, 0);
-}
+/// The major and minor components of the newest version of the PulseAudio client library this
+/// binding is known to be compatible with.
+pub const TARGET_VERSION: (u8, u8) = capi::version::TARGET_VERSION;
 
 #[deprecated(since = "2.3.0", note="use `TARGET_VERSION_STRING` instead")]
 pub const BINDING_TARGET_VERSION: &str = TARGET_VERSION_STRING;
 
-/// The current API version. Please note that this is only ever increased on incompatible API
-/// changes!
-pub const API_VERSION: u8 = 12;
+/// The current API version, from the PA C header. Note, this seems to be separate from the PA
+/// version number, where is was `12` for the v0.9.11 release, and has not been changed since
+/// (c95d0d7dcbca0c531b972ece1004caad95c92936).
+pub const API_VERSION: u8 = capi::version::PA_API_VERSION;
 
 /// The current protocol version.
-pub const PROTOCOL_VERSION: u16 = 32;
+pub const PROTOCOL_VERSION: u16 = capi::version::PA_PROTOCOL_VERSION;
 
 #[deprecated(since = "2.3.0", note="use `TARGET_VERSION` instead")]
 pub const MAJOR: u8 = TARGET_VERSION.0;
@@ -89,7 +68,7 @@ pub const MICRO: u8 = 0;
 /// Gets an indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
 pub fn get_compatibility() -> Compatibility {
-    actual::COMPATIBILITY
+    capi::version::get_compatibility()
 }
 
 /// Gets `BINDING_TARGET_VERSION`
