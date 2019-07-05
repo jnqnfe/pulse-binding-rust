@@ -981,6 +981,27 @@ impl Stream {
 
     /// Writes some data to the server (for playback streams).
     ///
+    /// This function does exactly the same as [`write`] as though `None` had been specified for the
+    /// `free_cb` param. I.e. an internal copy will be made of the provided data.
+    ///
+    /// # Params
+    ///
+    /// * `data`: The data to write. The length must be in multiples of the stream’s sample spec
+    ///   frame size.
+    /// * `offset`: Offset for seeking. Must be `0` for upload streams. Must be in multiples of the
+    ///   stream’s sample spec frame size.
+    /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
+    ///
+    /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
+    /// [`begin_write`]: #method.begin_write
+    /// [`write`]: #method.write
+    #[inline(always)]
+    pub fn write_copy(&mut self, data: &[u8], offset: i64, seek: SeekMode) -> Result<(), PAErr> {
+        self.write(data, None, offset, seek)
+    }
+
+    /// Writes some data to the server (for playback streams).
+    ///
     /// This function does exactly the same as [`write`] with the only difference being that a void
     /// pointer is provided along with the `free_cb` callback pointer, and this void pointer will be
     /// passed to the callback instead of the `data` pointer.

@@ -2,6 +2,9 @@
 
  * Renamed a few methods of `Proplist` for clarity: `sets()` → `set_str()`; `gets()` → `(get_str()`;
    and `setp()` → `set_pl()`.
+ * Added `Stream::write_copy()` which is just a simplified interface for asking PA to make an
+   internal copy of the to-be-written data (same as providing `None` in the `free_cb` param of
+   `Stream::write()`.
  * Changed the `mainloop` param of `Context::rttime_new` from trait object to generic (`dyn` to
    `impl`).
  * Removed stray `repr(C)` attribute from `SinkPortInfo` introspection type.
