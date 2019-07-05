@@ -169,13 +169,12 @@ pub(crate) fn callback_for_list_instance<'a, ClosureProto: ?Sized>(eol: i32, ptr
             let callback = unsafe { &mut *(ptr as *mut Box<ClosureProto>) };
             ListInstanceCallback::Entry(callback)
         },
-        i if i > 0 => { // End-of-list. Return owned, so it can be destroyed after use.
-            let mut callback = unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) };
-            ListInstanceCallback::End(callback)
-        },
-        _ => { // Error. Return owned, so it can be destroyed after use.
-            let mut callback = unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) };
-            ListInstanceCallback::Error(callback)
+        i => { // End-of-list or error. Return owned, so it can be destroyed after use.
+            let callback = unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) };
+            match i > 0 {
+                true => ListInstanceCallback::End(callback),
+                false => ListInstanceCallback::Error(callback),
+            }
         },
     }
 }
