@@ -17,7 +17,6 @@
 
 use std;
 use std::os::raw::c_void;
-use std::ptr::null_mut;
 
 /// List result instance. Fetching a list can result in a callback being fired for each list item,
 /// and then once to signal that the end of the list having been reached. This is used to
@@ -29,27 +28,6 @@ pub enum ListResult<T> {
     End,
     /// Failure, an error occurred
     Error,
-}
-
-/// Unwraps optional callback function + data pointer tuple, wrapping the function pointer in an
-/// option wrapper. Used internally in passing such parameters to an underlying C function.
-///
-/// Example:
-///
-/// ```rust,ignore
-/// fn foo(cb: Option<(SuccessCb, *mut c_void)>) {
-///     let (cb_f, cb_d) = ::util::unwrap_optional_callback::<SuccessCb>(cb);
-///     //do something, i.e. passing cb_f and cb_d to C function
-/// }
-/// ```
-#[inline]
-pub(crate) fn unwrap_optional_callback<T>(cb: Option<(T, *mut c_void)>)
-    -> (Option<T>, *mut c_void)
-{
-    match cb {
-        Some((f, d)) => (Some(f), d),
-        None => (None, null_mut::<c_void>()),
-    }
 }
 
 /// A saved multi-use callback. Closures of multi-use callbacks (those that may be called multiple

@@ -259,7 +259,6 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::borrow::Cow;
-use callbacks::unwrap_optional_callback;
 use error::PAErr;
 use time::MicroSeconds;
 use proplist::Proplist;
@@ -1010,7 +1009,10 @@ impl Stream {
     pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(::def::FreeCb, *mut c_void)>,
         offset: i64, seek: SeekMode) -> Result<(), PAErr>
     {
-        let (cb_f, cb_d) = unwrap_optional_callback::<::def::FreeCb>(free_cb);
+        let (cb_f, cb_d) = match free_cb {
+            Some((f, d)) => (Some(f), d),
+            None => (None, null_mut::<c_void>()),
+        };
         debug_assert_eq!(0, data.len().checked_rem(self.get_sample_spec().unwrap().frame_size())
             .unwrap());
         let r = unsafe {
