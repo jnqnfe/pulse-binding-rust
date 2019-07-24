@@ -54,7 +54,7 @@ impl<'a> Info<'a> {
                     true => None,
                 },
                 channel_map: std::mem::transmute(src.channel_map),
-                volume: std::mem::transmute(src.volume),
+                volume: ::volume::ChannelVolumes::new_from_raw(src.volume),
                 device: match src.name.is_null() {
                     false => Some(CStr::from_ptr(src.device).to_string_lossy()),
                     true => None,

@@ -109,12 +109,25 @@ impl Default for VolumeLinear {
 
 /// A structure encapsulating a per-channel volume
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct ChannelVolumes {
     /// Number of channels.
     pub channels: u8,
     /// Per-channel volume.
-    pub values: [Volume; ::sample::CHANNELS_MAX],
+    pub values: Vec<Volume>,
+}
+
+impl ChannelVolumes {
+    pub fn new_from_raw(p: ::capi::pa_cvolume) -> Self {
+        let mut values = Vec::with_capacity(p.channels as usize);
+        for i in 0..p.channels as usize {
+            values.push(::volume::Volume(p.values[i]));
+        }
+        return ChannelVolumes {
+            channels: p.channels,
+            values
+        }
+    }
 }
 
 impl PartialEq for ChannelVolumes {
