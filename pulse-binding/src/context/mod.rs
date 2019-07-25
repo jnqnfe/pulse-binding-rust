@@ -314,7 +314,7 @@ impl Context {
     /// perform internal state validation checks and return a null pointer if they detect a problem,
     /// just as they return a null pointer on invalid input. Other functions panic on getting a null
     /// pointer return, however this function is unique in a null pointer also signalling something
-    /// useful, and it is not possible to tell the difference. However, while I fell the need to be
+    /// useful, and it is not possible to tell the difference. However, while I feel the need to be
     /// clear about the possibility, I believe that such invalid state conditions should only occur
     /// if there were a serious bug within PA, thus you are probably safe to just ignore this and
     /// always take a `None` return to indicate only that there is nothing to drain.
