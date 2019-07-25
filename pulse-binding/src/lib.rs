@@ -118,6 +118,8 @@
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
 
+#![deny(bare_trait_objects)]
+
 extern crate libc;
 extern crate libpulse_sys as capi;
 
