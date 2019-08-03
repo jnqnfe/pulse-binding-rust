@@ -113,6 +113,13 @@ pub struct BufferAttr {
     pub fragsize: u32,
 }
 
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn bufferattr_compare_capi(){
+    assert_eq!(std::mem::size_of::<BufferAttr>(), std::mem::size_of::<capi::pa_buffer_attr>());
+    assert_eq!(std::mem::align_of::<BufferAttr>(), std::mem::align_of::<capi::pa_buffer_attr>());
+}
+
 /// A structure for all kinds of timing information of a stream.
 ///
 /// See [`stream::Stream::update_timing_info`] and [`stream::Stream::get_timing_info`].
@@ -220,6 +227,13 @@ pub struct TimingInfo {
     pub since_underrun: i64,
 }
 
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn timinginfo_compare_capi(){
+    assert_eq!(std::mem::size_of::<TimingInfo>(), std::mem::size_of::<capi::pa_timing_info>());
+    assert_eq!(std::mem::align_of::<TimingInfo>(), std::mem::align_of::<capi::pa_timing_info>());
+}
+
 /// A structure for the spawn API.
 ///
 /// This may be used to integrate auto spawned daemons into your application. For more information
@@ -242,6 +256,13 @@ pub struct SpawnApi {
     /// It is not safe to close all file descriptors in this function unconditionally, since a UNIX
     /// socket (created using socketpair()) is passed to the new process.
     pub atfork: Option<extern "C" fn()>,
+}
+
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn spawnapi_compare_capi(){
+    assert_eq!(std::mem::size_of::<SpawnApi>(), std::mem::size_of::<capi::pa_spawn_api>());
+    assert_eq!(std::mem::align_of::<SpawnApi>(), std::mem::align_of::<capi::pa_spawn_api>());
 }
 
 pub type SinkFlagSet = capi::def::pa_sink_flags_t;
@@ -303,6 +324,13 @@ pub enum SinkState {
 
     /// When suspended, actual sink access can be closed, for instance.
     Suspended = 2,
+}
+
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn sink_state_compare_capi(){
+    assert_eq!(std::mem::size_of::<SinkState>(), std::mem::size_of::<capi::pa_sink_state_t>());
+    assert_eq!(std::mem::align_of::<SinkState>(), std::mem::align_of::<capi::pa_sink_state_t>());
 }
 
 impl From<SinkState> for capi::pa_sink_state_t {
@@ -388,6 +416,13 @@ pub enum SourceState {
 
     /// When suspended, actual source access can be closed, for instance.
     Suspended = 2,
+}
+
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn source_state_compare_capi(){
+    assert_eq!(std::mem::size_of::<SourceState>(), std::mem::size_of::<capi::pa_source_state_t>());
+    assert_eq!(std::mem::align_of::<SourceState>(), std::mem::align_of::<capi::pa_source_state_t>());
 }
 
 impl From<SourceState> for capi::pa_source_state_t {

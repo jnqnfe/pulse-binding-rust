@@ -156,6 +156,13 @@ impl Default for Position {
     }
 }
 
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn pos_compare_capi(){
+    assert_eq!(std::mem::size_of::<Position>(), std::mem::size_of::<capi::pa_channel_position_t>());
+    assert_eq!(std::mem::align_of::<Position>(), std::mem::align_of::<capi::pa_channel_position_t>());
+}
+
 impl From<Position> for capi::pa_channel_position_t {
     fn from(p: Position) -> Self {
         unsafe { std::mem::transmute(p) }
@@ -177,6 +184,13 @@ pub struct Map {
     pub channels: u8,
     /// Channel labels
     pub map: [Position; ::sample::CHANNELS_MAX],
+}
+
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn map_compare_capi(){
+    assert_eq!(std::mem::size_of::<Map>(), std::mem::size_of::<capi::pa_channel_map>());
+    assert_eq!(std::mem::align_of::<Map>(), std::mem::align_of::<capi::pa_channel_map>());
 }
 
 impl Default for Map {

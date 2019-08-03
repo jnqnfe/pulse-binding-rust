@@ -80,6 +80,13 @@ pub enum Code {
     Busy,
 }
 
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn code_compare_capi(){
+    assert_eq!(std::mem::size_of::<Code>(), std::mem::size_of::<capi::pa_error_code_t>());
+    assert_eq!(std::mem::align_of::<Code>(), std::mem::align_of::<capi::pa_error_code_t>());
+}
+
 impl PAErr {
     /// Convert an integer error value, as returned by many PA C API functions, to a human readable
     /// string.

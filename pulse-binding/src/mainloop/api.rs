@@ -362,6 +362,13 @@ pub struct MainloopApi {
     pub quit: Option<extern "C" fn(a: *const MainloopApi, retval: ::def::RetvalActual)>,
 }
 
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn api_compare_capi(){
+    assert_eq!(std::mem::size_of::<ApiInternal>(), std::mem::size_of::<capi::pa_mainloop_api>());
+    assert_eq!(std::mem::align_of::<ApiInternal>(), std::mem::align_of::<capi::pa_mainloop_api>());
+}
+
 impl<'a> From<*const ApiInternal> for &'a MainloopApi {
     fn from(a: *const ApiInternal) -> Self {
         unsafe { std::mem::transmute(a) }

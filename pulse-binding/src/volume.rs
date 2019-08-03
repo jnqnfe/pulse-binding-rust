@@ -117,6 +117,13 @@ pub struct ChannelVolumes {
     pub values: [Volume; ::sample::CHANNELS_MAX],
 }
 
+/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+#[test]
+fn set_compare_capi(){
+    assert_eq!(std::mem::size_of::<ChannelVolumes>(), std::mem::size_of::<capi::pa_cvolume>());
+    assert_eq!(std::mem::align_of::<ChannelVolumes>(), std::mem::align_of::<capi::pa_cvolume>());
+}
+
 impl PartialEq for ChannelVolumes {
     fn eq(&self, other: &Self) -> bool {
         match self.channels == other.channels {
