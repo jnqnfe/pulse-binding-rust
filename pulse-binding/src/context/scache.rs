@@ -120,10 +120,7 @@ impl Context {
             None => CString::new("").unwrap(),
         };
 
-        let p_dev: *const c_char = match dev {
-            Some(_) => c_dev.as_ptr(),
-            None => null::<c_char>(),
-        };
+        let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -167,10 +164,7 @@ impl Context {
             None => CString::new("").unwrap(),
         };
 
-        let p_dev: *const c_char = match dev {
-            Some(_) => c_dev.as_ptr(),
-            None => null::<c_char>(),
-        };
+        let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, play_sample_success_cb_proxy);

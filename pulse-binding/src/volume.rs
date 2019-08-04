@@ -776,10 +776,7 @@ impl ChannelVolumes {
     pub fn print_verbose(&self, map: Option<&::channelmap::Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 
-        let p_map: *const capi::pa_channel_map = match map {
-            Some(map) => map.as_ref() as *const capi::pa_channel_map,
-            None => null::<capi::pa_channel_map>(),
-        };
+        let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
         let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
         unsafe {

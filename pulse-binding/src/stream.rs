@@ -587,10 +587,7 @@ impl Stream {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let p_map: *const capi::pa_channel_map = match map {
-            Some(map) => map.as_ref(),
-            None => null::<capi::pa_channel_map>(),
-        };
+        let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
         let ptr = unsafe { capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), ss.as_ref(), p_map) };
         if ptr.is_null() {
@@ -616,10 +613,7 @@ impl Stream {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let p_map: *const capi::pa_channel_map = match map {
-            Some(map) => map.as_ref(),
-            None => null::<capi::pa_channel_map>(),
-        };
+        let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
         let ptr = unsafe {
             capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), ss.as_ref(),
@@ -805,22 +799,10 @@ impl Stream {
             None => CString::new("").unwrap(),
         };
 
-        let p_attr: *const capi::pa_buffer_attr = match attr {
-            Some(attr) => attr.as_ref(),
-            None => null::<capi::pa_buffer_attr>(),
-        };
-        let p_vol: *const capi::pa_cvolume = match volume {
-            Some(volume) => volume.as_ref(),
-            None => null::<capi::pa_cvolume>(),
-        };
-        let p_sync: *mut StreamInternal = match sync_stream {
-            Some(sync_stream) => sync_stream.ptr,
-            None => null_mut::<StreamInternal>(),
-        };
-        let p_dev: *const c_char = match dev {
-            Some(_) => c_dev.as_ptr(),
-            None => null::<c_char>(),
-        };
+        let p_attr = attr.map_or(null::<capi::pa_buffer_attr>(), |a| a.as_ref());
+        let p_vol = volume.map_or(null::<capi::pa_cvolume>(), |v| v.as_ref());
+        let p_sync = sync_stream.map_or(null_mut::<StreamInternal>(), |s| s.ptr);
+        let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         let r = unsafe {
             capi::pa_stream_connect_playback(self.ptr, p_dev, p_attr, flags, p_vol, p_sync)
@@ -848,14 +830,8 @@ impl Stream {
             None => CString::new("").unwrap(),
         };
 
-        let p_attr: *const capi::pa_buffer_attr = match attr {
-            Some(attr) => attr.as_ref(),
-            None => null::<capi::pa_buffer_attr>(),
-        };
-        let p_dev: *const c_char = match dev {
-            Some(_) => c_dev.as_ptr(),
-            None => null::<c_char>(),
-        };
+        let p_attr = attr.map_or(null::<capi::pa_buffer_attr>(), |a| a.as_ref());
+        let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         match unsafe { capi::pa_stream_connect_record(self.ptr, p_dev, p_attr, flags) } {
             0 => Ok(()),

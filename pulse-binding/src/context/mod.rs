@@ -300,14 +300,8 @@ impl Context {
             None => CString::new("").unwrap(),
         };
 
-        let p_api: *const capi::pa_spawn_api = match api {
-            Some(api) => api.as_ref(),
-            None => null::<capi::pa_spawn_api>(),
-        };
-        let p_server: *const c_char = match server {
-            Some(_) => c_server.as_ptr(),
-            None => null::<c_char>(),
-        };
+        let p_api = api.map_or(null::<capi::pa_spawn_api>(), |a| a.as_ref());
+        let p_server = server.map_or(null::<c_char>(), |_| c_server.as_ptr() as *const c_char);
 
         match unsafe { capi::pa_context_connect(self.ptr, p_server, flags, p_api) } {
             0 => Ok(()),

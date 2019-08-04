@@ -158,22 +158,10 @@ impl Simple {
             None => CString::new("").unwrap(),
         };
 
-        let p_map: *const pcapi::pa_channel_map = match map {
-            Some(map) => map.as_ref(),
-            None => null::<pcapi::pa_channel_map>(),
-        };
-        let p_attr: *const pcapi::pa_buffer_attr = match attr {
-            Some(attr) => attr.as_ref(),
-            None => null::<pcapi::pa_buffer_attr>(),
-        };
-        let p_server: *const c_char = match server {
-            Some(_) => c_server.as_ptr(),
-            None => null::<c_char>(),
-        };
-        let p_dev: *const c_char = match dev {
-            Some(_) => c_dev.as_ptr(),
-            None => null::<c_char>(),
-        };
+        let p_map = map.map_or(null::<pcapi::pa_channel_map>(), |m| m.as_ref());
+        let p_attr = attr.map_or(null::<pcapi::pa_buffer_attr>(), |a| a.as_ref());
+        let p_server = server.map_or(null::<c_char>(), |_| c_server.as_ptr() as *const c_char);
+        let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
         let c_name = CString::new(name.clone()).unwrap();
         let c_stream_name = CString::new(stream_name.clone()).unwrap();
 
