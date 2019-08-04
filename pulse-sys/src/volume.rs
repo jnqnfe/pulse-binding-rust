@@ -84,10 +84,9 @@ pub const PA_VOLUME_SNPRINT_MAX: usize = 10;
 /// [`pa_sw_volume_snprint_dB`]: fn.pa_sw_volume_snprint_dB.html
 pub const PA_SW_VOLUME_SNPRINT_DB_MAX: usize = 11;
 
-/// The maximum length of strings returned by [`pa_volume_snprint_verbose`](fn.print_verbose.html),
-/// as per the underlying C function. Please note that this value can change with any release
-/// without warning and without being considered API or ABI breakage. You should not use this
-/// definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_volume_snprint_verbose`]. Please note that this
+/// value can change with any release without warning and without being considered API or ABI
+/// breakage. You should not use this definition anywhere where it might become part of an ABI.
 ///
 /// [`pa_volume_snprint_verbose`]: fn.pa_volume_snprint_verbose.html
 pub const PA_VOLUME_SNPRINT_VERBOSE_MAX: usize = 35;
