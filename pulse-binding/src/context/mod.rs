@@ -524,7 +524,7 @@ impl Context {
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
     /// [`mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
-    pub fn rttime_new<T, F>(&self, mainloop: &impl Mainloop<MI=T::MI>, time: MonotonicTs,
+    pub fn rttime_new<T, F>(&self, mainloop: &dyn Mainloop<MI=T::MI>, time: MonotonicTs,
         mut callback: F) -> Option<TimeEvent<T::MI>>
         where T: Mainloop + 'static,
               F: FnMut(TimeEventRef<T::MI>) + 'static
