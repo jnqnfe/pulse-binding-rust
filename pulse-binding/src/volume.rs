@@ -411,16 +411,8 @@ impl ChannelVolumes {
     /// If `with` is `None`, divides with itself. This is only valid for software volumes! Returns
     /// pointer to self.
     pub fn sw_divide(&mut self, with: Option<&Self>) -> &mut Self {
-        match with {
-            Some(with) => unsafe {
-                capi::pa_sw_cvolume_divide(std::mem::transmute(&self), std::mem::transmute(&self),
-                    std::mem::transmute(with))
-            },
-            None => unsafe {
-                capi::pa_sw_cvolume_divide(std::mem::transmute(&self), std::mem::transmute(&self),
-                    std::mem::transmute(&self))
-            },
-        };
+        unsafe { capi::pa_sw_cvolume_divide(std::mem::transmute(&self), std::mem::transmute(&self),
+            std::mem::transmute(with.unwrap_or(&*self))) };
         self
     }
 
