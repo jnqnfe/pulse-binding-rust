@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! Version constants and functions
+//! Version constants and functions.
 //!
 //! The constants defined here follow those given in the C headers.
 //!
@@ -73,9 +73,9 @@ pub const LINK_TARGET_VERSION: &str = TARGET_VERSION_STRING;
 /// Used for indicating PA version compatibility support, which can vary depending upon feature
 /// flags.
 pub enum Compatibility {
-    /// Support for latest compatible version
+    /// Support for latest compatible version.
     Latest,
-    /// Support for PA versions < 12 selected
+    /// Support for PA versions < 12 selected.
     PreV12,
 }
 
@@ -89,7 +89,7 @@ pub const PA_MINOR: u8 = TARGET_VERSION.1;
 #[deprecated(since = "1.4.0", note="not useful, always zero")]
 pub const PA_MICRO: u8 = 0;
 
-/// Returns indication of PA version compatibility support, depending upon feature flags used
+/// Returns indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
 pub fn get_compatibility() -> Compatibility {
     actual::COMPATIBILITY

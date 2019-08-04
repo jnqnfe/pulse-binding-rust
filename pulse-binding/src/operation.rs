@@ -35,7 +35,7 @@ pub struct Operation<ClosureProto: ?Sized> {
     /// user tries to cancel execution of the callback (with the `cancel` method), in which case we
     /// need this in order to release the memory.
     saved_cb: Option<*mut Box<ClosureProto>>,
-    /// Saved multi-use state callback closure, for later destruction
+    /// Saved multi-use state callback closure, for later destruction.
     state_cb: NotifyCb,
 }
 
@@ -85,7 +85,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
         }
     }
 
-    /// Return the current status of the operation
+    /// Return the current status of the operation.
     #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_operation_get_state(self.ptr) }

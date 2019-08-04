@@ -17,7 +17,7 @@
 
 use std::os::raw::c_void;
 
-/// An asynchronous operation object
+/// An asynchronous operation object.
 #[repr(C)] pub struct pa_operation { _private: [u8; 0] }
 
 #[repr(C)]
@@ -37,7 +37,7 @@ pub const PA_OPERATION_DONE: pa_operation_state_t = pa_operation_state_t::Done;
 pub const PA_OPERATION_CANCELED: pa_operation_state_t = pa_operation_state_t::Cancelled;
 pub const PA_OPERATION_CANCELLED: pa_operation_state_t = pa_operation_state_t::Cancelled;
 
-/// A callback for operation state changes
+/// A callback for operation state changes.
 pub type pa_operation_notify_cb_t = Option<extern "C" fn(o: *mut pa_operation, userdata: *mut c_void)>;
 
 #[link(name="pulse")]

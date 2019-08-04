@@ -17,7 +17,7 @@
 
 use std::os::raw::c_void;
 
-/// An opaque UNIX signal event source object
+/// An opaque UNIX signal event source object.
 #[repr(C)] pub struct pa_signal_event { _private: [u8; 0] }
 
 pub type pa_signal_cb_t = Option<extern "C" fn(api: *const ::mainloop::api::pa_mainloop_api, e: *mut pa_signal_event, sig: i32, userdata: *mut c_void)>;

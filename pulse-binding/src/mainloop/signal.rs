@@ -37,16 +37,16 @@ use capi::pa_signal_event as EventInternal;
 pub struct Event {
     /// The actual C object.
     ptr: *mut EventInternal,
-    /// Saved multi-use state callback closure, for later destruction
+    /// Saved multi-use state callback closure, for later destruction.
     _signal_cb: SignalCb,
 }
 
 type SignalCb = ::callbacks::MultiUseCallback<dyn FnMut(i32),
     extern "C" fn(*const ApiInternal, *mut EventInternal, i32, *mut c_void)>;
 
-/// Trait with signal handling, for mainloops
+/// Trait with signal handling, for mainloops.
 pub trait MainloopSignals : ::mainloop::api::Mainloop {
-    /// Initialize the UNIX signal subsystem and bind it to the specified main loop
+    /// Initialize the UNIX signal subsystem and bind it to the specified main loop.
     fn init_signals(&mut self) -> Result<(), PAErr> {
         let inner = self.inner();
         let api = inner.get_api();
@@ -56,7 +56,7 @@ pub trait MainloopSignals : ::mainloop::api::Mainloop {
         }
     }
 
-    /// Cleanup the signal subsystem
+    /// Cleanup the signal subsystem.
     #[inline]
     fn signals_done(&self) {
         unsafe { capi::pa_signal_done(); }
@@ -64,9 +64,9 @@ pub trait MainloopSignals : ::mainloop::api::Mainloop {
 }
 
 impl Event {
-    /// Create a new UNIX signal event source object
+    /// Create a new UNIX signal event source object.
     ///
-    /// The callback must accept an integer which represents the signal
+    /// The callback must accept an integer which represents the signal.
     pub fn new<F>(sig: i32, callback: F) -> Self
         where F: FnMut(i32) + 'static
     {

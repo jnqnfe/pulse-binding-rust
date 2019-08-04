@@ -23,22 +23,22 @@ use super::super::api::{MainloopApi, MainloopInnerType};
 
 pub use capi::pa_io_event as IoEventInternal;
 
-/// A bitmask for IO events
+/// A bitmask for IO events.
 pub type IoEventFlagSet = capi::mainloop::pa_io_event_flags_t;
 
 pub mod flags {
     use capi;
     use super::IoEventFlagSet;
 
-    /// No event
+    /// No event.
     pub const NULL: IoEventFlagSet = capi::PA_IO_EVENT_NULL;
-    /// Input event
+    /// Input event.
     pub const INPUT: IoEventFlagSet = capi::PA_IO_EVENT_INPUT;
-    /// Output event
+    /// Output event.
     pub const OUTPUT: IoEventFlagSet = capi::PA_IO_EVENT_OUTPUT;
-    /// Hangup event
+    /// Hangup event.
     pub const HANGUP: IoEventFlagSet = capi::PA_IO_EVENT_HANGUP;
-    /// Error event
+    /// Error event.
     pub const ERROR: IoEventFlagSet = capi::PA_IO_EVENT_ERROR;
 }
 
@@ -47,19 +47,19 @@ pub struct IoEvent<T>
     where T: MainloopInnerType
 {
     ptr: *mut IoEventInternal,
-    /// Source mainloop
+    /// Source mainloop.
     owner: Rc<T>,
-    /// Saved callback closure, for later destruction
+    /// Saved callback closure, for later destruction.
     _saved_cb: EventCb,
 }
 
 /// A reference to an IO event source, provided to the callback, allowing modification within the
-/// callback itself
+/// callback itself.
 pub struct IoEventRef<T: 'static>
     where T: MainloopInnerType
 {
     ptr: *mut IoEventInternal,
-    /// Source mainloop
+    /// Source mainloop.
     owner: Rc<T>,
 }
 

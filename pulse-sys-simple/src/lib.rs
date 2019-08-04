@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! PulseAudio Rust language linking library for the ‘simple’ component
+//! PulseAudio Rust language linking library for the ‘simple’ component.
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
@@ -24,7 +24,7 @@ extern crate libpulse_sys as pulse;
 
 use std::os::raw::{c_char, c_void};
 
-/// An opaque simple connection object
+/// An opaque simple connection object.
 #[repr(C)] pub struct pa_simple { _private: [u8; 0] }
 
 #[link(name="pulse-simple")]

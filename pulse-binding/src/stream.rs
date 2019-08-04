@@ -276,7 +276,7 @@ pub use capi::pa_stream_direction_t as Direction;
 pub struct Stream {
     /// The actual C object.
     ptr: *mut StreamInternal,
-    /// Multi-use callback closure pointers
+    /// Multi-use callback closure pointers.
     cb_ptrs: CallbackPointers,
 }
 
@@ -310,7 +310,7 @@ type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(String, Proplist),
     extern "C" fn(*mut StreamInternal, name: *const c_char, pl: *mut ::proplist::ProplistInternal,
         *mut c_void)>;
 
-/// The state of a stream
+/// The state of a stream.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum State {

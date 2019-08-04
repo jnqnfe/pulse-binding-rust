@@ -215,18 +215,18 @@ pub use capi::pa_mainloop as MainloopInternal;
 
 impl super::api::MainloopInternalType for MainloopInternal {}
 
-/// Generic prototype of a poll() like function
+/// Generic prototype of a poll() like function.
 pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
     userdata: *mut c_void) -> i32;
 
 /// Return type for [`Mainloop::iterate`](struct.Mainloop.html#method.iterate).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum IterateResult {
-    /// Success, with number of sources dispatched
+    /// Success, with number of sources dispatched.
     Success(u32),
-    /// Quit was called, with quit’s retval
+    /// Quit was called, with quit’s retval.
     Quit(::def::Retval),
-    /// An error occurred, with error value
+    /// An error occurred, with error value.
     Err(PAErr),
 }
 
@@ -267,7 +267,7 @@ impl IterateResult {
 /// firstly because they need the API pointer, secondly, it ensures that event objects do not
 /// outlive the mainloop object.
 pub struct Mainloop {
-    /// The ref-counted inner data
+    /// The ref-counted inner data.
     pub _inner: Rc<super::api::MainloopInner<MainloopInternal>>,
 }
 
@@ -291,7 +291,7 @@ impl super::api::MainloopInner<MainloopInternal> {
 }
 
 impl Mainloop {
-    /// Allocate a new main loop object
+    /// Allocate a new main loop object.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_mainloop_new() };
         if ptr.is_null() {
@@ -401,19 +401,19 @@ impl Mainloop {
         unsafe { &*ptr }
     }
 
-    /// Shutdown the main loop with the specified return value
+    /// Shutdown the main loop with the specified return value.
     #[inline]
     pub fn quit(&mut self, retval: ::def::Retval) {
         unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval.0); }
     }
 
-    /// Interrupt a running poll (for threaded systems)
+    /// Interrupt a running poll (for threaded systems).
     #[inline]
     pub fn wakeup(&mut self) {
         unsafe { capi::pa_mainloop_wakeup((*self._inner).ptr); }
     }
 
-    /// Change the poll() implementation
+    /// Change the poll() implementation.
     #[inline]
     pub fn set_poll_func(&mut self, poll_cb: (PollFn, *mut c_void)) {
         unsafe { capi::pa_mainloop_set_poll_func((*self._inner).ptr, Some(poll_cb.0), poll_cb.1); }

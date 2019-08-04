@@ -34,7 +34,7 @@ pub mod subscribe;
 use std::os::raw::{c_char, c_void};
 use ::mainloop::api::{pa_time_event, pa_time_event_cb_t};
 
-/// An opaque connection context to a daemon
+/// An opaque connection context to a daemon.
 #[repr(C)] pub struct pa_context { _private: [u8; 0] }
 
 #[repr(C)]

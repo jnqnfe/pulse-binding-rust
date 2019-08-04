@@ -13,13 +13,13 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! Global definitions
+//! Global definitions.
 
 use std;
 use std::os::raw::c_void;
 use libc::timeval;
 
-/// An invalid index
+/// An invalid index.
 pub const PA_INVALID_INDEX: u32 = std::u32::MAX;
 
 pub type pa_free_cb_t = Option<extern "C" fn(p: *mut c_void)>;
@@ -162,7 +162,7 @@ pub fn pa_source_is_running(state: pa_source_state_t) -> bool {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum pa_port_available_t {
-    /// This port does not support jack detection
+    /// This port does not support jack detection.
     Unknown = 0,
     /// This port is not available, likely because the jack is not plugged in.
     No = 1,

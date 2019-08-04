@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! PulseAudio Rust language linking library for the ‘GLIB mainloop’ component
+//! PulseAudio Rust language linking library for the ‘GLIB mainloop’ component.
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
@@ -26,7 +26,7 @@ extern crate libpulse_sys as pulse;
 /// According to Glib headers, this is an opaque type!
 pub enum GMainContext {}
 
-/// An opaque GLIB main loop object
+/// An opaque GLIB main loop object.
 #[repr(C)] pub struct pa_glib_mainloop { _private: [u8; 0] }
 
 #[link(name="pulse-mainloop-glib")]

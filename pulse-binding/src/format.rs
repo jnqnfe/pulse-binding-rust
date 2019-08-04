@@ -88,18 +88,18 @@ impl Default for Encoding {
 
 /// Represents the format of data provided in a stream or processed by a sink.
 pub struct Info {
-    /// The actual C object
+    /// The actual C object.
     pub(crate) ptr: *mut InfoInternal,
-    /// Wrapped property list pointer
+    /// Wrapped property list pointer.
     properties: ::proplist::Proplist,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
+    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks.
     weak: bool,
 }
 
 unsafe impl Send for Info {}
 unsafe impl Sync for Info {}
 
-/// The raw C structure (with documentation)
+/// The raw C structure (with documentation).
 #[repr(C)]
 pub(crate) struct InfoInternal {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */

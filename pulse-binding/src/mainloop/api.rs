@@ -36,10 +36,10 @@ pub trait MainloopInternalType {}
 pub trait MainloopInnerType {
     type I: MainloopInternalType;
 
-    /// Return opaque main loop object pointer
+    /// Return opaque main loop object pointer.
     fn get_ptr(&self) -> *mut Self::I;
 
-    /// Return main loop API object pointer
+    /// Return main loop API object pointer.
     fn get_api(&self) -> &MainloopApi;
 
     /// Returns `true` if the mainloop implementation supports monotonic based time events.
@@ -59,7 +59,7 @@ pub trait MainloopInnerType {
 pub struct MainloopInner<T>
     where T: MainloopInternalType
 {
-    /// An opaque main loop object
+    /// An opaque main loop object.
     pub ptr: *mut T,
 
     /// The abstract main loop API vtable for the GLIB main loop object. No need to free this API as
@@ -90,12 +90,12 @@ impl<T> MainloopInnerType for MainloopInner<T>
 {
     type I = T;
 
-    /// Return opaque main loop object pointer
+    /// Return opaque main loop object pointer.
     fn get_ptr(&self) -> *mut T {
         self.ptr
     }
 
-    /// Return main loop API object pointer
+    /// Return main loop API object pointer.
     fn get_api(&self) -> &MainloopApi {
         assert!(!self.api.is_null());
         unsafe { &*self.api }
@@ -111,7 +111,7 @@ pub trait Mainloop {
 
     fn inner(&self) -> Rc<Self::MI>;
 
-    /// Create a new IO event
+    /// Create a new IO event.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -146,7 +146,7 @@ pub trait Mainloop {
         Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Create a new timer event
+    /// Create a new timer event.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -188,9 +188,9 @@ pub trait Mainloop {
         Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Create a new monotonic-based timer event
+    /// Create a new monotonic-based timer event.
     ///
-    /// Asserts that `t` is not `USEC_INVALID`
+    /// Asserts that `t` is not `USEC_INVALID`.
     ///
     /// This is an alternative to the `new_timer_event` method, taking a monotonic based time value.
     ///
@@ -240,7 +240,7 @@ pub trait Mainloop {
         Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Create a new deferred event
+    /// Create a new deferred event.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -297,24 +297,24 @@ pub trait Mainloop {
     }
 }
 
-/// An IO event callback prototype
+/// An IO event callback prototype.
 pub type IoEventCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32,
     events: IoEventFlagSet, userdata: *mut c_void);
-/// A IO event destroy callback prototype
+/// A IO event destroy callback prototype.
 pub type IoEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal,
     userdata: *mut c_void);
 
-/// A time event callback prototype
+/// A time event callback prototype.
 pub type TimeEventCb = extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal,
     tv: *const timeval, userdata: *mut c_void);
-/// A time event destroy callback prototype
+/// A time event destroy callback prototype.
 pub type TimeEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut TimeEventInternal,
     userdata: *mut c_void);
 
-/// A defer event callback prototype
+/// A defer event callback prototype.
 pub type DeferEventCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
     userdata: *mut c_void);
-/// A defer event destroy callback prototype
+/// A defer event destroy callback prototype.
 pub type DeferEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut DeferEventInternal,
     userdata: *mut c_void);
 
@@ -323,45 +323,45 @@ pub type DeferEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut Defe
 pub struct MainloopApi {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
 
-    /// A pointer to some private, arbitrary data of the main loop implementation
+    /// A pointer to some private, arbitrary data of the main loop implementation.
     pub userdata: *mut c_void,
 
-    /// Create a new IO event source object
+    /// Create a new IO event source object.
     pub io_new: Option<extern "C" fn(a: *const MainloopApi, fd: i32, events: IoEventFlagSet,
         cb: Option<IoEventCb>, userdata: *mut c_void) -> *mut IoEventInternal>,
-    /// Enable or disable IO events on this object
+    /// Enable or disable IO events on this object.
     pub io_enable: Option<extern "C" fn(e: *mut IoEventInternal, events: IoEventFlagSet)>,
-    /// Free a IO event source object
+    /// Free a IO event source object.
     pub io_free: Option<extern "C" fn(e: *mut IoEventInternal)>,
     /// Set a function that is called when the IO event source is destroyed. Use this to free the
     /// `userdata` argument if required.
     pub io_set_destroy: Option<extern "C" fn(e: *mut IoEventInternal, cb: Option<IoEventDestroyCb>)>,
 
-    /// Create a new timer event source object for the specified Unix time
+    /// Create a new timer event source object for the specified Unix time.
     pub time_new: Option<extern "C" fn(a: *const MainloopApi, tv: *const timeval,
         cb: Option<TimeEventCb>, userdata: *mut c_void) -> *mut TimeEventInternal>,
-    /// Restart a running or expired timer event source with a new Unix time
+    /// Restart a running or expired timer event source with a new Unix time.
     pub time_restart: Option<extern "C" fn(e: *mut TimeEventInternal, tv: *const timeval)>,
-    /// Free a deferred timer event source object
+    /// Free a deferred timer event source object.
     pub time_free: Option<extern "C" fn(e: *mut TimeEventInternal)>,
     /// Set a function that is called when the timer event source is destroyed. Use this to free the
     /// `userdata` argument if required.
     pub time_set_destroy: Option<extern "C" fn(e: *mut TimeEventInternal,
         cb: Option<TimeEventDestroyCb>)>,
 
-    /// Create a new deferred event source object
+    /// Create a new deferred event source object.
     pub defer_new: Option<extern "C" fn(a: *const MainloopApi, cb: Option<DeferEventCb>,
         userdata: *mut c_void) -> *mut DeferEventInternal>,
-    /// Enable or disable a deferred event source temporarily
+    /// Enable or disable a deferred event source temporarily.
     pub defer_enable: Option<extern "C" fn(e: *mut DeferEventInternal, b: i32)>,
-    /// Free a deferred event source object
+    /// Free a deferred event source object.
     pub defer_free: Option<extern "C" fn(e: *mut DeferEventInternal)>,
     /// Set a function that is called when the deferred event source is
     /// destroyed. Use this to free the `userdata` argument if required.
     pub defer_set_destroy: Option<extern "C" fn(e: *mut DeferEventInternal,
         cb: Option<DeferEventDestroyCb>)>,
 
-    /// Exit the main loop and return the specified retval
+    /// Exit the main loop and return the specified retval.
     pub quit: Option<extern "C" fn(a: *const MainloopApi, retval: ::def::RetvalActual)>,
 }
 

@@ -145,27 +145,27 @@ impl Default for Format {
 
 pub use self::ei_formats::*;
 
-/// Endian-independent format identifiers
+/// Endian-independent format identifiers.
 #[cfg(target_endian = "big")]
 mod ei_formats {
     use super::Format;
 
-    /// Signed 16 Bit PCM, native endian
+    /// Signed 16 Bit PCM, native endian.
     pub const SAMPLE_S16NE: Format = Format::S16be;
-    /// 32 Bit IEEE floating point, native endian
+    /// 32 Bit IEEE floating point, native endian.
     pub const SAMPLE_FLOAT32NE: Format = Format::F32be;
-    /// Signed 32 Bit PCM, native endian
+    /// Signed 32 Bit PCM, native endian.
     pub const SAMPLE_S32NE: Format = Format::S32be;
     /// Signed 24 Bit PCM packed, native endian.
     pub const SAMPLE_S24NE: Format = Format::S24be;
     /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
     pub const SAMPLE_S24_32NE: Format = Format::S24_32be;
 
-    /// Signed 16 Bit PCM reverse endian
+    /// Signed 16 Bit PCM reverse endian.
     pub const SAMPLE_S16RE: Format = Format::S16le;
-    /// 32 Bit IEEE floating point, reverse endian
+    /// 32 Bit IEEE floating point, reverse endian.
     pub const SAMPLE_FLOAT32RE: Format = Format::F32le;
-    /// Signed 32 Bit PCM, reverse endian
+    /// Signed 32 Bit PCM, reverse endian.
     pub const SAMPLE_S32RE: Format = Format::S32le;
     /// Signed 24 Bit PCM, packed reverse endian.
     pub const SAMPLE_S24RE: Format = Format::S24le;
@@ -178,22 +178,22 @@ mod ei_formats {
 mod ei_formats {
     use super::Format;
 
-    /// Signed 16 Bit PCM, native endian
+    /// Signed 16 Bit PCM, native endian.
     pub const SAMPLE_S16NE: Format = Format::S16le;
-    /// 32 Bit IEEE floating point, native endian
+    /// 32 Bit IEEE floating point, native endian.
     pub const SAMPLE_FLOAT32NE: Format = Format::F32le;
-    /// Signed 32 Bit PCM, native endian
+    /// Signed 32 Bit PCM, native endian.
     pub const SAMPLE_S32NE: Format = Format::S32le;
     /// Signed 24 Bit PCM packed, native endian.
     pub const SAMPLE_S24NE: Format = Format::S24le;
     /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
     pub const SAMPLE_S24_32NE: Format = Format::S24_32le;
 
-    /// Signed 16 Bit PCM, reverse endian
+    /// Signed 16 Bit PCM, reverse endian.
     pub const SAMPLE_S16RE: Format = Format::S16be;
-    /// 32 Bit IEEE floating point, reverse endian
+    /// 32 Bit IEEE floating point, reverse endian.
     pub const SAMPLE_FLOAT32RE: Format = Format::F32be;
-    /// Signed 32 Bit PCM, reverse endian
+    /// Signed 32 Bit PCM, reverse endian.
     pub const SAMPLE_S32RE: Format = Format::S32be;
     /// Signed 24 Bit PCM, packed reverse endian.
     pub const SAMPLE_S24RE: Format = Format::S24be;
@@ -201,10 +201,10 @@ mod ei_formats {
     pub const SAMPLE_S24_32RE: Format = Format::S24_32be;
 }
 
-/// A Shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.SAMPLE_FLOAT32NE.html)
+/// A Shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.SAMPLE_FLOAT32NE.html).
 pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
 
-/// A sample format and attribute specification
+/// A sample format and attribute specification.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Spec {
@@ -260,13 +260,13 @@ impl Spec {
         unsafe { capi::pa_sample_spec_init(self.as_mut()); }
     }
 
-    /// Returns `true` when the sample type specification is valid
+    /// Returns `true` when the sample type specification is valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_sample_spec_valid(self.as_ref()) != 0 }
     }
 
-    /// Returns `true` when the two sample type specifications match
+    /// Returns `true` when the two sample type specifications match.
     #[inline]
     pub fn equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_sample_spec_equal(self.as_ref(), to.as_ref()) != 0 }
@@ -279,13 +279,13 @@ impl Spec {
         unsafe { capi::pa_bytes_per_second(self.as_ref()) }
     }
 
-    /// Returns the size of a frame
+    /// Returns the size of a frame.
     #[inline]
     pub fn frame_size(&self) -> usize {
         unsafe { capi::pa_frame_size(self.as_ref()) }
     }
 
-    /// Returns the size of a sample
+    /// Returns the size of a sample.
     #[inline]
     pub fn sample_size(&self) -> usize {
         unsafe { capi::pa_sample_size(self.as_ref()) }
@@ -307,7 +307,7 @@ impl Spec {
         unsafe { capi::pa_usec_to_bytes(t.0, self.as_ref()) }
     }
 
-    /// Pretty print a sample type specification to a string
+    /// Pretty print a sample type specification to a string.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
@@ -340,7 +340,7 @@ pub fn channels_are_valid(channels: u8) -> bool {
     unsafe { capi::pa_channels_valid(channels) != 0 }
 }
 
-/// Pretty print a byte size value (i.e. “2.5 MiB”)
+/// Pretty print a byte size value (i.e. “2.5 MiB”).
 pub fn bytes_print(bytes: u32) -> String {
     const PRINT_MAX: usize = capi::PA_BYTES_SNPRINT_MAX;
     let mut tmp = Vec::with_capacity(PRINT_MAX);

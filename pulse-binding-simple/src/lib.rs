@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! PulseAudio Rust language binding library for the ‘simple’ component
+//! PulseAudio Rust language binding library for the ‘simple’ component.
 //!
 //! PulseAudio ‘simple’ provides a simple but limited synchronous playback and recording API. This
 //! is a synchronous, simplified wrapper around the standard asynchronous API.

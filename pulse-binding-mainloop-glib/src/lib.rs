@@ -66,7 +66,7 @@ pub use capi::GMainContext;
  * one, just used as an opaque pointer), and transmute to the ‘sys’ crate one.
  */
 
-/// An opaque GLIB main loop object
+/// An opaque GLIB main loop object.
 pub enum MainloopInternal {}
 
 impl MainloopInternalType for MainloopInternal {}
@@ -79,7 +79,7 @@ impl MainloopInternalType for MainloopInternal {}
 /// firstly because they need the API pointer, secondly, it ensures that event objects do not
 /// outlive the mainloop object.
 pub struct Mainloop {
-    /// The ref-counted inner data
+    /// The ref-counted inner data.
     pub _inner: Rc<pulse::mainloop::api::MainloopInner<MainloopInternal>>,
 }
 
@@ -93,7 +93,7 @@ impl pulse::mainloop::api::Mainloop for Mainloop {
 
 impl pulse::mainloop::signal::MainloopSignals for Mainloop {}
 
-/// Drop function for MainloopInner<MainloopInternal>
+/// Drop function for MainloopInner<MainloopInternal>.
 fn drop_actual(self_: &mut pulse::mainloop::api::MainloopInner<MainloopInternal>) {
     unsafe { capi::pa_glib_mainloop_free(std::mem::transmute(&self_.ptr)) };
     self_.ptr = null_mut::<MainloopInternal>();

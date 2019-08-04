@@ -20,7 +20,7 @@ use capi;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 use super::MicroSeconds;
 
-/// A monotonic timestamp
+/// A monotonic timestamp.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MonotonicTs(pub(crate) MicroSeconds);
 

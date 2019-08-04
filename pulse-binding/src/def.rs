@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! Global definitions
+//! Global definitions.
 
 use std;
 use capi;
@@ -33,7 +33,7 @@ pub type RetvalActual = i32;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Retval(pub RetvalActual);
 
-/// Playback and record buffer metrics
+/// Playback and record buffer metrics.
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 pub struct BufferAttr {
@@ -305,14 +305,14 @@ pub mod sink_flags {
     use capi;
     use super::SinkFlagSet;
 
-    /// Flag to pass when no specific options are needed
+    /// Flag to pass when no specific options are needed.
     pub const NOFLAGS: SinkFlagSet = capi::PA_SINK_NOFLAGS;
 
     /// Supports hardware volume control. This is a dynamic flag and may change at runtime after the
     /// sink has initialized.
     pub const HW_VOLUME_CTRL: SinkFlagSet = capi::PA_SINK_HW_VOLUME_CTRL;
 
-    /// Supports latency querying
+    /// Supports latency querying.
     pub const LATENCY: SinkFlagSet = capi::PA_SINK_LATENCY;
 
     /// Is a hardware sink of some kind, in contrast to “virtual”/software sinks.
@@ -404,14 +404,14 @@ pub mod source_flags {
     use capi;
     use super::SourceFlagSet;
 
-    /// Flag to pass when no specific options are needed
+    /// Flag to pass when no specific options are needed.
     pub const NOFLAGS: SourceFlagSet = capi::PA_SOURCE_NOFLAGS;
 
     /// Supports hardware volume control. This is a dynamic flag and may change at runtime after the
     /// source has initialized.
     pub const HW_VOLUME_CTRL: SourceFlagSet = capi::PA_SOURCE_HW_VOLUME_CTRL;
 
-    /// Supports latency querying
+    /// Supports latency querying.
     pub const LATENCY: SourceFlagSet = capi::PA_SOURCE_LATENCY;
 
     /// Is a hardware source of some kind, in contrast to “virtual”/software source.

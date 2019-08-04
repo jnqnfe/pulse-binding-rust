@@ -136,7 +136,7 @@ impl Facility {
         }
     }
 
-    /// Convert to an interest mask
+    /// Convert to an interest mask.
     #[inline(always)]
     pub fn to_interest_mask(self) -> InterestMaskSet {
         1u32 << (self as u32)
@@ -154,13 +154,13 @@ impl Operation {
     }
 }
 
-/// Extract facility from `EventType` value
+/// Extract facility from `EventType` value.
 #[inline]
 fn get_facility(value: EventType) -> Option<Facility> {
     Facility::from_int((value & FACILITY_MASK) as u32)
 }
 
-/// Extract operation from `EventType` value
+/// Extract operation from `EventType` value.
 #[inline]
 fn get_operation(value: EventType) -> Option<Operation> {
     Operation::from_int((value & OPERATION_MASK) as u32)

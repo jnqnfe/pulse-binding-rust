@@ -97,15 +97,15 @@ use proplist::Proplist;
 use callbacks::box_closure_get_capi_ptr;
 use capi::pa_context as ContextInternal;
 
-/// An opaque connection context to a daemon
+/// An opaque connection context to a daemon.
 ///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct Context {
     /// The actual C object.
     pub(crate) ptr: *mut ContextInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
+    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks.
     weak: bool,
-    /// Multi-use callback closure pointers
+    /// Multi-use callback closure pointers.
     cb_ptrs: CallbackPointers,
 }
 
@@ -131,7 +131,7 @@ type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(String, Proplist),
 type ExtSubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut ContextInternal, *mut c_void)>;
 
-/// The state of a connection context
+/// The state of a connection context.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum State {
@@ -264,19 +264,19 @@ impl Context {
         unsafe { capi::pa_context_set_event_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Returns the error number of the last failed operation
+    /// Returns the error number of the last failed operation.
     #[inline]
     pub fn errno(&self) -> PAErr {
         PAErr(unsafe { capi::pa_context_errno(self.ptr) })
     }
 
-    /// Returns `true` if some data is pending to be written to the connection
+    /// Returns `true` if some data is pending to be written to the connection.
     #[inline]
     pub fn is_pending(&self) -> bool {
         unsafe { capi::pa_context_is_pending(self.ptr) != 0 }
     }
 
-    /// Returns the current context status
+    /// Returns the current context status.
     #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_context_get_state(self.ptr).into() }

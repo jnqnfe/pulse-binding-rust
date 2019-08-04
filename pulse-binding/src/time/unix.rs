@@ -20,12 +20,12 @@ use capi;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 use super::{Timeval, MicroSeconds};
 
-/// A Unix timestamp
+/// A Unix timestamp.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct UnixTs(pub(crate) Timeval);
 
 impl UnixTs {
-    /// Current ‘time of day’
+    /// Current ‘time of day’.
     pub fn now() -> Self {
         let mut tv = Timeval::new_zero();
         unsafe { capi::pa_gettimeofday(&mut tv.0) };
@@ -38,7 +38,7 @@ impl UnixTs {
         MicroSeconds(unsafe { capi::pa_timeval_diff(&(a.0).0, &(b.0).0) })
     }
 
-    /// Return the time difference between now and self
+    /// Return the time difference between now and self.
     #[inline]
     pub fn age(&self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_age(&(self.0).0) })

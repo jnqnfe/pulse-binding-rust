@@ -38,14 +38,14 @@ pub struct TimeEvent<T>
     where T: MainloopInnerType
 {
     ptr: *mut TimeEventInternal,
-    /// Source mainloop
+    /// Source mainloop.
     owner: Rc<T>,
-    /// Saved callback closure, for later destruction
+    /// Saved callback closure, for later destruction.
     _saved_cb: EventCb,
 }
 
 /// A reference to a timer event source, provided to the callback, allowing modification within the
-/// callback itself
+/// callback itself.
 pub struct TimeEventRef<T: 'static>
     where T: MainloopInnerType
 {

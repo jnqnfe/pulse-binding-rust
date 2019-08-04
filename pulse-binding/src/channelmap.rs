@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! Constants and routines for handing channel mapping
+//! Constants and routines for handing channel mapping.
 //!
 //! # Overview
 //!
@@ -53,10 +53,10 @@ pub use capi::pa_channel_map_def_t as MapDef;
 /// A mask of channel positions.
 pub type PositionMask = capi::channelmap::pa_channel_position_mask_t;
 
-/// Position mask covering all positions
+/// Position mask covering all positions.
 pub const POSITION_MASK_ALL: PositionMask = 0xffffffffffffffffu64;
 
-/// A list of channel labels
+/// A list of channel labels.
 ///
 /// Note, certain aliases, specifically `Left`, `Right`, `Center` and `Subwoofer`, available in the
 /// equivalent C enum are not provided here, since Rust does not allow aliases.
@@ -69,37 +69,37 @@ pub enum Position {
     Invalid = -1,
     Mono = 0,
 
-    /// Apple, Dolby call this ‘Left’
+    /// Apple, Dolby call this ‘Left’.
     FrontLeft,
-    /// Apple, Dolby call this ‘Right’
+    /// Apple, Dolby call this ‘Right’.
     FrontRight,
-    /// Apple, Dolby call this ‘Center’
+    /// Apple, Dolby call this ‘Center’.
     FrontCenter,
 
     /// Microsoft calls this ‘Back Center’, Apple calls this ‘Center Surround’,
-    /// Dolby calls this ‘Surround Rear Center’
+    /// Dolby calls this ‘Surround Rear Center’.
     RearCenter,
     /// Microsoft calls this ‘Back Left’, Apple calls this ‘Left Surround’,
-    /// Dolby calls this ‘Surround Rear Left’
+    /// Dolby calls this ‘Surround Rear Left’.
     RearLeft,
     /// Microsoft calls this ‘Back Right’, Apple calls this ‘Right Surround’,
-    /// Dolby calls this ‘Surround Rear Right’
+    /// Dolby calls this ‘Surround Rear Right’.
     RearRight,
 
     /// Aka subwoofer. Microsoft calls this ‘Low Frequency’,
-    /// Apple calls this ‘LFEScreen’
+    /// Apple calls this ‘LFEScreen’.
     Lfe,
 
-    /// Apple, Dolby call this ‘Left Center’
+    /// Apple, Dolby call this ‘Left Center’.
     FrontLeftOfCenter,
-    /// Apple, Dolby call this ‘Right Center’
+    /// Apple, Dolby call this ‘Right Center’.
     FrontRightOfCenter,
 
     /// Apple calls this ‘Left Surround Direct’,
-    /// Dolby calls this ‘Surround Left’
+    /// Dolby calls this ‘Surround Left’.
     SideLeft,
     /// Apple calls this ‘Right Surround Direct’,
-    /// Dolby calls this ‘Surround Right’
+    /// Dolby calls this ‘Surround Right’.
     SideRight,
 
     Aux0,
@@ -135,21 +135,21 @@ pub enum Position {
     Aux30,
     Aux31,
 
-    /// Apple calls this ‘Top Center Surround’
+    /// Apple calls this ‘Top Center Surround’.
     TopCenter,
 
-    /// Apple calls this ‘Vertical Height Left’
+    /// Apple calls this ‘Vertical Height Left’.
     TopFrontLeft,
-    /// Apple calls this ‘Vertical Height Right’
+    /// Apple calls this ‘Vertical Height Right’.
     TopFrontRight,
-    /// Apple calls this ‘Vertical Height Center’
+    /// Apple calls this ‘Vertical Height Center’.
     TopFrontCenter,
 
-    /// Microsoft and Apple call this ‘Top Back Left’
+    /// Microsoft and Apple call this ‘Top Back Left’.
     TopRearLeft,
-    /// Microsoft and Apple call this ‘Top Back Right’
+    /// Microsoft and Apple call this ‘Top Back Right’.
     TopRearRight,
-    /// Microsoft and Apple call this ‘Top Back Center’
+    /// Microsoft and Apple call this ‘Top Back Center’.
     TopRearCenter,
 }
 
@@ -187,9 +187,9 @@ impl From<capi::pa_channel_position_t> for Position {
 #[derive(Debug, Copy, Clone)]
 pub struct Map {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
-    /// Number of channels mapped
+    /// Number of channels mapped.
     pub channels: u8,
-    /// Channel labels
+    /// Channel labels.
     pub map: [Position; ::sample::CHANNELS_MAX],
 }
 
@@ -254,7 +254,7 @@ impl Position {
         (1 as PositionMask) << (self as PositionMask)
     }
 
-    /// Return a text label for the specified channel position
+    /// Return a text label for the specified channel position.
     pub fn to_string(pos: Self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_position_to_string(pos.into()) };
         if ptr.is_null() {

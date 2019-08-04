@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! Error management
+//! Error management.
 
 use std;
 use capi;
@@ -33,40 +33,40 @@ pub struct PAErr(pub ErrorInt);
 pub enum Code {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */
-    /// No error
+    /// No error.
     Ok = 0,
-    /// Access failure
+    /// Access failure.
     Access,
-    /// Unknown command
+    /// Unknown command.
     Command,
-    /// Invalid argument
+    /// Invalid argument.
     Invalid,
-    /// Entity exists
+    /// Entity exists.
     Exist,
-    /// No such entity
+    /// No such entity.
     NoEntity,
-    /// Connection refused
+    /// Connection refused.
     ConnectionRefused,
-    /// Protocol error
+    /// Protocol error.
     Protocol,
     Timeout,
-    /// No authentication key
+    /// No authentication key.
     AuthKey,
     Internal,
     ConnectionTerminated,
-    /// Entity killed
+    /// Entity killed.
     Killed,
     InvalidServer,
     ModInitFailed,
     BadState,
     NoData,
-    /// Incompatible protocol version
+    /// Incompatible protocol version.
     Version,
-    /// Data too large
+    /// Data too large.
     TooLarge,
-    /// Operation not supported
+    /// Operation not supported.
     NotSupported,
-    /// The error code was unknown to the client
+    /// The error code was unknown to the client.
     Unknown,
     /// Extension does not exist.
     NoExtension,

@@ -405,7 +405,7 @@ impl super::api::MainloopInternalType for MainloopInternal {}
 /// firstly because they need the API pointer, secondly, it ensures that event objects do not
 /// outlive the mainloop object.
 pub struct Mainloop {
-    /// The ref-counted inner data
+    /// The ref-counted inner data.
     pub _inner: Rc<super::api::MainloopInner<MainloopInternal>>,
 }
 

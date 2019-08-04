@@ -26,7 +26,7 @@ use error::PAErr;
 pub(crate) use capi::pa_proplist as ProplistInternal;
 pub use capi::pa_update_mode_t as UpdateMode;
 
-/// Common properties
+/// Common properties.
 pub mod properties {
     use capi;
 
@@ -147,7 +147,7 @@ unsafe impl Sync for Proplist {}
 pub(crate) struct ProplistInner {
     /// The actual C object.
     pub(crate) ptr: *mut ProplistInternal,
-    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks
+    /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks.
     weak: bool,
 }
 
@@ -168,9 +168,9 @@ impl std::fmt::Debug for Proplist {
 pub struct Iterator<'a> {
     /// The actual C proplist object.
     pl_ref: ProplistInner,
-    /// State tracker, used by underlying C function
+    /// State tracker, used by underlying C function.
     state: *mut c_void,
-    /// Use lifetime `'a`
+    /// Use lifetime `'a`.
     phantom: PhantomData<&'a ProplistInner>,
 }
 
@@ -474,7 +474,7 @@ impl Proplist {
         unsafe { capi::pa_proplist_size(self.0.ptr) }
     }
 
-    /// Returns `true` when the proplist is empty, false otherwise
+    /// Returns `true` when the proplist is empty, false otherwise.
     #[inline]
     pub fn is_empty(&self) -> bool {
         unsafe { capi::pa_proplist_isempty(self.0.ptr) == 0 }

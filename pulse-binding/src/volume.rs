@@ -85,7 +85,7 @@ pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 /// and decibel (dB, floating point) software volume.
 pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY);
 
-/// Software volume expressed as an integer
+/// Software volume expressed as an integer.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Volume(pub capi::pa_volume_t);
 
@@ -93,7 +93,7 @@ impl Default for Volume {
     fn default() -> Self { VOLUME_NORM }
 }
 
-/// Software volume expressed in decibels (dBs)
+/// Software volume expressed in decibels (dBs).
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct VolumeDB(pub f64);
 
@@ -101,7 +101,7 @@ impl Default for VolumeDB {
     fn default() -> Self { VolumeDB(0.0) }
 }
 
-/// Software volume expressed as linear factor
+/// Software volume expressed as linear factor.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct VolumeLinear(pub f64);
 
@@ -288,7 +288,7 @@ impl Volume {
         Volume(unsafe { capi::pa_sw_volume_divide(a.0, b.0) })
     }
 
-    /// Pretty print a volume
+    /// Pretty print a volume.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
@@ -340,7 +340,7 @@ impl ChannelVolumes {
         self
     }
 
-    /// Set the volume of the specified number of channels to the supplied volume
+    /// Set the volume of the specified number of channels to the supplied volume.
     #[inline]
     pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
         unsafe { capi::pa_cvolume_set(self.as_mut(), channels, v.0) };
@@ -368,19 +368,19 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
-    /// Returns `true` if all channels are muted
+    /// Returns `true` if all channels are muted.
     #[inline]
     pub fn is_muted(&self) -> bool {
         self.channels_equal_to(VOLUME_MUTED)
     }
 
-    /// Returns `true` if all channels are at normal volume level
+    /// Returns `true` if all channels are at normal volume level.
     #[inline]
     pub fn is_norm(&self) -> bool {
         self.channels_equal_to(VOLUME_NORM)
     }
 
-    /// Returns the average volume of all channels
+    /// Returns the average volume of all channels.
     #[inline]
     pub fn avg(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_avg(self.as_ref()) })
@@ -748,7 +748,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Pretty print a volume structure
+    /// Pretty print a volume structure.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);

@@ -17,7 +17,7 @@
 
 use std::os::raw::c_char;
 
-/// Direction bitfield
+/// Direction bitfield.
 ///
 /// While we currently do not expose anything bidirectional, one should test against the bit instead
 /// of the value because we might add bidirectional stuff in the future.

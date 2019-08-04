@@ -79,7 +79,7 @@ pub mod event_operations {
     pub const PA_SUBSCRIPTION_EVENT_REMOVE: pa_subscription_event_type_t = 0x20;
 }
 
-/// Returns `true` if an event type `t` matches an event mask bitfield
+/// Returns `true` if an event type `t` matches an event mask bitfield.
 pub fn pa_subscription_match_flags(m: pa_subscription_mask_t, t: pa_subscription_event_type_t)
     -> bool
 {

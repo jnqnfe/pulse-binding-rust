@@ -18,16 +18,16 @@
 use std;
 use std::os::raw::c_char;
 
-/// The basic volume type
+/// The basic volume type.
 pub type pa_volume_t = u32;
 
-/// Normal volume (100%, 0 dB)
+/// Normal volume (100%, 0 dB).
 pub const PA_VOLUME_NORM: pa_volume_t = 0x10000;
 
-/// Muted (minimal valid) volume (0%, -inf dB)
+/// Muted (minimal valid) volume (0%, -inf dB).
 pub const PA_VOLUME_MUTED: pa_volume_t = 0;
 
-/// Maximum valid volume we can store
+/// Maximum valid volume we can store.
 pub const PA_VOLUME_MAX: pa_volume_t = std::u32::MAX / 2;
 
 #[inline(always)]
@@ -35,7 +35,7 @@ pub fn pa_volume_ui_max() -> pa_volume_t {
     unsafe { pa_sw_volume_from_dB(11.0) }
 }
 
-/// Special ‘invalid’ volume
+/// Special ‘invalid’ volume.
 pub const PA_VOLUME_INVALID: pa_volume_t = std::u32::MAX;
 
 /// This floor value is used as minus infinity when using
@@ -107,13 +107,13 @@ pub fn pa_clamp_volume(v: pa_volume_t) -> pa_volume_t {
     v
 }
 
-/// Set the volume of the first n channels to `PA_VOLUME_NORM`
+/// Set the volume of the first n channels to `PA_VOLUME_NORM`.
 #[inline(always)]
 pub unsafe fn pa_cvolume_reset(a: *mut pa_cvolume, n: u32) -> *mut pa_cvolume {
     pa_cvolume_set(a, n, PA_VOLUME_NORM)
 }
 
-/// Set the volume of the first n channels to `PA_VOLUME_MUTED`
+/// Set the volume of the first n channels to `PA_VOLUME_MUTED`.
 #[inline(always)]
 pub unsafe fn pa_cvolume_mute(a: *mut pa_cvolume, n: u32) -> *mut pa_cvolume {
     pa_cvolume_set(a, n, PA_VOLUME_MUTED)

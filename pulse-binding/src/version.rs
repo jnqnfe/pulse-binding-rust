@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with this library;
 // if not, see <http://www.gnu.org/licenses/>.
 
-//! Version constants and functions
+//! Version constants and functions.
 //!
 //! The constants defined here follow those given in the `sys` crate and thus the C headers.
 //!
@@ -86,7 +86,7 @@ pub const MINOR: u8 = TARGET_VERSION.1;
 #[deprecated(since = "2.3.0", note="not useful, always zero")]
 pub const MICRO: u8 = 0;
 
-/// Returns indication of PA version compatibility support, depending upon feature flags used
+/// Returns indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
 pub fn get_compatibility() -> Compatibility {
     actual::COMPATIBILITY

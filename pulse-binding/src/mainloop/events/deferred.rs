@@ -22,24 +22,24 @@ use super::super::api::{MainloopApi, MainloopInnerType};
 
 pub use capi::pa_defer_event as DeferEventInternal;
 
-/// A deferred event source
+/// A deferred event source.
 pub struct DeferEvent<T>
     where T: MainloopInnerType
 {
     ptr: *mut DeferEventInternal,
-    /// Source mainloop
+    /// Source mainloop.
     owner: Rc<T>,
-    /// Saved callback closure, for later destruction
+    /// Saved callback closure, for later destruction.
     _saved_cb: EventCb,
 }
 
 /// A reference to a deferred event source, provided to the callback, allowing modification within
-/// the callback itself
+/// the callback itself.
 pub struct DeferEventRef<T: 'static>
     where T: MainloopInnerType
 {
     ptr: *mut DeferEventInternal,
-    /// Source mainloop
+    /// Source mainloop.
     owner: Rc<T>,
 }
 

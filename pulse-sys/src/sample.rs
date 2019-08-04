@@ -17,13 +17,13 @@
 
 use std::os::raw::c_char;
 
-/// Maximum number of allowed channels
+/// Maximum number of allowed channels.
 pub const PA_CHANNELS_MAX: usize = 32;
 
-/// Maximum allowed sample rate
+/// Maximum allowed sample rate.
 pub const PA_RATE_MAX: u32 = 48000 * 8;
 
-/// Sample format
+/// Sample format.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
@@ -70,7 +70,7 @@ impl Default for pa_sample_format_t {
 
 pub use self::ei_formats::*;
 
-/// Endian-independent format identifiers
+/// Endian-independent format identifiers.
 #[cfg(target_endian = "big")]
 mod ei_formats {
     use super::pa_sample_format_t;
@@ -88,7 +88,7 @@ mod ei_formats {
     pub const PA_SAMPLE_S24_32RE: pa_sample_format_t = pa_sample_format_t::S24_32le;
 }
 
-/// Endian-independent format identifiers
+/// Endian-independent format identifiers.
 #[cfg(target_endian = "little")]
 mod ei_formats {
     use super::pa_sample_format_t;
@@ -106,10 +106,10 @@ mod ei_formats {
     pub const PA_SAMPLE_S24_32RE: pa_sample_format_t = pa_sample_format_t::S24_32be;
 }
 
-/// A Shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.PA_SAMPLE_FLOAT32NE.html)
+/// A Shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.PA_SAMPLE_FLOAT32NE.html).
 pub const PA_SAMPLE_FLOAT32: pa_sample_format_t = PA_SAMPLE_FLOAT32NE;
 
-/// A sample format and attribute specification
+/// A sample format and attribute specification.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct pa_sample_spec {
