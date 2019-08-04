@@ -361,10 +361,10 @@ impl Format {
     /// Gets a descriptive string for the specified sample format.
     pub fn to_string(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_sample_format_to_string((*self).into()) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Parses a sample format text. Inverse of [`to_string`](#method.to_string).

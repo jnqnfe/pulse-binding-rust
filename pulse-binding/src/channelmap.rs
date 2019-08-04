@@ -257,19 +257,19 @@ impl Position {
     /// Gets a text label for the specified channel position.
     pub fn to_string(pos: Self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_position_to_string(pos.into()) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Gets a human readable text label for the specified channel position.
     pub fn to_pretty_string(pos: Self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_position_to_pretty_string(pos.into()) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Creates a new instance from a string representation, as given by [`to_string`](#method.to_string).
@@ -407,20 +407,20 @@ impl Map {
     /// [`new_from_string`](#method.new_from_string).
     pub fn to_name(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_map_to_name(self.as_ref()) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Similar to [`to_name`](#method.to_name), but returning prettier, human readable text labels,
     /// i.e. “Stereo”, “Surround 7.1” and so on.
     pub fn to_pretty_name(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_map_to_pretty_name(self.as_ref()) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Checks whether or not the specified channel position is available at least once in the map.

@@ -211,10 +211,7 @@ impl Context {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_new(mainloop.inner().get_api().as_ref(),
             c_name.as_ptr()) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Instantiates a new connection context with an abstract mainloop API and an application name,
@@ -227,10 +224,7 @@ impl Context {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_new_with_proplist(mainloop.inner().get_api().as_ref(),
             c_name.as_ptr(), proplist.0.ptr) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Creates a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
@@ -334,10 +328,10 @@ impl Context {
         let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
         // NOTE: this function is unique in NEEDING the `Option` wrapper on the return value, since
         // a null pointer may be returned if there is nothing to drain! Do not remove it!
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut()>)),
+            true => None,
         }
-        Some(Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut()>))
     }
 
     /// Tells the daemon to exit.
@@ -427,10 +421,10 @@ impl Context {
     /// Gets the server name this context is connected to.
     pub fn get_server(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_context_get_server(self.ptr) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     /// Gets the protocol version of the library.
@@ -551,10 +545,10 @@ impl Context {
 
         let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, (time.0).0,
             std::mem::transmute(cb_fn), cb_data) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner(), to_save)),
+            true => None,
         }
-        Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner(), to_save))
     }
 
     /// Gets the optimal block size for passing around audio buffers.

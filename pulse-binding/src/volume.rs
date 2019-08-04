@@ -540,10 +540,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn set_balance(&mut self, map: &::channelmap::Map, new_balance: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_balance(self.as_mut(), map.as_ref(), new_balance) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Calculates a ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
@@ -575,10 +572,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn set_fade(&mut self, map: &::channelmap::Map, new_fade: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_fade(self.as_mut(), map.as_ref(), new_fade) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Calculates a ‘lfe balance’ value for the specified volume with the specified channel map.
@@ -612,10 +606,7 @@ impl ChannelVolumes {
     {
         let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(self.as_mut(), map.as_ref(),
             new_balance) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Scales so that the maximum volume of all channels equals `max`.
@@ -626,10 +617,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn scale(&mut self, max: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_scale(self.as_mut(), max.0) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Scales so that the maximum volume of all channels selected via `cm`/`mask` equals `max`.
@@ -648,10 +636,7 @@ impl ChannelVolumes {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
         let ptr = unsafe { capi::pa_cvolume_scale_mask(self.as_mut(), max.0, cm.as_ref(),
             mask_actual) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Sets the passed volume to all channels at the specified channel position.
@@ -670,10 +655,7 @@ impl ChannelVolumes {
         // ideal to leave callers unaware should they be passing in invalid data.
         let ptr = unsafe { capi::pa_cvolume_set_position(self.as_mut(), map.as_ref(), t.into(),
             v.0) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Gets the maximum volume of all channels at the specified channel position.
@@ -700,10 +682,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn merge(&mut self, with: &Self) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_merge(self.as_mut(), self.as_ref(), with.as_ref()) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Increases the volume passed in by `inc`, but not exceeding `limit`.
@@ -714,10 +693,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn inc_clamp(&mut self, inc: Volume, limit: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_inc_clamp(self.as_mut(), inc.0, limit.0) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Increases the volume passed in by `inc`.
@@ -728,10 +704,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn increase(&mut self, inc: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_inc(self.as_mut(), inc.0) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Decreases the volume passed in by `dec`.
@@ -742,10 +715,7 @@ impl ChannelVolumes {
     #[inline]
     pub fn decrease(&mut self, dec: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_dec(self.as_mut(), dec.0) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(self)
+        match ptr.is_null() { false => Some(self), true => None }
     }
 
     /// Pretty prints a volume structure.

@@ -590,10 +590,7 @@ impl Stream {
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
         let ptr = unsafe { capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), ss.as_ref(), p_map) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Creates a new, unconnected stream with the specified name and sample type, and specify the
@@ -619,10 +616,7 @@ impl Stream {
             capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), ss.as_ref(),
                 p_map, proplist.0.ptr)
         };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Creates a new, unconnected stream with the specified name, the set of formats this client
@@ -655,10 +649,7 @@ impl Stream {
             capi::pa_stream_new_extended(ctx.ptr, c_name.as_ptr(), info_ptrs.as_ptr(),
                 info_ptrs.len() as u32, proplist.0.ptr)
         };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Creates a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
@@ -726,10 +717,10 @@ impl Stream {
     /// ../context/struct.Context.html#method.get_source_info_by_name
     pub fn get_device_name(&self) -> Option<Cow<'static, str>> {
         let ptr: *const c_char = unsafe { capi::pa_stream_get_device_name(self.ptr) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
     /// Checks whether or not the sink or source this stream is connected to has been suspended.
@@ -1528,10 +1519,10 @@ impl Stream {
     /// Gets a pointer to the stream’s format.
     pub fn get_format_info(&self) -> Option<::format::Info> {
         let ptr = unsafe { capi::pa_stream_get_format_info(self.ptr) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(::format::Info::from_raw_weak(ptr as *mut InfoInternal)),
+            true => None,
         }
-        Some(::format::Info::from_raw_weak(ptr as *mut InfoInternal))
     }
 
     /// Gets the per-stream server-side buffer metrics of the stream.

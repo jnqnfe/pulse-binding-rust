@@ -179,10 +179,10 @@ impl Simple {
                 &mut error
             )
         };
-        if ptr.is_null() {
-            return Err(PAErr(error));
+        match ptr.is_null() {
+            false => Ok(Self::from_raw(ptr)),
+            true => Err(PAErr(error)),
         }
-        Ok(Self::from_raw(ptr))
     }
 
     /// Creates a new `Simple` from an existing [`SimpleInternal`](capi/enum.pa_simple.html) pointer.

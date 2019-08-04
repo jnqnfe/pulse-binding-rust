@@ -140,10 +140,10 @@ pub trait Mainloop {
         let api = inner.get_api();
         let fn_ptr = api.io_new.unwrap();
         let ptr = fn_ptr(api, fd, events, cb_fn, cb_data);
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save)),
+            true => None,
         }
-        Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Creates a new timer event.
@@ -182,10 +182,10 @@ pub trait Mainloop {
         let api = inner.get_api();
         let fn_ptr = api.time_new.unwrap();
         let ptr = fn_ptr(api, &(tv.0).0, cb_fn, cb_data);
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save)),
+            true => None,
         }
-        Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Creates a new monotonic-based timer event.
@@ -234,10 +234,10 @@ pub trait Mainloop {
         let api = inner.get_api();
         let fn_ptr = api.time_new.unwrap();
         let ptr = fn_ptr(api, &tv.0, cb_fn, cb_data);
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save)),
+            true => None,
         }
-        Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Creates a new deferred event.
@@ -267,10 +267,10 @@ pub trait Mainloop {
         let api = inner.get_api();
         let fn_ptr = api.defer_new.unwrap();
         let ptr = fn_ptr(api, cb_fn, cb_data);
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(DeferEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save)),
+            true => None,
         }
-        Some(DeferEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
     /// Runs the specified callback once from the main loop using an anonymous defer event.

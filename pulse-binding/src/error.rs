@@ -94,10 +94,10 @@ impl PAErr {
     /// string.
     pub fn to_string(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_strerror(self.0) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 }
 

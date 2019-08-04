@@ -214,10 +214,7 @@ impl Proplist {
     /// Allocates a property list.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_proplist_new() };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Allocates a new property list and assigns key/value from a human readable string.
@@ -226,10 +223,7 @@ impl Proplist {
         // as_ptr() giving dangling pointers!
         let c_str = CString::new(s.clone()).unwrap();
         let ptr = unsafe { capi::pa_proplist_from_string(c_str.as_ptr()) };
-        if ptr.is_null() {
-            return None;
-        }
-        Some(Self::from_raw(ptr))
+        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
     /// Creates a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
@@ -323,10 +317,10 @@ impl Proplist {
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
         let ptr = unsafe { capi::pa_proplist_gets(self.0.ptr, c_key.as_ptr()) };
-        if ptr.is_null() {
-            return None;
+        match ptr.is_null() {
+            false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() }),
+            true => None,
         }
-        Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
     #[deprecated(note="`gets()` has been renamed to `get_str()`")]
