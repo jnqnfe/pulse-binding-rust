@@ -262,6 +262,7 @@ unsafe impl Sync for Introspector {}
 impl Context {
     /// Returns an introspection object linked to the current context, giving access to
     /// introspection routines. See [`::context::introspect`](introspect/index.html).
+    #[inline]
     pub fn introspect(&self) -> Introspector {
         unsafe { capi::pa_context_ref(self.ptr) };
         Introspector::from_raw(self.ptr)
@@ -271,6 +272,7 @@ impl Context {
 impl Introspector {
     /// Create a new `Introspector` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
+    #[inline(always)]
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context }
     }

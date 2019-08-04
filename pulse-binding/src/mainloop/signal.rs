@@ -57,6 +57,7 @@ pub trait MainloopSignals : ::mainloop::api::Mainloop {
     }
 
     /// Cleanup the signal subsystem
+    #[inline]
     fn signals_done(&self) {
         unsafe { capi::pa_signal_done(); }
     }

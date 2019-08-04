@@ -412,6 +412,7 @@ pub struct Mainloop {
 impl super::api::Mainloop for Mainloop {
     type MI = super::api::MainloopInner<MainloopInternal>;
 
+    #[inline]
     fn inner(&self) -> Rc<super::api::MainloopInner<MainloopInternal>> {
         Rc::clone(&self._inner)
     }
@@ -462,6 +463,7 @@ impl Mainloop {
 
     /// Terminate the event loop thread cleanly. Make sure to unlock the mainloop object before
     /// calling this function.
+    #[inline]
     pub fn stop(&mut self) {
         unsafe { capi::pa_threaded_mainloop_stop((*self._inner).ptr); }
     }
@@ -470,12 +472,14 @@ impl Mainloop {
     /// events. You can use this to enforce exclusive access to all objects attached to the event
     /// loop. This lock is recursive. This function may not be called inside the event loop thread.
     /// Events that are dispatched from the event loop thread are executed with this lock held.
+    #[inline]
     pub fn lock(&mut self) {
         assert!(!self.in_thread(), "lock() can not be called from within the event loop thread!");
         unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
     }
 
     /// Unlock the event loop object, inverse of [`lock`](#method.lock).
+    #[inline]
     pub fn unlock(&mut self) {
         unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
     }
@@ -486,6 +490,7 @@ impl Mainloop {
     /// to be locked using [`lock`](#method.lock). While waiting the lock will be released.
     /// Immediately before returning it will be acquired again. This function may spuriously wake up
     /// even without [`signal`](#method.signal) being called. You need to make sure to handle that!
+    #[inline]
     pub fn wait(&mut self) {
         unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
     }
@@ -494,6 +499,7 @@ impl Mainloop {
     /// `wait_for_accept` is non-zero, do not return before the signal was accepted by an
     /// [`accept`](#method.accept) call. While waiting for that condition the event loop object is
     /// unlocked.
+    #[inline]
     pub fn signal(&mut self, wait_for_accept: bool) {
         unsafe { capi::pa_threaded_mainloop_signal((*self._inner).ptr, wait_for_accept as i32); }
     }
@@ -504,12 +510,14 @@ impl Mainloop {
     /// `true`.
     ///
     /// [`signal`]: #method.signal
+    #[inline]
     pub fn accept(&mut self) {
         unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }
     }
 
     /// Return the return value as specified with the main loop’s `quit` routine (used internally by
     /// threaded mainloop).
+    #[inline]
     pub fn get_retval(&self) -> ::def::Retval {
         ::def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })
     }
@@ -523,6 +531,7 @@ impl Mainloop {
     /// This is actually unnecessary through this binding. The pointer is retrieved automatically
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
+    #[inline]
     pub fn get_api<'a>(&self) -> &'a ::mainloop::api::MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
@@ -530,6 +539,7 @@ impl Mainloop {
     }
 
     /// Returns `true` when called from within the event loop thread.
+    #[inline]
     pub fn in_thread(&self) -> bool {
         unsafe { capi::pa_threaded_mainloop_in_thread((*self._inner).ptr) != 0 }
     }

@@ -33,19 +33,23 @@ impl UnixTs {
     }
 
     /// Calculate the difference between the two specified timestamps.
+    #[inline]
     pub fn diff(a: &Self, b: &Self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_diff(&(a.0).0, &(b.0).0) })
     }
 
     /// Return the time difference between now and self
+    #[inline]
     pub fn age(&self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_age(&(self.0).0) })
     }
 
+    #[inline]
     pub fn checked_add(self, other: MicroSeconds) -> Option<Self> {
         self.0.checked_add_us(other).and_then(|us| Some(UnixTs(us)))
     }
 
+    #[inline]
     pub fn checked_sub(self, other: MicroSeconds) -> Option<Self> {
         self.0.checked_sub_us(other).and_then(|us| Some(UnixTs(us)))
     }
@@ -54,11 +58,13 @@ impl UnixTs {
 impl Add<MicroSeconds> for UnixTs {
     type Output = Self;
 
+    #[inline]
     fn add(self, other: MicroSeconds) -> Self {
         UnixTs(self.0 + other)
     }
 }
 impl AddAssign<MicroSeconds> for UnixTs {
+    #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
         *self = *self + rhs;
     }
@@ -67,11 +73,13 @@ impl AddAssign<MicroSeconds> for UnixTs {
 impl Sub<MicroSeconds> for UnixTs {
     type Output = Self;
 
+    #[inline]
     fn sub(self, other: MicroSeconds) -> Self {
         UnixTs(self.0 - other)
     }
 }
 impl SubAssign<MicroSeconds> for UnixTs {
+    #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = *self - rhs;
     }

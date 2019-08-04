@@ -118,6 +118,7 @@ impl Code {
 }
 
 impl From<Code> for PAErr {
+    #[inline]
     fn from(c: Code) -> Self {
         // Error codes are negative, `Code` enum variants are positive
         PAErr(-(c as ErrorInt))

@@ -24,36 +24,44 @@ use std::time::Duration;
 pub struct MicroSeconds(pub u64);
 
 impl MicroSeconds {
+    #[inline]
     pub fn is_valid(&self) -> bool {
         *self != super::USEC_INVALID
     }
 
+    #[inline]
     pub fn checked_add(self, other: Self) -> Option<Self> {
         self.0.checked_add(other.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    #[inline]
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
         let usecs = MicroSeconds::from(rhs);
         self.0.checked_add(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    #[inline]
     pub fn checked_sub(self, other: Self) -> Option<Self> {
         self.0.checked_sub(other.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    #[inline]
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
         let usecs = MicroSeconds::from(rhs);
         self.0.checked_sub(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    #[inline]
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
         self.0.checked_mul(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    #[inline]
     pub fn checked_div(self, rhs: u32) -> Option<Self> {
         self.0.checked_div(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    #[inline]
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
         self.0.checked_rem(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
     }
@@ -62,11 +70,13 @@ impl MicroSeconds {
 impl Add for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn add(self, other: Self) -> Self {
         MicroSeconds(self.0 + other.0)
     }
 }
 impl AddAssign for MicroSeconds {
+    #[inline]
     fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs;
     }
@@ -75,11 +85,13 @@ impl AddAssign for MicroSeconds {
 impl Add<Duration> for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn add(self, rhs: Duration) -> Self {
         self.checked_add_duration(rhs).unwrap()
     }
 }
 impl AddAssign<Duration> for MicroSeconds {
+    #[inline]
     fn add_assign(&mut self, rhs: Duration) {
         *self = self.checked_add_duration(rhs).unwrap();
     }
@@ -88,11 +100,13 @@ impl AddAssign<Duration> for MicroSeconds {
 impl Sub for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn sub(self, other: Self) -> Self {
         MicroSeconds(self.0 - other.0)
     }
 }
 impl SubAssign for MicroSeconds {
+    #[inline]
     fn sub_assign(&mut self, rhs: Self) {
         *self = *self - rhs;
     }
@@ -101,11 +115,13 @@ impl SubAssign for MicroSeconds {
 impl Sub<Duration> for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn sub(self, rhs: Duration) -> Self {
         self.checked_sub_duration(rhs).unwrap()
     }
 }
 impl SubAssign<Duration> for MicroSeconds {
+    #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
         *self = self.checked_sub_duration(rhs).unwrap();
     }
@@ -114,11 +130,13 @@ impl SubAssign<Duration> for MicroSeconds {
 impl Mul<u32> for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn mul(self, rhs: u32) -> Self {
         MicroSeconds(self.0 * rhs as u64)
     }
 }
 impl MulAssign<u32> for MicroSeconds {
+    #[inline]
     fn mul_assign(&mut self, rhs: u32) {
         *self = *self * rhs;
     }
@@ -127,11 +145,13 @@ impl MulAssign<u32> for MicroSeconds {
 impl Div<u32> for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn div(self, rhs: u32) -> Self {
         MicroSeconds(self.0 / rhs as u64)
     }
 }
 impl DivAssign<u32> for MicroSeconds {
+    #[inline]
     fn div_assign(&mut self, rhs: u32) {
         *self = *self / rhs;
     }
@@ -140,11 +160,13 @@ impl DivAssign<u32> for MicroSeconds {
 impl Rem<u32> for MicroSeconds {
     type Output = Self;
 
+    #[inline]
     fn rem(self, rhs: u32) -> Self {
         MicroSeconds(self.0 % rhs as u64)
     }
 }
 impl RemAssign<u32> for MicroSeconds {
+    #[inline]
     fn rem_assign(&mut self, rhs: u32) {
         *self = *self % rhs;
     }

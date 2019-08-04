@@ -234,6 +234,7 @@ impl Proplist {
 
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
     /// pointer.
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Proplist(ProplistInner { ptr: ptr, weak: false })
@@ -242,6 +243,7 @@ impl Proplist {
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
     /// pointer. This is the ‘weak’ version, which avoids destroying the internal object when
     /// dropped.
+    #[inline]
     pub(crate) fn from_raw_weak(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Proplist(ProplistInner { ptr: ptr, weak: true })
@@ -336,6 +338,7 @@ impl Proplist {
     }
 
     /// Merge property list “other” into self, adhering to the merge mode specified.
+    #[inline]
     pub fn merge(&mut self, other: &Self, mode: UpdateMode) {
         unsafe { capi::pa_proplist_update(self.0.ptr, mode, other.0.ptr); }
     }
@@ -397,6 +400,7 @@ impl Proplist {
     /// }
     /// # }
     /// ```
+    #[inline]
     pub fn iter(&self) -> Iterator<'_> {
         Iterator::new(self.0.ptr)
     }
@@ -451,21 +455,25 @@ impl Proplist {
     }
 
     /// Remove all entries from the property list object.
+    #[inline]
     pub fn clear(&mut self) {
         unsafe { capi::pa_proplist_clear(self.0.ptr); }
     }
 
     /// Returns the number of entries in the property list.
+    #[inline]
     pub fn len(&self) -> u32 {
         unsafe { capi::pa_proplist_size(self.0.ptr) }
     }
 
     /// Returns `true` when the proplist is empty, false otherwise
+    #[inline]
     pub fn is_empty(&self) -> bool {
         unsafe { capi::pa_proplist_isempty(self.0.ptr) == 0 }
     }
 
     /// Returns `true` when self and `to` have the same keys and values.
+    #[inline]
     pub fn equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_proplist_equal(self.0.ptr, to.0.ptr) != 0 }
     }
@@ -483,6 +491,7 @@ impl Drop for ProplistInner {
 impl Clone for Proplist {
     /// Allocate a new property list and copy over every single entry from the specified list. If
     /// this is called on a ‘weak’ instance, a non-weak object is returned.
+    #[inline]
     fn clone(&self) -> Self {
         Self::from_raw(unsafe { capi::pa_proplist_copy(self.0.ptr) })
     }

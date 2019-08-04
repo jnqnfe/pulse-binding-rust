@@ -61,6 +61,7 @@ pub(crate) type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(*mut TimeEvent
 impl<T> TimeEvent<T>
     where T: MainloopInnerType
 {
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut TimeEventInternal, mainloop_inner: Rc<T>, callback: EventCb)
         -> Self
     {
@@ -70,6 +71,7 @@ impl<T> TimeEvent<T>
 
     /// Restart this timer event source (whether still running or already expired) with a new Unix
     /// time.
+    #[inline]
     pub fn restart(&mut self, t: &UnixTs) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, &(t.0).0);
@@ -97,6 +99,7 @@ impl<T> TimeEventRef<T>
 
     /// Restart this timer event source (whether still running or already expired) with a new Unix
     /// time.
+    #[inline]
     pub fn restart(&mut self, t: &UnixTs) {
         let fn_ptr = (*self.owner).get_api().time_restart.unwrap();
         fn_ptr(self.ptr, &(t.0).0);

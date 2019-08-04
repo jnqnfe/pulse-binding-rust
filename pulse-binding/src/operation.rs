@@ -84,6 +84,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     }
 
     /// Return the current status of the operation
+    #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_operation_get_state(self.ptr) }
     }

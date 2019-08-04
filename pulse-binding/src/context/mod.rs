@@ -161,11 +161,13 @@ fn state_compare_capi(){
 }
 
 impl From<State> for capi::pa_context_state_t {
+    #[inline]
     fn from(s: State) -> Self {
         unsafe { std::mem::transmute(s) }
     }
 }
 impl From<capi::pa_context_state_t> for State {
+    #[inline]
     fn from(s: capi::pa_context_state_t) -> Self {
         unsafe { std::mem::transmute(s) }
     }
@@ -233,6 +235,7 @@ impl Context {
 
     /// Create a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
     /// pointer.
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, weak: false, cb_ptrs: Default::default() }
@@ -262,16 +265,19 @@ impl Context {
     }
 
     /// Returns the error number of the last failed operation
+    #[inline]
     pub fn errno(&self) -> PAErr {
         PAErr(unsafe { capi::pa_context_errno(self.ptr) })
     }
 
     /// Returns `true` if some data is pending to be written to the connection
+    #[inline]
     pub fn is_pending(&self) -> bool {
         unsafe { capi::pa_context_is_pending(self.ptr) != 0 }
     }
 
     /// Returns the current context status
+    #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_context_get_state(self.ptr).into() }
     }
@@ -310,6 +316,7 @@ impl Context {
     }
 
     /// Terminate the context connection immediately.
+    #[inline]
     pub fn disconnect(&mut self) {
         unsafe { capi::pa_context_disconnect(self.ptr); }
     }
@@ -431,6 +438,7 @@ impl Context {
     }
 
     /// Return the protocol version of the library.
+    #[inline]
     pub fn get_protocol_version(&self) -> u32 {
         unsafe { capi::pa_context_get_protocol_version(self.ptr) }
     }

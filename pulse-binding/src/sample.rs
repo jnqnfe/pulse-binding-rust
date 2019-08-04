@@ -124,17 +124,20 @@ fn format_compare_capi(){
 }
 
 impl From<Format> for capi::pa_sample_format_t {
+    #[inline]
     fn from(f: Format) -> Self {
         unsafe { std::mem::transmute(f) }
     }
 }
 impl From<capi::pa_sample_format_t> for Format {
+    #[inline]
     fn from(f: capi::pa_sample_format_t) -> Self {
         unsafe { std::mem::transmute(f) }
     }
 }
 
 impl Default for Format {
+    #[inline(always)]
     fn default() -> Self {
         Format::Invalid
     }
@@ -241,6 +244,7 @@ impl AsRef<Spec> for capi::pa_sample_spec {
 }
 
 impl From<capi::pa_sample_spec> for Spec {
+    #[inline]
     fn from(s: capi::pa_sample_spec) -> Self {
         unsafe { std::mem::transmute(s) }
     }
@@ -250,44 +254,52 @@ impl Spec {
     /// Initialize the specified sample spec.
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
     /// it.
+    #[inline]
     pub fn init(&mut self) {
         unsafe { capi::pa_sample_spec_init(self.as_mut()); }
     }
 
     /// Returns `true` when the sample type specification is valid
+    #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_sample_spec_valid(self.as_ref()) != 0 }
     }
 
     /// Returns `true` when the two sample type specifications match
+    #[inline]
     pub fn equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_sample_spec_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
     /// Returns the amount of bytes that constitute playback of one second of audio, with the
     /// specified sample type.
+    #[inline]
     pub fn bytes_per_second(&self) -> usize {
         unsafe { capi::pa_bytes_per_second(self.as_ref()) }
     }
 
     /// Returns the size of a frame
+    #[inline]
     pub fn frame_size(&self) -> usize {
         unsafe { capi::pa_frame_size(self.as_ref()) }
     }
 
     /// Returns the size of a sample
+    #[inline]
     pub fn sample_size(&self) -> usize {
         unsafe { capi::pa_sample_size(self.as_ref()) }
     }
 
     /// Calculate the time it would take to play a buffer of the specified size.
     /// The return value will always be rounded down for non-integral return values.
+    #[inline]
     pub fn bytes_to_usec(&self, length: u64) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_bytes_to_usec(length, self.as_ref()) })
     }
 
     /// Calculates the size of a buffer required, for playback duration of the time specified.
     /// The return value will always be rounded down for non-integral return values.
+    #[inline]
     pub fn usec_to_bytes(&self, t: MicroSeconds) -> usize {
         unsafe { capi::pa_usec_to_bytes(t.0, self.as_ref()) }
     }
@@ -308,16 +320,19 @@ impl Spec {
 /// With pure Rust code, this would be enforced natively through use of the
 /// [`Format`](enum.Format.html) enum, but this function may remain useful for miscellaneous int
 /// values from less reliable sources.
+#[inline]
 pub fn format_is_valid(format: u32) -> bool {
     unsafe { capi::pa_sample_format_valid(format) != 0 }
 }
 
 /// Returns `true` if the rate is within the supported range.
+#[inline]
 pub fn rate_is_valid(rate: u32) -> bool {
     unsafe { capi::pa_sample_rate_valid(rate) != 0 }
 }
 
 /// Returns `true` if the channel count is within the supported range.
+#[inline]
 pub fn channels_are_valid(channels: u8) -> bool {
     unsafe { capi::pa_channels_valid(channels) != 0 }
 }
@@ -335,6 +350,7 @@ pub fn bytes_print(bytes: u32) -> String {
 impl Format {
     /// Similar to [`Spec::sample_size`](struct.Spec.html#method.sample_size) but take a sample
     /// format instead of full sample spec.
+    #[inline]
     pub fn size(&self) -> usize {
         unsafe { capi::pa_sample_size_of_format((*self).into()) }
     }
@@ -380,6 +396,7 @@ impl Format {
     ///
     /// Returns `true` when the specified format is native endian, `false` when not. Returns `None`
     /// when endianness does not apply to the specified format, or endianness is unknown.
+    #[inline]
     pub fn is_ne(&self) -> Option<bool> {
         #[cfg(target_endian = "big")]
         { Format::is_be(self) }
@@ -391,6 +408,7 @@ impl Format {
     ///
     /// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
     /// when endianness does not apply to the specified format, or endianness is unknown.
+    #[inline]
     pub fn is_re(&self) -> Option<bool> {
         self.is_ne().and_then(|b| Some(!b))
     }

@@ -139,12 +139,14 @@ impl AsMut<capi::pa_cvolume> for ChannelVolumes {
 }
 
 impl From<capi::pa_cvolume> for ChannelVolumes {
+    #[inline]
     fn from(cv: capi::pa_cvolume) -> Self {
         unsafe { std::mem::transmute(cv) }
     }
 }
 
 impl PartialEq for ChannelVolumes {
+    #[inline]
     fn eq(&self, other: &Self) -> bool {
         match self.channels == other.channels {
             true => self.values[..self.channels as usize] == other.values[..other.channels as usize],
@@ -156,6 +158,7 @@ impl PartialEq for ChannelVolumes {
 /// Convert a decibel value to a volume (amplitude, not power).
 /// This is only valid for software volumes!
 impl From<VolumeDB> for Volume {
+    #[inline]
     fn from(v: VolumeDB) -> Self {
         Volume(unsafe { capi::pa_sw_volume_from_dB(v.0) })
     }
@@ -163,6 +166,7 @@ impl From<VolumeDB> for Volume {
 /// Convert a volume to a decibel value (amplitude, not power).
 /// This is only valid for software volumes!
 impl From<Volume> for VolumeDB {
+    #[inline]
     fn from(v: Volume) -> Self {
         VolumeDB(unsafe { capi::pa_sw_volume_to_dB(v.0) })
     }
@@ -172,6 +176,7 @@ impl From<Volume> for VolumeDB {
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 /// This is only valid for software volumes!
 impl From<VolumeLinear> for Volume {
+    #[inline]
     fn from(v: VolumeLinear) -> Self {
         Volume(unsafe { capi::pa_sw_volume_from_linear(v.0) })
     }
@@ -179,6 +184,7 @@ impl From<VolumeLinear> for Volume {
 /// Convert a volume to a linear factor.
 /// This is only valid for software volumes!
 impl From<Volume> for VolumeLinear {
+    #[inline]
     fn from(v: Volume) -> Self {
         VolumeLinear(unsafe { capi::pa_sw_volume_to_linear(v.0) })
     }
@@ -188,6 +194,7 @@ impl From<Volume> for VolumeLinear {
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 /// This is only valid for software volumes!
 impl From<VolumeLinear> for VolumeDB {
+    #[inline]
     fn from(v: VolumeLinear) -> Self {
         VolumeDB::from(Volume::from(v))
     }
@@ -195,30 +202,36 @@ impl From<VolumeLinear> for VolumeDB {
 /// Convert a decibel value (amplitude, not power) to a linear factor.
 /// This is only valid for software volumes!
 impl From<VolumeDB> for VolumeLinear {
+    #[inline]
     fn from(v: VolumeDB) -> Self {
         VolumeLinear::from(Volume::from(v))
     }
 }
 
 impl VolumeLinear {
+    #[inline]
     pub fn is_muted(&self) -> bool {
         self.0 <= 0.0
     }
 
+    #[inline]
     pub fn is_normal(&self) -> bool {
         self.0 == 1.0
     }
 }
 
 impl Volume {
+    #[inline]
     pub fn is_muted(&self) -> bool {
         *self == VOLUME_MUTED
     }
 
+    #[inline]
     pub fn is_normal(&self) -> bool {
         *self == VOLUME_NORM
     }
 
+    #[inline]
     pub fn is_max(&self) -> bool {
         *self == VOLUME_MAX
     }
@@ -227,16 +240,19 @@ impl Volume {
     /// Note: UIs should deal gracefully with volumes greater than this value and not cause feedback
     /// loops etc. - i.e. if the volume is more than this, the UI should not limit it and push the
     /// limited value back to the server.
+    #[inline]
     pub fn ui_max() -> Self {
         Volume(capi::pa_volume_ui_max())
     }
 
     /// Check if volume is valid.
+    #[inline]
     pub fn is_valid(&self) -> bool {
         capi::pa_volume_is_valid(self.0)
     }
 
     /// Clamp volume to the permitted range.
+    #[inline]
     pub fn clamp(&mut self) {
         self.0 = capi::pa_clamp_volume(self.0)
     }
@@ -244,6 +260,7 @@ impl Volume {
     /// Multiply two software volumes, return the result.
     /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of multiplication.
     /// This is only valid for software volumes!
+    #[inline]
     pub fn multiply(a: Self, b: Self) -> Self {
         Volume(unsafe { capi::pa_sw_volume_multiply(a.0, b.0) })
     }
@@ -252,6 +269,7 @@ impl Volume {
     ///
     /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. This is
     /// only valid for software volumes! If a division by zero is tried the result will be `0`.
+    #[inline]
     pub fn divide(a: Self, b: Self) -> Self {
         Volume(unsafe { capi::pa_sw_volume_divide(a.0, b.0) })
     }
@@ -300,23 +318,27 @@ impl std::fmt::Display for Volume {
 impl ChannelVolumes {
     /// Initialize the specified volume and return a pointer to it. The sample spec will have a
     /// defined state but [`is_valid`](#method.is_valid) will fail for it.
+    #[inline]
     pub fn init(&mut self) -> &Self {
         unsafe { capi::pa_cvolume_init(self.as_mut()) };
         self
     }
 
     /// Set the volume of the specified number of channels to the supplied volume
+    #[inline]
     pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
         unsafe { capi::pa_cvolume_set(self.as_mut(), channels, v.0) };
         self
     }
 
     /// Set the volume of the first n channels to [`VOLUME_NORM`](constant.VOLUME_NORM.html).
+    #[inline]
     pub fn reset(&mut self, channels: u32) -> &Self {
         self.set(channels, VOLUME_NORM)
     }
 
     /// Set the volume of the first n channels to [`VOLUME_MUTED`](constant.VOLUME_MUTED.html).
+    #[inline]
     pub fn mute(&mut self, channels: u32) -> &Self {
         self.set(channels, VOLUME_MUTED)
     }
@@ -325,21 +347,25 @@ impl ChannelVolumes {
     ///
     /// This checks that the number of channels in self equals the number in `to` and that the
     /// channels volumes in self equal those in `to`.
+    #[inline]
     pub fn equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_cvolume_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
     /// Returns `true` if all channels are muted
+    #[inline]
     pub fn is_muted(&self) -> bool {
         self.channels_equal_to(VOLUME_MUTED)
     }
 
     /// Returns `true` if all channels are at normal volume level
+    #[inline]
     pub fn is_norm(&self) -> bool {
         self.channels_equal_to(VOLUME_NORM)
     }
 
     /// Returns the average volume of all channels
+    #[inline]
     pub fn avg(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_avg(self.as_ref()) })
     }
@@ -350,6 +376,7 @@ impl ChannelVolumes {
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    #[inline]
     pub fn avg_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
         -> Volume
     {
@@ -358,6 +385,7 @@ impl ChannelVolumes {
     }
 
     /// Return the maximum volume of all channels.
+    #[inline]
     pub fn max(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_max(self.as_ref()) })
     }
@@ -368,6 +396,7 @@ impl ChannelVolumes {
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    #[inline]
     pub fn max_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
         -> Volume
     {
@@ -376,6 +405,7 @@ impl ChannelVolumes {
     }
 
     /// Return the minimum volume of all channels.
+    #[inline]
     pub fn min(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_min(self.as_ref()) })
     }
@@ -386,6 +416,7 @@ impl ChannelVolumes {
     /// If no channel is selected the returned value will be
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    #[inline]
     pub fn min_mask(&self, cm: &::channelmap::Map, mask: Option<::channelmap::PositionMask>)
         -> Volume
     {
@@ -394,11 +425,13 @@ impl ChannelVolumes {
     }
 
     /// Returns `true` when the `ChannelVolumes` structure is valid.
+    #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_cvolume_valid(self.as_ref()) != 0 }
     }
 
     /// Returns `true` if the volume of all channels are equal to the specified value.
+    #[inline]
     pub fn channels_equal_to(&self, v: Volume) -> bool {
         unsafe { capi::pa_cvolume_channels_equal_to(self.as_ref(), v.0) != 0 }
     }
@@ -407,6 +440,7 @@ impl ChannelVolumes {
     ///
     /// If `with` is `None`, multiplies with itself. This is only valid for software volumes!
     /// Returns pointer to self.
+    #[inline]
     pub fn sw_multiply(&mut self, with: Option<&Self>) -> &mut Self {
         unsafe { capi::pa_sw_cvolume_multiply(self.as_mut(), self.as_mut(),
             with.unwrap_or(self).as_ref()) };
@@ -416,6 +450,7 @@ impl ChannelVolumes {
     /// Multiply a per-channel volume with a scalar volume.
     ///
     /// This is only valid for software volumes! Returns pointer to self.
+    #[inline]
     pub fn sw_multiply_scalar(&mut self, with: Volume) -> &mut Self {
         unsafe { capi::pa_sw_cvolume_multiply_scalar(self.as_mut(), self.as_ref(), with.0) };
         self
@@ -425,6 +460,7 @@ impl ChannelVolumes {
     ///
     /// If `with` is `None`, divides with itself. This is only valid for software volumes! Returns
     /// pointer to self.
+    #[inline]
     pub fn sw_divide(&mut self, with: Option<&Self>) -> &mut Self {
         unsafe { capi::pa_sw_cvolume_divide(self.as_mut(), self.as_mut(),
             with.unwrap_or(self).as_ref()) };
@@ -434,6 +470,7 @@ impl ChannelVolumes {
     /// Divide a per-channel volume by a scalar volume.
     ///
     /// This is only valid for software volumes! Returns pointer to self.
+    #[inline]
     pub fn sw_divide_scalar(&mut self, with: Volume) -> &mut Self {
         unsafe { capi::pa_sw_cvolume_divide_scalar(self.as_mut(), self.as_ref(), with.0) };
         self
@@ -442,17 +479,20 @@ impl ChannelVolumes {
     /// Remap a volume from one channel mapping to a different channel mapping.
     ///
     /// Returns pointer to self.
+    #[inline]
     pub fn remap(&mut self, from: &::channelmap::Map, to: &::channelmap::Map) -> &mut Self {
         unsafe { capi::pa_cvolume_remap(self.as_mut(), from.as_ref(), to.as_ref()) };
         self
     }
 
     /// Returns `true` if the specified volume is compatible with the specified sample spec.
+    #[inline]
     pub fn is_compatible_with_ss(&self, ss: &::sample::Spec) -> bool {
         unsafe { capi::pa_cvolume_compatible(self.as_ref(), ss.as_ref()) != 0 }
     }
 
     /// Returns `true` if the specified volume is compatible with the specified channel map.
+    #[inline]
     pub fn is_compatible_with_cm(&self, cm: &::channelmap::Map) -> bool {
         unsafe { capi::pa_cvolume_compatible_with_channel_map(self.as_ref(), cm.as_ref()) != 0 }
     }
@@ -464,6 +504,7 @@ impl ChannelVolumes {
     /// [`::channelmap::Map::can_balance`].
     ///
     /// [`::channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
+    #[inline]
     pub fn get_balance(&self, map: &::channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_balance(self.as_ref(), map.as_ref()) }
     }
@@ -480,6 +521,7 @@ impl ChannelVolumes {
     ///
     /// [`get_balance`]: #method.get_balance
     /// [`::channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
+    #[inline]
     pub fn set_balance(&mut self, map: &::channelmap::Map, new_balance: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_balance(self.as_mut(), map.as_ref(), new_balance) };
         if ptr.is_null() {
@@ -496,6 +538,7 @@ impl ChannelVolumes {
     /// [`::channelmap::Map::can_fade`].
     ///
     /// [`::channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
+    #[inline]
     pub fn get_fade(&self, map: &::channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_fade(self.as_ref(), map.as_ref()) }
     }
@@ -513,6 +556,7 @@ impl ChannelVolumes {
     ///
     /// [`get_fade`]: #method.get_fade
     /// [`::channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
+    #[inline]
     pub fn set_fade(&mut self, map: &::channelmap::Map, new_fade: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_fade(self.as_mut(), map.as_ref(), new_fade) };
         if ptr.is_null() {
@@ -529,6 +573,7 @@ impl ChannelVolumes {
     ///
     /// [`::channelmap::Map::can_lfe_balance`]:
     /// ../channelmap/struct.Map.html#method.can_lfe_balance
+    #[inline]
     pub fn get_lfe_balance(&self, map: &::channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
@@ -545,6 +590,7 @@ impl ChannelVolumes {
     ///
     /// [`get_lfe_balance`]: #method.get_lfe_balance
     /// [`::channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
+    #[inline]
     pub fn set_lfe_balance(&mut self, map: &::channelmap::Map, new_balance: f32)
         -> Option<&mut Self>
     {
@@ -560,6 +606,7 @@ impl ChannelVolumes {
     ///
     /// The proportions between the channel volumes are kept.
     /// Returns pointer to self, or `None` on error.
+    #[inline]
     pub fn scale(&mut self, max: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_scale(self.as_mut(), max.0) };
         if ptr.is_null() {
@@ -577,6 +624,7 @@ impl ChannelVolumes {
     /// [`::channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     ///
     /// Returns pointer to self, or `None` on error.
+    #[inline]
     pub fn scale_mask(&mut self, max: Volume, cm: &mut ::channelmap::Map,
         mask: Option<::channelmap::PositionMask>) -> Option<&mut Self>
     {
@@ -596,6 +644,7 @@ impl ChannelVolumes {
     /// [`::channelmap::Map::has_position`]. On success, returns pointer to self.
     ///
     /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
+    #[inline]
     pub fn set_position(&mut self, map: &::channelmap::Map, t: ::channelmap::Position, v: Volume)
         -> Option<&mut Self>
     {
@@ -616,6 +665,7 @@ impl ChannelVolumes {
     /// map includes a specific position by calling [`::channelmap::Map::has_position`].
     ///
     /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
+    #[inline]
     pub fn get_position(&self, map: &::channelmap::Map, t: ::channelmap::Position) -> Volume {
         Volume(unsafe { capi::pa_cvolume_get_position(self.as_ref(), map.as_ref(), t.into()) })
     }
@@ -630,6 +680,7 @@ impl ChannelVolumes {
     /// the one set will be ignored.
     ///
     /// Returns pointer to self, or `None` on error.
+    #[inline]
     pub fn merge(&mut self, with: &Self) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_merge(self.as_mut(), self.as_ref(), with.as_ref()) };
         if ptr.is_null() {
@@ -641,6 +692,7 @@ impl ChannelVolumes {
     /// Increase the volume passed in by `inc`, but not exceeding `limit`.
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
+    #[inline]
     pub fn inc_clamp(&mut self, inc: Volume, limit: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_inc_clamp(self.as_mut(), inc.0, limit.0) };
         if ptr.is_null() {
@@ -652,6 +704,7 @@ impl ChannelVolumes {
     /// Increase the volume passed in by `inc`.
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
+    #[inline]
     pub fn increase(&mut self, inc: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_inc(self.as_mut(), inc.0) };
         if ptr.is_null() {
@@ -663,6 +716,7 @@ impl ChannelVolumes {
     /// Decrease the volume passed in by `dec`.
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
+    #[inline]
     pub fn decrease(&mut self, dec: Volume) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_dec(self.as_mut(), dec.0) };
         if ptr.is_null() {

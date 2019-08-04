@@ -337,11 +337,13 @@ fn state_compare_capi(){
 }
 
 impl From<State> for capi::pa_stream_state_t {
+    #[inline]
     fn from(s: State) -> Self {
         unsafe { std::mem::transmute(s) }
     }
 }
 impl From<capi::pa_stream_state_t> for State {
+    #[inline]
     fn from(s: capi::pa_stream_state_t) -> Self {
         unsafe { std::mem::transmute(s) }
     }
@@ -349,6 +351,7 @@ impl From<capi::pa_stream_state_t> for State {
 
 impl State {
     /// Returns `true` if the passed state is one of the connected states.
+    #[inline]
     pub fn is_good(self) -> bool {
         self == State::Creating || self == State::Ready
     }
@@ -663,12 +666,14 @@ impl Stream {
     }
 
     /// Create a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
+    #[inline]
     fn from_raw(ptr: *mut StreamInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, cb_ptrs: Default::default() }
     }
 
     /// Return the current state of the stream.
+    #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_stream_get_state(self.ptr).into() }
     }

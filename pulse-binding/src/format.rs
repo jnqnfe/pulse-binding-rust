@@ -67,17 +67,20 @@ fn enc_compare_capi(){
 }
 
 impl From<Encoding> for capi::pa_encoding_t {
+    #[inline]
     fn from(e: Encoding) -> Self {
         unsafe { std::mem::transmute(e) }
     }
 }
 impl From<capi::pa_encoding_t> for Encoding {
+    #[inline]
     fn from(e: capi::pa_encoding_t) -> Self {
         unsafe { std::mem::transmute(e) }
     }
 }
 
 impl Default for Encoding {
+    #[inline(always)]
     fn default() -> Self {
         Encoding::Invalid
     }
@@ -222,11 +225,13 @@ impl Info {
     }
 
     /// Returns whether the `Info` structure is valid.
+    #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_format_info_valid(self.ptr as *const capi::pa_format_info) != 0 }
     }
 
     /// Returns whether the `Info` structure represents a PCM (i.e. uncompressed data) format.
+    #[inline]
     pub fn is_pcm(&self) -> bool {
         unsafe { capi::pa_format_info_is_pcm(self.ptr as *const capi::pa_format_info) != 0 }
     }
@@ -236,6 +241,7 @@ impl Info {
     /// not be true. This is typically expected to be used to check if a stream’s format is
     /// compatible with a given sink. In such a case, self would be the sink’s format and `with`
     /// would be the streams.
+    #[inline]
     pub fn is_compatible_with(&self, with: &Self) -> bool {
         unsafe { capi::pa_format_info_is_compatible(self.ptr as *const capi::pa_format_info,
             with.ptr as *const capi::pa_format_info) != 0 }
@@ -274,21 +280,25 @@ impl Info {
     }
 
     /// Get the encoding.
+    #[inline]
     pub fn get_encoding(&self) -> Encoding {
         unsafe { (*self.ptr).encoding }
     }
 
     /// Set the encoding attribute.
+    #[inline]
     pub fn set_encoding(&mut self, encoding: Encoding) {
         unsafe { (*self.ptr).encoding = encoding };
     }
 
     /// Get an immutable reference to the property list.
+    #[inline]
     pub fn get_properties(&self) -> &::proplist::Proplist {
         &self.properties
     }
 
     /// Get a mutable reference to the property list.
+    #[inline]
     pub fn get_properties_mut(&mut self) -> &mut ::proplist::Proplist {
         &mut self.properties
     }
@@ -463,6 +473,7 @@ impl Info {
     /// Note for PCM: If the sample format is left unspecified in the `Info` object, then the server
     /// will select the stream sample format. In that case the stream sample format will most likely
     /// match the device sample format, meaning that sample format conversion will be avoided.
+    #[inline]
     pub fn set_sample_format(&mut self, sf: ::sample::Format) {
         unsafe { capi::pa_format_info_set_sample_format(self.ptr as *mut capi::pa_format_info,
             sf.into()); }
@@ -473,6 +484,7 @@ impl Info {
     /// Note for PCM: If the sample rate is left unspecified in the `Info` object, then the server
     /// will select the stream sample rate. In that case the stream sample rate will most likely
     /// match the device sample rate, meaning that sample rate conversion will be avoided.
+    #[inline]
     pub fn set_rate(&mut self, rate: i32) {
         unsafe { capi::pa_format_info_set_rate(self.ptr as *mut capi::pa_format_info, rate) }
     }
@@ -482,6 +494,7 @@ impl Info {
     /// Note for PCM: If the channel count is left unspecified in the `Info` object, then the server
     /// will select the stream channel count. In that case the stream channel count will most likely
     /// match the device channel count, meaning that up/downmixing will be avoided.
+    #[inline]
     pub fn set_channels(&mut self, channels: u32) {
         debug_assert!(channels <= std::i32::MAX as u32);
         unsafe { capi::pa_format_info_set_channels(self.ptr as *mut capi::pa_format_info,
@@ -493,6 +506,7 @@ impl Info {
     /// Note for PCM: If the channel map is left unspecified in the `Info` object, then the server
     /// will select the stream channel map. In that case the stream channel map will most likely
     /// match the device channel map, meaning that remixing will be avoided.
+    #[inline]
     pub fn set_channel_map(&mut self, map: &::channelmap::Map) {
         unsafe { capi::pa_format_info_set_channel_map(self.ptr as *mut capi::pa_format_info,
             map.as_ref()) }

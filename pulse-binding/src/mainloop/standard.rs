@@ -274,6 +274,7 @@ pub struct Mainloop {
 impl super::api::Mainloop for Mainloop {
     type MI = super::api::MainloopInner<MainloopInternal>;
 
+    #[inline]
     fn inner(&self) -> Rc<super::api::MainloopInner<MainloopInternal>> {
         Rc::clone(&self._inner)
     }
@@ -345,6 +346,7 @@ impl Mainloop {
     }
 
     /// Return the return value as specified with the main loop’s [`quit`](#method.quit) routine.
+    #[inline]
     pub fn get_retval(&self) -> ::def::Retval {
         ::def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
     }
@@ -392,6 +394,7 @@ impl Mainloop {
     /// This is actually unnecessary through this binding. The pointer is retrieved automatically
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
+    #[inline]
     pub fn get_api<'a>(&self) -> &'a ::mainloop::api::MainloopApi {
         let ptr = (*self._inner).api;
         assert_eq!(false, ptr.is_null());
@@ -399,16 +402,19 @@ impl Mainloop {
     }
 
     /// Shutdown the main loop with the specified return value
+    #[inline]
     pub fn quit(&mut self, retval: ::def::Retval) {
         unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval.0); }
     }
 
     /// Interrupt a running poll (for threaded systems)
+    #[inline]
     pub fn wakeup(&mut self) {
         unsafe { capi::pa_mainloop_wakeup((*self._inner).ptr); }
     }
 
     /// Change the poll() implementation
+    #[inline]
     pub fn set_poll_func(&mut self, poll_cb: (PollFn, *mut c_void)) {
         unsafe { capi::pa_mainloop_set_poll_func((*self._inner).ptr, Some(poll_cb.0), poll_cb.1); }
     }

@@ -154,6 +154,7 @@ pub enum Position {
 }
 
 impl Default for Position {
+    #[inline(always)]
     fn default() -> Self {
         Position::Invalid
     }
@@ -167,11 +168,13 @@ fn pos_compare_capi(){
 }
 
 impl From<Position> for capi::pa_channel_position_t {
+    #[inline]
     fn from(p: Position) -> Self {
         unsafe { std::mem::transmute(p) }
     }
 }
 impl From<capi::pa_channel_position_t> for Position {
+    #[inline]
     fn from(p: capi::pa_channel_position_t) -> Self {
         unsafe { std::mem::transmute(p) }
     }
@@ -216,6 +219,7 @@ impl AsRef<Map> for capi::pa_channel_map {
 }
 
 impl From<capi::pa_channel_map> for Map {
+    #[inline]
     fn from(m: capi::pa_channel_map) -> Self {
         unsafe { std::mem::transmute(m) }
     }
@@ -231,6 +235,7 @@ impl Default for Map {
 }
 
 impl PartialEq for Map {
+    #[inline]
     fn eq(&self, other: &Self) -> bool {
         match self.channels == other.channels {
             true => self.map[..self.channels as usize] == other.map[..other.channels as usize],
@@ -294,18 +299,21 @@ impl Map {
 
     /// Initialize the specified channel map and return a pointer to it. The map will have a defined
     /// state but [`is_valid`](#method.is_valid) will fail for it.
+    #[inline]
     pub fn init(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init(self.as_mut()) };
         self
     }
 
     /// Initialize the specified channel map for monaural audio and return a pointer to it.
+    #[inline]
     pub fn init_mono(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init_mono(self.as_mut()) };
         self
     }
 
     /// Initialize the specified channel map for stereophonic audio and return a pointer to it.
+    #[inline]
     pub fn init_stereo(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init_stereo(self.as_mut()) };
         self
@@ -346,33 +354,39 @@ impl Map {
     }
 
     /// Compare whether or not two maps are equal.
+    #[inline]
     pub fn is_equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_channel_map_equal(self.as_ref(), to.as_ref()) == 1 }
     }
 
     /// Check whether or not the map is considered valid.
+    #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_channel_map_valid(self.as_ref()) != 0 }
     }
 
     /// Checks whether or not the specified map is compatible with the specified sample spec.
+    #[inline]
     pub fn is_compatible_with_sample_spec(&self, ss: &::sample::Spec) -> bool {
         unsafe { capi::pa_channel_map_compatible(self.as_ref(), ss.as_ref()) != 0 }
     }
 
     /// Checks whether every channel defined in `of` is also defined in self.
+    #[inline]
     pub fn is_superset_of(&self, of: &Self) -> bool {
         unsafe { capi::pa_channel_map_superset(self.as_ref(), of.as_ref()) != 0 }
     }
 
     /// Checks whether or not it makes sense to apply a volume “balance” with this mapping, i.e. if
     /// there are left/right channels available.
+    #[inline]
     pub fn can_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_balance(self.as_ref()) != 0 }
     }
 
     /// Checks whether or not it makes sense to apply a volume “fade” (i.e. “balance” between front
     /// and rear) with this mapping, i.e. if there are front/rear channels available.
+    #[inline]
     pub fn can_fade(&self) -> bool {
         unsafe { capi::pa_channel_map_can_fade(self.as_ref()) != 0 }
     }
@@ -380,6 +394,7 @@ impl Map {
     /// Checks whether or not it makes sense to apply a volume “LFE balance” (i.e. “balance” between
     /// LFE and non-LFE channels) with this mapping, i.e. if there are LFE and non-LFE channels
     /// available.
+    #[inline]
     pub fn can_lfe_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_lfe_balance(self.as_ref()) != 0 }
     }
@@ -406,11 +421,13 @@ impl Map {
     }
 
     /// Checks whether or not the specified channel position is available at least once in the map.
+    #[inline]
     pub fn has_position(&self, p: Position) -> bool {
         unsafe { capi::pa_channel_map_has_position(self.as_ref(), p.into()) != 0 }
     }
 
     /// Generates a bit mask from a map.
+    #[inline]
     pub fn get_mask(&self) -> PositionMask {
         unsafe { capi::pa_channel_map_mask(self.as_ref()) }
     }

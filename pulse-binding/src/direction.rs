@@ -29,11 +29,13 @@ pub mod flags {
 }
 
 /// Returns whether direction is valid (either input, output or bidirectional).
+#[inline]
 pub fn is_valid(f: FlagSet) -> bool {
     unsafe { capi::pa_direction_valid(f) != 0 }
 }
 
 /// Return a textual representation of the direction.
+#[inline]
 pub fn to_string(f: FlagSet) -> String {
     unsafe { CStr::from_ptr(capi::pa_direction_to_string(f)).to_string_lossy().into_owned() }
 }

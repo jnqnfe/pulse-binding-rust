@@ -49,6 +49,7 @@ pub(crate) type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(*mut DeferEven
 impl<T> DeferEvent<T>
     where T: MainloopInnerType
 {
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>, callback: EventCb)
         -> Self
     {
@@ -57,12 +58,14 @@ impl<T> DeferEvent<T>
     }
 
     /// Enable this event source temporarily.
+    #[inline]
     pub fn enable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 1);
     }
 
     /// Disable this event source temporarily.
+    #[inline]
     pub fn disable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 0);
@@ -72,18 +75,21 @@ impl<T> DeferEvent<T>
 impl<T> DeferEventRef<T>
     where T: MainloopInnerType
 {
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut DeferEventInternal, mainloop_inner: Rc<T>) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner }
     }
 
     /// Enable this event source temporarily.
+    #[inline]
     pub fn enable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 1);
     }
 
     /// Disable this event source temporarily.
+    #[inline]
     pub fn disable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 0);

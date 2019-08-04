@@ -71,6 +71,7 @@ pub(crate) type EventCb =
 impl<T> IoEvent<T>
     where T: MainloopInnerType
 {
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut IoEventInternal, mainloop_inner: Rc<T>, callback: EventCb)
         -> Self
     {
@@ -79,6 +80,7 @@ impl<T> IoEvent<T>
     }
 
     /// Enable or disable IO events on this object.
+    #[inline]
     pub fn enable(&mut self, events: IoEventFlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
         fn_ptr(self.ptr, events);
@@ -88,12 +90,14 @@ impl<T> IoEvent<T>
 impl<T> IoEventRef<T>
     where T: MainloopInnerType
 {
+    #[inline]
     pub(crate) fn from_raw(ptr: *mut IoEventInternal, mainloop_inner: Rc<T>) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, owner: mainloop_inner }
     }
 
     /// Enable or disable IO events on this object.
+    #[inline]
     pub fn enable(&mut self, events: IoEventFlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
         fn_ptr(self.ptr, events);

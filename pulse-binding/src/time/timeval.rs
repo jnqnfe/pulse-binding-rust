@@ -49,6 +49,7 @@ impl Ord for Timeval {
 }
 
 impl PartialOrd for Timeval {
+    #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
@@ -62,21 +63,25 @@ impl std::fmt::Debug for Timeval {
 
 impl Timeval {
     /// Create a new instance, with values provided.
+    #[inline]
     pub fn new(sec: libc::time_t, usec: libc::suseconds_t) -> Self {
         Timeval(libc::timeval { tv_sec: sec, tv_usec: usec })
     }
 
     /// Create a new instance, with value of zero.
+    #[inline]
     pub fn new_zero() -> Self {
         Timeval::new(0, 0)
     }
 
     /// Calculate the difference between the two specified timeval structs.
+    #[inline]
     pub fn diff(a: &Self, b: &Self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_diff(&a.0, &b.0) })
     }
 
     /// Return the time difference between now and self
+    #[inline]
     pub fn age(&self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_age(&self.0) })
     }
@@ -171,11 +176,13 @@ impl Timeval {
 impl Add for Timeval {
     type Output = Self;
 
+    #[inline]
     fn add(self, other: Self) -> Self {
         self.checked_add(other).unwrap()
     }
 }
 impl AddAssign for Timeval {
+    #[inline]
     fn add_assign(&mut self, rhs: Self) {
         *self = self.checked_add(rhs).unwrap();
     }
@@ -184,11 +191,13 @@ impl AddAssign for Timeval {
 impl Add<MicroSeconds> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
         self.checked_add_us(rhs).unwrap()
     }
 }
 impl AddAssign<MicroSeconds> for Timeval {
+    #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
         *self = self.checked_add_us(rhs).unwrap();
     }
@@ -197,11 +206,13 @@ impl AddAssign<MicroSeconds> for Timeval {
 impl Add<Duration> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn add(self, rhs: Duration) -> Self {
         self.checked_add_duration(rhs).unwrap()
     }
 }
 impl AddAssign<Duration> for Timeval {
+    #[inline]
     fn add_assign(&mut self, rhs: Duration) {
         *self = self.checked_add_duration(rhs).unwrap();
     }
@@ -210,11 +221,13 @@ impl AddAssign<Duration> for Timeval {
 impl Sub for Timeval {
     type Output = Self;
 
+    #[inline]
     fn sub(self, other: Self) -> Self {
         self.checked_sub(other).unwrap()
     }
 }
 impl SubAssign for Timeval {
+    #[inline]
     fn sub_assign(&mut self, rhs: Self) {
         *self = self.checked_sub(rhs).unwrap();
     }
@@ -223,11 +236,13 @@ impl SubAssign for Timeval {
 impl Sub<MicroSeconds> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
         self.checked_sub_us(rhs).unwrap()
     }
 }
 impl SubAssign<MicroSeconds> for Timeval {
+    #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = self.checked_sub_us(rhs).unwrap();
     }
@@ -236,11 +251,13 @@ impl SubAssign<MicroSeconds> for Timeval {
 impl Sub<Duration> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn sub(self, rhs: Duration) -> Self {
         self.checked_sub_duration(rhs).unwrap()
     }
 }
 impl SubAssign<Duration> for Timeval {
+    #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
         *self = self.checked_sub_duration(rhs).unwrap();
     }
@@ -249,11 +266,13 @@ impl SubAssign<Duration> for Timeval {
 impl Mul<u32> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn mul(self, rhs: u32) -> Self {
         self.checked_mul(rhs).unwrap()
     }
 }
 impl MulAssign<u32> for Timeval {
+    #[inline]
     fn mul_assign(&mut self, rhs: u32) {
         *self = self.checked_mul(rhs).unwrap();
     }
@@ -262,11 +281,13 @@ impl MulAssign<u32> for Timeval {
 impl Div<u32> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn div(self, rhs: u32) -> Self {
         self.checked_div(rhs).unwrap()
     }
 }
 impl DivAssign<u32> for Timeval {
+    #[inline]
     fn div_assign(&mut self, rhs: u32) {
         *self = self.checked_div(rhs).unwrap();
     }
@@ -275,11 +296,13 @@ impl DivAssign<u32> for Timeval {
 impl Rem<u32> for Timeval {
     type Output = Self;
 
+    #[inline]
     fn rem(self, rhs: u32) -> Self {
         self.checked_rem(rhs).unwrap()
     }
 }
 impl RemAssign<u32> for Timeval {
+    #[inline]
     fn rem_assign(&mut self, rhs: u32) {
         *self = self.checked_rem(rhs).unwrap();
     }

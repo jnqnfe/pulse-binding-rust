@@ -379,11 +379,13 @@ impl AsRef<capi::pa_mainloop_api> for MainloopApi {
 }
 
 impl<'a> From<*const ApiInternal> for &'a MainloopApi {
+    #[inline]
     fn from(a: *const ApiInternal) -> Self {
         unsafe { std::mem::transmute(a) }
     }
 }
 impl<'a> From<&'a MainloopApi> for *const ApiInternal {
+    #[inline]
     fn from(a: &'a MainloopApi) -> Self {
         unsafe { std::mem::transmute(a) }
     }

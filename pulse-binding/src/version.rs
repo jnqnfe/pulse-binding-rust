@@ -101,6 +101,7 @@ pub fn get_headers_version() -> &'static str {
 }
 
 /// Returns the version of the library actually in use at runtime.
+#[inline]
 pub fn get_library_version() -> &'static CStr {
     unsafe { CStr::from_ptr(capi::pa_get_library_version()) }
 }
