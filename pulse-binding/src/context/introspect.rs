@@ -290,7 +290,6 @@ impl Drop for Introspector {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[repr(C)]
 #[derive(Debug)]
 pub struct SinkPortInfo<'a> {
     /// Name of this port.
