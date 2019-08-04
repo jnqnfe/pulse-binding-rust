@@ -264,6 +264,7 @@ use time::MicroSeconds;
 use proplist::Proplist;
 use callbacks::box_closure_get_capi_ptr;
 use operation::Operation;
+use format::InfoInternal;
 
 use capi::pa_stream as StreamInternal;
 pub use capi::pa_seek_mode_t as SeekMode;
@@ -340,7 +341,6 @@ impl From<State> for capi::pa_stream_state_t {
         unsafe { std::mem::transmute(s) }
     }
 }
-
 impl From<capi::pa_stream_state_t> for State {
     fn from(s: capi::pa_stream_state_t) -> Self {
         unsafe { std::mem::transmute(s) }
@@ -585,13 +585,11 @@ impl Stream {
         let c_name = CString::new(name.clone()).unwrap();
 
         let p_map: *const capi::pa_channel_map = match map {
-            Some(map) => unsafe { std::mem::transmute(map) },
+            Some(map) => map.as_ref(),
             None => null::<capi::pa_channel_map>(),
         };
 
-        let ptr = unsafe {
-            capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss), p_map)
-        };
+        let ptr = unsafe { capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), ss.as_ref(), p_map) };
         if ptr.is_null() {
             return None;
         }
@@ -616,12 +614,12 @@ impl Stream {
         let c_name = CString::new(name.clone()).unwrap();
 
         let p_map: *const capi::pa_channel_map = match map {
-            Some(map) => unsafe { std::mem::transmute(map) },
+            Some(map) => map.as_ref(),
             None => null::<capi::pa_channel_map>(),
         };
 
         let ptr = unsafe {
-            capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), std::mem::transmute(ss),
+            capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), ss.as_ref(),
                 p_map, proplist.0.ptr)
         };
         if ptr.is_null() {
@@ -798,11 +796,11 @@ impl Stream {
         };
 
         let p_attr: *const capi::pa_buffer_attr = match attr {
-            Some(attr) => unsafe { std::mem::transmute(attr) },
+            Some(attr) => attr.as_ref(),
             None => null::<capi::pa_buffer_attr>(),
         };
         let p_vol: *const capi::pa_cvolume = match volume {
-            Some(volume) => unsafe { std::mem::transmute(volume) },
+            Some(volume) => volume.as_ref(),
             None => null::<capi::pa_cvolume>(),
         };
         let p_sync: *mut StreamInternal = match sync_stream {
@@ -841,7 +839,7 @@ impl Stream {
         };
 
         let p_attr: *const capi::pa_buffer_attr = match attr {
-            Some(attr) => unsafe { std::mem::transmute(attr) },
+            Some(attr) => attr.as_ref(),
             None => null::<capi::pa_buffer_attr>(),
         };
         let p_dev: *const c_char = match dev {
@@ -1501,20 +1499,26 @@ impl Stream {
     /// [`write`]: #method.write
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
     pub fn get_timing_info<'a>(&mut self) -> Option<&'a ::def::TimingInfo> {
-        let ptr = unsafe { capi::pa_stream_get_timing_info(self.ptr) };
-        unsafe { std::mem::transmute(ptr) }
+        unsafe {
+            let ptr = capi::pa_stream_get_timing_info(self.ptr);
+            ptr.as_ref().map(|r| r.as_ref())
+        }
     }
 
     /// Return a pointer to the stream’s sample specification.
     pub fn get_sample_spec<'a>(&mut self) -> Option<&'a ::sample::Spec> {
-        let ptr = unsafe { capi::pa_stream_get_sample_spec(self.ptr) };
-        unsafe { std::mem::transmute(ptr) }
+        unsafe {
+            let ptr = capi::pa_stream_get_sample_spec(self.ptr);
+            ptr.as_ref().map(|r| r.as_ref())
+        }
     }
 
     /// Return a pointer to the stream’s channel map.
     pub fn get_channel_map<'a>(&mut self) -> Option<&'a ::channelmap::Map> {
-        let ptr = unsafe { capi::pa_stream_get_channel_map(self.ptr) };
-        unsafe { std::mem::transmute(ptr) }
+        unsafe {
+            let ptr = capi::pa_stream_get_channel_map(self.ptr);
+            ptr.as_ref().map(|r| r.as_ref())
+        }
     }
 
     /// Return a pointer to the stream’s format.
@@ -1523,7 +1527,7 @@ impl Stream {
         if ptr.is_null() {
             return None;
         }
-        Some(::format::Info::from_raw_weak(unsafe { std::mem::transmute(ptr) }))
+        Some(::format::Info::from_raw_weak(ptr as *mut InfoInternal))
     }
 
     /// Return the per-stream server-side buffer metrics of the stream.
@@ -1538,8 +1542,10 @@ impl Stream {
     /// [`connect_playback`]: #method.connect_playback
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
     pub fn get_buffer_attr<'a>(&mut self) -> Option<&'a ::def::BufferAttr> {
-        let ptr = unsafe { capi::pa_stream_get_buffer_attr(self.ptr) };
-        unsafe { std::mem::transmute(ptr) }
+        unsafe {
+            let ptr = capi::pa_stream_get_buffer_attr(self.ptr);
+            ptr.as_ref().map(|r| r.as_ref())
+        }
     }
 
     /// Change the buffer metrics of the stream during playback.
@@ -1560,7 +1566,7 @@ impl Stream {
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
-        let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, std::mem::transmute(attr),
+        let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, attr.as_ref(),
             Some(success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)

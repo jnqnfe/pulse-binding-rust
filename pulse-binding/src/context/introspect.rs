@@ -233,6 +233,7 @@ use super::{Context, ContextInternal};
 use time::MicroSeconds;
 use callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
 use operation::Operation;
+use volume::Volume;
 
 use capi::pa_sink_port_info as SinkPortInfoInternal;
 use capi::pa_sink_info as SinkInfoInternal;
@@ -409,13 +410,13 @@ impl<'a> SinkInfo<'a> {
                     false => Some(CStr::from_ptr(src.description).to_string_lossy()),
                     true => None,
                 },
-                sample_spec: std::mem::transmute(src.sample_spec),
-                channel_map: std::mem::transmute(src.channel_map),
+                sample_spec: src.sample_spec.into(),
+                channel_map: src.channel_map.into(),
                 owner_module: match src.owner_module {
                     ::def::INVALID_INDEX => None,
                     i => Some(i),
                 },
-                volume: std::mem::transmute(src.volume),
+                volume: src.volume.into(),
                 mute: match src.mute { 0 => false, _ => true },
                 monitor_source: src.monitor_source,
                 monitor_source_name: match src.monitor_source_name.is_null() {
@@ -430,8 +431,8 @@ impl<'a> SinkInfo<'a> {
                 flags: src.flags,
                 proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
                 configured_latency: MicroSeconds(src.configured_latency),
-                base_volume: ::volume::Volume(src.base_volume),
-                state: std::mem::transmute(src.state),
+                base_volume: Volume(src.base_volume),
+                state: src.state.into(),
                 n_volume_steps: src.n_volume_steps,
                 card: match src.card {
                     ::def::INVALID_INDEX => None,
@@ -505,7 +506,7 @@ impl Introspector {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, index,
-            std::mem::transmute(volume), cb_fn, cb_data) };
+            volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
@@ -525,7 +526,7 @@ impl Introspector {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_name(self.context, c_name.as_ptr(),
-            std::mem::transmute(volume), cb_fn, cb_data) };
+            volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
@@ -791,13 +792,13 @@ impl<'a> SourceInfo<'a> {
                     false => Some(CStr::from_ptr(src.description).to_string_lossy()),
                     true => None,
                 },
-                sample_spec: std::mem::transmute(src.sample_spec),
-                channel_map: std::mem::transmute(src.channel_map),
+                sample_spec: src.sample_spec.into(),
+                channel_map: src.channel_map.into(),
                 owner_module: match src.owner_module {
                     ::def::INVALID_INDEX => None,
                     i => Some(i),
                 },
-                volume: std::mem::transmute(src.volume),
+                volume: src.volume.into(),
                 mute: match src.mute { 0 => false, _ => true },
                 monitor_of_sink: match src.monitor_of_sink {
                     ::def::INVALID_INDEX => None,
@@ -891,7 +892,7 @@ impl Introspector {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, index,
-            std::mem::transmute(volume), cb_fn, cb_data) };
+            volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
@@ -910,8 +911,8 @@ impl Introspector {
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
-        let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context, c_name.as_ptr(),
-            std::mem::transmute(volume), cb_fn, cb_data) };
+        let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context,
+            c_name.as_ptr(), volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
@@ -1102,7 +1103,7 @@ impl<'a> ServerInfo<'a> {
                     false => Some(CStr::from_ptr(src.server_name).to_string_lossy()),
                     true => None,
                 },
-                sample_spec: std::mem::transmute(src.sample_spec),
+                sample_spec: src.sample_spec.into(),
                 default_sink_name: match src.default_sink_name.is_null() {
                     false => Some(CStr::from_ptr(src.default_sink_name).to_string_lossy()),
                     true => None,
@@ -1112,7 +1113,7 @@ impl<'a> ServerInfo<'a> {
                     true => None,
                 },
                 cookie: src.cookie,
-                channel_map: std::mem::transmute(src.channel_map),
+                channel_map: src.channel_map.into(),
             }
         }
     }
@@ -1787,9 +1788,9 @@ impl<'a> SinkInputInfo<'a> {
                     i => Some(i),
                 },
                 sink: src.sink,
-                sample_spec: std::mem::transmute(src.sample_spec),
-                channel_map: std::mem::transmute(src.channel_map),
-                volume: std::mem::transmute(src.volume),
+                sample_spec: src.sample_spec.into(),
+                channel_map: src.channel_map.into(),
+                volume: src.volume.into(),
                 buffer_usec: MicroSeconds(src.buffer_usec),
                 sink_usec: MicroSeconds(src.sink_usec),
                 resample_method: match src.resample_method.is_null() {
@@ -1889,7 +1890,7 @@ impl Introspector {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, index,
-            std::mem::transmute(volume), cb_fn, cb_data) };
+            volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
@@ -2018,8 +2019,8 @@ impl<'a> SourceOutputInfo<'a> {
                     i => Some(i),
                 },
                 source: src.source,
-                sample_spec: std::mem::transmute(src.sample_spec),
-                channel_map: std::mem::transmute(src.channel_map),
+                sample_spec: src.sample_spec.into(),
+                channel_map: src.channel_map.into(),
                 buffer_usec: MicroSeconds(src.buffer_usec),
                 source_usec: MicroSeconds(src.source_usec),
                 resample_method: match src.resample_method.is_null() {
@@ -2032,7 +2033,7 @@ impl<'a> SourceOutputInfo<'a> {
                 },
                 proplist: ::proplist::Proplist::from_raw_weak(src.proplist),
                 corked: match src.corked { 0 => false, _ => true },
-                volume: std::mem::transmute(src.volume),
+                volume: src.volume.into(),
                 mute: match src.mute { 0 => false, _ => true },
                 has_volume: match src.has_volume { 0 => false, _ => true },
                 volume_writable: match src.volume_writable { 0 => false, _ => true },
@@ -2120,7 +2121,7 @@ impl Introspector {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             ::callbacks::get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, index,
-            std::mem::transmute(volume), cb_fn, cb_data) };
+            volume.as_ref(), cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
@@ -2250,9 +2251,9 @@ impl<'a> SampleInfo<'a> {
                     false => Some(CStr::from_ptr(src.name).to_string_lossy()),
                     true => None,
                 },
-                volume: std::mem::transmute(src.volume),
-                sample_spec: std::mem::transmute(src.sample_spec),
-                channel_map: std::mem::transmute(src.channel_map),
+                volume: src.volume.into(),
+                sample_spec: src.sample_spec.into(),
+                channel_map: src.channel_map.into(),
                 duration: MicroSeconds(src.duration),
                 bytes: src.bytes,
                 lazy: match src.lazy { 0 => false, _ => true },

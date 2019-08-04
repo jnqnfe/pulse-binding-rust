@@ -128,7 +128,6 @@ impl From<Format> for capi::pa_sample_format_t {
         unsafe { std::mem::transmute(f) }
     }
 }
-
 impl From<capi::pa_sample_format_t> for Format {
     fn from(f: capi::pa_sample_format_t) -> Self {
         unsafe { std::mem::transmute(f) }
@@ -222,50 +221,75 @@ fn spec_compare_capi(){
     assert_eq!(std::mem::align_of::<Spec>(), std::mem::align_of::<capi::pa_sample_spec>());
 }
 
+impl AsRef<capi::pa_sample_spec> for Spec {
+    #[inline]
+    fn as_ref(&self) -> &capi::pa_sample_spec {
+        unsafe { &*(self as *const Self as *const capi::pa_sample_spec) }
+    }
+}
+impl AsMut<capi::pa_sample_spec> for Spec {
+    #[inline]
+    fn as_mut(&mut self) -> &mut capi::pa_sample_spec {
+        unsafe { &mut *(self as *mut Self as *mut capi::pa_sample_spec) }
+    }
+}
+impl AsRef<Spec> for capi::pa_sample_spec {
+    #[inline]
+    fn as_ref(&self) -> &Spec {
+        unsafe { &*(self as *const Self as *const Spec) }
+    }
+}
+
+impl From<capi::pa_sample_spec> for Spec {
+    fn from(s: capi::pa_sample_spec) -> Self {
+        unsafe { std::mem::transmute(s) }
+    }
+}
+
 impl Spec {
     /// Initialize the specified sample spec.
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
     /// it.
     pub fn init(&mut self) {
-        unsafe { capi::pa_sample_spec_init(std::mem::transmute(self)); }
+        unsafe { capi::pa_sample_spec_init(self.as_mut()); }
     }
 
     /// Returns `true` when the sample type specification is valid
     pub fn is_valid(&self) -> bool {
-        unsafe { capi::pa_sample_spec_valid(std::mem::transmute(self)) != 0 }
+        unsafe { capi::pa_sample_spec_valid(self.as_ref()) != 0 }
     }
 
     /// Returns `true` when the two sample type specifications match
     pub fn equal_to(&self, to: &Self) -> bool {
-        unsafe { capi::pa_sample_spec_equal(std::mem::transmute(self), std::mem::transmute(to)) != 0 }
+        unsafe { capi::pa_sample_spec_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
     /// Returns the amount of bytes that constitute playback of one second of audio, with the
     /// specified sample type.
     pub fn bytes_per_second(&self) -> usize {
-        unsafe { capi::pa_bytes_per_second(std::mem::transmute(self)) }
+        unsafe { capi::pa_bytes_per_second(self.as_ref()) }
     }
 
     /// Returns the size of a frame
     pub fn frame_size(&self) -> usize {
-        unsafe { capi::pa_frame_size(std::mem::transmute(self)) }
+        unsafe { capi::pa_frame_size(self.as_ref()) }
     }
 
     /// Returns the size of a sample
     pub fn sample_size(&self) -> usize {
-        unsafe { capi::pa_sample_size(std::mem::transmute(self)) }
+        unsafe { capi::pa_sample_size(self.as_ref()) }
     }
 
     /// Calculate the time it would take to play a buffer of the specified size.
     /// The return value will always be rounded down for non-integral return values.
     pub fn bytes_to_usec(&self, length: u64) -> MicroSeconds {
-        MicroSeconds(unsafe { capi::pa_bytes_to_usec(length, std::mem::transmute(self)) })
+        MicroSeconds(unsafe { capi::pa_bytes_to_usec(length, self.as_ref()) })
     }
 
     /// Calculates the size of a buffer required, for playback duration of the time specified.
     /// The return value will always be rounded down for non-integral return values.
     pub fn usec_to_bytes(&self, t: MicroSeconds) -> usize {
-        unsafe { capi::pa_usec_to_bytes(t.0, std::mem::transmute(self)) }
+        unsafe { capi::pa_usec_to_bytes(t.0, self.as_ref()) }
     }
 
     /// Pretty print a sample type specification to a string
@@ -273,7 +297,7 @@ impl Spec {
         const PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_sample_spec_snprint(tmp.as_mut_ptr(), PRINT_MAX, std::mem::transmute(self));
+            capi::pa_sample_spec_snprint(tmp.as_mut_ptr(), PRINT_MAX, self.as_ref());
             CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }

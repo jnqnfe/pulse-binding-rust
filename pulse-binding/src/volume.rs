@@ -125,6 +125,25 @@ fn set_compare_capi(){
     assert_eq!(std::mem::align_of::<ChannelVolumes>(), std::mem::align_of::<capi::pa_cvolume>());
 }
 
+impl AsRef<capi::pa_cvolume> for ChannelVolumes {
+    #[inline]
+    fn as_ref(&self) -> &capi::pa_cvolume {
+        unsafe { &*(self as *const Self as *const capi::pa_cvolume) }
+    }
+}
+impl AsMut<capi::pa_cvolume> for ChannelVolumes {
+    #[inline]
+    fn as_mut(&mut self) -> &mut capi::pa_cvolume {
+        unsafe { &mut *(self as *mut Self as *mut capi::pa_cvolume) }
+    }
+}
+
+impl From<capi::pa_cvolume> for ChannelVolumes {
+    fn from(cv: capi::pa_cvolume) -> Self {
+        unsafe { std::mem::transmute(cv) }
+    }
+}
+
 impl PartialEq for ChannelVolumes {
     fn eq(&self, other: &Self) -> bool {
         match self.channels == other.channels {
@@ -282,13 +301,13 @@ impl ChannelVolumes {
     /// Initialize the specified volume and return a pointer to it. The sample spec will have a
     /// defined state but [`is_valid`](#method.is_valid) will fail for it.
     pub fn init(&mut self) -> &Self {
-        unsafe { capi::pa_cvolume_init(std::mem::transmute(&self)) };
+        unsafe { capi::pa_cvolume_init(self.as_mut()) };
         self
     }
 
     /// Set the volume of the specified number of channels to the supplied volume
     pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
-        unsafe { capi::pa_cvolume_set(std::mem::transmute(&self), channels, v.0) };
+        unsafe { capi::pa_cvolume_set(self.as_mut(), channels, v.0) };
         self
     }
 
@@ -307,7 +326,7 @@ impl ChannelVolumes {
     /// This checks that the number of channels in self equals the number in `to` and that the
     /// channels volumes in self equal those in `to`.
     pub fn equal_to(&self, to: &Self) -> bool {
-        unsafe { capi::pa_cvolume_equal(std::mem::transmute(self), std::mem::transmute(to)) != 0 }
+        unsafe { capi::pa_cvolume_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
     /// Returns `true` if all channels are muted
@@ -322,7 +341,7 @@ impl ChannelVolumes {
 
     /// Returns the average volume of all channels
     pub fn avg(&self) -> Volume {
-        Volume(unsafe { capi::pa_cvolume_avg(std::mem::transmute(self)) })
+        Volume(unsafe { capi::pa_cvolume_avg(self.as_ref()) })
     }
 
     /// Returns the average volume of all channels that are included in the specified channel map
@@ -335,13 +354,12 @@ impl ChannelVolumes {
         -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        Volume(unsafe { capi::pa_cvolume_avg_mask(std::mem::transmute(self),
-            std::mem::transmute(cm), mask_actual) })
+        Volume(unsafe { capi::pa_cvolume_avg_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
     /// Return the maximum volume of all channels.
     pub fn max(&self) -> Volume {
-        Volume(unsafe { capi::pa_cvolume_max(std::mem::transmute(self)) })
+        Volume(unsafe { capi::pa_cvolume_max(self.as_ref()) })
     }
 
     /// Return the maximum volume of all channels that are included in the specified channel map
@@ -354,13 +372,12 @@ impl ChannelVolumes {
         -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        Volume(unsafe { capi::pa_cvolume_max_mask(std::mem::transmute(self),
-            std::mem::transmute(cm), mask_actual) })
+        Volume(unsafe { capi::pa_cvolume_max_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
     /// Return the minimum volume of all channels.
     pub fn min(&self) -> Volume {
-        Volume(unsafe { capi::pa_cvolume_min(std::mem::transmute(self)) })
+        Volume(unsafe { capi::pa_cvolume_min(self.as_ref()) })
     }
 
     /// Return the minimum volume of all channels that are included in the specified channel map
@@ -373,18 +390,17 @@ impl ChannelVolumes {
         -> Volume
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        Volume(unsafe { capi::pa_cvolume_min_mask(std::mem::transmute(self),
-            std::mem::transmute(cm), mask_actual) })
+        Volume(unsafe { capi::pa_cvolume_min_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
     /// Returns `true` when the `ChannelVolumes` structure is valid.
     pub fn is_valid(&self) -> bool {
-        unsafe { capi::pa_cvolume_valid(std::mem::transmute(self)) != 0 }
+        unsafe { capi::pa_cvolume_valid(self.as_ref()) != 0 }
     }
 
     /// Returns `true` if the volume of all channels are equal to the specified value.
     pub fn channels_equal_to(&self, v: Volume) -> bool {
-        unsafe { capi::pa_cvolume_channels_equal_to(std::mem::transmute(self), v.0) != 0 }
+        unsafe { capi::pa_cvolume_channels_equal_to(self.as_ref(), v.0) != 0 }
     }
 
     /// Multiply two per-channel volumes.
@@ -392,8 +408,8 @@ impl ChannelVolumes {
     /// If `with` is `None`, multiplies with itself. This is only valid for software volumes!
     /// Returns pointer to self.
     pub fn sw_multiply(&mut self, with: Option<&Self>) -> &mut Self {
-        unsafe { capi::pa_sw_cvolume_multiply(std::mem::transmute(&self),
-            std::mem::transmute(&self), std::mem::transmute(with.unwrap_or(&*self))) };
+        unsafe { capi::pa_sw_cvolume_multiply(self.as_mut(), self.as_mut(),
+            with.unwrap_or(self).as_ref()) };
         self
     }
 
@@ -401,8 +417,7 @@ impl ChannelVolumes {
     ///
     /// This is only valid for software volumes! Returns pointer to self.
     pub fn sw_multiply_scalar(&mut self, with: Volume) -> &mut Self {
-        unsafe { capi::pa_sw_cvolume_multiply_scalar(std::mem::transmute(&self),
-            std::mem::transmute(&self), with.0) };
+        unsafe { capi::pa_sw_cvolume_multiply_scalar(self.as_mut(), self.as_ref(), with.0) };
         self
     }
 
@@ -411,8 +426,8 @@ impl ChannelVolumes {
     /// If `with` is `None`, divides with itself. This is only valid for software volumes! Returns
     /// pointer to self.
     pub fn sw_divide(&mut self, with: Option<&Self>) -> &mut Self {
-        unsafe { capi::pa_sw_cvolume_divide(std::mem::transmute(&self), std::mem::transmute(&self),
-            std::mem::transmute(with.unwrap_or(&*self))) };
+        unsafe { capi::pa_sw_cvolume_divide(self.as_mut(), self.as_mut(),
+            with.unwrap_or(self).as_ref()) };
         self
     }
 
@@ -420,8 +435,7 @@ impl ChannelVolumes {
     ///
     /// This is only valid for software volumes! Returns pointer to self.
     pub fn sw_divide_scalar(&mut self, with: Volume) -> &mut Self {
-        unsafe { capi::pa_sw_cvolume_divide_scalar(std::mem::transmute(&self),
-            std::mem::transmute(&self), with.0) };
+        unsafe { capi::pa_sw_cvolume_divide_scalar(self.as_mut(), self.as_ref(), with.0) };
         self
     }
 
@@ -429,21 +443,18 @@ impl ChannelVolumes {
     ///
     /// Returns pointer to self.
     pub fn remap(&mut self, from: &::channelmap::Map, to: &::channelmap::Map) -> &mut Self {
-        unsafe { capi::pa_cvolume_remap(std::mem::transmute(&self),
-            std::mem::transmute(from), std::mem::transmute(to)) };
+        unsafe { capi::pa_cvolume_remap(self.as_mut(), from.as_ref(), to.as_ref()) };
         self
     }
 
     /// Returns `true` if the specified volume is compatible with the specified sample spec.
     pub fn is_compatible_with_ss(&self, ss: &::sample::Spec) -> bool {
-        unsafe { capi::pa_cvolume_compatible(std::mem::transmute(self),
-            std::mem::transmute(ss)) != 0 }
+        unsafe { capi::pa_cvolume_compatible(self.as_ref(), ss.as_ref()) != 0 }
     }
 
     /// Returns `true` if the specified volume is compatible with the specified channel map.
     pub fn is_compatible_with_cm(&self, cm: &::channelmap::Map) -> bool {
-        unsafe { capi::pa_cvolume_compatible_with_channel_map(std::mem::transmute(self),
-            std::mem::transmute(cm)) != 0 }
+        unsafe { capi::pa_cvolume_compatible_with_channel_map(self.as_ref(), cm.as_ref()) != 0 }
     }
 
     /// Calculate a ‘balance’ value for the specified volume with the specified channel map.
@@ -454,7 +465,7 @@ impl ChannelVolumes {
     ///
     /// [`::channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
     pub fn get_balance(&self, map: &::channelmap::Map) -> f32 {
-        unsafe { capi::pa_cvolume_get_balance(std::mem::transmute(self), std::mem::transmute(map)) }
+        unsafe { capi::pa_cvolume_get_balance(self.as_ref(), map.as_ref()) }
     }
 
     /// Adjust the ‘balance’ value for the specified volume with the specified channel map.
@@ -470,8 +481,7 @@ impl ChannelVolumes {
     /// [`get_balance`]: #method.get_balance
     /// [`::channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
     pub fn set_balance(&mut self, map: &::channelmap::Map, new_balance: f32) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_set_balance(std::mem::transmute(&self),
-            std::mem::transmute(map), new_balance) };
+        let ptr = unsafe { capi::pa_cvolume_set_balance(self.as_mut(), map.as_ref(), new_balance) };
         if ptr.is_null() {
             return None;
         }
@@ -487,7 +497,7 @@ impl ChannelVolumes {
     ///
     /// [`::channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
     pub fn get_fade(&self, map: &::channelmap::Map) -> f32 {
-        unsafe { capi::pa_cvolume_get_fade(std::mem::transmute(self), std::mem::transmute(map)) }
+        unsafe { capi::pa_cvolume_get_fade(self.as_ref(), map.as_ref()) }
     }
 
     /// Adjust the ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
@@ -503,9 +513,8 @@ impl ChannelVolumes {
     ///
     /// [`get_fade`]: #method.get_fade
     /// [`::channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
-    pub fn set_fade(&mut self, map: &::channelmap::Map, new_fade: f32) -> Option<&mut Self>{
-        let ptr = unsafe { capi::pa_cvolume_set_fade(std::mem::transmute(&self),
-            std::mem::transmute(map), new_fade) };
+    pub fn set_fade(&mut self, map: &::channelmap::Map, new_fade: f32) -> Option<&mut Self> {
+        let ptr = unsafe { capi::pa_cvolume_set_fade(self.as_mut(), map.as_ref(), new_fade) };
         if ptr.is_null() {
             return None;
         }
@@ -521,8 +530,7 @@ impl ChannelVolumes {
     /// [`::channelmap::Map::can_lfe_balance`]:
     /// ../channelmap/struct.Map.html#method.can_lfe_balance
     pub fn get_lfe_balance(&self, map: &::channelmap::Map) -> f32 {
-        unsafe { capi::pa_cvolume_get_lfe_balance(std::mem::transmute(self),
-            std::mem::transmute(map)) }
+        unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
 
     /// Adjust the ‘LFE balance’ value for the specified volume with the specified channel map.
@@ -540,8 +548,8 @@ impl ChannelVolumes {
     pub fn set_lfe_balance(&mut self, map: &::channelmap::Map, new_balance: f32)
         -> Option<&mut Self>
     {
-        let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(std::mem::transmute(&self),
-            std::mem::transmute(map), new_balance) };
+        let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(self.as_mut(), map.as_ref(),
+            new_balance) };
         if ptr.is_null() {
             return None;
         }
@@ -553,7 +561,7 @@ impl ChannelVolumes {
     /// The proportions between the channel volumes are kept.
     /// Returns pointer to self, or `None` on error.
     pub fn scale(&mut self, max: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_scale(std::mem::transmute(&self), max.0) };
+        let ptr = unsafe { capi::pa_cvolume_scale(self.as_mut(), max.0) };
         if ptr.is_null() {
             return None;
         }
@@ -573,8 +581,8 @@ impl ChannelVolumes {
         mask: Option<::channelmap::PositionMask>) -> Option<&mut Self>
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
-        let ptr = unsafe { capi::pa_cvolume_scale_mask(std::mem::transmute(&self), max.0,
-            std::mem::transmute(cm), mask_actual) };
+        let ptr = unsafe { capi::pa_cvolume_scale_mask(self.as_mut(), max.0, cm.as_ref(),
+            mask_actual) };
         if ptr.is_null() {
             return None;
         }
@@ -594,8 +602,8 @@ impl ChannelVolumes {
         // Note: C function returns NULL on invalid data or no channel at position specified (no
         // change needed). We could ignore failure and always return self ptr, but it does not seem
         // ideal to leave callers unaware should they be passing in invalid data.
-        let ptr = unsafe { capi::pa_cvolume_set_position(std::mem::transmute(&self),
-            std::mem::transmute(map), t.into(), v.0) };
+        let ptr = unsafe { capi::pa_cvolume_set_position(self.as_mut(), map.as_ref(), t.into(),
+            v.0) };
         if ptr.is_null() {
             return None;
         }
@@ -609,8 +617,7 @@ impl ChannelVolumes {
     ///
     /// [`::channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     pub fn get_position(&self, map: &::channelmap::Map, t: ::channelmap::Position) -> Volume {
-        Volume(unsafe { capi::pa_cvolume_get_position(std::mem::transmute(self),
-            std::mem::transmute(map), t.into()) })
+        Volume(unsafe { capi::pa_cvolume_get_position(self.as_ref(), map.as_ref(), t.into()) })
     }
 
     /// Merges one set of channel volumes with another.
@@ -624,8 +631,7 @@ impl ChannelVolumes {
     ///
     /// Returns pointer to self, or `None` on error.
     pub fn merge(&mut self, with: &Self) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_merge(std::mem::transmute(&self),
-            std::mem::transmute(&self), std::mem::transmute(with)) };
+        let ptr = unsafe { capi::pa_cvolume_merge(self.as_mut(), self.as_ref(), with.as_ref()) };
         if ptr.is_null() {
             return None;
         }
@@ -636,7 +642,7 @@ impl ChannelVolumes {
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
     pub fn inc_clamp(&mut self, inc: Volume, limit: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_inc_clamp(std::mem::transmute(&self), inc.0, limit.0) };
+        let ptr = unsafe { capi::pa_cvolume_inc_clamp(self.as_mut(), inc.0, limit.0) };
         if ptr.is_null() {
             return None;
         }
@@ -647,7 +653,7 @@ impl ChannelVolumes {
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
     pub fn increase(&mut self, inc: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_inc(std::mem::transmute(&self), inc.0) };
+        let ptr = unsafe { capi::pa_cvolume_inc(self.as_mut(), inc.0) };
         if ptr.is_null() {
             return None;
         }
@@ -658,7 +664,7 @@ impl ChannelVolumes {
     /// The proportions between the channels are kept.
     /// Returns pointer to self, or `None` on error.
     pub fn decrease(&mut self, dec: Volume) -> Option<&mut Self> {
-        let ptr = unsafe { capi::pa_cvolume_dec(std::mem::transmute(&self), dec.0) };
+        let ptr = unsafe { capi::pa_cvolume_dec(self.as_mut(), dec.0) };
         if ptr.is_null() {
             return None;
         }
@@ -670,7 +676,7 @@ impl ChannelVolumes {
         const PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
         unsafe {
-            capi::pa_cvolume_snprint(tmp.as_mut_ptr(), PRINT_MAX, std::mem::transmute(self));
+            capi::pa_cvolume_snprint(tmp.as_mut_ptr(), PRINT_MAX, self.as_ref());
             CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
@@ -680,8 +686,7 @@ impl ChannelVolumes {
         const PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
         let mut tmp = Vec::with_capacity(PRINT_DB_MAX);
         unsafe {
-            capi::pa_sw_cvolume_snprint_dB(tmp.as_mut_ptr(), PRINT_DB_MAX,
-                std::mem::transmute(self));
+            capi::pa_sw_cvolume_snprint_dB(tmp.as_mut_ptr(), PRINT_DB_MAX, self.as_ref());
             CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
@@ -695,14 +700,14 @@ impl ChannelVolumes {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 
         let p_map: *const capi::pa_channel_map = match map {
-            Some(map) => unsafe { std::mem::transmute(map) },
+            Some(map) => map.as_ref() as *const capi::pa_channel_map,
             None => null::<capi::pa_channel_map>(),
         };
 
         let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
         unsafe {
-            capi::pa_cvolume_snprint_verbose(tmp.as_mut_ptr(), PRINT_VERBOSE_MAX,
-                std::mem::transmute(self), p_map, print_db as i32);
+            capi::pa_cvolume_snprint_verbose(tmp.as_mut_ptr(), PRINT_VERBOSE_MAX, self.as_ref(),
+                p_map, print_db as i32);
             CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }

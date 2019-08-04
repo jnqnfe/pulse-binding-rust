@@ -159,11 +159,11 @@ impl Simple {
         };
 
         let p_map: *const pcapi::pa_channel_map = match map {
-            Some(map) => unsafe { std::mem::transmute(map) },
+            Some(map) => map.as_ref(),
             None => null::<pcapi::pa_channel_map>(),
         };
         let p_attr: *const pcapi::pa_buffer_attr = match attr {
-            Some(attr) => unsafe { std::mem::transmute(attr) },
+            Some(attr) => attr.as_ref(),
             None => null::<pcapi::pa_buffer_attr>(),
         };
         let p_server: *const c_char = match server {

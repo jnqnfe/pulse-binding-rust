@@ -122,6 +122,19 @@ fn bufferattr_compare_capi(){
     assert_eq!(std::mem::align_of::<BufferAttr>(), std::mem::align_of::<capi::pa_buffer_attr>());
 }
 
+impl AsRef<capi::pa_buffer_attr> for BufferAttr {
+    #[inline]
+    fn as_ref(&self) -> &capi::pa_buffer_attr {
+        unsafe { &*(self as *const Self as *const capi::pa_buffer_attr) }
+    }
+}
+impl AsRef<BufferAttr> for capi::pa_buffer_attr {
+    #[inline]
+    fn as_ref(&self) -> &BufferAttr {
+        unsafe { &*(self as *const Self as *const BufferAttr) }
+    }
+}
+
 /// A structure for all kinds of timing information of a stream.
 ///
 /// See [`stream::Stream::update_timing_info`] and [`stream::Stream::get_timing_info`].
@@ -238,6 +251,13 @@ fn timinginfo_compare_capi(){
     assert_eq!(std::mem::align_of::<TimingInfo>(), std::mem::align_of::<capi::pa_timing_info>());
 }
 
+impl AsRef<TimingInfo> for capi::pa_timing_info {
+    #[inline]
+    fn as_ref(&self) -> &TimingInfo {
+        unsafe { &*(self as *const Self as *const TimingInfo) }
+    }
+}
+
 /// A structure for the spawn API.
 ///
 /// This may be used to integrate auto spawned daemons into your application. For more information
@@ -269,6 +289,13 @@ pub struct SpawnApi {
 fn spawnapi_compare_capi(){
     assert_eq!(std::mem::size_of::<SpawnApi>(), std::mem::size_of::<capi::pa_spawn_api>());
     assert_eq!(std::mem::align_of::<SpawnApi>(), std::mem::align_of::<capi::pa_spawn_api>());
+}
+
+impl AsRef<capi::pa_spawn_api> for SpawnApi {
+    #[inline]
+    fn as_ref(&self) -> &capi::pa_spawn_api {
+        unsafe { &*(self as *const Self as *const capi::pa_spawn_api) }
+    }
 }
 
 pub type SinkFlagSet = capi::def::pa_sink_flags_t;
@@ -347,7 +374,6 @@ impl From<SinkState> for capi::pa_sink_state_t {
         unsafe { std::mem::transmute(s) }
     }
 }
-
 impl From<capi::pa_sink_state_t> for SinkState {
     fn from(s: capi::pa_sink_state_t) -> Self {
         unsafe { std::mem::transmute(s) }
@@ -442,7 +468,6 @@ impl From<SourceState> for capi::pa_source_state_t {
         unsafe { std::mem::transmute(s) }
     }
 }
-
 impl From<capi::pa_source_state_t> for SourceState {
     fn from(s: capi::pa_source_state_t) -> Self {
         unsafe { std::mem::transmute(s) }

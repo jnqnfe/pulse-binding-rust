@@ -165,7 +165,6 @@ impl From<State> for capi::pa_context_state_t {
         unsafe { std::mem::transmute(s) }
     }
 }
-
 impl From<capi::pa_context_state_t> for State {
     fn from(s: capi::pa_context_state_t) -> Self {
         unsafe { std::mem::transmute(s) }
@@ -208,7 +207,7 @@ impl Context {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_new(std::mem::transmute(mainloop.inner().get_api()),
+        let ptr = unsafe { capi::pa_context_new(mainloop.inner().get_api().as_ref(),
             c_name.as_ptr()) };
         if ptr.is_null() {
             return None;
@@ -224,8 +223,8 @@ impl Context {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_new_with_proplist(
-            std::mem::transmute(mainloop.inner().get_api()), c_name.as_ptr(), proplist.0.ptr) };
+        let ptr = unsafe { capi::pa_context_new_with_proplist(mainloop.inner().get_api().as_ref(),
+            c_name.as_ptr(), proplist.0.ptr) };
         if ptr.is_null() {
             return None;
         }
@@ -296,7 +295,7 @@ impl Context {
         };
 
         let p_api: *const capi::pa_spawn_api = match api {
-            Some(api) => unsafe { std::mem::transmute(api) },
+            Some(api) => api.as_ref(),
             None => null::<capi::pa_spawn_api>(),
         };
         let p_server: *const c_char = match server {
@@ -572,7 +571,7 @@ impl Context {
     pub fn get_tile_size(&self, ss: &::sample::Spec) -> Option<usize> {
         // Note: C function doc comments mention possibility of passing in a NULL pointer for ss.
         // We do not allow this, since 
-        match unsafe { capi::pa_context_get_tile_size(self.ptr, std::mem::transmute(ss)) } {
+        match unsafe { capi::pa_context_get_tile_size(self.ptr, ss.as_ref()) } {
             std::usize::MAX => None,
             r => Some(r),
         }

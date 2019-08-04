@@ -284,7 +284,7 @@ pub trait Mainloop {
 
         let inner = self.inner();
         let api = inner.get_api();
-        unsafe { capi::pa_mainloop_api_once(std::mem::transmute(api), cb_fn, cb_data) };
+        unsafe { capi::pa_mainloop_api_once(api.as_ref(), cb_fn, cb_data) };
     }
 
     /// Call quit
@@ -371,12 +371,18 @@ fn api_compare_capi(){
     assert_eq!(std::mem::align_of::<ApiInternal>(), std::mem::align_of::<capi::pa_mainloop_api>());
 }
 
+impl AsRef<capi::pa_mainloop_api> for MainloopApi {
+    #[inline]
+    fn as_ref(&self) -> &capi::pa_mainloop_api {
+        unsafe { &*(self as *const Self as *const capi::pa_mainloop_api) }
+    }
+}
+
 impl<'a> From<*const ApiInternal> for &'a MainloopApi {
     fn from(a: *const ApiInternal) -> Self {
         unsafe { std::mem::transmute(a) }
     }
 }
-
 impl<'a> From<&'a MainloopApi> for *const ApiInternal {
     fn from(a: &'a MainloopApi) -> Self {
         unsafe { std::mem::transmute(a) }
