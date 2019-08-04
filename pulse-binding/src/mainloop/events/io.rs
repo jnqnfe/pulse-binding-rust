@@ -114,6 +114,7 @@ impl<T> Drop for IoEvent<T>
 }
 
 /// Proxy for the event callback.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 pub(crate)

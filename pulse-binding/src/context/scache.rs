@@ -184,6 +184,7 @@ impl Context {
 }
 
 /// Proxy for completion success callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn play_sample_success_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {

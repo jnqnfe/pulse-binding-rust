@@ -59,6 +59,7 @@ impl Info {
 }
 
 /// A wrapper object providing device restore routines to a context.
+///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct DeviceRestore {
     context: *mut ContextInternal,
@@ -81,7 +82,9 @@ type SubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(::def::Device, u32),
 
 impl Context {
     /// Returns a device restore object linked to the current context, giving access to device
-    /// restore routines. See [`::context::ext_device_restore`](ext_device_restore/index.html).
+    /// restore routines.
+    ///
+    /// See [`::context::ext_device_restore`](ext_device_restore/index.html).
     pub fn device_restore(&self) -> DeviceRestore {
         unsafe { capi::pa_context_ref(self.ptr) };
         DeviceRestore::from_raw(self.ptr)
@@ -202,6 +205,7 @@ impl Drop for DeviceRestore {
 }
 
 /// Proxy for the extension subscribe callback.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
@@ -215,6 +219,7 @@ fn ext_subscribe_cb_proxy(_: *mut ContextInternal, type_: ::def::Device, index: 
 }
 
 /// Proxy for read list callbacks.
+///
 /// Warning: This is for list cases only! On EOL or error it destroys the actual closure callback.
 extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,

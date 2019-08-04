@@ -632,8 +632,10 @@ impl Stream {
     }
 
     /// Create a new, unconnected stream with the specified name, the set of formats this client can
-    /// provide, and an initial list of properties. While connecting, the server will select the
-    /// most appropriate format which the client must then provide.
+    /// provide, and an initial list of properties.
+    ///
+    /// While connecting, the server will select the most appropriate format which the client must
+    /// then provide.
     ///
     /// # Params
     ///
@@ -679,7 +681,9 @@ impl Stream {
     }
 
     /// Return the sink input resp. source output index this stream is identified in the server
-    /// with. This is useful with the introspection functions such as
+    /// with.
+    ///
+    /// This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_input_info`] or
     /// [`::context::introspect::Introspector::get_source_output_info`].
     ///
@@ -694,8 +698,9 @@ impl Stream {
         }
     }
 
-    /// Return the index of the sink or source this stream is connected to in the server. This is
-    /// useful with the introspection functions such as
+    /// Return the index of the sink or source this stream is connected to in the server.
+    ///
+    /// This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_info_by_index`] or
     /// [`::context::introspect::Introspector::get_source_info_by_index`].
     ///
@@ -713,8 +718,9 @@ impl Stream {
         }
     }
 
-    /// Return the name of the sink or source this stream is connected to in the server. This is
-    /// useful with the introspection functions such as
+    /// Return the name of the sink or source this stream is connected to in the server.
+    ///
+    /// This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_info_by_name`] or
     /// [`::context::introspect::Introspector::get_source_info_by_name`].
     ///
@@ -941,9 +947,11 @@ impl Stream {
     }
 
     /// Reverses the effect of [`begin_write`] dropping any data that has already been placed in the
-    /// memory area returned by [`begin_write`]. Only valid to call after a call to [`begin_write`]
-    /// has been made, and neither [`cancel_write`] nor [`write`] have been called yet. Accessing
-    /// the memory previously returned by [`begin_write`] after calling this function is invalid.
+    /// memory area returned by [`begin_write`].
+    ///
+    /// Only valid to call after a call to [`begin_write`] has been made, and neither
+    /// [`cancel_write`] nor [`write`] have been called yet. Accessing the memory previously
+    /// returned by [`begin_write`] after calling this function is invalid.
     ///
     /// [`begin_write`]: #method.begin_write
     /// [`cancel_write`]: #method.cancel_write
@@ -1207,8 +1215,9 @@ impl Stream {
         }
     }
 
-    /// Set the callback function that is called when a buffer underflow happens. (Only for playback
-    /// streams)
+    /// Set the callback function that is called when a buffer underflow happens.
+    ///
+    /// (Only for playback streams).
     pub fn set_underflow_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.underflow;
         *saved = NotifyCb::new(callback);
@@ -1217,8 +1226,10 @@ impl Stream {
     }
 
     /// Set the callback function that is called when the server starts playback after an underrun
-    /// or on initial startup. This only informs that audio is flowing again, it is no indication
-    /// that audio started to reach the speakers already. (Only for playback streams).
+    /// or on initial startup.
+    ///
+    /// This only informs that audio is flowing again, it is no indication that audio started to
+    /// reach the speakers already. (Only for playback streams).
     pub fn set_started_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.started;
         *saved = NotifyCb::new(callback);
@@ -1227,6 +1238,7 @@ impl Stream {
     }
 
     /// Set the callback function that is called whenever a latency information update happens.
+    ///
     /// Useful on [`flags::AUTO_TIMING_UPDATE`] streams only.
     ///
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
@@ -1238,7 +1250,9 @@ impl Stream {
     }
 
     /// Set the callback function that is called whenever the stream is moved to a different
-    /// sink/source. Use [`get_device_name`] or [`get_device_index`] to query the new sink/source.
+    /// sink/source.
+    ///
+    /// Use [`get_device_name`] or [`get_device_index`] to query the new sink/source.
     ///
     /// [`get_device_name`]: #method.get_device_name
     /// [`get_device_index`]: #method.get_device_index
@@ -1250,9 +1264,11 @@ impl Stream {
     }
 
     /// Set the callback function that is called whenever the sink/source this stream is connected
-    /// to is suspended or resumed. Use [`is_suspended`] to query the new suspend status. Please
-    /// note that the suspend status might also change when the stream is moved between devices.
-    /// Thus if you call this function you very likely want to call [`set_moved_callback`] too.
+    /// to is suspended or resumed.
+    ///
+    /// Use [`is_suspended`] to query the new suspend status. Please note that the suspend status
+    /// might also change when the stream is moved between devices. Thus if you call this function
+    /// you very likely want to call [`set_moved_callback`] too.
     ///
     /// [`is_suspended`]: #method.is_suspended
     /// [`set_moved_callback`]: #method.set_moved_callback
@@ -1280,9 +1296,11 @@ impl Stream {
     }
 
     /// Set the callback function that is called whenever the buffer attributes on the server side
-    /// change. Please note that the buffer attributes can change when moving a stream to a
-    /// different sink/source too, hence if you use this callback you should use
-    /// [`set_moved_callback`] as well.
+    /// change.
+    ///
+    /// Please note that the buffer attributes can change when moving a stream to a different
+    /// sink/source too, hence if you use this callback you should use [`set_moved_callback`] as
+    /// well.
     ///
     /// [`set_moved_callback`]: #method.set_moved_callback
     pub fn set_buffer_attr_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
@@ -1294,12 +1312,13 @@ impl Stream {
 
     /// Pause playback of this stream temporarily.
     ///
-    /// Available on both playback and recording streams. The pause operation is executed as
-    /// quickly as possible. If a cork is very quickly followed by an uncork, this might not
-    /// actually have any effect on the stream that is output. You can use [`is_corked`] to find out
-    /// whether the stream is currently paused or not. Normally a stream will be created in uncorked
-    /// state. If you pass [`flags::START_CORKED`] as a flag when connecting the stream, it will be
-    /// created in corked state.
+    /// Available on both playback and recording streams.
+    ///
+    /// The pause operation is executed as quickly as possible. If a cork is very quickly followed
+    /// by an uncork, this might not actually have any effect on the stream that is output. You can
+    /// use [`is_corked`] to find out whether the stream is currently paused or not. Normally a
+    /// stream will be created in uncorked state. If you pass [`flags::START_CORKED`] as a flag when
+    /// connecting the stream, it will be created in corked state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1319,12 +1338,13 @@ impl Stream {
 
     /// Resume playback of this stream.
     ///
-    /// Available on both playback and recording streams. The un-pause operation is executed as
-    /// quickly as possible. If an uncork is very quickly followed by a cork, this might not
-    /// actually have any effect on the stream that is output. You can use [`is_corked`] to find out
-    /// whether the stream is currently paused or not. Normally a stream will be created in uncorked
-    /// state. If you pass [`flags::START_CORKED`] as a flag when connecting the stream, it will be
-    /// created in corked state.
+    /// Available on both playback and recording streams.
+    ///
+    /// The un-pause operation is executed as quickly as possible. If an uncork is very quickly
+    /// followed by a cork, this might not actually have any effect on the stream that is output.
+    /// You can use [`is_corked`] to find out whether the stream is currently paused or not.
+    /// Normally a stream will be created in uncorked state. If you pass [`flags::START_CORKED`] as
+    /// a flag when connecting the stream, it will be created in corked state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1360,8 +1380,9 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Re-enable prebuffering if specified in the [`::def::BufferAttr`] structure. Available for
-    /// playback streams only.
+    /// Re-enable prebuffering if specified in the [`::def::BufferAttr`] structure.
+    ///
+    /// Available for playback streams only.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1653,8 +1674,9 @@ impl Stream {
     }
 
     /// For record streams connected to a monitor source: monitor only a very specific sink input of
-    /// the sink. This function needs to be called before [`connect_record`](#method.connect_record)
-    /// is called.
+    /// the sink.
+    ///
+    /// This function needs to be called before [`connect_record`](#method.connect_record) is called.
     pub fn set_monitor_stream(&mut self, sink_input_index: u32) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_index) } {
             0 => Ok(()),
@@ -1683,6 +1705,7 @@ impl Drop for Stream {
 }
 
 /// Proxy for completion success callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void) {
@@ -1695,6 +1718,7 @@ fn success_cb_proxy(_: *mut StreamInternal, success: i32, userdata: *mut c_void)
 }
 
 /// Proxy for request callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
@@ -1706,6 +1730,7 @@ fn request_cb_proxy(_: *mut StreamInternal, nbytes: usize, userdata: *mut c_void
 }
 
 /// Proxy for notify callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
@@ -1717,6 +1742,7 @@ fn notify_cb_proxy(_: *mut StreamInternal, userdata: *mut c_void) {
 }
 
 /// Proxy for event callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

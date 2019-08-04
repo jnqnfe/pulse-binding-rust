@@ -79,8 +79,10 @@ pub const VOLUME_MUTED: Volume = Volume(capi::PA_VOLUME_MUTED);
 pub const VOLUME_MAX: Volume = Volume(capi::PA_VOLUME_MAX);
 pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 
-/// Minus Infinity. This floor value is used / can be used, when using converting between integer
-/// software volume and decibel (dB, floating point) software volume.
+/// Minus Infinity.
+///
+/// This floor value is used / can be used, when using converting between integer software volume
+/// and decibel (dB, floating point) software volume.
 pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY);
 
 /// Software volume expressed as an integer
@@ -156,6 +158,7 @@ impl PartialEq for ChannelVolumes {
 }
 
 /// Convert a decibel value to a volume (amplitude, not power).
+///
 /// This is only valid for software volumes!
 impl From<VolumeDB> for Volume {
     #[inline]
@@ -164,6 +167,7 @@ impl From<VolumeDB> for Volume {
     }
 }
 /// Convert a volume to a decibel value (amplitude, not power).
+///
 /// This is only valid for software volumes!
 impl From<Volume> for VolumeDB {
     #[inline]
@@ -173,6 +177,7 @@ impl From<Volume> for VolumeDB {
 }
 
 /// Convert a linear factor to a volume.
+///
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 /// This is only valid for software volumes!
 impl From<VolumeLinear> for Volume {
@@ -182,6 +187,7 @@ impl From<VolumeLinear> for Volume {
     }
 }
 /// Convert a volume to a linear factor.
+///
 /// This is only valid for software volumes!
 impl From<Volume> for VolumeLinear {
     #[inline]
@@ -191,7 +197,9 @@ impl From<Volume> for VolumeLinear {
 }
 
 /// Convert a linear factor to a decibel value (amplitude, not power).
+///
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
+///
 /// This is only valid for software volumes!
 impl From<VolumeLinear> for VolumeDB {
     #[inline]
@@ -200,6 +208,7 @@ impl From<VolumeLinear> for VolumeDB {
     }
 }
 /// Convert a decibel value (amplitude, not power) to a linear factor.
+///
 /// This is only valid for software volumes!
 impl From<VolumeDB> for VolumeLinear {
     #[inline]
@@ -237,6 +246,7 @@ impl Volume {
     }
 
     /// Recommended maximum volume to show in user facing UIs.
+    ///
     /// Note: UIs should deal gracefully with volumes greater than this value and not cause feedback
     /// loops etc. - i.e. if the volume is more than this, the UI should not limit it and push the
     /// limited value back to the server.
@@ -258,7 +268,9 @@ impl Volume {
     }
 
     /// Multiply two software volumes, return the result.
+    ///
     /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of multiplication.
+    ///
     /// This is only valid for software volumes!
     #[inline]
     pub fn multiply(a: Self, b: Self) -> Self {
@@ -267,8 +279,10 @@ impl Volume {
 
     /// Divide two software volumes, return the result.
     ///
-    /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. This is
-    /// only valid for software volumes! If a division by zero is tried the result will be `0`.
+    /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. If a
+    /// division by zero is tried the result will be `0`.
+    ///
+    /// This is only valid for software volumes!
     #[inline]
     pub fn divide(a: Self, b: Self) -> Self {
         Volume(unsafe { capi::pa_sw_volume_divide(a.0, b.0) })
@@ -316,8 +330,10 @@ impl std::fmt::Display for Volume {
 }
 
 impl ChannelVolumes {
-    /// Initialize the specified volume and return a pointer to it. The sample spec will have a
-    /// defined state but [`is_valid`](#method.is_valid) will fail for it.
+    /// Initialize the specified volume and return a pointer to it.
+    ///
+    /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
+    /// it.
     #[inline]
     pub fn init(&mut self) -> &Self {
         unsafe { capi::pa_cvolume_init(self.as_mut()) };
@@ -605,6 +621,7 @@ impl ChannelVolumes {
     /// Scale so that the maximum volume of all channels equals `max`.
     ///
     /// The proportions between the channel volumes are kept.
+    ///
     /// Returns pointer to self, or `None` on error.
     #[inline]
     pub fn scale(&mut self, max: Volume) -> Option<&mut Self> {
@@ -690,7 +707,9 @@ impl ChannelVolumes {
     }
 
     /// Increase the volume passed in by `inc`, but not exceeding `limit`.
+    ///
     /// The proportions between the channels are kept.
+    ///
     /// Returns pointer to self, or `None` on error.
     #[inline]
     pub fn inc_clamp(&mut self, inc: Volume, limit: Volume) -> Option<&mut Self> {
@@ -702,7 +721,9 @@ impl ChannelVolumes {
     }
 
     /// Increase the volume passed in by `inc`.
+    ///
     /// The proportions between the channels are kept.
+    ///
     /// Returns pointer to self, or `None` on error.
     #[inline]
     pub fn increase(&mut self, inc: Volume) -> Option<&mut Self> {
@@ -714,7 +735,9 @@ impl ChannelVolumes {
     }
 
     /// Decrease the volume passed in by `dec`.
+    ///
     /// The proportions between the channels are kept.
+    ///
     /// Returns pointer to self, or `None` on error.
     #[inline]
     pub fn decrease(&mut self, dec: Volume) -> Option<&mut Self> {

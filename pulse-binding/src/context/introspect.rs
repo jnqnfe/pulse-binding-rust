@@ -261,7 +261,9 @@ unsafe impl Sync for Introspector {}
 
 impl Context {
     /// Returns an introspection object linked to the current context, giving access to
-    /// introspection routines. See [`::context::introspect`](introspect/index.html).
+    /// introspection routines.
+    ///
+    /// See [`::context::introspect`](introspect/index.html).
     #[inline]
     pub fn introspect(&self) -> Introspector {
         unsafe { capi::pa_context_ref(self.ptr) };
@@ -1035,6 +1037,7 @@ impl Introspector {
 }
 
 /// Proxy for get source info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn get_source_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceInfoInternal, eol: i32,
@@ -1265,6 +1268,7 @@ impl Introspector {
 }
 
 /// Proxy for get module info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal, eol: i32,
@@ -1284,6 +1288,7 @@ fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal,
 }
 
 /// Proxy for context index callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
@@ -1387,6 +1392,7 @@ impl Introspector {
 }
 
 /// Proxy for get sink info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoInternal, eol: i32,
@@ -1699,6 +1705,7 @@ impl Introspector {
 }
 
 /// Proxy for get card info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn get_card_info_list_cb_proxy(_: *mut ContextInternal, i: *const CardInfoInternal, eol: i32,
@@ -1930,6 +1937,7 @@ impl Introspector {
 }
 
 /// Proxy for get sink input info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn get_sink_input_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInputInfoInternal,
@@ -2161,6 +2169,7 @@ impl Introspector {
 }
 
 /// Proxy for get source output info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceOutputInfoInternal,
@@ -2199,6 +2208,7 @@ impl Introspector {
 }
 
 /// Proxy for get stat info callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata: *mut c_void) {
@@ -2318,6 +2328,7 @@ impl Introspector {
 }
 
 /// Proxy for get sample info list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn get_sample_info_list_cb_proxy(_: *mut ContextInternal, i: *const SampleInfoInternal, eol: i32,

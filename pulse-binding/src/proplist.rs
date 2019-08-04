@@ -241,8 +241,9 @@ impl Proplist {
     }
 
     /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
-    /// pointer. This is the ‘weak’ version, which avoids destroying the internal object when
-    /// dropped.
+    /// pointer.
+    ///
+    /// This is the ‘weak’ version, which avoids destroying the internal object when dropped.
     #[inline]
     pub(crate) fn from_raw_weak(ptr: *mut ProplistInternal) -> Self {
         assert_eq!(false, ptr.is_null());
@@ -258,7 +259,9 @@ impl Proplist {
     }
 
     /// Append a new string entry to the property list, possibly overwriting an already existing
-    /// entry with the same key. An internal copy is made of the provided string.
+    /// entry with the same key.
+    ///
+    /// An internal copy is made of the provided string.
     pub fn sets(&mut self, key: &str, value: &str) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -287,7 +290,9 @@ impl Proplist {
     }
 
     /// Append a new arbitrary data entry to the property list, possibly overwriting an already
-    /// existing entry with the same key. An internal copy of the provided data is made.
+    /// existing entry with the same key.
+    ///
+    /// An internal copy of the provided data is made.
     pub fn set(&mut self, key: &str, data: &[u8]) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         //  as_ptr() giving dangling pointers!
@@ -300,8 +305,9 @@ impl Proplist {
         }
     }
 
-    /// Return a string entry for the specified key. Will return `None` if the key does not exist or
-    /// if data is not valid UTF-8.
+    /// Return a string entry for the specified key.
+    ///
+    /// Will return `None` if the key does not exist or if data is not valid UTF-8.
     pub fn gets(&self, key: &str) -> Option<String> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -441,6 +447,8 @@ impl Proplist {
         }
     }
 
+    /// Does this contain an entry with the given key?
+    ///
     /// Returns `true` if an entry for the specified key exists in the property list. Returns `None`
     /// on error.
     pub fn contains(&self, key: &str) -> Option<bool> {
@@ -489,8 +497,9 @@ impl Drop for ProplistInner {
 }
 
 impl Clone for Proplist {
-    /// Allocate a new property list and copy over every single entry from the specified list. If
-    /// this is called on a ‘weak’ instance, a non-weak object is returned.
+    /// Allocate a new property list and copy over every single entry from the specified list.
+    ///
+    /// If this is called on a ‘weak’ instance, a non-weak object is returned.
     #[inline]
     fn clone(&self) -> Self {
         Self::from_raw(unsafe { capi::pa_proplist_copy(self.0.ptr) })

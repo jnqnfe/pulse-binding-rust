@@ -47,8 +47,10 @@ type NotifyCb = ::callbacks::MultiUseCallback<dyn FnMut(),
 
 impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     /// Create a new `Operation` from an existing [`OperationInternal`](enum.OperationInternal.html)
-    /// pointer. We also take a copy of the closure callback pointer, in order to free the memory
-    /// on cancellation.
+    /// pointer.
+    ///
+    /// We also take a copy of the closure callback pointer, in order to free the memory on
+    /// cancellation.
     pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>)
         -> Self
     {
@@ -113,6 +115,7 @@ impl<ClosureProto: ?Sized> Drop for Operation<ClosureProto> {
 }
 
 /// Proxy for notification callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

@@ -252,6 +252,7 @@ impl From<capi::pa_sample_spec> for Spec {
 
 impl Spec {
     /// Initialize the specified sample spec.
+    ///
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
     /// it.
     #[inline]
@@ -291,6 +292,7 @@ impl Spec {
     }
 
     /// Calculate the time it would take to play a buffer of the specified size.
+    ///
     /// The return value will always be rounded down for non-integral return values.
     #[inline]
     pub fn bytes_to_usec(&self, length: u64) -> MicroSeconds {
@@ -298,6 +300,7 @@ impl Spec {
     }
 
     /// Calculates the size of a buffer required, for playback duration of the time specified.
+    ///
     /// The return value will always be rounded down for non-integral return values.
     #[inline]
     pub fn usec_to_bytes(&self, t: MicroSeconds) -> usize {
@@ -372,6 +375,8 @@ impl Format {
         unsafe { capi::pa_parse_sample_format(c_format.as_ptr()).into() }
     }
 
+    /// Is format little endian?
+    ///
     /// Returns `true` when the specified format is little endian, `false` if big endian. Returns
     /// `None` when endianness does not apply to this format, or if unknown.
     pub fn is_le(&self) -> Option<bool> {
@@ -382,6 +387,8 @@ impl Format {
         }
     }
 
+    /// Is format big endian?
+    ///
     /// Returns `true` when the specified format is big endian, `false` if little endian. Returns
     /// `None` when endianness does not apply to this format, or if unknown.
     pub fn is_be(&self) -> Option<bool> {

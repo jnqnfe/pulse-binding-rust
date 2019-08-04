@@ -461,17 +461,20 @@ impl Mainloop {
         }
     }
 
-    /// Terminate the event loop thread cleanly. Make sure to unlock the mainloop object before
-    /// calling this function.
+    /// Terminate the event loop thread cleanly.
+    ///
+    /// Make sure to unlock the mainloop object before calling this function.
     #[inline]
     pub fn stop(&mut self) {
         unsafe { capi::pa_threaded_mainloop_stop((*self._inner).ptr); }
     }
 
     /// Lock the event loop object, effectively blocking the event loop thread from processing
-    /// events. You can use this to enforce exclusive access to all objects attached to the event
-    /// loop. This lock is recursive. This function may not be called inside the event loop thread.
-    /// Events that are dispatched from the event loop thread are executed with this lock held.
+    /// events.
+    ///
+    /// You can use this to enforce exclusive access to all objects attached to the event loop. This
+    /// lock is recursive. This function may not be called inside the event loop thread. Events that
+    /// are dispatched from the event loop thread are executed with this lock held.
     #[inline]
     pub fn lock(&mut self) {
         assert!(!self.in_thread(), "lock() can not be called from within the event loop thread!");
@@ -484,19 +487,22 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
     }
 
-    /// Wait for an event to be signalled by the event loop thread. You can use this to pass data
-    /// from the event loop thread to the main thread in a synchronized fashion. This function may
-    /// not be called inside the event loop thread. Prior to this call the event loop object needs
-    /// to be locked using [`lock`](#method.lock). While waiting the lock will be released.
-    /// Immediately before returning it will be acquired again. This function may spuriously wake up
-    /// even without [`signal`](#method.signal) being called. You need to make sure to handle that!
+    /// Wait for an event to be signalled by the event loop thread.
+    ///
+    /// You can use this to pass data from the event loop thread to the main thread in a
+    /// synchronized fashion. This function may not be called inside the event loop thread. Prior to
+    /// this call the event loop object needs to be locked using [`lock`](#method.lock). While
+    /// waiting the lock will be released. Immediately before returning it will be acquired again.
+    /// This function may spuriously wake up even without [`signal`](#method.signal) being called.
+    /// You need to make sure to handle that!
     #[inline]
     pub fn wait(&mut self) {
         unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
     }
 
-    /// Signal all threads waiting for a signalling event in [`wait`](#method.wait). If
-    /// `wait_for_accept` is non-zero, do not return before the signal was accepted by an
+    /// Signal all threads waiting for a signalling event in [`wait`](#method.wait).
+    ///
+    /// If `wait_for_accept` is non-zero, do not return before the signal was accepted by an
     /// [`accept`](#method.accept) call. While waiting for that condition the event loop object is
     /// unlocked.
     #[inline]

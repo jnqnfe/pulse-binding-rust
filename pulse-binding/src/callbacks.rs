@@ -18,9 +18,11 @@
 use std;
 use std::os::raw::c_void;
 
-/// List result instance. Fetching a list can result in a callback being fired for each list item,
-/// and then once to signal that the end of the list having been reached. This is used to
-/// distinguish such state to a closure callback.
+/// List result instance.
+///
+/// Fetching a list can result in a callback being fired for each list item, and then once to signal
+/// that the end of the list having been reached. This is used to distinguish such state to a
+/// closure callback.
 pub enum ListResult<T> {
     /// List item
     Item(T),
@@ -30,10 +32,11 @@ pub enum ListResult<T> {
     Error,
 }
 
-/// A saved multi-use callback. Closures of multi-use callbacks (those that may be called multiple
-/// times) need saving, and releasing later at an appropriate time (on change of registered
-/// callback, or on destruction of associated object). This is used for saving the pointer to it
-/// for such deferred destruction.
+/// A saved multi-use callback.
+///
+/// Closures of multi-use callbacks (those that may be called multiple times) need saving, and
+/// releasing later at an appropriate time (on change of registered callback, or on destruction of
+/// associated object). This is used for saving the pointer to it for such deferred destruction.
 pub(crate) struct MultiUseCallback<ClosureProto: ?Sized, ProxyProto> {
     saved: Option<*mut Box<ClosureProto>>,
     proxy: std::marker::PhantomData<*const ProxyProto>,
@@ -46,8 +49,10 @@ impl<ClosureProto: ?Sized, ProxyProto> Default for MultiUseCallback<ClosureProto
 }
 
 impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto> {
-    /// Create a new instance. **Note**, an existing instance should always be overwritten with a
-    /// new one, to ensure the old one is correctly freed.
+    /// Create a new instance.
+    ///
+    /// **Note**, an existing instance should always be overwritten with a new one, to ensure the
+    /// old one is correctly freed.
     pub fn new(cb: Option<Box<ClosureProto>>) -> Self {
         match cb {
             Some(f) => MultiUseCallback::<ClosureProto, ProxyProto> {
@@ -66,8 +71,11 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
         }
     }
 
-    /// Convert void closure pointer back to real type. For use in callback proxies. Only a
-    /// reference is returned, in order to deliberately avoid reclaiming ownership and thus
+    /// Convert void closure pointer back to real type.
+    ///
+    /// For use in callback proxies.
+    ///
+    /// Only a reference is returned, in order to deliberately avoid reclaiming ownership and thus
     /// triggering of destruction.
     ///
     /// Panics if `ptr` is null.
@@ -104,10 +112,12 @@ pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<Closu
 }
 
 /// Get the C API callback params (function pointer and data pointer pair), for an optional
-/// single-use callback closure. The proxy function must be specified. If `callback` is `None` then
-/// a pair of null pointers will be returned. Otherwise, a pair consisting of the given proxy and
-/// a pointer for the given closure will be returned. The data pointer can be restored to the actual
-/// (boxed) closure in the `extern "C"` callback proxy with `get_su_callback`.
+/// single-use callback closure.
+///
+/// The proxy function must be specified. If `callback` is `None` then a pair of null pointers will
+/// be returned. Otherwise, a pair consisting of the given proxy and a pointer for the given closure
+/// will be returned. The data pointer can be restored to the actual (boxed) closure in the
+/// `extern "C"` callback proxy with `get_su_callback`.
 pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
     callback: Option<Box<ClosureProto>>, proxy: ProxyProto) -> (Option<ProxyProto>, *mut c_void)
 {
@@ -117,7 +127,10 @@ pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
     }
 }
 
-/// Convert void single-use-callback closure pointer back to real type. For use in callback proxies.
+/// Convert void single-use-callback closure pointer back to real type.
+///
+/// For use in callback proxies.
+///
 /// Returns ownership of the closure, thus it can be destroyed after use.
 ///
 /// Panics if `ptr` is null.
@@ -135,9 +148,11 @@ pub(crate) enum ListInstanceCallback<'a, ClosureProto: 'a + ?Sized> {
     Error(Box<Box<ClosureProto>>),
 }
 
-/// Used by multi-use-list style callback proxies. Provide this with the `eol` parameter, and the
-/// userdata (closure) pointer parameter, and it will return either a reference to the closure or
-/// the owned closure, depending upon whether or not `eol` signals end-of-list/error.
+/// Used by multi-use-list style callback proxies.
+///
+/// Provide this with the `eol` parameter, and the userdata (closure) pointer parameter, and it will
+/// return either a reference to the closure or the owned closure, depending upon whether or not
+/// `eol` signals end-of-list/error.
 pub(crate) fn callback_for_list_instance<'a, ClosureProto: ?Sized>(eol: i32, ptr: *mut c_void)
     -> ListInstanceCallback<'a, ClosureProto>
 {

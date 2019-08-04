@@ -171,6 +171,7 @@ pub(super) type Callback = ::callbacks::MultiUseCallback<dyn FnMut(Option<Facili
 
 impl Context {
     /// Enable event notification.
+    ///
     /// The `mask` parameter is used to specify which facilities you are interested in being
     /// modified about. Use [`set_subscribe_callback`](#method.set_subscribe_callback) to set the
     /// actual callback that will be called when an event occurs.
@@ -190,9 +191,10 @@ impl Context {
     }
 
     /// Set the context specific call back function that is called whenever a subscribed-to event
-    /// occurs. Use [`subscribe`](#method.subscribe) to set the facilities you are interested in
-    /// receiving notifications for, and thus to start receiving notifications with the callback set
-    /// here.
+    /// occurs.
+    ///
+    /// Use [`subscribe`](#method.subscribe) to set the facilities you are interested in receiving
+    /// notifications for, and thus to start receiving notifications with the callback set here.
     ///
     /// The callback must take three parameters. The first two are the facility and operation
     /// components of the event type respectively (the underlying C API provides this information
@@ -211,6 +213,7 @@ impl Context {
 }
 
 /// Proxy for callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

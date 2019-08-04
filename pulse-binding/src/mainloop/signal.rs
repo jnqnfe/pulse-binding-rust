@@ -85,6 +85,7 @@ impl Drop for Event {
 }
 
 /// Proxy for signal callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

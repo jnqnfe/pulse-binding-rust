@@ -66,6 +66,7 @@ impl<'a> Info<'a> {
 }
 
 /// A wrapper object providing stream restore routines to a context.
+///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct StreamRestore {
     context: *mut ContextInternal,
@@ -85,7 +86,9 @@ struct CallbackPointers {
 
 impl Context {
     /// Returns a stream restore object linked to the current context, giving access to stream
-    /// restore routines. See [`::context::ext_stream_restore`](ext_stream_restore/index.html).
+    /// restore routines.
+    ///
+    /// See [`::context::ext_stream_restore`](ext_stream_restore/index.html).
     pub fn stream_restore(&self) -> StreamRestore {
         unsafe { capi::pa_context_ref(self.ptr) };
         StreamRestore::from_raw(self.ptr)
@@ -209,6 +212,7 @@ impl Drop for StreamRestore {
 }
 
 /// Proxy for read list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,

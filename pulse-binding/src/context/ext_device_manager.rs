@@ -105,6 +105,7 @@ impl<'a> Info<'a> {
 }
 
 /// A wrapper object providing device manager routines to a context.
+///
 /// Note: Saves a copy of active multi-use closure callbacks, which it frees on drop.
 pub struct DeviceManager {
     context: *mut ContextInternal,
@@ -124,7 +125,9 @@ struct CallbackPointers {
 
 impl Context {
     /// Returns a device manager object linked to the current context, giving access to device
-    /// manager routines. See [`::context::ext_device_manager`](ext_device_manager/index.html).
+    /// manager routines.
+    ///
+    /// See [`::context::ext_device_manager`](ext_device_manager/index.html).
     pub fn device_manager(&self) -> DeviceManager {
         unsafe { capi::pa_context_ref(self.ptr) };
         DeviceManager::from_raw(self.ptr)
@@ -304,6 +307,7 @@ impl Drop for DeviceManager {
 }
 
 /// Proxy for read list callbacks.
+///
 /// Warning: This is for list cases only! On EOL it destroys the actual closure callback.
 extern "C"
 fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,

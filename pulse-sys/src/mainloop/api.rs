@@ -43,6 +43,7 @@ pub type pa_time_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e:
 pub type pa_time_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_time_event, userdata: *mut c_void)>;
 
 /// An opaque deferred event source object.
+///
 /// Events of this type are triggered once in every main loop iteration
 #[repr(C)] pub struct pa_defer_event { _private: [u8; 0] }
 pub type pa_defer_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_defer_event, userdata: *mut c_void)>;

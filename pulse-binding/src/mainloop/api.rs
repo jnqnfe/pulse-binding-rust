@@ -274,6 +274,7 @@ pub trait Mainloop {
     }
 
     /// Run the specified callback once from the main loop using an anonymous defer event.
+    ///
     /// If the mainloop runs in a different thread, you need to follow the mainloop implementation’s
     /// rules regarding how to safely create defer events. In particular, if you’re using
     /// [`::mainloop::threaded`](../threaded/index.html), you must lock the mainloop before calling
@@ -392,6 +393,7 @@ impl<'a> From<&'a MainloopApi> for *const ApiInternal {
 }
 
 /// Proxy for anonymous ‘once’ deferred event callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn once_cb_proxy(_: *const ApiInternal, userdata: *mut c_void) {

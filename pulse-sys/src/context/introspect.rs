@@ -125,6 +125,7 @@ pub type pa_module_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *cons
 pub type pa_context_index_cb_t = Option<extern "C" fn(c: *mut pa_context, idx: u32, userdata: *mut c_void)>;
 
 /// Stores information about clients.
+///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 #[repr(C)]

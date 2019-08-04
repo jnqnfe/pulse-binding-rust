@@ -126,18 +126,18 @@ pub struct pa_sample_spec {
 /// Type for usec specifications (unsigned). Always 64 bit.
 pub type pa_usec_t = u64;
 
-/// The maximum length of strings returned by [`pa_sample_spec_snprint`]. Please note that this
-/// value can change with any release without warning and without being considered API or ABI
-/// breakage. You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_sample_spec_snprint`](fn.pa_sample_spec_snprint.html).
 ///
-/// [`pa_sample_spec_snprint`]: fn.pa_sample_spec_snprint.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_SAMPLE_SPEC_SNPRINT_MAX: usize = 32;
 
-/// The maximum length of strings returned by [`pa_bytes_snprint`]. Please note that this value can
-/// change with any release without warning and without being considered API or ABI breakage. You
-/// should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_bytes_snprint`](fn.pa_bytes_snprint.html).
 ///
-/// [`pa_bytes_snprint`]: fn.pa_bytes_snprint.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_BYTES_SNPRINT_MAX: usize = 11;
 
 #[link(name="pulse")]

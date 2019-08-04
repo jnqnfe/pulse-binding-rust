@@ -401,6 +401,8 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
+    /// Is this a connection to a local daemon?
+    ///
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
     /// instance when no connection has been made yet.
     pub fn is_local(&self) -> Option<bool> {
@@ -612,6 +614,7 @@ impl Drop for Context {
 }
 
 /// Proxy for completion success callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn success_cb_proxy(_: *mut ContextInternal, success: i32, userdata: *mut c_void) {
@@ -625,6 +628,7 @@ fn success_cb_proxy(_: *mut ContextInternal, success: i32, userdata: *mut c_void
 }
 
 /// Proxy for notification callbacks (single use).
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn notify_cb_proxy_single(_: *mut ContextInternal, userdata: *mut c_void) {
@@ -637,6 +641,7 @@ fn notify_cb_proxy_single(_: *mut ContextInternal, userdata: *mut c_void) {
 }
 
 /// Proxy for notification callbacks (multi use).
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
@@ -648,6 +653,7 @@ fn notify_cb_proxy_multi(_: *mut ContextInternal, userdata: *mut c_void) {
 }
 
 /// Proxy for event callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"
@@ -668,6 +674,7 @@ fn event_cb_proxy(_: *mut ContextInternal, name: *const c_char,
 }
 
 /// Proxy for extension test callbacks.
+///
 /// Warning: This is for single-use cases only! It destroys the actual closure callback.
 extern "C"
 fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_void) {
@@ -679,6 +686,7 @@ fn ext_test_cb_proxy(_: *mut ContextInternal, version: u32, userdata: *mut c_voi
 }
 
 /// Proxy for extension subscribe callbacks.
+///
 /// Warning: This is for multi-use cases! It does **not** destroy the actual closure callback, which
 /// must be accomplished separately to avoid a memory leak.
 extern "C"

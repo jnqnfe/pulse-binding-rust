@@ -56,11 +56,11 @@ pub struct pa_format_info {
     pub plist: *mut ::proplist::pa_proplist,
 }
 
-/// The maximum length of strings returned by [`pa_format_info_snprint`]. Please note that this
-/// value can change with any release without warning and without being considered API or ABI
-/// breakage. You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_format_info_snprint`](fn.pa_format_info_snprint.html).
 ///
-/// [`pa_format_info_snprint`]: fn.pa_format_info_snprint.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_FORMAT_INFO_SNPRINT_MAX: usize = 256;
 
 /// Represents the type of value of a property.

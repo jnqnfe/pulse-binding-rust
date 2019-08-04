@@ -50,45 +50,46 @@ pub struct pa_cvolume {
     pub values: [pa_volume_t; ::sample::PA_CHANNELS_MAX],
 }
 
-/// The maximum length of strings returned by [`pa_cvolume_snprint`]. Please note that this value
-/// can change with any release without warning and without being considered API or ABI breakage.
-/// You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_cvolume_snprint`](fn.pa_cvolume_snprint.htm).
 ///
-/// [`pa_cvolume_snprint`]: fn.pa_cvolume_snprint.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_CVOLUME_SNPRINT_MAX: usize = 320;
 
-/// The maximum length of strings returned by [`pa_sw_cvolume_snprint_dB`]. Please note that this
-/// value can change with any release without warning and without being considered API or ABI
-/// breakage. You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_sw_cvolume_snprint_dB`](fn.pa_sw_cvolume_snprint_dB.html).
 ///
-/// [`pa_sw_cvolume_snprint_dB`]: fn.pa_sw_cvolume_snprint_dB.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_SW_CVOLUME_SNPRINT_DB_MAX: usize = 448;
 
-/// The maximum length of strings returned by [`pa_cvolume_snprint_verbose`]. Please note that this
-/// value can change with any release without warning and without being considered API or ABI
-/// breakage. You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_cvolume_snprint_verbose`](fn.pa_cvolume_snprint_verbose.html).
 ///
-/// [`pa_cvolume_snprint_verbose`]: fn.pa_cvolume_snprint_verbose.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_CVOLUME_SNPRINT_VERBOSE_MAX: usize = 1984;
 
 /// The maximum length of strings returned by [`pa_volume_snprint`](fn.pa_volume_snprint.html).
+///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 pub const PA_VOLUME_SNPRINT_MAX: usize = 10;
 
-/// The maximum length of strings returned by [`pa_sw_volume_snprint_dB`]. Please note that this
-/// value can change with any release without warning and without being considered API or ABI
-/// breakage. You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_sw_volume_snprint_dB`](fn.pa_sw_volume_snprint_dB.html).
 ///
-/// [`pa_sw_volume_snprint_dB`]: fn.pa_sw_volume_snprint_dB.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_SW_VOLUME_SNPRINT_DB_MAX: usize = 11;
 
-/// The maximum length of strings returned by [`pa_volume_snprint_verbose`]. Please note that this
-/// value can change with any release without warning and without being considered API or ABI
-/// breakage. You should not use this definition anywhere where it might become part of an ABI.
+/// The maximum length of strings returned by [`pa_volume_snprint_verbose`](fn.pa_volume_snprint_verbose.html).
 ///
-/// [`pa_volume_snprint_verbose`]: fn.pa_volume_snprint_verbose.html
+/// Please note that this value can change with any release without warning and without being
+/// considered API or ABI breakage. You should not use this definition anywhere where it might
+/// become part of an ABI.
 pub const PA_VOLUME_SNPRINT_VERBOSE_MAX: usize = 35;
 
 #[inline(always)]

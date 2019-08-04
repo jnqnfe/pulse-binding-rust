@@ -180,8 +180,9 @@ impl From<capi::pa_channel_position_t> for Position {
     }
 }
 
-/// A channel map which can be used to attach labels to specific channels of a stream. These values
-/// are relevant for conversion and mixing of streams.
+/// A channel map which can be used to attach labels to specific channels of a stream.
+///
+/// These values are relevant for conversion and mixing of streams.
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Map {
@@ -281,9 +282,10 @@ impl Position {
 }
 
 impl Map {
-    /// Parse a channel position list or well-known mapping name into a channel map structure. This
-    /// turns the output of [`print`](#method.print) and [`to_name`](#method.to_name) back into a
-    /// `Map`.
+    /// Parse a channel position list or well-known mapping name into a channel map structure.
+    ///
+    /// This turns the output of [`print`](#method.print) and [`to_name`](#method.to_name) back into
+    /// a `Map`.
     pub fn new_from_string(s: &str) -> Result<Self, ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -297,8 +299,9 @@ impl Map {
         Ok(map)
     }
 
-    /// Initialize the specified channel map and return a pointer to it. The map will have a defined
-    /// state but [`is_valid`](#method.is_valid) will fail for it.
+    /// Initialize the specified channel map and return a pointer to it.
+    ///
+    /// The map will have a defined state but [`is_valid`](#method.is_valid) will fail for it.
     #[inline]
     pub fn init(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init(self.as_mut()) };

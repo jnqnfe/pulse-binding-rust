@@ -212,6 +212,7 @@ impl Info {
     }
 
     /// Create a new `Info` from an existing [`InfoInternal`](struct.InfoInternal.html) pointer.
+    ///
     /// This is the ‘weak’ version, which avoids destroying the internal object when dropped.
     pub(crate) fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
@@ -237,10 +238,12 @@ impl Info {
     }
 
     /// Returns whether the format represented by self is a subset of the format represented by
-    /// `with`. This means that `with` must have all the fields that self does, but the reverse need
-    /// not be true. This is typically expected to be used to check if a stream’s format is
-    /// compatible with a given sink. In such a case, self would be the sink’s format and `with`
-    /// would be the streams.
+    /// `with`.
+    ///
+    /// This means that `with` must have all the fields that self does, but the reverse need not be
+    /// true. This is typically expected to be used to check if a stream’s format is compatible with
+    /// a given sink. In such a case, self would be the sink’s format and `with` would be the
+    /// streams.
     #[inline]
     pub fn is_compatible_with(&self, with: &Self) -> bool {
         unsafe { capi::pa_format_info_is_compatible(self.ptr as *const capi::pa_format_info,
