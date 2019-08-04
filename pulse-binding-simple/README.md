@@ -26,3 +26,9 @@ versions of the PulseAudio client library that are too new for you. (This compat
 targets the entire PA client C API, and you will naturally encounter problems where mismatching
 version support with the version of PA on your systems). See the overall project `COMPATIBILITY.md`
 file for further details.
+
+## Licensing
+
+This crate is primarily licensed under LGPL 2.1+ (per PulseAudio itself). Alternate MIT/Apache-2.0
+licensing is available under certain circumstances. See the main project `README.md` file for
+further details.

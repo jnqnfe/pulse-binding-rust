@@ -1,25 +1,22 @@
 Overview
 ========
 
-This repository contains binding libraries for connecting to PulseAudio from the Rust programming
-language.
+This repository contains *sys* and *binding* libraries (crates) for connecting to PulseAudio (PA)
+from the Rust programming language.
 
-Three bindings are provided:
+These are provided for each of the three system libraries:
  * `libpulse_binding` for `libpulse`,
  * `libpulse_simple_binding` for `libpulse-simple`, and
  * `libpulse_glib_binding` for `libpulse-mainloop-glib`.
 
+The *sys* crates provide basic interfaces to the raw C APIs, while the *bindings* add Rust-oriented
+higher-level abstractions on top of these. (It is the bindings that you should prefer to make direct
+use of in Rust applications).
+
 See the respective library sub-directories for details.
 
-The bindings are based upon the public API of PulseAudio, as provided in the PulseAudio ‘include’ C
-header files. They provide:
- * A basic export of the C API.
- * For much of the API, simpler and safer interfaces to the underlying C functions and data
-   structures, for instance providing wrappers for PulseAudio objects with drop trait
-   implementations that automatically free the object upon going out of scope, ala smart pointers.
-
 PulseAudio Version Compatibility
-=============================
+================================
 
 Please see the separate `COMPATIBILITY.md` file for discussion of PA version compatibility.
 
@@ -32,36 +29,52 @@ developer - Lyndon Brown.
 Copyright & Licensing
 =====================
 
-## Primary/Current Licensing - LGPL
+All parts of these binding libraries are fully open-source and free to use.
+
+## Primary Licensing - LGPL
 
 All files in this source code repository, except as noted below, are licensed under the GNU Lesser
-General Public License (LGPL). (See file LICENSE-LGPL for details).
+General Public License (LGPL) version 2.1+. (See file `LICENSE-LGPL` for details).
 
-## Alternate Licensing - Read carefully!
+This matches the current licensing of PulseAudio itself.
 
-Whilst I am actually entirely *open* to MIT/Apache-2.0 licensing, LGPL was chosen simply because
-PulseAudio itself is licensed under LGPL, and I expect that this would be considered a derivative
-work, which blocks licensing this work under those licenses. Should PulseAudio itself ever relicense
-to MIT and/or Apache-2.0, it is intended that this source code repository will be relicensed to
-match. Should you have an exception from PulseAudio, licensing it to you under MIT and/or Apache-2.0
-licensing, then you may freely consider that to apply here also.
+## Alternate Licensing
+
+A popular alternative to GPL/LGPL, especially I have noticed in the world of Rust crates, is a dual
+MIT and Apache-2.0 licensing model. I *would* license this project under such a model, however
+unfortunately I believe that there is a strong possibility that it would be considered a ‘derivative
+work’ of PulseAudio, and as such is constrained to LGPL by the licensing of PulseAudio itself.
+
+Thus you may freely consider this project available under said dual MIT and Apache-2.0 licensing
+only under one of the following conditions:
+ - Either, should I be wrong about the ‘derivative work’ principle, i.e. that there is no actual
+   restriction imposed by the PulseAudio LGPL license on my bindings being licensed under this
+   alternate model. (In which case please inform me thusly).
+ - Or, you are granted license to use PulseAudio itself under such licensing, removing the barrier
+   to use of these bindings under same.
+ - Or, should the PulseAudio project grant explicit permission for this project to be licensed under
+   such a model.
+ - Or, should the PulseAudio project grant you explicit permission to use these bindings under such
+   license, i.e. an exception to their LGPL ‘derivative work’ restriction.
 
 ## Licensing/Copyright Specifics
 
 The files within the ‘includes’ directory, have been copied directly from the PulseAudio source.
 These files are kept for development purposes only (to be compared through diff checking against
-future versions to find changes that may need propagating into new versions of this binding library).
-To be clear, they are not used in any compilation processes. They are licensed under LGPL by the
-PulseAudio project.
+future versions to find changes that may need propagating into the bindings). To be clear, they are
+not used in any compilation processes. They are licensed under LGPL by the PulseAudio project.
 
-The binding libraries provided in this source code repository have been built upon the public API of
-PulseAudio, as described in the PulseAudio ‘include’ files, with documentation in particular largely
-copied from those files. These bindings may be considered derivative works under the PulseAudio
-license. PulseAudio itself is licensed under LGPL version 2.1+. These bindings, as specified above,
-are under that same license.
+The *binding* and *sys* libraries provided in this source code repository have been built upon the
+public API of PulseAudio, as described by the PulseAudio ‘include’ files, with documentation in
+particular largely copied from those files.
 
 The logo image files are a combined derivative of the Rust programming language icon and the
-PulseAudio icon, taking core elements from each.
+PulseAudio icon, taking core elements from each. I apply no specific image-oriented license upon
+them (I am not familiar with such licenses). As a substitute, subject to any constraints of
+licensing of those original images, I freely permit use on a common-sense fair-use basis. For
+instance, you may freely make use of them in articles discussing this project (should anyone ever
+care to do so). Feel free to make your own such derived logos, I make no claim upon it being an
+original idea.
 
 Source Code Contents
 ====================
