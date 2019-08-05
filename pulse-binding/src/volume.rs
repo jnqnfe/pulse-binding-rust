@@ -69,6 +69,7 @@
 //! [`def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
 //! [`def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
 
+use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;
 use std::ptr::null;
 use crate::{channelmap, sample};
@@ -114,8 +115,10 @@ impl Default for VolumeLinear {
 pub struct ChannelVolumes {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels.
+    //TODO: make non-pub (backwards compatible break)
     pub channels: u8,
     /// Per-channel volume.
+    //TODO: make non-pub (backwards compatible break)
     pub values: [Volume; sample::CHANNELS_MAX],
 }
 
@@ -124,6 +127,18 @@ pub struct ChannelVolumes {
 fn set_compare_capi(){
     assert_eq!(std::mem::size_of::<ChannelVolumes>(), std::mem::size_of::<capi::pa_cvolume>());
     assert_eq!(std::mem::align_of::<ChannelVolumes>(), std::mem::align_of::<capi::pa_cvolume>());
+}
+
+impl Borrow<[Volume]> for ChannelVolumes {
+    fn borrow(&self) -> &[Volume] {
+        &self.values[..self.channels as usize]
+    }
+}
+
+impl BorrowMut<[Volume]> for ChannelVolumes {
+    fn borrow_mut(&mut self) -> &mut [Volume] {
+        &mut self.values[..self.channels as usize]
+    }
 }
 
 impl AsRef<capi::pa_cvolume> for ChannelVolumes {
@@ -348,6 +363,39 @@ impl ChannelVolumes {
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_cvolume_valid(self.as_ref()) != 0 }
+    }
+
+    /// Gets the number of active channels.
+    #[inline]
+    pub fn len(&self) -> u8 {
+        self.channels
+    }
+
+    /// Sets the number of active channels.
+    ///
+    /// Volumes for up to [`sample::CHANNELS_MAX`] channels can be held. This sets the portion of
+    /// the internal array considered “active” and thus available for reading/writing (i.e. when
+    /// borrowing `self` as a slice).
+    ///
+    /// **Panics** if the number of channels specified is greater than [`sample::CHANNELS_MAX`].
+    ///
+    /// [`sample::CHANNELS_MAX`]: ../sample/constant.CHANNELS_MAX.html
+    #[inline]
+    pub fn set_len(&mut self, channels: u8) {
+        assert!(channels as usize <= sample::CHANNELS_MAX);
+        self.channels = channels;
+    }
+
+    /// Gets an immutable slice of the set of “active” channels.
+    #[inline]
+    pub fn get(&self) -> &[Volume] {
+        self.borrow()
+    }
+
+    /// Gets a mutable slice of the set of “active” channels.
+    #[inline]
+    pub fn get_mut(&mut self) -> &mut [Volume] {
+        self.borrow_mut()
     }
 
     /// Sets the volume of the specified number of channels to the supplied volume.

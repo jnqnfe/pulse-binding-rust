@@ -43,6 +43,7 @@
 //! [`Map::init_auto`]: struct.Map.html#method.init_auto
 //! [`Map::init_extend`]: struct.Map.html#method.init_extend
 
+use std::borrow::{Borrow, BorrowMut};
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use crate::sample;
@@ -187,9 +188,23 @@ impl From<capi::pa_channel_position_t> for Position {
 pub struct Map {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels mapped.
+    //TODO: make non-pub (backwards compatible break)
     pub channels: u8,
     /// Channel labels.
+    //TODO: make non-pub (backwards compatible break)
     pub map: [Position; sample::CHANNELS_MAX],
+}
+
+impl Borrow<[Position]> for Map {
+    fn borrow(&self) -> &[Position] {
+        &self.map[..self.channels as usize]
+    }
+}
+
+impl BorrowMut<[Position]> for Map {
+    fn borrow_mut(&mut self) -> &mut [Position] {
+        &mut self.map[..self.channels as usize]
+    }
 }
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
@@ -346,6 +361,39 @@ impl Map {
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_channel_map_valid(self.as_ref()) != 0 }
+    }
+
+    /// Gets the number of active channels.
+    #[inline]
+    pub fn len(&self) -> u8 {
+        self.channels
+    }
+
+    /// Sets the number of active channels.
+    ///
+    /// Positions for up to [`sample::CHANNELS_MAX`] channels can be held. This sets the portion of
+    /// the internal array considered “active” and thus available for reading/writing (i.e. when
+    /// borrowing `self` as a slice).
+    ///
+    /// **Panics** if the number of channels specified is greater than [`sample::CHANNELS_MAX`].
+    ///
+    /// [`sample::CHANNELS_MAX`]: ../sample/constant.CHANNELS_MAX.html
+    #[inline]
+    pub fn set_len(&mut self, channels: u8) {
+        assert!(channels as usize <= sample::CHANNELS_MAX);
+        self.channels = channels;
+    }
+
+    /// Gets an immutable slice of the set of “active” channels.
+    #[inline]
+    pub fn get(&self) -> &[Position] {
+        self.borrow()
+    }
+
+    /// Gets a mutable slice of the set of “active” channels.
+    #[inline]
+    pub fn get_mut(&mut self) -> &mut [Position] {
+        self.borrow_mut()
     }
 
     /// Makes a human readable string from the map.

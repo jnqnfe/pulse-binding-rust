@@ -1,5 +1,17 @@
 # <unreleased>
 
+ * Modified `ChannelVolumes` and `channelmap::Map` to be more Rust-like.
+   Both of these types hold an array of size `sample::CHANNELS_MAX`, along with a `channels`
+   attribute which controls how much of the initial portion of that array is “active” (equivalent to
+   the `len()` of a `Vec`). Previously the array and len were simply public attributes, with changes
+   to be applied directly. While for the time being they remain publically accessible for backwards
+   compatibility, this will become private in a future release. These types should now be used in
+   a way more similar to a `Vec`:
+    - New methods `len()` and `set_len()` get read/write access to the `channels` attribute that
+      records how much of the array is considered “active”.
+    - Traits `Borrow<[_]>` and `BorrowMut<[_]>` have been implemented, along with the addition of
+      new methods `get()` and `get_mut()` (for convenience - you can avoid type abiguity), for
+      accessing the array as a slice (of just the “active” portion).
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file
  * Made the following `const` functions:
