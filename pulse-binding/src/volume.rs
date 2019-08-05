@@ -423,16 +423,6 @@ impl ChannelVolumes {
         self.set(channels, VOLUME_MUTED)
     }
 
-    /// Checks if self is equal to `to`.
-    ///
-    /// This checks that the number of channels in self equals the number in `to` and that the
-    /// channels volumes in self equal those in `to`.
-    #[inline(always)]
-    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
-    pub fn equal_to(&self, to: &Self) -> bool {
-        self.eq(to)
-    }
-
     /// Checks if all channels are muted.
     #[inline]
     pub fn is_muted(&self) -> bool {
@@ -503,13 +493,6 @@ impl ChannelVolumes {
     {
         let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_min_mask(self.as_ref(), cm.as_ref(), mask_actual) })
-    }
-
-    /// Checks if the volume of all channels are equal to the specified value.
-    #[inline(always)]
-    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
-    pub fn channels_equal_to(&self, v: Volume) -> bool {
-        self.eq(&v)
     }
 
     /// Multiplies two per-channel volumes.

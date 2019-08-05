@@ -408,13 +408,6 @@ impl Map {
         }
     }
 
-    /// Compares whether or not two maps are equal.
-    #[inline(always)]
-    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
-    pub fn is_equal_to(&self, to: &Self) -> bool {
-        self.eq(to)
-    }
-
     /// Checks whether or not the specified map is compatible with the specified sample spec.
     #[inline]
     pub fn is_compatible_with_sample_spec(&self, ss: &sample::Spec) -> bool {

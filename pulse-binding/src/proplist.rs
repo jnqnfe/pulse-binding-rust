@@ -491,13 +491,6 @@ impl Proplist {
     pub fn is_empty(&self) -> bool {
         unsafe { capi::pa_proplist_isempty(self.0.ptr) == 0 }
     }
-
-    /// Checks if self and `to` have the same keys and values.
-    #[inline(always)]
-    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
-    pub fn equal_to(&self, to: &Self) -> bool {
-        self.eq(to)
-    }
 }
 
 impl Drop for ProplistInner {

@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Removed deprecated comparison methods
+
 # 2.15.1 (April 18th, 2020)
 
  * Fixed issues with a threaded mainloop example in the documentation
