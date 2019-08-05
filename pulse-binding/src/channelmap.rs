@@ -346,6 +346,12 @@ impl Map {
         self
     }
 
+    /// Checks whether or not the map is considered valid.
+    #[inline]
+    pub fn is_valid(&self) -> bool {
+        unsafe { capi::pa_channel_map_valid(self.as_ref()) != 0 }
+    }
+
     /// Makes a human readable string from the map.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_CHANNEL_MAP_SNPRINT_MAX;
@@ -360,12 +366,6 @@ impl Map {
     #[inline]
     pub fn is_equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_channel_map_equal(self.as_ref(), to.as_ref()) == 1 }
-    }
-
-    /// Checks whether or not the map is considered valid.
-    #[inline]
-    pub fn is_valid(&self) -> bool {
-        unsafe { capi::pa_channel_map_valid(self.as_ref()) != 0 }
     }
 
     /// Checks whether or not the specified map is compatible with the specified sample spec.

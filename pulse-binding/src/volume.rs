@@ -340,6 +340,12 @@ impl ChannelVolumes {
         self
     }
 
+    /// Checks if the `ChannelVolumes` structure is valid.
+    #[inline]
+    pub fn is_valid(&self) -> bool {
+        unsafe { capi::pa_cvolume_valid(self.as_ref()) != 0 }
+    }
+
     /// Sets the volume of the specified number of channels to the supplied volume.
     #[inline]
     pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
@@ -438,12 +444,6 @@ impl ChannelVolumes {
     {
         let mask_actual = mask.unwrap_or(::channelmap::POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_min_mask(self.as_ref(), cm.as_ref(), mask_actual) })
-    }
-
-    /// Checks if the `ChannelVolumes` structure is valid.
-    #[inline]
-    pub fn is_valid(&self) -> bool {
-        unsafe { capi::pa_cvolume_valid(self.as_ref()) != 0 }
     }
 
     /// Checks if the volume of all channels are equal to the specified value.
