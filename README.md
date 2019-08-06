@@ -37,7 +37,9 @@ compatibility, and freely update to new versions of the crates.
 
 Note that the `latest_pa_compatibility` feature (enabled by default) selects enabling the newest
 compatibility available, but this is risky. You can disable this and instead select a specific
-version compatibility as demonstrated below.
+version compatibility as demonstrated below. Alternatively `latest_pa_common_compatibility` selects
+the latest version deemed to be in widespread use (just excludes compatibility with recently a
+released major version temporarily).
 
 Example: Selecting PA v12 compatibility
 

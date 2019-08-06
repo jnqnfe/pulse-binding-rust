@@ -19,10 +19,11 @@ libc = "0.2"
 pkg-config = "0.3"
 
 [features]
-default = ["latest_pa_compatibility"]
+default = ["latest_pa_common_compatibility"]
 
 # PA version compatibility selection
 # See the overall project `README.md` file for explanation.
+latest_pa_common_compatibility = ["pa_v12_compatibility"]
 latest_pa_compatibility = ["pa_v12_compatibility"]
 pa_v12_compatibility = []
 

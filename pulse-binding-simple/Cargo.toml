@@ -18,10 +18,11 @@ libpulse-sys = { path = "../pulse-sys", version = "1.5", default-features = fals
 libpulse-simple-sys = { path = "../pulse-sys-simple", version = "1.5", default-features = false }
 
 [features]
-default = ["latest_pa_compatibility"]
+default = ["latest_pa_common_compatibility"]
 
 # PA version compatibility selection
 # See the overall project `README.md` file for explanation.
+latest_pa_common_compatibility = ["pa_v12_compatibility"]
 latest_pa_compatibility = ["pa_v12_compatibility"]
 pa_v12_compatibility = ["libpulse-binding/pa_v12_compatibility", "libpulse-sys/pa_v12_compatibility", "libpulse-simple-sys/pa_v12_compatibility"]
 
