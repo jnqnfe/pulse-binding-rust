@@ -111,6 +111,3 @@ Source Code Contents
  - pulse-sys-mainloop-glib/     - The raw C API interface library for the GLIB mainloop.
  - pulse-sys-simple/            - The raw C API interface library for the PulseAudio ‘simple’
                                   component.
- - src/                         - A dummy binary crate, creating a Cargo workspace, depending upon
-                                  all library crates, such that they all build efficiently together
-                                  to the same target directory (including documentaton).
