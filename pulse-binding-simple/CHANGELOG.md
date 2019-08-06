@@ -1,3 +1,8 @@
+# <unreleased>
+
+ * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
+   `latest_pa_compatibility`.
+
 # 2.6.1 (April 5th, 2019)
 
  * Enabled `Send`+`Sync` for `Simple`, thanks to @MOZGIII for the patch

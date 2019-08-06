@@ -1,3 +1,8 @@
+# <unreleased>
+
+ * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
+   `latest_pa_compatibility`.
+
 # 2.6.0 (March 10th, 2019)
 
  * Updated `libpulse-binding` version dependency (2.5 → 2.6)

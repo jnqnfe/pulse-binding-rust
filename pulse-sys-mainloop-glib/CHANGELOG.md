@@ -3,6 +3,8 @@
  * Replaced use of empty enums for opaque types with a struct based alternative. According to the
    Rust nomicon ([here](https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs))
    the use of the empty enum trick is apparently undefined behaviour.
+ * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
+   `latest_pa_compatibility`.
 
 # 1.5.0 (December 22nd, 2018)
 
