@@ -556,17 +556,20 @@ impl Context {
     /// this size. It is not recommended writing smaller blocks than this (unless required due to
     /// latency demands) because this increases CPU usage.
     ///
+    /// If `ss` is `None` you will be returned the byte-exact tile size.
+    ///
     /// If `ss` is invalid, returns `None`, else returns tile size rounded down to multiple of the
-    /// frame size. This is supposed to be used in a construct such as:
+    /// frame size.
+    ///
+    /// This is supposed to be used in a construct such as:
     ///
     /// ```rust,ignore
     /// let ss = stream.get_sample_spec().unwrap();
-    /// let size = stream.get_context().get_tile_size(ss).unwrap();
+    /// let size = stream.get_context().get_tile_size(Some(ss)).unwrap();
     /// ```
-    pub fn get_tile_size(&self, ss: &sample::Spec) -> Option<usize> {
-        // Note: C function doc comments mention possibility of passing in a NULL pointer for ss.
-        // We do not allow this, since 
-        match unsafe { capi::pa_context_get_tile_size(self.ptr, ss.as_ref()) } {
+    pub fn get_tile_size(&self, ss: Option<&sample::Spec>) -> Option<usize> {
+        let p_ss = ss.map_or(null::<capi::pa_sample_spec>(), |s| s.as_ref());
+        match unsafe { capi::pa_context_get_tile_size(self.ptr, p_ss) } {
             std::usize::MAX => None,
             r => Some(r),
         }
