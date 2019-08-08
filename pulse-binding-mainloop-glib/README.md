@@ -10,7 +10,7 @@ Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
 libpulse-binding = { version = "2.0", features = "" }
-libpulse-glib_binding = { version = "2.0", features = "" }
+libpulse-glib-binding = { version = "2.0", features = "" }
 ```
 
 and this to your crate root:
