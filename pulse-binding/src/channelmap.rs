@@ -63,6 +63,9 @@ pub const POSITION_MASK_ALL: PositionMask = 0xffffffffffffffffu64;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Position {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
+
     Invalid = -1,
     Mono = 0,
 
@@ -180,6 +183,7 @@ impl From<capi::pa_channel_position_t> for Position {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Map {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels mapped
     pub channels: u8,
     /// Channel labels

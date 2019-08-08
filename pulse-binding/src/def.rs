@@ -37,6 +37,8 @@ pub struct Retval(pub RetvalActual);
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 pub struct BufferAttr {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
+
     /// Maximum length of the buffer in bytes.
     ///
     /// Setting this to `std::u32::MAX` will initialize this to the maximum value supported by the
@@ -161,6 +163,8 @@ fn bufferattr_compare_capi(){
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct TimingInfo {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
+
     /// The system clock time when this timing info structure was current.
     pub timestamp: Timeval,
 
@@ -245,6 +249,8 @@ fn timinginfo_compare_capi(){
 #[repr(C)]
 #[derive(Debug)]
 pub struct SpawnApi {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
+
     /// Is called just before the fork in the parent process.
     pub prefork: Option<extern "C" fn()>,
 
@@ -313,6 +319,9 @@ pub mod sink_flags {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum SinkState {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
+
     /// This state is used when the server does not support sink state introspection.
     Invalid = -1,
 
@@ -405,6 +414,9 @@ pub mod source_flags {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum SourceState {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
+
     /// This state is used when the server does not support source state introspection.
     Invalid = -1,
 

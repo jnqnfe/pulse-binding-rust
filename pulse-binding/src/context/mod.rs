@@ -135,6 +135,8 @@ type ExtSubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(),
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum State {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
     /// The context hasn’t been connected yet.
     Unconnected,
     /// A connection is being established.

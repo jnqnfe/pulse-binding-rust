@@ -83,6 +83,8 @@ pub use capi::PA_RATE_MAX as RATE_MAX;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
 pub enum Format {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
     /// Unsigned 8 Bit PCM.
     U8,
     /// 8 Bit a-Law.
@@ -204,6 +206,7 @@ pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Spec {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// The sample format.
     pub format: Format,
     /// The sample rate. (e.g. 44100).

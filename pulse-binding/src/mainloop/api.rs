@@ -320,6 +320,8 @@ pub type DeferEventDestroyCb = extern "C" fn(a: *const MainloopApi, e: *mut Defe
 /// An abstract mainloop API vtable
 #[repr(C)]
 pub struct MainloopApi {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
+
     /// A pointer to some private, arbitrary data of the main loop implementation
     pub userdata: *mut c_void,
 

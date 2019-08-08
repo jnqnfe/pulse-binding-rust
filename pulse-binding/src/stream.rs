@@ -313,6 +313,9 @@ type EventCb = ::callbacks::MultiUseCallback<dyn FnMut(String, Proplist),
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum State {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
+
     /// The stream is not yet connected to any sink or source.
     Unconnected,
     /// The stream is being created.

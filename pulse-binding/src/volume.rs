@@ -111,6 +111,7 @@ impl Default for VolumeLinear {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Default)]
 pub struct ChannelVolumes {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels.
     pub channels: u8,
     /// Per-channel volume.

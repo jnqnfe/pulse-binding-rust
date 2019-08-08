@@ -38,6 +38,8 @@ pub use capi::pa_prop_type_t as PropType;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
 pub enum Encoding {
+    /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
+       (C API) equivalent */
     /// Any encoding format, PCM or compressed.
     Any,
     /// Any PCM format.
@@ -98,6 +100,7 @@ unsafe impl Sync for Info {}
 /// The raw C structure (with documentation)
 #[repr(C)]
 pub(crate) struct InfoInternal {
+    /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// The encoding used for the format.
     pub encoding: Encoding,
     /// Additional encoding-specific properties such as sample rate, bitrate, etc.
