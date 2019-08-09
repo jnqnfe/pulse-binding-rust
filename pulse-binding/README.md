@@ -22,4 +22,4 @@ Finally, fill in the `features` attribute of the dependency added above with the
 flag (listed within this crates’ toml file) to disable functionality for versions of the PulseAudio
 client library that are too new for you. (This compatibility layer targets the entire PA client C
 API, and you will naturally encounter problems where mismatching version support with the version
-of PA on your systems). See the overall project `README` for further details.
+of PA on your systems). See the overall project `COMPATIBILITY.md` file for further details.

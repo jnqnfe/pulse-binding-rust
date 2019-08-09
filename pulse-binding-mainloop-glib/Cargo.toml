@@ -20,7 +20,7 @@ libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1
 default = ["latest_pa_common_compatibility"]
 
 # PA version compatibility selection
-# See the overall project `README.md` file for explanation.
+# See the overall project `COMPATIBILITY.md` file for explanation.
 latest_pa_common_compatibility = ["pa_v12_compatibility"]
 latest_pa_compatibility = ["pa_v12_compatibility"]
 pa_v12_compatibility = ["libpulse-binding/pa_v12_compatibility", "libpulse-mainloop-glib-sys/pa_v12_compatibility"]
