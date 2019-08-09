@@ -23,8 +23,12 @@ default = ["latest_pa_common_compatibility"]
 
 # PA version compatibility selection
 # See the overall project `COMPATIBILITY.md` file for explanation.
+#
+# Alias targetting latest compatibility, with the exception only of that for a very new release
 latest_pa_common_compatibility = ["pa_v12_compatibility"]
+# Alias simply targetting latest compatibility
 latest_pa_compatibility = ["pa_v12_compatibility"]
+# Enables PA version 12 support
 pa_v12_compatibility = [
     "libpulse-binding/pa_v12_compatibility",
     "libpulse-simple-binding/pa_v12_compatibility",
