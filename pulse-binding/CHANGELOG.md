@@ -1,5 +1,7 @@
 # <unreleased>
 
+ * Renamed a few methods of `Proplist` for clarity: `sets()` → `set_str()`; `gets()` → `(get_str()`;
+   and `setp()` → `set_pl()`.
  * Removed stray `repr(C)` attribute from `SinkPortInfo` introspection type.
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
    `latest_pa_compatibility`.

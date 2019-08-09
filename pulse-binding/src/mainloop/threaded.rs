@@ -237,7 +237,7 @@
 //!     assert!(spec.is_valid());
 //!
 //!     let mut proplist = Proplist::new().unwrap();
-//!     proplist.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp")
+//!     proplist.set_str(pulse::proplist::properties::APPLICATION_NAME, "FooApp")
 //!         .unwrap();
 //!
 //!     let mut mainloop = Rc::new(RefCell::new(Mainloop::new()

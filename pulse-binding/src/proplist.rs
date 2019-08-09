@@ -262,7 +262,7 @@ impl Proplist {
     /// entry with the same key.
     ///
     /// An internal copy is made of the provided string.
-    pub fn sets(&mut self, key: &str, value: &str) -> Result<(), ()> {
+    pub fn set_str(&mut self, key: &str, value: &str) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
@@ -273,13 +273,18 @@ impl Proplist {
         }
     }
 
+    #[deprecated(note="`sets()` has been renamed to `set_str()`")]
+    pub fn sets(&mut self, key: &str, value: &str) -> Result<(), ()> {
+        self.set_str(key, value)
+    }
+
     /// Appends a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key.
     ///
     /// This is similar to [`sets`](#method.sets), however here the provided key and value are
     /// combined into a single string, separated by an `=`. An internal copy is made of the provided
     /// string.
-    pub fn setp(&mut self, pair: &str) -> Result<(), ()> {
+    pub fn set_pl(&mut self, pair: &str) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_pair = CString::new(pair.clone()).unwrap();
@@ -287,6 +292,11 @@ impl Proplist {
             0 => Ok(()),
             _ => Err(()),
         }
+    }
+
+    #[deprecated(note="`setp()` has been renamed to `set_pl()`")]
+    pub fn setp(&mut self, pair: &str) -> Result<(), ()> {
+        self.set_pl(pair)
     }
 
     /// Appends a new arbitrary data entry to the property list, possibly overwriting an already
@@ -308,7 +318,7 @@ impl Proplist {
     /// Gets a string entry for the specified key.
     ///
     /// Will return `None` if the key does not exist or if data is not valid UTF-8.
-    pub fn gets(&self, key: &str) -> Option<String> {
+    pub fn get_str(&self, key: &str) -> Option<String> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key.clone()).unwrap();
@@ -317,6 +327,11 @@ impl Proplist {
             return None;
         }
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
+    }
+
+    #[deprecated(note="`gets()` has been renamed to `get_str()`")]
+    pub fn gets(&self, key: &str) -> Option<String> {
+        self.get_str(key)
     }
 
     /// Gets the value for the specified key.
