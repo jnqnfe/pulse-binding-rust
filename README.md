@@ -47,7 +47,7 @@ Example: Selecting PA v12 compatibility
 libpulse-binding = { version = "2.0", default-features = false, features = "pa_v12_compatibility" }
 ```
 
-Example: Selecting PA v10/11 compatibility (the oldest supported)
+Example: Selecting PA v8+ compatibility (the oldest supported)
 
 ```toml
 libpulse-binding = { version = "2.0", default-features = false }
