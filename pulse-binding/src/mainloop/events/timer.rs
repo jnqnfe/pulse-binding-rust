@@ -69,7 +69,7 @@ impl<T> TimeEvent<T>
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
     }
 
-    /// Restart this timer event source (whether still running or already expired) with a new Unix
+    /// Restarts this timer event source (whether still running or already expired) with a new Unix
     /// time.
     #[inline]
     pub fn restart(&mut self, t: &UnixTs) {
@@ -77,7 +77,7 @@ impl<T> TimeEvent<T>
         fn_ptr(self.ptr, &(t.0).0);
     }
 
-    /// Restart this timer event source (whether still running or already expired) with a new
+    /// Restarts this timer event source (whether still running or already expired) with a new
     /// monotonic time.
     pub fn restart_rt(&mut self, t: MonotonicTs) {
         assert_ne!(t.0, USEC_INVALID);
@@ -97,7 +97,7 @@ impl<T> TimeEventRef<T>
         Self { ptr: ptr, owner: mainloop_inner }
     }
 
-    /// Restart this timer event source (whether still running or already expired) with a new Unix
+    /// Restarts this timer event source (whether still running or already expired) with a new Unix
     /// time.
     #[inline]
     pub fn restart(&mut self, t: &UnixTs) {
@@ -105,7 +105,7 @@ impl<T> TimeEventRef<T>
         fn_ptr(self.ptr, &(t.0).0);
     }
 
-    /// Restart this timer event source (whether still running or already expired) with a new
+    /// Restarts this timer event source (whether still running or already expired) with a new
     /// monotonic time.
     pub fn restart_rt(&mut self, t: MonotonicTs) {
         assert_ne!(t.0, USEC_INVALID);

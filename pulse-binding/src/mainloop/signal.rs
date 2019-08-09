@@ -46,7 +46,7 @@ type SignalCb = ::callbacks::MultiUseCallback<dyn FnMut(i32),
 
 /// Trait with signal handling, for mainloops.
 pub trait MainloopSignals : ::mainloop::api::Mainloop {
-    /// Initialize the UNIX signal subsystem and bind it to the specified main loop.
+    /// Initializes the UNIX signal subsystem and bind it to the specified main loop.
     fn init_signals(&mut self) -> Result<(), PAErr> {
         let inner = self.inner();
         let api = inner.get_api();
@@ -56,7 +56,7 @@ pub trait MainloopSignals : ::mainloop::api::Mainloop {
         }
     }
 
-    /// Cleanup the signal subsystem.
+    /// Cleans up the signal subsystem.
     #[inline]
     fn signals_done(&self) {
         unsafe { capi::pa_signal_done(); }
@@ -64,7 +64,7 @@ pub trait MainloopSignals : ::mainloop::api::Mainloop {
 }
 
 impl Event {
-    /// Create a new UNIX signal event source object.
+    /// Creates a new UNIX signal event source object.
     ///
     /// The callback must accept an integer which represents the signal.
     pub fn new<F>(sig: i32, callback: F) -> Self

@@ -107,13 +107,13 @@ pub fn pa_clamp_volume(v: pa_volume_t) -> pa_volume_t {
     v
 }
 
-/// Set the volume of the first n channels to `PA_VOLUME_NORM`.
+/// Sets the volume of the first n channels to `PA_VOLUME_NORM`.
 #[inline(always)]
 pub unsafe fn pa_cvolume_reset(a: *mut pa_cvolume, n: u32) -> *mut pa_cvolume {
     pa_cvolume_set(a, n, PA_VOLUME_NORM)
 }
 
-/// Set the volume of the first n channels to `PA_VOLUME_MUTED`.
+/// Sets the volume of the first n channels to `PA_VOLUME_MUTED`.
 #[inline(always)]
 pub unsafe fn pa_cvolume_mute(a: *mut pa_cvolume, n: u32) -> *mut pa_cvolume {
     pa_cvolume_set(a, n, PA_VOLUME_MUTED)

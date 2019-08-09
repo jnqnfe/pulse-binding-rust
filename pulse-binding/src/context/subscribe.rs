@@ -136,7 +136,7 @@ impl Facility {
         }
     }
 
-    /// Convert to an interest mask.
+    /// Converts to an interest mask.
     #[inline(always)]
     pub fn to_interest_mask(self) -> InterestMaskSet {
         1u32 << (self as u32)
@@ -154,13 +154,13 @@ impl Operation {
     }
 }
 
-/// Extract facility from `EventType` value.
+/// Extracts facility from `EventType` value.
 #[inline]
 fn get_facility(value: EventType) -> Option<Facility> {
     Facility::from_int((value & FACILITY_MASK) as u32)
 }
 
-/// Extract operation from `EventType` value.
+/// Extracts operation from `EventType` value.
 #[inline]
 fn get_operation(value: EventType) -> Option<Operation> {
     Operation::from_int((value & OPERATION_MASK) as u32)
@@ -170,7 +170,7 @@ pub(super) type Callback = ::callbacks::MultiUseCallback<dyn FnMut(Option<Facili
     Option<Operation>, u32), extern "C" fn(*mut ContextInternal, EventType, u32, *mut c_void)>;
 
 impl Context {
-    /// Enable event notification.
+    /// Enables event notification.
     ///
     /// The `mask` parameter is used to specify which facilities you are interested in being
     /// modified about. Use [`set_subscribe_callback`](#method.set_subscribe_callback) to set the
@@ -190,7 +190,7 @@ impl Context {
         ::operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the context specific call back function that is called whenever a subscribed-to event
+    /// Sets the context specific call back function that is called whenever a subscribed-to event
     /// occurs.
     ///
     /// Use [`subscribe`](#method.subscribe) to set the facilities you are interested in receiving

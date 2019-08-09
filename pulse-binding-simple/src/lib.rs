@@ -131,7 +131,7 @@ unsafe impl Send for Simple {}
 unsafe impl Sync for Simple {}
 
 impl Simple {
-    /// Create a new connection to the server.
+    /// Creates a new connection to the server.
     ///
     /// # Params
     ///
@@ -197,13 +197,13 @@ impl Simple {
         Ok(Self::from_raw(ptr))
     }
 
-    /// Create a new `Simple` from an existing [`SimpleInternal`](capi/enum.pa_simple.html) pointer.
+    /// Creates a new `Simple` from an existing [`SimpleInternal`](capi/enum.pa_simple.html) pointer.
     fn from_raw(ptr: *mut SimpleInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr }
     }
 
-    /// Write some data to the server.
+    /// Writes some data to the server.
     pub fn write(&self, data: &[u8]) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_write(self.ptr, data.as_ptr() as *mut c_void, data.len(),
@@ -214,7 +214,7 @@ impl Simple {
         }
     }
 
-    /// Wait until all data already written is played by the daemon.
+    /// Waits until all data already written is played by the daemon.
     pub fn drain(&self) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_drain(self.ptr, &mut error) } {
@@ -223,7 +223,7 @@ impl Simple {
         }
     }
 
-    /// Read some data from the server.
+    /// Reads some data from the server.
     ///
     /// This function blocks until `data.len()` amount of data has been received from the server,
     /// or until an error occurs.
@@ -237,7 +237,7 @@ impl Simple {
         }
     }
 
-    /// Return the playback or record latency.
+    /// Gets the playback or record latency.
     pub fn get_latency(&self) -> Option<pulse::time::MicroSeconds> {
         let mut error: i32 = 0;
         let ret = unsafe { capi::pa_simple_get_latency(self.ptr, &mut error) };
@@ -247,7 +247,9 @@ impl Simple {
         Some(pulse::time::MicroSeconds(ret))
     }
 
-    /// Flush the playback or record buffer. This discards any audio in the buffer.
+    /// Flushes the playback or record buffer.
+    ///
+    /// This discards any audio in the buffer.
     pub fn flush(&self) -> Result<(), PAErr> {
         let mut error: i32 = 0;
         match unsafe { capi::pa_simple_flush(self.ptr, &mut error) } {

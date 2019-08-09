@@ -34,29 +34,38 @@ macro_rules! fn_string_with_buffer {
     }};
 }
 
-/// Return the current username. Returns `None` on failure.
+/// Gets the current username.
+///
+/// Returns `None` on failure.
 pub fn get_user_name(l: usize) -> Option<String> {
     fn_string_with_buffer!(pa_get_user_name, l)
 }
 
-/// Return the current hostname. Returns `None` on failure.
+/// Gets the current hostname.
+///
+/// Returns `None` on failure.
 pub fn get_host_name(l: usize) -> Option<String> {
     fn_string_with_buffer!(pa_get_host_name, l)
 }
 
-/// Return the fully qualified domain name. Returns `None` on failure.
+/// Gets the fully qualified domain name.
+///
+/// Returns `None` on failure.
 pub fn get_fqdn(l: usize) -> Option<String> {
     fn_string_with_buffer!(pa_get_fqdn, l)
 }
 
-/// Return the home directory of the current user. Returns `None` on failure.
+/// Gets the home directory of the current user.
+///
+/// Returns `None` on failure.
 pub fn get_home_dir(l: usize) -> Option<String> {
     fn_string_with_buffer!(pa_get_home_dir, l)
 }
 
-/// Return the binary file name of the current process. Returns `None` on failure. This is not
-/// supported on all architectures (in which case `NULL` is returned).
+/// Gets the binary file name of the current process.
+///
+/// Returns `None` on failure.
+/// This is not supported on all architectures (in which case `NULL` is returned).
 pub fn get_binary_name(l: usize) -> Option<String> {
     fn_string_with_buffer!(pa_get_binary_name, l)
 }
-

@@ -383,14 +383,14 @@ impl From<capi::pa_sink_state_t> for SinkState {
 }
 
 impl SinkState {
-    /// Returns `true` if sink is playing: running or idle.
+    /// Checks if sink is playing: running or idle.
     #[inline]
     pub fn is_opened(self) -> bool {
         self == SinkState::Running ||
         self == SinkState::Idle
     }
 
-    /// Returns `true` if sink is running.
+    /// Checks if sink is running.
     #[inline]
     pub fn is_running(self) -> bool {
         self == SinkState::Running
@@ -481,14 +481,14 @@ impl From<capi::pa_source_state_t> for SourceState {
 }
 
 impl SourceState {
-    /// Returns `true` if source is recording: running or idle.
+    /// Checks if source is recording: running or idle.
     #[inline]
     pub fn is_opened(self) -> bool {
         self == SourceState::Running ||
         self == SourceState::Idle
     }
 
-    /// Returns `true` if source is running.
+    /// Checks if source is running.
     #[inline]
     pub fn is_running(self) -> bool {
         self == SourceState::Running

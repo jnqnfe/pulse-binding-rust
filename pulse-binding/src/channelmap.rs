@@ -254,7 +254,7 @@ impl Position {
         (1 as PositionMask) << (self as PositionMask)
     }
 
-    /// Return a text label for the specified channel position.
+    /// Gets a text label for the specified channel position.
     pub fn to_string(pos: Self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_position_to_string(pos.into()) };
         if ptr.is_null() {
@@ -263,7 +263,7 @@ impl Position {
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
-    /// Return a human readable text label for the specified channel position.
+    /// Gets a human readable text label for the specified channel position.
     pub fn to_pretty_string(pos: Self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_position_to_pretty_string(pos.into()) };
         if ptr.is_null() {
@@ -272,7 +272,7 @@ impl Position {
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
-    /// The inverse of [`to_string`](#method.to_string).
+    /// Creates a new instance from a string representation, as given by [`to_string`](#method.to_string).
     pub fn from_string(s: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -282,7 +282,7 @@ impl Position {
 }
 
 impl Map {
-    /// Parse a channel position list or well-known mapping name into a channel map structure.
+    /// Parses a channel position list or well-known mapping name into a channel map structure.
     ///
     /// This turns the output of [`print`](#method.print) and [`to_name`](#method.to_name) back into
     /// a `Map`.
@@ -299,7 +299,7 @@ impl Map {
         Ok(map)
     }
 
-    /// Initialize the specified channel map and return a pointer to it.
+    /// Initializes the specified channel map and returns a pointer to it.
     ///
     /// The map will have a defined state but [`is_valid`](#method.is_valid) will fail for it.
     #[inline]
@@ -308,22 +308,22 @@ impl Map {
         self
     }
 
-    /// Initialize the specified channel map for monaural audio and return a pointer to it.
+    /// Initializes the specified channel map for monaural audio and returns a pointer to it.
     #[inline]
     pub fn init_mono(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init_mono(self.as_mut()) };
         self
     }
 
-    /// Initialize the specified channel map for stereophonic audio and return a pointer to it.
+    /// Initializes the specified channel map for stereophonic audio and returns a pointer to it.
     #[inline]
     pub fn init_stereo(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init_stereo(self.as_mut()) };
         self
     }
 
-    /// Initialize the specified channel map for the specified number of channels using default
-    /// labels and return a pointer to it.
+    /// Initializes the specified channel map for the specified number of channels using default
+    /// labels and returns a pointer to it.
     ///
     /// This call will fail (return `None`) if there is no default channel map known for this
     /// specific number of channels and mapping.
@@ -346,7 +346,7 @@ impl Map {
         self
     }
 
-    /// Make a human readable string from the map.
+    /// Makes a human readable string from the map.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_CHANNEL_MAP_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
@@ -356,13 +356,13 @@ impl Map {
         }
     }
 
-    /// Compare whether or not two maps are equal.
+    /// Compares whether or not two maps are equal.
     #[inline]
     pub fn is_equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_channel_map_equal(self.as_ref(), to.as_ref()) == 1 }
     }
 
-    /// Check whether or not the map is considered valid.
+    /// Checks whether or not the map is considered valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_channel_map_valid(self.as_ref()) != 0 }

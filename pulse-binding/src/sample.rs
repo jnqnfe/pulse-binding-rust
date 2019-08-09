@@ -251,7 +251,7 @@ impl From<capi::pa_sample_spec> for Spec {
 }
 
 impl Spec {
-    /// Initialize the specified sample spec.
+    /// Initializes the specified sample spec.
     ///
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
     /// it.
@@ -260,38 +260,38 @@ impl Spec {
         unsafe { capi::pa_sample_spec_init(self.as_mut()); }
     }
 
-    /// Returns `true` when the sample type specification is valid.
+    /// Checks if the sample type specification is valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_sample_spec_valid(self.as_ref()) != 0 }
     }
 
-    /// Returns `true` when the two sample type specifications match.
+    /// Checks if the two sample type specifications match.
     #[inline]
     pub fn equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_sample_spec_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
-    /// Returns the amount of bytes that constitute playback of one second of audio, with the
-    /// specified sample type.
+    /// Gets the amount of bytes that constitute playback of one second of audio, with the specified
+    /// sample type.
     #[inline]
     pub fn bytes_per_second(&self) -> usize {
         unsafe { capi::pa_bytes_per_second(self.as_ref()) }
     }
 
-    /// Returns the size of a frame.
+    /// Gets the size of a frame.
     #[inline]
     pub fn frame_size(&self) -> usize {
         unsafe { capi::pa_frame_size(self.as_ref()) }
     }
 
-    /// Returns the size of a sample.
+    /// Gets the size of a sample.
     #[inline]
     pub fn sample_size(&self) -> usize {
         unsafe { capi::pa_sample_size(self.as_ref()) }
     }
 
-    /// Calculate the time it would take to play a buffer of the specified size.
+    /// Calculates the time it would take to play a buffer of the specified size.
     ///
     /// The return value will always be rounded down for non-integral return values.
     #[inline]
@@ -307,7 +307,7 @@ impl Spec {
         unsafe { capi::pa_usec_to_bytes(t.0, self.as_ref()) }
     }
 
-    /// Pretty print a sample type specification to a string.
+    /// Pretty prints a sample type specification to a string.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_SAMPLE_SPEC_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
@@ -318,7 +318,7 @@ impl Spec {
     }
 }
 
-/// Returns `true` if the given integer is a valid sample format.
+/// Checks if the given integer is a valid sample format.
 ///
 /// With pure Rust code, this would be enforced natively through use of the
 /// [`Format`](enum.Format.html) enum, but this function may remain useful for miscellaneous int
@@ -328,13 +328,13 @@ pub fn format_is_valid(format: u32) -> bool {
     unsafe { capi::pa_sample_format_valid(format) != 0 }
 }
 
-/// Returns `true` if the rate is within the supported range.
+/// Checks if the rate is within the supported range.
 #[inline]
 pub fn rate_is_valid(rate: u32) -> bool {
     unsafe { capi::pa_sample_rate_valid(rate) != 0 }
 }
 
-/// Returns `true` if the channel count is within the supported range.
+/// Checkss if the channel count is within the supported range.
 #[inline]
 pub fn channels_are_valid(channels: u8) -> bool {
     unsafe { capi::pa_channels_valid(channels) != 0 }
@@ -358,7 +358,7 @@ impl Format {
         unsafe { capi::pa_sample_size_of_format((*self).into()) }
     }
 
-    /// Returns a descriptive string for the specified sample format.
+    /// Gets a descriptive string for the specified sample format.
     pub fn to_string(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_sample_format_to_string((*self).into()) };
         if ptr.is_null() {
@@ -367,7 +367,7 @@ impl Format {
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
-    /// Parse a sample format text. Inverse of [`to_string`](#method.to_string).
+    /// Parses a sample format text. Inverse of [`to_string`](#method.to_string).
     pub fn parse(format: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -375,7 +375,7 @@ impl Format {
         unsafe { capi::pa_parse_sample_format(c_format.as_ptr()).into() }
     }
 
-    /// Is format little endian?
+    /// Checks if format is little endian.
     ///
     /// Returns `true` when the specified format is little endian, `false` if big endian. Returns
     /// `None` when endianness does not apply to this format, or if unknown.
@@ -387,7 +387,7 @@ impl Format {
         }
     }
 
-    /// Is format big endian?
+    /// Checks if format is big endian.
     ///
     /// Returns `true` when the specified format is big endian, `false` if little endian. Returns
     /// `None` when endianness does not apply to this format, or if unknown.
@@ -399,7 +399,7 @@ impl Format {
         }
     }
 
-    /// Is format native endian?
+    /// Checks if format is native endian.
     ///
     /// Returns `true` when the specified format is native endian, `false` when not. Returns `None`
     /// when endianness does not apply to the specified format, or endianness is unknown.
@@ -411,7 +411,7 @@ impl Format {
         { Format::is_le(self) }
     }
 
-    /// Is format reverse of native endian?
+    /// Checks if format is reverse of native endian.
     ///
     /// Returns `true` when the specified format is reverse endian, `false` when not. Returns `None`
     /// when endianness does not apply to the specified format, or endianness is unknown.

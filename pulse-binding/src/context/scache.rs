@@ -72,7 +72,7 @@ use callbacks::box_closure_get_capi_ptr;
 use ::operation::Operation;
 
 impl Context {
-    /// Remove a sample from the sample cache.
+    /// Removes a sample from the sample cache.
     ///
     /// Returns an operation object which may be used to cancel the operation while it is running.
     ///
@@ -93,7 +93,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Play a sample from the sample cache to the specified device.
+    /// Plays a sample from the sample cache to the specified device.
     ///
     /// If the specified device is `None` use the default sink.
     ///
@@ -133,7 +133,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Play a sample from the sample cache to the specified device, allowing specification of a
+    /// Plays a sample from the sample cache to the specified device, allowing specification of a
     /// property list for the playback stream.
     ///
     /// If the device is `None` use the default sink.

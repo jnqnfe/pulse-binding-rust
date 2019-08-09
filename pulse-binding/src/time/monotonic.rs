@@ -25,7 +25,7 @@ use super::MicroSeconds;
 pub struct MonotonicTs(pub(crate) MicroSeconds);
 
 impl MonotonicTs {
-    /// Return the current monotonic system time in microseconds.
+    /// Gets the current monotonic system time in microseconds.
     ///
     /// Note, if such a clock is not available then this will actually fall back to the wallclock
     /// time instead. No indication is available for whether or not this is the case, and the

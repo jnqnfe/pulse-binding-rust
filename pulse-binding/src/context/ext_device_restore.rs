@@ -81,8 +81,8 @@ type SubscribeCb = ::callbacks::MultiUseCallback<dyn FnMut(::def::Device, u32),
     extern "C" fn(*mut ContextInternal, ::def::Device, u32, *mut c_void)>;
 
 impl Context {
-    /// Returns a device restore object linked to the current context, giving access to device
-    /// restore routines.
+    /// Gets a device restore object linked to the current context, giving access to device restore
+    /// routines.
     ///
     /// See [`::context::ext_device_restore`](ext_device_restore/index.html).
     pub fn device_restore(&self) -> DeviceRestore {
@@ -92,13 +92,13 @@ impl Context {
 }
 
 impl DeviceRestore {
-    /// Create a new `DeviceManager` from an existing
+    /// Creates a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
     }
 
-    /// Test if this extension module is available in the server.
+    /// Tests if this extension module is available in the server.
     ///
     /// The callback must accept an integer, which indicates version.
     ///
@@ -113,7 +113,7 @@ impl DeviceRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
-    /// Subscribe to changes in the device database.
+    /// Subscribes to changes in the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -128,7 +128,7 @@ impl DeviceRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
     ///
     /// The callback must accept two parameters, firstly a [`::def::Device`] variant, and secondly an
@@ -144,7 +144,7 @@ impl DeviceRestore {
         unsafe { capi::pa_ext_device_restore_set_subscribe_cb(self.context, cb_fn, cb_data); }
     }
 
-    /// Read the formats for all present devices from the device database.
+    /// Reads the formats for all present devices from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn read_formats_all<F>(&mut self, callback: F) -> Operation<dyn FnMut(ListResult<&Info>)>
@@ -157,7 +157,7 @@ impl DeviceRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
-    /// Read an entry from the device database.
+    /// Reads an entry from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn read_formats<F>(&mut self, type_: ::def::Device, index: u32, callback: F)
@@ -171,7 +171,7 @@ impl DeviceRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
-    /// Read an entry from the device database.
+    /// Reads an entry from the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///

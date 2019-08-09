@@ -90,12 +90,12 @@ impl<T> MainloopInnerType for MainloopInner<T>
 {
     type I = T;
 
-    /// Return opaque main loop object pointer.
+    /// Gets opaque main loop object pointer.
     fn get_ptr(&self) -> *mut T {
         self.ptr
     }
 
-    /// Return main loop API object pointer.
+    /// Gets main loop API object pointer.
     fn get_api(&self) -> &MainloopApi {
         assert!(!self.api.is_null());
         unsafe { &*self.api }
@@ -111,7 +111,7 @@ pub trait Mainloop {
 
     fn inner(&self) -> Rc<Self::MI>;
 
-    /// Create a new IO event.
+    /// Creates a new IO event.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -146,7 +146,7 @@ pub trait Mainloop {
         Some(IoEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Create a new timer event.
+    /// Creates a new timer event.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -188,7 +188,7 @@ pub trait Mainloop {
         Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Create a new monotonic-based timer event.
+    /// Creates a new monotonic-based timer event.
     ///
     /// Asserts that `t` is not `USEC_INVALID`.
     ///
@@ -240,7 +240,7 @@ pub trait Mainloop {
         Some(TimeEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Create a new deferred event.
+    /// Creates a new deferred event.
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
@@ -273,7 +273,7 @@ pub trait Mainloop {
         Some(DeferEvent::<Self::MI>::from_raw(ptr, Rc::clone(&inner), to_save))
     }
 
-    /// Run the specified callback once from the main loop using an anonymous defer event.
+    /// Runs the specified callback once from the main loop using an anonymous defer event.
     ///
     /// If the mainloop runs in a different thread, you need to follow the mainloop implementation’s
     /// rules regarding how to safely create defer events. In particular, if you’re using
@@ -288,7 +288,7 @@ pub trait Mainloop {
         unsafe { capi::pa_mainloop_api_once(api.as_ref(), cb_fn, cb_data) };
     }
 
-    /// Call quit
+    /// Calls quit
     fn quit(&mut self, retval: ::def::Retval) {
         let inner = self.inner();
         let api = inner.get_api();
@@ -326,42 +326,42 @@ pub struct MainloopApi {
     /// A pointer to some private, arbitrary data of the main loop implementation.
     pub userdata: *mut c_void,
 
-    /// Create a new IO event source object.
+    /// Creates a new IO event source object.
     pub io_new: Option<extern "C" fn(a: *const MainloopApi, fd: i32, events: IoEventFlagSet,
         cb: Option<IoEventCb>, userdata: *mut c_void) -> *mut IoEventInternal>,
-    /// Enable or disable IO events on this object.
+    /// Enables or disables IO events on this object.
     pub io_enable: Option<extern "C" fn(e: *mut IoEventInternal, events: IoEventFlagSet)>,
-    /// Free a IO event source object.
+    /// Frees a IO event source object.
     pub io_free: Option<extern "C" fn(e: *mut IoEventInternal)>,
-    /// Set a function that is called when the IO event source is destroyed. Use this to free the
+    /// Sets a function that is called when the IO event source is destroyed. Use this to free the
     /// `userdata` argument if required.
     pub io_set_destroy: Option<extern "C" fn(e: *mut IoEventInternal, cb: Option<IoEventDestroyCb>)>,
 
-    /// Create a new timer event source object for the specified Unix time.
+    /// Creates a new timer event source object for the specified Unix time.
     pub time_new: Option<extern "C" fn(a: *const MainloopApi, tv: *const timeval,
         cb: Option<TimeEventCb>, userdata: *mut c_void) -> *mut TimeEventInternal>,
-    /// Restart a running or expired timer event source with a new Unix time.
+    /// Restarts a running or expired timer event source with a new Unix time.
     pub time_restart: Option<extern "C" fn(e: *mut TimeEventInternal, tv: *const timeval)>,
-    /// Free a deferred timer event source object.
+    /// Frees a deferred timer event source object.
     pub time_free: Option<extern "C" fn(e: *mut TimeEventInternal)>,
-    /// Set a function that is called when the timer event source is destroyed. Use this to free the
-    /// `userdata` argument if required.
+    /// Sets a function that is called when the timer event source is destroyed. Use this to free
+    /// the `userdata` argument if required.
     pub time_set_destroy: Option<extern "C" fn(e: *mut TimeEventInternal,
         cb: Option<TimeEventDestroyCb>)>,
 
-    /// Create a new deferred event source object.
+    /// Creates a new deferred event source object.
     pub defer_new: Option<extern "C" fn(a: *const MainloopApi, cb: Option<DeferEventCb>,
         userdata: *mut c_void) -> *mut DeferEventInternal>,
-    /// Enable or disable a deferred event source temporarily.
+    /// Enables or disables a deferred event source temporarily.
     pub defer_enable: Option<extern "C" fn(e: *mut DeferEventInternal, b: i32)>,
-    /// Free a deferred event source object.
+    /// Frees a deferred event source object.
     pub defer_free: Option<extern "C" fn(e: *mut DeferEventInternal)>,
-    /// Set a function that is called when the deferred event source is
+    /// Sets a function that is called when the deferred event source is
     /// destroyed. Use this to free the `userdata` argument if required.
     pub defer_set_destroy: Option<extern "C" fn(e: *mut DeferEventInternal,
         cb: Option<DeferEventDestroyCb>)>,
 
-    /// Exit the main loop and return the specified retval.
+    /// Exits the main loop and return the specified retval.
     pub quit: Option<extern "C" fn(a: *const MainloopApi, retval: ::def::RetvalActual)>,
 }
 

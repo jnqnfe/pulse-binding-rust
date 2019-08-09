@@ -70,6 +70,8 @@ mod actual {
 #[deprecated(since = "1.4.0", note="use `TARGET_VERSION_STRING` instead")]
 pub const LINK_TARGET_VERSION: &str = TARGET_VERSION_STRING;
 
+/// PA version compatibility selection.
+///
 /// Used for indicating PA version compatibility support, which can vary depending upon feature
 /// flags.
 pub enum Compatibility {

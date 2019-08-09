@@ -79,7 +79,7 @@ impl<T> IoEvent<T>
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
     }
 
-    /// Enable or disable IO events on this object.
+    /// Enables or disables IO events on this object.
     #[inline]
     pub fn enable(&mut self, events: IoEventFlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
@@ -96,7 +96,7 @@ impl<T> IoEventRef<T>
         Self { ptr: ptr, owner: mainloop_inner }
     }
 
-    /// Enable or disable IO events on this object.
+    /// Enables or disables IO events on this object.
     #[inline]
     pub fn enable(&mut self, events: IoEventFlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();

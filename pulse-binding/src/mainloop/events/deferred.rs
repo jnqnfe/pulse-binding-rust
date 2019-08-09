@@ -57,14 +57,14 @@ impl<T> DeferEvent<T>
         Self { ptr: ptr, owner: mainloop_inner, _saved_cb: callback }
     }
 
-    /// Enable this event source temporarily.
+    /// Enables this event source temporarily.
     #[inline]
     pub fn enable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 1);
     }
 
-    /// Disable this event source temporarily.
+    /// Disables this event source temporarily.
     #[inline]
     pub fn disable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
@@ -81,14 +81,14 @@ impl<T> DeferEventRef<T>
         Self { ptr: ptr, owner: mainloop_inner }
     }
 
-    /// Enable this event source temporarily.
+    /// Enables this event source temporarily.
     #[inline]
     pub fn enable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();
         fn_ptr(self.ptr, 1);
     }
 
-    /// Disable this event source temporarily.
+    /// Disables this event source temporarily.
     #[inline]
     pub fn disable(&mut self) {
         let fn_ptr = (*self.owner).get_api().defer_enable.unwrap();

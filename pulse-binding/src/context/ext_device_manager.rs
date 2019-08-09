@@ -124,8 +124,8 @@ struct CallbackPointers {
 }
 
 impl Context {
-    /// Returns a device manager object linked to the current context, giving access to device
-    /// manager routines.
+    /// Gets a device manager object linked to the current context, giving access to device manager
+    /// routines.
     ///
     /// See [`::context::ext_device_manager`](ext_device_manager/index.html).
     pub fn device_manager(&self) -> DeviceManager {
@@ -135,13 +135,13 @@ impl Context {
 }
 
 impl DeviceManager {
-    /// Create a new `DeviceManager` from an existing
+    /// Creates a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
     }
 
-    /// Test if this extension module is available in the server.
+    /// Tests if this extension module is available in the server.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn test<F>(&mut self, callback: F) -> Operation<dyn FnMut(u32)>
@@ -154,7 +154,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
-    /// Read all entries from the device database.
+    /// Reads all entries from the device database.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn read<F>(&mut self, callback: F) -> Operation<dyn FnMut(ListResult<&Info>)>
@@ -190,7 +190,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Delete entries from the device database.
+    /// Deletes entries from the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -220,7 +220,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Enable the role-based device-priority routing mode.
+    /// Enables the role-based device-priority routing mode.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -238,7 +238,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Prefer a given device in the priority list.
+    /// Reorders the position of a given device in the priority list to give preference to it.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -272,7 +272,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Subscribe to changes in the device database.
+    /// Subscribes to changes in the device database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -287,7 +287,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
         where F: FnMut() + 'static

@@ -86,13 +86,13 @@ pub const MINOR: u8 = TARGET_VERSION.1;
 #[deprecated(since = "2.3.0", note="not useful, always zero")]
 pub const MICRO: u8 = 0;
 
-/// Returns indication of PA version compatibility support, depending upon feature flags used.
+/// Gets an indication of PA version compatibility support, depending upon feature flags used.
 #[inline(always)]
 pub fn get_compatibility() -> Compatibility {
     actual::COMPATIBILITY
 }
 
-/// Returns `BINDING_TARGET_VERSION`
+/// Gets `BINDING_TARGET_VERSION`
 #[deprecated(since = "2.3.0", note="not useful, confusing name, use `TARGET_VERSION_STRING` directly or `get_compatibility()` instead")]
 #[inline(always)]
 pub fn get_headers_version() -> &'static str {
@@ -100,13 +100,13 @@ pub fn get_headers_version() -> &'static str {
     BINDING_TARGET_VERSION
 }
 
-/// Returns the version of the library actually in use at runtime.
+/// Gets the version of the library actually in use at runtime.
 #[inline]
 pub fn get_library_version() -> &'static CStr {
     unsafe { CStr::from_ptr(capi::pa_get_library_version()) }
 }
 
-/// Evaluates to true if the PulseAudio library version targeted by this version of the PA binding
+/// Evaluates to `true` if the PulseAudio library version targeted by this version of the PA binding
 /// library is equal or newer than the version specified.
 pub fn check_version(major: u8, minor: u8, _micro: u8) -> bool {
     // Note, defined micro version is always zero as of PA v1.0, thus ignored here

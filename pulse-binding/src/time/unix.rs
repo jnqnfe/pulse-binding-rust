@@ -25,20 +25,20 @@ use super::{Timeval, MicroSeconds};
 pub struct UnixTs(pub(crate) Timeval);
 
 impl UnixTs {
-    /// Current ‘time of day’.
+    /// Gets the current ‘time of day’.
     pub fn now() -> Self {
         let mut tv = Timeval::new_zero();
         unsafe { capi::pa_gettimeofday(&mut tv.0) };
         UnixTs(tv)
     }
 
-    /// Calculate the difference between the two specified timestamps.
+    /// Calculates the difference between the two specified timestamps.
     #[inline]
     pub fn diff(a: &Self, b: &Self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_diff(&(a.0).0, &(b.0).0) })
     }
 
-    /// Return the time difference between now and self.
+    /// Gets the time difference between now and self.
     #[inline]
     pub fn age(&self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_age(&(self.0).0) })

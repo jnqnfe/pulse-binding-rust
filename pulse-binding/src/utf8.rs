@@ -22,7 +22,7 @@ use capi;
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 
-/// Convert a UTF-8 string to the current locale.
+/// Converts a UTF-8 string to the current locale.
 pub fn utf8_to_locale(s: &str) -> Option<String> {
     // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
     // as_ptr() giving dangling pointers!

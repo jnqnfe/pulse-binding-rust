@@ -174,7 +174,7 @@ impl From<capi::pa_context_state_t> for State {
 }
 
 impl State {
-    /// Returns `true` if the passed state is one of the connected states.
+    /// Checks if the passed state is one of the connected states (returns `true` if so).
     pub fn is_good(self) -> bool {
         self == State::Connecting ||
         self == State::Authorizing ||
@@ -201,7 +201,7 @@ pub mod flags {
 }
 
 impl Context {
-    /// Instantiate a new connection context with an abstract mainloop API and an application name.
+    /// Instantiates a new connection context with an abstract mainloop API and an application name.
     ///
     /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
     /// specify some initial properties.
@@ -217,7 +217,7 @@ impl Context {
         Some(Self::from_raw(ptr))
     }
 
-    /// Instantiate a new connection context with an abstract mainloop API and an application name,
+    /// Instantiates a new connection context with an abstract mainloop API and an application name,
     /// and specify the initial client property list.
     pub fn new_with_proplist(mainloop: &impl ::mainloop::api::Mainloop, name: &str,
         proplist: &Proplist) -> Option<Self>
@@ -233,7 +233,7 @@ impl Context {
         Some(Self::from_raw(ptr))
     }
 
-    /// Create a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
+    /// Creates a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
     /// pointer.
     #[inline]
     pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {
@@ -241,7 +241,7 @@ impl Context {
         Self { ptr: ptr, weak: false, cb_ptrs: Default::default() }
     }
 
-    /// Set a callback function that is called whenever the context status changes.
+    /// Sets a callback function that is called whenever the context status changes.
     pub fn set_state_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.set_state;
         *saved = NotifyCb::new(callback);
@@ -249,7 +249,7 @@ impl Context {
         unsafe { capi::pa_context_set_state_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set a callback function that is called whenever a meta/policy control event is received.
+    /// Sets a callback function that is called whenever a meta/policy control event is received.
     ///
     /// The callback is given a name which represents what event occurred. The set of defined events
     /// can be extended at any time. Also, server modules may introduce additional message types so
@@ -264,25 +264,25 @@ impl Context {
         unsafe { capi::pa_context_set_event_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Returns the error number of the last failed operation.
+    /// Gets the error number of the last failed operation.
     #[inline]
     pub fn errno(&self) -> PAErr {
         PAErr(unsafe { capi::pa_context_errno(self.ptr) })
     }
 
-    /// Returns `true` if some data is pending to be written to the connection.
+    /// Checks if some data is pending to be written to the connection (returns `true` if so).
     #[inline]
     pub fn is_pending(&self) -> bool {
         unsafe { capi::pa_context_is_pending(self.ptr) != 0 }
     }
 
-    /// Returns the current context status.
+    /// Gets the current context status.
     #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_context_get_state(self.ptr).into() }
     }
 
-    /// Connect the context to the specified server.
+    /// Connects the context to the specified server.
     ///
     /// If server is `None`, connect to the default server. This routine may but will not always
     /// return synchronously on error. Use [`set_state_callback`](#method.set_state_callback) to be
@@ -315,13 +315,13 @@ impl Context {
         }
     }
 
-    /// Terminate the context connection immediately.
+    /// Terminates the context connection immediately.
     #[inline]
     pub fn disconnect(&mut self) {
         unsafe { capi::pa_context_disconnect(self.ptr); }
     }
 
-    /// Drain the context.
+    /// Drains the context.
     ///
     /// If there is nothing to drain, the function returns `None`.
     ///
@@ -346,7 +346,7 @@ impl Context {
         Some(Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut()>))
     }
 
-    /// Tell the daemon to exit.
+    /// Tells the daemon to exit.
     ///
     /// The returned operation is unlikely to complete successfully, since the daemon probably died
     /// before returning a success notification.
@@ -363,7 +363,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the name of the default sink.
+    /// Sets the name of the default sink.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -382,7 +382,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the name of the default source.
+    /// Sets the name of the default source.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -401,7 +401,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Is this a connection to a local daemon?
+    /// Checks if this is a connection to a local daemon.
     ///
     /// Returns `true` when the connection is to a local daemon. Returns `None` on error, for
     /// instance when no connection has been made yet.
@@ -413,7 +413,7 @@ impl Context {
         }
     }
 
-    /// Set a different application name for context on the server.
+    /// Sets a different application name for context on the server.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
@@ -430,7 +430,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Return the server name this context is connected to.
+    /// Gets the server name this context is connected to.
     pub fn get_server(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_context_get_server(self.ptr) };
         if ptr.is_null() {
@@ -439,13 +439,13 @@ impl Context {
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
-    /// Return the protocol version of the library.
+    /// Gets the protocol version of the library.
     #[inline]
     pub fn get_protocol_version(&self) -> u32 {
         unsafe { capi::pa_context_get_protocol_version(self.ptr) }
     }
 
-    /// Return the protocol version of the connected server.
+    /// Gets the protocol version of the connected server.
     ///
     /// Returns `None` on error.
     pub fn get_server_protocol_version(&self) -> Option<u32> {
@@ -455,7 +455,7 @@ impl Context {
         }
     }
 
-    /// Update the property list of the client, adding new entries.
+    /// Updates the property list of the client, adding new entries.
     ///
     /// Please note that it is highly recommended to set as many properties initially via
     /// [`new_with_proplist`](#method.new_with_proplist) as possible instead a posteriori with this
@@ -474,7 +474,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Update the property list of the client, remove entries.
+    /// Updates the property list of the client, remove entries.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<dyn FnMut(bool)>
@@ -502,7 +502,7 @@ impl Context {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Return the client index this context is identified in the server with.
+    /// Gets the client index this context is identified in the server with.
     ///
     /// This is useful for usage with the introspection functions, such as
     /// [`::introspect::Introspector::get_client_info`].
@@ -517,7 +517,7 @@ impl Context {
         }
     }
 
-    /// Create a new timer event source for the specified time.
+    /// Creates a new timer event source for the specified time.
     ///
     /// This is an alternative to the mainloop `new_timer_event_rt` method.
     ///
@@ -563,7 +563,7 @@ impl Context {
         Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner(), to_save))
     }
 
-    /// Return the optimal block size for passing around audio buffers.
+    /// Gets the optimal block size for passing around audio buffers.
     ///
     /// It is recommended to allocate buffers of the size returned here when writing audio data to
     /// playback streams, if the latency constraints permit this. It is not recommended writing
@@ -587,7 +587,7 @@ impl Context {
         }
     }
 
-    /// Load the authentication cookie from a file.
+    /// Loads the authentication cookie from a file.
     ///
     /// This function is primarily meant for PulseAudio’s own tunnel modules, which need to load the
     /// cookie from a custom location. Applications don’t usually need to care about the cookie at

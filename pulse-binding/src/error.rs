@@ -90,7 +90,7 @@ fn code_compare_capi(){
 }
 
 impl PAErr {
-    /// Convert an integer error value, as returned by many PA C API functions, to a human readable
+    /// Converts an integer error value, as returned by many PA C API functions, to a human readable
     /// string.
     pub fn to_string(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_strerror(self.0) };
@@ -111,7 +111,7 @@ impl std::fmt::Display for PAErr {
 }
 
 impl Code {
-    /// Convert a Code to a human readable string.
+    /// Converts a `Code` to a human readable string.
     pub fn to_string(self) -> Option<String> {
         PAErr::from(self).to_string()
     }

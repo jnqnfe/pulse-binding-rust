@@ -17,6 +17,8 @@
 
 use std::os::raw::c_char;
 
+/// Error code.
+///
 /// These represent the i32 error codes returned by many of the underlying PulseAudio C functions.
 /// Beware, these enum values are positive values, whilst PA functions return them in negative form,
 /// i.e. the `Invalid` variant here has a value of `3`, while functions returning this error code

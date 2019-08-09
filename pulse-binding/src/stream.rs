@@ -350,7 +350,7 @@ impl From<capi::pa_stream_state_t> for State {
 }
 
 impl State {
-    /// Returns `true` if the passed state is one of the connected states.
+    /// Checks if the passed state is one of the connected states.
     #[inline]
     pub fn is_good(self) -> bool {
         self == State::Creating || self == State::Ready
@@ -569,7 +569,7 @@ pub enum Latency {
 }
 
 impl Stream {
-    /// Create a new, unconnected stream with the specified name and sample type.
+    /// Creates a new, unconnected stream with the specified name and sample type.
     ///
     /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
     /// specify some initial properties.
@@ -599,7 +599,7 @@ impl Stream {
         Some(Self::from_raw(ptr))
     }
 
-    /// Create a new, unconnected stream with the specified name and sample type, and specify the
+    /// Creates a new, unconnected stream with the specified name and sample type, and specify the
     /// initial stream property list.
     ///
     /// # Params
@@ -631,8 +631,8 @@ impl Stream {
         Some(Self::from_raw(ptr))
     }
 
-    /// Create a new, unconnected stream with the specified name, the set of formats this client can
-    /// provide, and an initial list of properties.
+    /// Creates a new, unconnected stream with the specified name, the set of formats this client
+    /// can provide, and an initial list of properties.
     ///
     /// While connecting, the server will select the most appropriate format which the client must
     /// then provide.
@@ -667,21 +667,20 @@ impl Stream {
         Some(Self::from_raw(ptr))
     }
 
-    /// Create a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
+    /// Creates a new `Stream` from an existing [`StreamInternal`](enum.StreamInternal.html) pointer.
     #[inline]
     fn from_raw(ptr: *mut StreamInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr: ptr, cb_ptrs: Default::default() }
     }
 
-    /// Return the current state of the stream.
+    /// Gets the current state of the stream.
     #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_stream_get_state(self.ptr).into() }
     }
 
-    /// Return the sink input resp. source output index this stream is identified in the server
-    /// with.
+    /// Gets the sink input resp. source output index this stream is identified in the server with.
     ///
     /// This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_input_info`] or
@@ -698,7 +697,7 @@ impl Stream {
         }
     }
 
-    /// Return the index of the sink or source this stream is connected to in the server.
+    /// Gets the index of the sink or source this stream is connected to in the server.
     ///
     /// This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_info_by_index`] or
@@ -718,7 +717,7 @@ impl Stream {
         }
     }
 
-    /// Return the name of the sink or source this stream is connected to in the server.
+    /// Gets the name of the sink or source this stream is connected to in the server.
     ///
     /// This is useful with the introspection functions such as
     /// [`::context::introspect::Introspector::get_sink_info_by_name`] or
@@ -739,7 +738,7 @@ impl Stream {
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy() })
     }
 
-    /// Return whether or not the sink or source this stream is connected to has been suspended.
+    /// Checks whether or not the sink or source this stream is connected to has been suspended.
     pub fn is_suspended(&self) -> Result<bool, PAErr> {
         match unsafe { capi::pa_stream_is_suspended(self.ptr) } {
             0 => Ok(false),
@@ -748,7 +747,7 @@ impl Stream {
         }
     }
 
-    /// Return whether or not this stream has been corked.
+    /// Checks whether or not this stream has been corked.
     pub fn is_corked(&self) -> Result<bool, PAErr> {
         match unsafe { capi::pa_stream_is_corked(self.ptr) } {
             0 => Ok(false),
@@ -757,7 +756,7 @@ impl Stream {
         }
     }
 
-    /// Connect the stream to a sink.
+    /// Connects the stream to a sink.
     ///
     /// It is strongly recommended to pass `None` in both `dev` and `volume` and to set neither
     /// [`flags::START_MUTED`] nor [`flags::START_UNMUTED`] -- unless these options are directly
@@ -832,7 +831,7 @@ impl Stream {
         }
     }
 
-    /// Connect the stream to a source.
+    /// Connects the stream to a source.
     ///
     /// # Params
     ///
@@ -864,7 +863,9 @@ impl Stream {
         }
     }
 
-    /// Make this stream a sample upload stream. (See [`::scache`](../context/scache/index.html)).
+    /// Makes this stream a sample upload stream.
+    ///
+    /// (See [`::scache`](../context/scache/index.html)).
     pub fn connect_upload(&mut self, length: usize) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_connect_upload(self.ptr, length) } {
             0 => Ok(()),
@@ -872,7 +873,8 @@ impl Stream {
         }
     }
 
-    /// Finish the sample upload, the stream name will become the sample name.
+    /// Finishes the sample upload, the stream name will become the sample name.
+    ///
     /// You cancel a sample upload by issuing [`disconnect`](#method.disconnect).
     pub fn finish_upload(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_finish_upload(self.ptr) } {
@@ -881,7 +883,7 @@ impl Stream {
         }
     }
 
-    /// Disconnect a stream from a source/sink.
+    /// Disconnects a stream from a source/sink.
     pub fn disconnect(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_disconnect(self.ptr) } {
             0 => Ok(()),
@@ -889,7 +891,7 @@ impl Stream {
         }
     }
 
-    /// Prepare writing data to the server (for playback streams).
+    /// Prepares writing data to the server (for playback streams).
     ///
     /// This function may be used to optimize the number of memory copies when doing playback
     /// (“zero-copy”). It is recommended to call this function before each call to [`write`]. It is
@@ -963,7 +965,7 @@ impl Stream {
         }
     }
 
-    /// Write some data to the server (for playback streams).
+    /// Writes some data to the server (for playback streams).
     ///
     /// If `free_cb` is provided, this routine is called when all data has been written out. An
     /// internal reference to the specified data is kept, the data is not copied. If `None`, the
@@ -1010,7 +1012,7 @@ impl Stream {
         }
     }
 
-    /// Write some data to the server (for playback streams).
+    /// Writes some data to the server (for playback streams).
     ///
     /// This function does exactly the same as [`write`] with the only difference being that a void
     /// pointer is provided along with the `free_cb` callback pointer, and this void pointer will be
@@ -1046,7 +1048,7 @@ impl Stream {
         }
     }
 
-    /// Read the next fragment from the buffer (for recording streams).
+    /// Reads the next fragment from the buffer (for recording streams).
     ///
     /// This function returns one of the [`PeekResult`] variants - either [`Empty`], [`Hole`] or
     /// [`Data`]:
@@ -1089,7 +1091,7 @@ impl Stream {
         }
     }
 
-    /// Remove the current fragment on record streams.
+    /// Removes the current fragment on record streams.
     ///
     /// It is invalid to do this without first calling [`peek`](#method.peek).
     ///
@@ -1102,7 +1104,7 @@ impl Stream {
         }
     }
 
-    /// Return the number of bytes requested by the server that have not yet been written.
+    /// Gets the number of bytes requested by the server that have not yet been written.
     ///
     /// It is possible to write more than this amount, up to the stream’s [`buffer_attr.maxlength`]
     /// bytes. This is usually not desirable, though, as it would increase stream latency to be
@@ -1117,7 +1119,7 @@ impl Stream {
         }
     }
 
-    /// Return the number of bytes that may be read using [`peek`](#method.peek).
+    /// Gets the number of bytes that may be read using [`peek`](#method.peek).
     pub fn readable_size(&self) -> Option<usize> {
         match unsafe { capi::pa_stream_readable_size(self.ptr) } {
             std::usize::MAX => None,
@@ -1125,7 +1127,7 @@ impl Stream {
         }
     }
 
-    /// Drain a playback stream.
+    /// Drains a playback stream.
     ///
     /// Use this for notification when the playback buffer is empty after playing all the audio in
     /// the buffer. Please note that only one drain operation per stream may be issued at a time.
@@ -1143,7 +1145,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Request a timing info structure update for a stream.
+    /// Requests a timing info structure update for a stream.
     ///
     /// Use [`get_timing_info`] to get access to the raw timing data, or [`get_time`] or
     /// [`get_latency`] to get cleaned up values.
@@ -1165,7 +1167,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the callback function that is called whenever the state of the stream changes.
+    /// Sets the callback function that is called whenever the state of the stream changes.
     pub fn set_state_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.set_state;
         *saved = NotifyCb::new(callback);
@@ -1173,7 +1175,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_state_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called when new data may be written to the stream.
+    /// Sets the callback function that is called when new data may be written to the stream.
     ///
     /// The callback accepts an argument giving the number of bytes.
     pub fn set_write_callback(&mut self, callback: Option<Box<dyn FnMut(usize) + 'static>>) {
@@ -1183,7 +1185,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_write_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called when new data is available from the stream.
+    /// Sets the callback function that is called when new data is available from the stream.
     ///
     /// The callback accepts an argument giving the number of bytes.
     pub fn set_read_callback(&mut self, callback: Option<Box<dyn FnMut(usize) + 'static>>) {
@@ -1193,7 +1195,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_read_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called when a buffer overflow happens. (Only for playback
+    /// Sets the callback function that is called when a buffer overflow happens. (Only for playback
     /// streams).
     pub fn set_overflow_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.overflow;
@@ -1202,7 +1204,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_overflow_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Return at what position the latest underflow occurred.
+    /// Gets at what position the latest underflow occurred.
     ///
     /// `None` is returned if this information is not known (e.g. if no underflow has occurred).
     ///
@@ -1215,7 +1217,7 @@ impl Stream {
         }
     }
 
-    /// Set the callback function that is called when a buffer underflow happens.
+    /// Sets the callback function that is called when a buffer underflow happens.
     ///
     /// (Only for playback streams).
     pub fn set_underflow_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
@@ -1225,7 +1227,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_underflow_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called when the server starts playback after an underrun
+    /// Sets the callback function that is called when the server starts playback after an underrun
     /// or on initial startup.
     ///
     /// This only informs that audio is flowing again, it is no indication that audio started to
@@ -1237,7 +1239,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_started_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called whenever a latency information update happens.
+    /// Sets the callback function that is called whenever a latency information update happens.
     ///
     /// Useful on [`flags::AUTO_TIMING_UPDATE`] streams only.
     ///
@@ -1249,7 +1251,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_latency_update_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called whenever the stream is moved to a different
+    /// Sets the callback function that is called whenever the stream is moved to a different
     /// sink/source.
     ///
     /// Use [`get_device_name`] or [`get_device_index`] to query the new sink/source.
@@ -1263,7 +1265,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_moved_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called whenever the sink/source this stream is connected
+    /// Sets the callback function that is called whenever the sink/source this stream is connected
     /// to is suspended or resumed.
     ///
     /// Use [`is_suspended`] to query the new suspend status. Please note that the suspend status
@@ -1279,7 +1281,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_suspended_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called whenever a meta/policy control event is received.
+    /// Sets the callback function that is called whenever a meta/policy control event is received.
     ///
     /// The callback is given a name which represents what event occurred. The set of defined events
     /// can be extended at any time. Also, server modules may introduce additional message types so
@@ -1295,7 +1297,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_event_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Set the callback function that is called whenever the buffer attributes on the server side
+    /// Sets the callback function that is called whenever the buffer attributes on the server side
     /// change.
     ///
     /// Please note that the buffer attributes can change when moving a stream to a different
@@ -1310,7 +1312,7 @@ impl Stream {
         unsafe { capi::pa_stream_set_buffer_attr_callback(self.ptr, cb_fn, cb_data); }
     }
 
-    /// Pause playback of this stream temporarily.
+    /// Pauses playback of this stream temporarily.
     ///
     /// Available on both playback and recording streams.
     ///
@@ -1336,7 +1338,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Resume playback of this stream.
+    /// Resumes playback of this stream.
     ///
     /// Available on both playback and recording streams.
     ///
@@ -1362,7 +1364,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Flush the playback or record buffer of this stream.
+    /// Flushes the playback or record buffer of this stream.
     ///
     /// This discards any audio data in the buffer. Most of the time you’re better off using the
     /// parameter `seek` of [`write`](#method.write) instead of this function.
@@ -1380,7 +1382,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Re-enable prebuffering if specified in the [`::def::BufferAttr`] structure.
+    /// Re-enables prebuffering if specified in the [`::def::BufferAttr`] structure.
     ///
     /// Available for playback streams only.
     ///
@@ -1399,7 +1401,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Request immediate start of playback on this stream.
+    /// Requests immediate start of playback on this stream.
     ///
     /// This disables prebuffering temporarily if specified in the [`::def::BufferAttr`] structure.
     /// Available for playback streams only.
@@ -1419,7 +1421,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Rename the stream.
+    /// Renames the stream.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1440,7 +1442,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Return the current playback/recording time.
+    /// Gets the current playback/recording time.
     ///
     /// This is based on the data in the timing info structure returned by [`get_timing_info`]. The
     /// returned time is in the sound card clock domain, which usually runs at a slightly different
@@ -1480,7 +1482,7 @@ impl Stream {
         }
     }
 
-    /// Determine the total stream latency.
+    /// Determines the total stream latency.
     ///
     /// This function is based on [`get_time`]. The returned time is in the sound card clock domain,
     /// which usually runs at a slightly different rate than the system clock.
@@ -1508,7 +1510,7 @@ impl Stream {
         }
     }
 
-    /// Returns the latest raw timing data structure.
+    /// Gets the latest raw timing data structure.
     ///
     /// The returned pointer refers to an internal read-only instance of the timing structure. The
     /// user should make a copy of this structure if wanting to modify it. An in-place update to
@@ -1531,7 +1533,7 @@ impl Stream {
         }
     }
 
-    /// Return a pointer to the stream’s sample specification.
+    /// Gets a pointer to the stream’s sample specification.
     pub fn get_sample_spec<'a>(&mut self) -> Option<&'a ::sample::Spec> {
         unsafe {
             let ptr = capi::pa_stream_get_sample_spec(self.ptr);
@@ -1539,7 +1541,7 @@ impl Stream {
         }
     }
 
-    /// Return a pointer to the stream’s channel map.
+    /// Gets a pointer to the stream’s channel map.
     pub fn get_channel_map<'a>(&mut self) -> Option<&'a ::channelmap::Map> {
         unsafe {
             let ptr = capi::pa_stream_get_channel_map(self.ptr);
@@ -1547,7 +1549,7 @@ impl Stream {
         }
     }
 
-    /// Return a pointer to the stream’s format.
+    /// Gets a pointer to the stream’s format.
     pub fn get_format_info(&self) -> Option<::format::Info> {
         let ptr = unsafe { capi::pa_stream_get_format_info(self.ptr) };
         if ptr.is_null() {
@@ -1556,7 +1558,7 @@ impl Stream {
         Some(::format::Info::from_raw_weak(ptr as *mut InfoInternal))
     }
 
-    /// Return the per-stream server-side buffer metrics of the stream.
+    /// Gets the per-stream server-side buffer metrics of the stream.
     ///
     /// Only valid after the stream has been connected successfully. This will return the actual
     /// configured buffering metrics, which may differ from what was requested during
@@ -1574,7 +1576,7 @@ impl Stream {
         }
     }
 
-    /// Change the buffer metrics of the stream during playback.
+    /// Changes the buffer metrics of the stream during playback.
     ///
     /// The server might have chosen different buffer metrics then requested. The selected metrics
     /// may be queried with [`get_buffer_attr`] as soon as the callback is called. Only valid after
@@ -1598,7 +1600,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Change the stream sampling rate during playback.
+    /// Changes the stream sampling rate during playback.
     ///
     /// You need to pass [`flags::VARIABLE_RATE`] in the flags parameter of [`connect_playback`] if
     /// you plan to use this function. Only valid after the stream has been connected successfully.
@@ -1619,7 +1621,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Update the property list of the sink input/source output of this stream, adding new entries.
+    /// Updates the property list of the sink input/source output of this stream, adding new entries.
     ///
     /// Please note that it is highly recommended to set as many properties initially via
     /// [`new_with_proplist`] as possible instead a posteriori with this function, since that
@@ -1641,7 +1643,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Update the property list of the sink input/source output of this stream, remove entries.
+    /// Updates the property list of the sink input/source output of this stream, removing entries.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -1673,8 +1675,8 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// For record streams connected to a monitor source: monitor only a very specific sink input of
-    /// the sink.
+    /// For record streams connected to a monitor source: monitors only a very specific sink input
+    /// of the sink.
     ///
     /// This function needs to be called before [`connect_record`](#method.connect_record) is called.
     pub fn set_monitor_stream(&mut self, sink_input_index: u32) -> Result<(), PAErr> {
@@ -1684,7 +1686,7 @@ impl Stream {
         }
     }
 
-    /// Return the sink input index previously set with
+    /// Gets the sink input index previously set with
     /// [`set_monitor_stream`](#method.set_monitor_stream).
     pub fn get_monitor_stream(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_monitor_stream(self.ptr) } {

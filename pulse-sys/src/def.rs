@@ -102,14 +102,14 @@ pub const PA_SINK_RUNNING: pa_sink_state_t = pa_sink_state_t::Running;
 pub const PA_SINK_IDLE: pa_sink_state_t = pa_sink_state_t::Idle;
 pub const PA_SINK_SUSPENDED: pa_sink_state_t = pa_sink_state_t::Suspended;
 
-/// Returns `true` if sink is playing: running or idle.
+/// Checks if state is playing, i.e. running or idle (returns `true` if so).
 #[inline(always)]
 pub fn pa_sink_is_opened(state: pa_sink_state_t) -> bool {
     state == pa_sink_state_t::Running ||
     state == pa_sink_state_t::Idle
 }
 
-/// Returns `true` if sink is running.
+/// Checks if state is running (returns `true` if so).
 #[inline(always)]
 pub fn pa_sink_is_running(state: pa_sink_state_t) -> bool {
     state == pa_sink_state_t::Running

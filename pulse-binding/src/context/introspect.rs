@@ -260,8 +260,8 @@ unsafe impl Send for Introspector {}
 unsafe impl Sync for Introspector {}
 
 impl Context {
-    /// Returns an introspection object linked to the current context, giving access to
-    /// introspection routines.
+    /// Gets an introspection object linked to the current context, giving access to introspection
+    /// routines.
     ///
     /// See [`::context::introspect`](introspect/index.html).
     #[inline]
@@ -272,7 +272,7 @@ impl Context {
 }
 
 impl Introspector {
-    /// Create a new `Introspector` from an existing
+    /// Creates a new `Introspector` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     #[inline(always)]
     fn from_raw(context: *mut ContextInternal) -> Self {
@@ -454,7 +454,7 @@ impl<'a> SinkInfo<'a> {
 }
 
 impl Introspector {
-    /// Get information about a sink by its name.
+    /// Gets information about a sink by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_name<F>(&self, name: &str, callback: F)
@@ -472,7 +472,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInfo>)>)
     }
 
-    /// Get information about a sink by its index.
+    /// Gets information about a sink by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_info_by_index<F>(&self, index: u32, callback: F)
@@ -486,7 +486,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInfo>)>)
     }
 
-    /// Get the complete sink list.
+    /// Gets the complete sink list.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_info_list<F>(&self, callback: F) -> Operation<dyn FnMut(ListResult<&SinkInfo>)>
@@ -499,7 +499,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInfo>)>)
     }
 
-    /// Set the volume of a sink device specified by its index.
+    /// Sets the volume of a sink device specified by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -515,7 +515,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the volume of a sink device specified by its name.
+    /// Sets the volume of a sink device specified by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -535,7 +535,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the mute switch of a sink device specified by its index.
+    /// Sets the mute switch of a sink device specified by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -551,7 +551,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the mute switch of a sink device specified by its name.
+    /// Sets the mute switch of a sink device specified by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -571,7 +571,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Suspend/Resume a sink.
+    /// Suspends/Resumes a sink.
     /// 
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -591,7 +591,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Suspend/Resume a sink.
+    /// Suspends/Resumes a sink.
     ///
     /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
     /// be suspended. Panics on error, i.e. invalid arguments or state.
@@ -608,7 +608,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Change the profile of a sink.
+    /// Changes the profile of a sink.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -628,7 +628,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Change the profile of a sink.
+    /// Changes the profile of a sink.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -839,7 +839,7 @@ impl<'a> SourceInfo<'a> {
 }
 
 impl Introspector {
-    /// Get information about a source by its name.
+    /// Gets information about a source by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_name<F>(&self, name: &str, callback: F)
@@ -857,7 +857,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceInfo>)>)
     }
 
-    /// Get information about a source by its index.
+    /// Gets information about a source by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_info_by_index<F>(&self, index: u32, callback: F)
@@ -871,7 +871,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceInfo>)>)
     }
 
-    /// Get the complete source list.
+    /// Gets the complete source list.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_info_list<F>(&self, callback: F)
@@ -885,7 +885,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceInfo>)>)
     }
 
-    /// Set the volume of a source device specified by its index.
+    /// Sets the volume of a source device specified by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -901,7 +901,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the volume of a source device specified by its name.
+    /// Sets the volume of a source device specified by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -921,7 +921,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the mute switch of a source device specified by its index.
+    /// Sets the mute switch of a source device specified by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -937,7 +937,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the mute switch of a source device specified by its name.
+    /// Sets the mute switch of a source device specified by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -957,7 +957,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Suspend/Resume a source.
+    /// Suspends/Resumes a source.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -977,7 +977,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Suspend/Resume a source.
+    /// Suspends/Resumes a source.
     ///
     /// If `index` is [`::def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
     /// will be suspended. Panics on error, i.e. invalid arguments or state.
@@ -994,7 +994,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Change the profile of a source.
+    /// Changes the profile of a source.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1014,7 +1014,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Change the profile of a source.
+    /// Changes the profile of a source.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1125,7 +1125,7 @@ impl<'a> ServerInfo<'a> {
 }
 
 impl Introspector {
-    /// Get some information about the server.
+    /// Gets some information about the server.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_server_info<F>(&self, callback: F) -> Operation<dyn FnMut(&ServerInfo)>
@@ -1203,7 +1203,7 @@ impl<'a> ModuleInfo<'a> {
 }
 
 impl Introspector {
-    /// Get some information about a module by its index.
+    /// Gets some information about a module by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_module_info<F>(&self, index: u32, callback: F)
@@ -1217,7 +1217,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ModuleInfo>)>)
     }
 
-    /// Get the complete list of currently loaded modules.
+    /// Gets the complete list of currently loaded modules.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_module_info_list<F>(&self, callback: F)
@@ -1231,7 +1231,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ModuleInfo>)>)
     }
 
-    /// Load a module.
+    /// Loads a module.
     ///
     /// Panics on error, i.e. invalid arguments or state. The callback is provided with the
     /// index.
@@ -1251,7 +1251,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
-    /// Unload a module.
+    /// Unloads a module.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1347,7 +1347,7 @@ impl<'a> ClientInfo<'a> {
 }
 
 impl Introspector {
-    /// Get information about a client by its index.
+    /// Gets information about a client by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_client_info<F>(&self, index: u32, callback: F)
@@ -1361,7 +1361,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ClientInfo>)>)
     }
 
-    /// Get the complete client list.
+    /// Gets the complete client list.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_client_info_list<F>(&self, callback: F)
@@ -1375,7 +1375,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ClientInfo>)>)
     }
 
-    /// Kill a client.
+    /// Kills a client.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1596,7 +1596,7 @@ impl<'a> CardInfo<'a> {
 }
 
 impl Introspector {
-    /// Get information about a card by its index.
+    /// Gets information about a card by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_index<F>(&self, index: u32, callback: F)
@@ -1610,7 +1610,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&CardInfo>)>)
     }
 
-    /// Get information about a card by its name.
+    /// Gets information about a card by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_card_info_by_name<F>(&self, name: &str, callback: F)
@@ -1628,7 +1628,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&CardInfo>)>)
     }
 
-    /// Get the complete card list.
+    /// Gets the complete card list.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_card_info_list<F>(&self, callback: F) -> Operation<dyn FnMut(ListResult<&CardInfo>)>
@@ -1641,7 +1641,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&CardInfo>)>)
     }
 
-    /// Change the profile of a card.
+    /// Changes the profile of a card.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1661,7 +1661,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Change the profile of a card.
+    /// Changes the profile of a card.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1682,7 +1682,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the latency offset of a port.
+    /// Sets the latency offset of a port.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1822,7 +1822,7 @@ impl<'a> SinkInputInfo<'a> {
 }
 
 impl Introspector {
-    /// Get some information about a sink input by its index.
+    /// Gets some information about a sink input by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info<F>(&self, index: u32, callback: F)
@@ -1837,7 +1837,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInputInfo>)>)
     }
 
-    /// Get the complete sink input list.
+    /// Gets the complete sink input list.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sink_input_info_list<F>(&self, callback: F)
@@ -1852,7 +1852,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInputInfo>)>)
     }
 
-    /// Move the specified sink input to a different sink.
+    /// Moves the specified sink input to a different sink.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1872,7 +1872,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Move the specified sink input to a different sink.
+    /// Moves the specified sink input to a different sink.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1888,7 +1888,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the volume of a sink input stream.
+    /// Sets the volume of a sink input stream.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1904,7 +1904,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the mute switch of a sink input stream.
+    /// Sets the mute switch of a sink input stream.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -1920,7 +1920,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Kill a sink input.
+    /// Kills a sink input.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -2054,7 +2054,7 @@ impl<'a> SourceOutputInfo<'a> {
 }
 
 impl Introspector {
-    /// Get information about a source output by its index.
+    /// Gets information about a source output by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_output_info<F>(&self, index: u32, callback: F)
@@ -2069,7 +2069,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceOutputInfo>)>)
     }
 
-    /// Get the complete list of source outputs.
+    /// Gets the complete list of source outputs.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_source_output_info_list<F>(&self, callback: F)
@@ -2084,7 +2084,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceOutputInfo>)>)
     }
 
-    /// Move the specified source output to a different source.
+    /// Moves the specified source output to a different source.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -2104,7 +2104,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Move the specified source output to a different source.
+    /// Moves the specified source output to a different source.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -2120,7 +2120,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the volume of a source output stream.
+    /// Sets the volume of a source output stream.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -2136,7 +2136,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the mute switch of a source output stream.
+    /// Sets the mute switch of a source output stream.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -2152,7 +2152,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Kill a source output.
+    /// Kills a source output.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
@@ -2193,7 +2193,7 @@ fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const Sourc
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 impl Introspector {
-    /// Get daemon memory block statistics.
+    /// Gets daemon memory block statistics.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn stat<F>(&self, callback: F) -> Operation<dyn FnMut(&StatInfo)>
@@ -2280,7 +2280,7 @@ impl<'a> SampleInfo<'a> {
 }
 
 impl Introspector {
-    /// Get information about a sample by its name.
+    /// Gets information about a sample by its name.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_name<F>(&self, name: &str, callback: F)
@@ -2298,7 +2298,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SampleInfo>)>)
     }
 
-    /// Get information about a sample by its index.
+    /// Gets information about a sample by its index.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sample_info_by_index<F>(&self, index: u32, callback: F)
@@ -2312,7 +2312,7 @@ impl Introspector {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SampleInfo>)>)
     }
 
-    /// Get the complete list of samples stored in the daemon.
+    /// Gets the complete list of samples stored in the daemon.
     ///
     /// Panics on error, i.e. invalid arguments or state.
     pub fn get_sample_info_list<F>(&self, callback: F)

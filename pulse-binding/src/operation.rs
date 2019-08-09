@@ -46,11 +46,12 @@ type NotifyCb = ::callbacks::MultiUseCallback<dyn FnMut(),
     extern "C" fn(*mut OperationInternal, *mut c_void)>;
 
 impl<ClosureProto: ?Sized> Operation<ClosureProto> {
-    /// Create a new `Operation` from an existing [`OperationInternal`](enum.OperationInternal.html)
-    /// pointer.
+    /// Creates a new `Operation` from an existing [`OperationInternal`] pointer.
     ///
     /// We also take a copy of the closure callback pointer, in order to free the memory on
     /// cancellation.
+    ///
+    /// [`OperationInternal`]: enum.OperationInternal.html
     pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>)
         -> Self
     {
@@ -62,7 +63,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
         Self { ptr: ptr, saved_cb: saved_cb_actual, state_cb: Default::default() }
     }
 
-    /// Cancel the operation.
+    /// Cancels the operation.
     ///
     /// Beware! This will not necessarily cancel the execution of the operation on the server side.
     /// However it will make sure that the callback associated with this operation will not be
@@ -85,13 +86,13 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
         }
     }
 
-    /// Return the current status of the operation.
+    /// Gets the current status of the operation.
     #[inline]
     pub fn get_state(&self) -> State {
         unsafe { capi::pa_operation_get_state(self.ptr) }
     }
 
-    /// Set the callback function that is called when the operation state changes.
+    /// Sets the callback function that is called when the operation state changes.
     ///
     /// Usually this is not necessary, since the functions that create `Operation` objects already
     /// take a callback that is called when the operation finishes. Registering a state change

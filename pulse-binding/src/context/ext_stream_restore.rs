@@ -85,8 +85,8 @@ struct CallbackPointers {
 }
 
 impl Context {
-    /// Returns a stream restore object linked to the current context, giving access to stream
-    /// restore routines.
+    /// Gets a stream restore object linked to the current context, giving access to stream restore
+    /// routines.
     ///
     /// See [`::context::ext_stream_restore`](ext_stream_restore/index.html).
     pub fn stream_restore(&self) -> StreamRestore {
@@ -96,13 +96,13 @@ impl Context {
 }
 
 impl StreamRestore {
-    /// Create a new `DeviceManager` from an existing
+    /// Creates a new `DeviceManager` from an existing
     /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
     }
 
-    /// Test if this extension module is available in the server.
+    /// Tests if this extension module is available in the server.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn test<F>(&mut self, callback: F) -> Operation<dyn FnMut(u32)>
@@ -115,7 +115,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
-    /// Read all entries from the stream database.
+    /// Reads all entries from the stream database.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn read<F>(&mut self, callback: F) -> Operation<dyn FnMut(ListResult<&Info>)>
@@ -128,7 +128,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
-    /// Store entries in the stream database.
+    /// Stores entries in the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -147,7 +147,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Delete entries from the stream database.
+    /// Deletes entries from the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -177,7 +177,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Subscribe to changes in the stream database.
+    /// Subscribes to changes in the stream database.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -192,7 +192,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Set the subscription callback that is called when [`subscribe`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe`](#method.subscribe) was
     /// called.
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
         where F: FnMut() + 'static

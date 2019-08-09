@@ -157,7 +157,7 @@ impl PartialEq for ChannelVolumes {
     }
 }
 
-/// Convert a decibel value to a volume (amplitude, not power).
+/// Converts a decibel value to a volume (amplitude, not power).
 ///
 /// This is only valid for software volumes!
 impl From<VolumeDB> for Volume {
@@ -166,7 +166,7 @@ impl From<VolumeDB> for Volume {
         Volume(unsafe { capi::pa_sw_volume_from_dB(v.0) })
     }
 }
-/// Convert a volume to a decibel value (amplitude, not power).
+/// Converts a volume to a decibel value (amplitude, not power).
 ///
 /// This is only valid for software volumes!
 impl From<Volume> for VolumeDB {
@@ -176,7 +176,7 @@ impl From<Volume> for VolumeDB {
     }
 }
 
-/// Convert a linear factor to a volume.
+/// Converts a linear factor to a volume.
 ///
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 /// This is only valid for software volumes!
@@ -186,7 +186,7 @@ impl From<VolumeLinear> for Volume {
         Volume(unsafe { capi::pa_sw_volume_from_linear(v.0) })
     }
 }
-/// Convert a volume to a linear factor.
+/// Converts a volume to a linear factor.
 ///
 /// This is only valid for software volumes!
 impl From<Volume> for VolumeLinear {
@@ -196,7 +196,7 @@ impl From<Volume> for VolumeLinear {
     }
 }
 
-/// Convert a linear factor to a decibel value (amplitude, not power).
+/// Converts a linear factor to a decibel value (amplitude, not power).
 ///
 /// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
 ///
@@ -207,7 +207,7 @@ impl From<VolumeLinear> for VolumeDB {
         VolumeDB::from(Volume::from(v))
     }
 }
-/// Convert a decibel value (amplitude, not power) to a linear factor.
+/// Converts a decibel value (amplitude, not power) to a linear factor.
 ///
 /// This is only valid for software volumes!
 impl From<VolumeDB> for VolumeLinear {
@@ -245,7 +245,7 @@ impl Volume {
         *self == VOLUME_MAX
     }
 
-    /// Recommended maximum volume to show in user facing UIs.
+    /// Get the recommended maximum volume to show in user facing UIs.
     ///
     /// Note: UIs should deal gracefully with volumes greater than this value and not cause feedback
     /// loops etc. - i.e. if the volume is more than this, the UI should not limit it and push the
@@ -255,19 +255,19 @@ impl Volume {
         Volume(capi::pa_volume_ui_max())
     }
 
-    /// Check if volume is valid.
+    /// Checks if volume is valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
         capi::pa_volume_is_valid(self.0)
     }
 
-    /// Clamp volume to the permitted range.
+    /// Clamps volume to the permitted range.
     #[inline]
     pub fn clamp(&mut self) {
         self.0 = capi::pa_clamp_volume(self.0)
     }
 
-    /// Multiply two software volumes, return the result.
+    /// Multiplies two software volumes, returning the result.
     ///
     /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of multiplication.
     ///
@@ -277,7 +277,7 @@ impl Volume {
         Volume(unsafe { capi::pa_sw_volume_multiply(a.0, b.0) })
     }
 
-    /// Divide two software volumes, return the result.
+    /// Divides two software volumes, returning the result.
     ///
     /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. If a
     /// division by zero is tried the result will be `0`.
@@ -288,7 +288,7 @@ impl Volume {
         Volume(unsafe { capi::pa_sw_volume_divide(a.0, b.0) })
     }
 
-    /// Pretty print a volume.
+    /// Pretty prints a volume.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_VOLUME_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
@@ -298,7 +298,7 @@ impl Volume {
         }
     }
 
-    /// Pretty print a volume but show dB values.
+    /// Pretty prints a volume but showing dB values.
     pub fn print_db(&self) -> String {
         const PRINT_DB_MAX: usize = capi::PA_SW_VOLUME_SNPRINT_DB_MAX;
         let mut tmp = Vec::with_capacity(PRINT_DB_MAX);
@@ -308,7 +308,7 @@ impl Volume {
         }
     }
 
-    /// Pretty print a volume in a verbose way.
+    /// Pretty prints a volume in a verbose way.
     ///
     /// The volume is printed in several formats: the raw volume value, percentage, and if
     /// `print_db` is true, also the dB value.
@@ -330,7 +330,7 @@ impl std::fmt::Display for Volume {
 }
 
 impl ChannelVolumes {
-    /// Initialize the specified volume and return a pointer to it.
+    /// Initializes the specified volume and return a pointer to it.
     ///
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
     /// it.
@@ -340,26 +340,26 @@ impl ChannelVolumes {
         self
     }
 
-    /// Set the volume of the specified number of channels to the supplied volume.
+    /// Sets the volume of the specified number of channels to the supplied volume.
     #[inline]
     pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
         unsafe { capi::pa_cvolume_set(self.as_mut(), channels, v.0) };
         self
     }
 
-    /// Set the volume of the first n channels to [`VOLUME_NORM`](constant.VOLUME_NORM.html).
+    /// Sets the volume of the first n channels to [`VOLUME_NORM`](constant.VOLUME_NORM.html).
     #[inline]
     pub fn reset(&mut self, channels: u32) -> &Self {
         self.set(channels, VOLUME_NORM)
     }
 
-    /// Set the volume of the first n channels to [`VOLUME_MUTED`](constant.VOLUME_MUTED.html).
+    /// Sets the volume of the first n channels to [`VOLUME_MUTED`](constant.VOLUME_MUTED.html).
     #[inline]
     pub fn mute(&mut self, channels: u32) -> &Self {
         self.set(channels, VOLUME_MUTED)
     }
 
-    /// Returns `true` when self is equal to `to`.
+    /// Checks if self is equal to `to`.
     ///
     /// This checks that the number of channels in self equals the number in `to` and that the
     /// channels volumes in self equal those in `to`.
@@ -368,19 +368,19 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_equal(self.as_ref(), to.as_ref()) != 0 }
     }
 
-    /// Returns `true` if all channels are muted.
+    /// Checks if all channels are muted.
     #[inline]
     pub fn is_muted(&self) -> bool {
         self.channels_equal_to(VOLUME_MUTED)
     }
 
-    /// Returns `true` if all channels are at normal volume level.
+    /// Checks if all channels are at normal volume level.
     #[inline]
     pub fn is_norm(&self) -> bool {
         self.channels_equal_to(VOLUME_NORM)
     }
 
-    /// Returns the average volume of all channels.
+    /// Gets the average volume of all channels.
     #[inline]
     pub fn avg(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_avg(self.as_ref()) })
@@ -400,13 +400,13 @@ impl ChannelVolumes {
         Volume(unsafe { capi::pa_cvolume_avg_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
-    /// Return the maximum volume of all channels.
+    /// Gets the maximum volume of all channels.
     #[inline]
     pub fn max(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_max(self.as_ref()) })
     }
 
-    /// Return the maximum volume of all channels that are included in the specified channel map
+    /// Gets the maximum volume of all channels that are included in the specified channel map
     /// with the specified channel position mask.
     ///
     /// If no channel is selected the returned value will be
@@ -420,13 +420,13 @@ impl ChannelVolumes {
         Volume(unsafe { capi::pa_cvolume_max_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
-    /// Return the minimum volume of all channels.
+    /// Gets the minimum volume of all channels.
     #[inline]
     pub fn min(&self) -> Volume {
         Volume(unsafe { capi::pa_cvolume_min(self.as_ref()) })
     }
 
-    /// Return the minimum volume of all channels that are included in the specified channel map
+    /// Gets the minimum volume of all channels that are included in the specified channel map
     /// with the specified channel position mask.
     ///
     /// If no channel is selected the returned value will be
@@ -440,19 +440,19 @@ impl ChannelVolumes {
         Volume(unsafe { capi::pa_cvolume_min_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
-    /// Returns `true` when the `ChannelVolumes` structure is valid.
+    /// Checks if the `ChannelVolumes` structure is valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_cvolume_valid(self.as_ref()) != 0 }
     }
 
-    /// Returns `true` if the volume of all channels are equal to the specified value.
+    /// Checks if the volume of all channels are equal to the specified value.
     #[inline]
     pub fn channels_equal_to(&self, v: Volume) -> bool {
         unsafe { capi::pa_cvolume_channels_equal_to(self.as_ref(), v.0) != 0 }
     }
 
-    /// Multiply two per-channel volumes.
+    /// Multiplies two per-channel volumes.
     ///
     /// If `with` is `None`, multiplies with itself. This is only valid for software volumes!
     /// Returns pointer to self.
@@ -463,7 +463,7 @@ impl ChannelVolumes {
         self
     }
 
-    /// Multiply a per-channel volume with a scalar volume.
+    /// Multiplies a per-channel volume with a scalar volume.
     ///
     /// This is only valid for software volumes! Returns pointer to self.
     #[inline]
@@ -472,7 +472,7 @@ impl ChannelVolumes {
         self
     }
 
-    /// Divide two per-channel volumes.
+    /// Divides two per-channel volumes.
     ///
     /// If `with` is `None`, divides with itself. This is only valid for software volumes! Returns
     /// pointer to self.
@@ -483,7 +483,7 @@ impl ChannelVolumes {
         self
     }
 
-    /// Divide a per-channel volume by a scalar volume.
+    /// Divides a per-channel volume by a scalar volume.
     ///
     /// This is only valid for software volumes! Returns pointer to self.
     #[inline]
@@ -492,7 +492,7 @@ impl ChannelVolumes {
         self
     }
 
-    /// Remap a volume from one channel mapping to a different channel mapping.
+    /// Remaps a volume from one channel mapping to a different channel mapping.
     ///
     /// Returns pointer to self.
     #[inline]
@@ -501,19 +501,19 @@ impl ChannelVolumes {
         self
     }
 
-    /// Returns `true` if the specified volume is compatible with the specified sample spec.
+    /// Checks if the specified volume is compatible with the specified sample spec.
     #[inline]
     pub fn is_compatible_with_ss(&self, ss: &::sample::Spec) -> bool {
         unsafe { capi::pa_cvolume_compatible(self.as_ref(), ss.as_ref()) != 0 }
     }
 
-    /// Returns `true` if the specified volume is compatible with the specified channel map.
+    /// Checks if the specified volume is compatible with the specified channel map.
     #[inline]
     pub fn is_compatible_with_cm(&self, cm: &::channelmap::Map) -> bool {
         unsafe { capi::pa_cvolume_compatible_with_channel_map(self.as_ref(), cm.as_ref()) != 0 }
     }
 
-    /// Calculate a ‘balance’ value for the specified volume with the specified channel map.
+    /// Calculates a ‘balance’ value for the specified volume with the specified channel map.
     ///
     /// The return value will range from `-1.0` (left) to `+1.0` (right). If no balance value is
     /// applicable to this channel map the return value will always be `0.0`. See
@@ -525,7 +525,7 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_get_balance(self.as_ref(), map.as_ref()) }
     }
 
-    /// Adjust the ‘balance’ value for the specified volume with the specified channel map.
+    /// Adjusts the ‘balance’ value for the specified volume with the specified channel map.
     ///
     /// The balance is a value between `-1.0` and `+1.0`. This operation might not be reversible!
     /// Also, after this call [`get_balance`] is not guaranteed to actually return the requested
@@ -546,7 +546,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Calculate a ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
+    /// Calculates a ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
     /// with the specified channel map.
     ///
     /// The return value will range from -1.0f (rear) to +1.0f (left). If no fade value is
@@ -559,7 +559,7 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_get_fade(self.as_ref(), map.as_ref()) }
     }
 
-    /// Adjust the ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
+    /// Adjusts the ‘fade’ value (i.e. ‘balance’ between front and rear) for the specified volume
     /// with the specified channel map.
     ///
     /// The balance is a value between `-1.0` and `+1.0`. This operation might not be reversible!
@@ -581,7 +581,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Calculate a ‘lfe balance’ value for the specified volume with the specified channel map.
+    /// Calculates a ‘lfe balance’ value for the specified volume with the specified channel map.
     ///
     /// The return value will range from `-1.0` (no lfe) to `+1.0` (only lfe), where `0.0` is
     /// balanced. If no value is applicable to this channel map the return value will always be
@@ -594,7 +594,7 @@ impl ChannelVolumes {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
 
-    /// Adjust the ‘LFE balance’ value for the specified volume with the specified channel map.
+    /// Adjusts the ‘LFE balance’ value for the specified volume with the specified channel map.
     ///
     /// The balance is a value between `-1.0` (no lfe) and `+1.0` (only lfe). This operation might
     /// not be reversible! Also, after this call [`get_lfe_balance`] is not guaranteed to actually
@@ -618,7 +618,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Scale so that the maximum volume of all channels equals `max`.
+    /// Scales so that the maximum volume of all channels equals `max`.
     ///
     /// The proportions between the channel volumes are kept.
     ///
@@ -632,7 +632,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Scale so that the maximum volume of all channels selected via `cm`/`mask` equals `max`.
+    /// Scales so that the maximum volume of all channels selected via `cm`/`mask` equals `max`.
     ///
     /// This also modifies the volume of those channels that are unmasked. The proportions between
     /// the channel volumes are kept.
@@ -654,7 +654,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Set the passed volume to all channels at the specified channel position.
+    /// Sets the passed volume to all channels at the specified channel position.
     ///
     /// Returns `None` if either invalid data was provided, or if there is no channel at the
     /// position specified. You can check if a channel map includes a specific position by calling
@@ -676,7 +676,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Get the maximum volume of all channels at the specified channel position.
+    /// Gets the maximum volume of all channels at the specified channel position.
     ///
     /// Will return `0` if there is no channel at the position specified. You can check if a channel
     /// map includes a specific position by calling [`::channelmap::Map::has_position`].
@@ -706,7 +706,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Increase the volume passed in by `inc`, but not exceeding `limit`.
+    /// Increases the volume passed in by `inc`, but not exceeding `limit`.
     ///
     /// The proportions between the channels are kept.
     ///
@@ -720,7 +720,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Increase the volume passed in by `inc`.
+    /// Increases the volume passed in by `inc`.
     ///
     /// The proportions between the channels are kept.
     ///
@@ -734,7 +734,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Decrease the volume passed in by `dec`.
+    /// Decreases the volume passed in by `dec`.
     ///
     /// The proportions between the channels are kept.
     ///
@@ -748,7 +748,7 @@ impl ChannelVolumes {
         Some(self)
     }
 
-    /// Pretty print a volume structure.
+    /// Pretty prints a volume structure.
     pub fn print(&self) -> String {
         const PRINT_MAX: usize = capi::PA_CVOLUME_SNPRINT_MAX;
         let mut tmp = Vec::with_capacity(PRINT_MAX);
@@ -758,7 +758,7 @@ impl ChannelVolumes {
         }
     }
 
-    /// Pretty print a volume structure but show dB values.
+    /// Pretty prints a volume structure but show dB values.
     pub fn print_db(&self) -> String {
         const PRINT_DB_MAX: usize = capi::PA_SW_CVOLUME_SNPRINT_DB_MAX;
         let mut tmp = Vec::with_capacity(PRINT_DB_MAX);
@@ -768,7 +768,7 @@ impl ChannelVolumes {
         }
     }
 
-    /// Pretty print a volume structure in a verbose way.
+    /// Pretty prints a volume structure in a verbose way.
     ///
     /// The volume for each channel is printed in several formats: the raw volume value,
     /// percentage, and if `print_db` is non-zero, also the dB value. If `map` is provided, the

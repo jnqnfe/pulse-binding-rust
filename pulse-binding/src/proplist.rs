@@ -211,7 +211,7 @@ impl IntoIterator for Proplist {
 }
 
 impl Proplist {
-    /// Allocate a property list.
+    /// Allocates a property list.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_proplist_new() };
         if ptr.is_null() {
@@ -220,7 +220,7 @@ impl Proplist {
         Some(Self::from_raw(ptr))
     }
 
-    /// Allocate a new property list and assign key/value from a human readable string.
+    /// Allocates a new property list and assigns key/value from a human readable string.
     pub fn new_from_string(s: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -232,7 +232,7 @@ impl Proplist {
         Some(Self::from_raw(ptr))
     }
 
-    /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
+    /// Creates a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
     /// pointer.
     #[inline]
     pub(crate) fn from_raw(ptr: *mut ProplistInternal) -> Self {
@@ -240,7 +240,7 @@ impl Proplist {
         Proplist(ProplistInner { ptr: ptr, weak: false })
     }
 
-    /// Create a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
+    /// Creates a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
     /// pointer.
     ///
     /// This is the ‘weak’ version, which avoids destroying the internal object when dropped.
@@ -250,7 +250,7 @@ impl Proplist {
         Proplist(ProplistInner { ptr: ptr, weak: true })
     }
 
-    /// Returns `true` if the key is valid.
+    /// Checks if the key is valid.
     pub fn key_is_valid(key: &str) -> bool {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -258,7 +258,7 @@ impl Proplist {
         unsafe { capi::pa_proplist_key_valid(c_key.as_ptr()) != 0 }
     }
 
-    /// Append a new string entry to the property list, possibly overwriting an already existing
+    /// Appends a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key.
     ///
     /// An internal copy is made of the provided string.
@@ -273,7 +273,7 @@ impl Proplist {
         }
     }
 
-    /// Append a new string entry to the property list, possibly overwriting an already existing
+    /// Appends a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key.
     ///
     /// This is similar to [`sets`](#method.sets), however here the provided key and value are
@@ -289,7 +289,7 @@ impl Proplist {
         }
     }
 
-    /// Append a new arbitrary data entry to the property list, possibly overwriting an already
+    /// Appends a new arbitrary data entry to the property list, possibly overwriting an already
     /// existing entry with the same key.
     ///
     /// An internal copy of the provided data is made.
@@ -305,7 +305,7 @@ impl Proplist {
         }
     }
 
-    /// Return a string entry for the specified key.
+    /// Gets a string entry for the specified key.
     ///
     /// Will return `None` if the key does not exist or if data is not valid UTF-8.
     pub fn gets(&self, key: &str) -> Option<String> {
@@ -319,7 +319,7 @@ impl Proplist {
         Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() })
     }
 
-    /// Get the value for the specified key.
+    /// Gets the value for the specified key.
     ///
     /// For string entries, the value store will be NUL-terminated. The caller should make a copy of
     /// the data before the property list is accessed again.
@@ -343,7 +343,7 @@ impl Proplist {
         Some(unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) })
     }
 
-    /// Merge property list “other” into self, adhering to the merge mode specified.
+    /// Merges property list “other” into self, adhering to the merge mode specified.
     #[inline]
     pub fn merge(&mut self, other: &Self, mode: UpdateMode) {
         unsafe { capi::pa_proplist_update(self.0.ptr, mode, other.0.ptr); }
@@ -386,7 +386,7 @@ impl Proplist {
         }
     }
 
-    /// Get an immutable iterator over the list’s keys.
+    /// Gets an immutable iterator over the list’s keys.
     ///
     /// The property list should not be modified during iteration through the list, with the
     /// exception of deleting the current entry. The keys in the property list do not have any
@@ -411,7 +411,7 @@ impl Proplist {
         Iterator::new(self.0.ptr)
     }
 
-    /// Format the property list nicely as a human readable string.
+    /// Formats the property list nicely as a human readable string.
     ///
     /// This works very much like [`to_string_sep`](#method.to_string_sep) and uses a newline as
     /// separator and appends one final one.
@@ -429,7 +429,7 @@ impl Proplist {
         }
     }
 
-    /// Format the property list nicely as a human readable string, choosing the separator used.
+    /// Formats the property list nicely as a human readable string, choosing the separator used.
     pub fn to_string_sep(&self, sep: &str) -> Option<String> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -447,7 +447,7 @@ impl Proplist {
         }
     }
 
-    /// Does this contain an entry with the given key?
+    /// Checks if this contains an entry with the given key.
     ///
     /// Returns `true` if an entry for the specified key exists in the property list. Returns `None`
     /// on error.
@@ -462,25 +462,25 @@ impl Proplist {
         }
     }
 
-    /// Remove all entries from the property list object.
+    /// Removes all entries from the property list object.
     #[inline]
     pub fn clear(&mut self) {
         unsafe { capi::pa_proplist_clear(self.0.ptr); }
     }
 
-    /// Returns the number of entries in the property list.
+    /// Gets the number of entries in the property list.
     #[inline]
     pub fn len(&self) -> u32 {
         unsafe { capi::pa_proplist_size(self.0.ptr) }
     }
 
-    /// Returns `true` when the proplist is empty, false otherwise.
+    /// Checks if the proplist is empty.
     #[inline]
     pub fn is_empty(&self) -> bool {
         unsafe { capi::pa_proplist_isempty(self.0.ptr) == 0 }
     }
 
-    /// Returns `true` when self and `to` have the same keys and values.
+    /// Checks if self and `to` have the same keys and values.
     #[inline]
     pub fn equal_to(&self, to: &Self) -> bool {
         unsafe { capi::pa_proplist_equal(self.0.ptr, to.0.ptr) != 0 }
@@ -497,7 +497,7 @@ impl Drop for ProplistInner {
 }
 
 impl Clone for Proplist {
-    /// Allocate a new property list and copy over every single entry from the specified list.
+    /// Allocates a new property list and copy over every single entry from the specified list.
     ///
     /// If this is called on a ‘weak’ instance, a non-weak object is returned.
     #[inline]

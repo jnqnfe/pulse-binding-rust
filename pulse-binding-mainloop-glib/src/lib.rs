@@ -101,7 +101,7 @@ fn drop_actual(self_: &mut pulse::mainloop::api::MainloopInner<MainloopInternal>
 }
 
 impl Mainloop {
-    /// Create a new GLIB main loop object for the specified GLIB main loop context.
+    /// Creates a new GLIB main loop object for the specified GLIB main loop context.
     ///
     /// Takes an argument `context` for the `GMainContext` to use. If context is `None` the default
     /// context is used.
@@ -135,7 +135,7 @@ impl Mainloop {
         )
     }
 
-    /// Return the abstract main loop abstraction layer vtable for this main loop.
+    /// Gets the abstract main loop abstraction layer vtable for this main loop.
     ///
     /// No need to free the API as it is owned by the loop and is destroyed when the loop is freed.
     ///

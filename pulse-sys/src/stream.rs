@@ -36,7 +36,7 @@ pub const PA_STREAM_READY: pa_stream_state_t = pa_stream_state_t::Ready;
 pub const PA_STREAM_FAILED: pa_stream_state_t = pa_stream_state_t::Failed;
 pub const PA_STREAM_TERMINATED: pa_stream_state_t = pa_stream_state_t::Terminated;
 
-/// Returns `true` if the passed state is one of the connected states.
+/// Checks if the passed state is one of the connected states (returns `true` if so).
 #[inline(always)]
 pub fn pa_stream_is_good(state: pa_stream_state_t) -> bool {
     state == pa_stream_state_t::Creating ||

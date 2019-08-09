@@ -57,7 +57,7 @@ pub const PA_CONTEXT_READY: pa_context_state_t = pa_context_state_t::Ready;
 pub const PA_CONTEXT_FAILED: pa_context_state_t = pa_context_state_t::Failed;
 pub const PA_CONTEXT_TERMINATED: pa_context_state_t = pa_context_state_t::Terminated;
 
-/// Returns `true` if the passed state is one of the connected states.
+/// Checks if the passed state is one of the connected states (returns `true` if so).
 #[inline(always)]
 pub fn pa_context_is_good(state: pa_context_state_t) -> bool {
     state == pa_context_state_t::Connecting ||

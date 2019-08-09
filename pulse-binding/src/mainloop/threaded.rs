@@ -429,7 +429,7 @@ impl super::api::MainloopInner<MainloopInternal> {
 }
 
 impl Mainloop {
-    /// Allocate a new threaded main loop object.
+    /// Allocates a new threaded main loop object.
     ///
     /// You have to call [`start`](#method.start) before the event loop thread starts running.
     pub fn new() -> Option<Self> {
@@ -453,7 +453,7 @@ impl Mainloop {
         )
     }
 
-    /// Start the event loop thread.
+    /// Starts the event loop thread.
     pub fn start(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_threaded_mainloop_start((*self._inner).ptr) } {
             0 => Ok(()),
@@ -461,7 +461,7 @@ impl Mainloop {
         }
     }
 
-    /// Terminate the event loop thread cleanly.
+    /// Terminates the event loop thread cleanly.
     ///
     /// Make sure to unlock the mainloop object before calling this function.
     #[inline]
@@ -469,7 +469,7 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_stop((*self._inner).ptr); }
     }
 
-    /// Lock the event loop object, effectively blocking the event loop thread from processing
+    /// Locks the event loop object, effectively blocking the event loop thread from processing
     /// events.
     ///
     /// You can use this to enforce exclusive access to all objects attached to the event loop. This
@@ -481,13 +481,13 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
     }
 
-    /// Unlock the event loop object, inverse of [`lock`](#method.lock).
+    /// Unlocks the event loop object, inverse of [`lock`](#method.lock).
     #[inline]
     pub fn unlock(&mut self) {
         unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
     }
 
-    /// Wait for an event to be signalled by the event loop thread.
+    /// Waits for an event to be signalled by the event loop thread.
     ///
     /// You can use this to pass data from the event loop thread to the main thread in a
     /// synchronized fashion. This function may not be called inside the event loop thread. Prior to
@@ -500,7 +500,7 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
     }
 
-    /// Signal all threads waiting for a signalling event in [`wait`](#method.wait).
+    /// Signals all threads waiting for a signalling event in [`wait`](#method.wait).
     ///
     /// If `wait_for_accept` is non-zero, do not return before the signal was accepted by an
     /// [`accept`](#method.accept) call. While waiting for that condition the event loop object is
@@ -510,7 +510,7 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_signal((*self._inner).ptr, wait_for_accept as i32); }
     }
 
-    /// Accept a signal from the event thread issued with [`signal`].
+    /// Accepts a signal from the event thread issued with [`signal`].
     ///
     /// This call should only be used in conjunction with [`signal`] with `wait_for_accept` as
     /// `true`.
@@ -521,14 +521,14 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }
     }
 
-    /// Return the return value as specified with the main loop’s `quit` routine (used internally by
+    /// Gets the return value as specified with the main loop’s `quit` routine (used internally by
     /// threaded mainloop).
     #[inline]
     pub fn get_retval(&self) -> ::def::Retval {
         ::def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })
     }
 
-    /// Return the main loop abstraction layer vtable for this main loop.
+    /// Gets the main loop abstraction layer vtable for this main loop.
     ///
     /// There is no need to free this object as it is owned by the loop and is destroyed when the
     /// loop is freed.
@@ -544,7 +544,7 @@ impl Mainloop {
         unsafe { &*ptr }
     }
 
-    /// Returns `true` when called from within the event loop thread.
+    /// Checks whether or not we are in the event loop thread (returns `true` if so).
     #[inline]
     pub fn in_thread(&self) -> bool {
         unsafe { capi::pa_threaded_mainloop_in_thread((*self._inner).ptr) != 0 }

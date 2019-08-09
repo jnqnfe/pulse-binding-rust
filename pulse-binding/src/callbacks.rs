@@ -49,7 +49,7 @@ impl<ClosureProto: ?Sized, ProxyProto> Default for MultiUseCallback<ClosureProto
 }
 
 impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto> {
-    /// Create a new instance.
+    /// Creates a new instance.
     ///
     /// **Note**, an existing instance should always be overwritten with a new one, to ensure the
     /// old one is correctly freed.
@@ -71,7 +71,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
         }
     }
 
-    /// Convert void closure pointer back to real type.
+    /// Converts void closure pointer back to real type.
     ///
     /// For use in callback proxies.
     ///
@@ -94,7 +94,7 @@ impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, P
     }
 }
 
-/// Convert single-use-callback closure to pointer for C API.
+/// Converts single-use-callback closure to pointer for C API.
 ///
 /// It can be restored in an `extern "C"` callback proxy with `get_su_callback`.
 ///
@@ -111,7 +111,7 @@ pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<Closu
     Box::into_raw(Box::new(callback)) as *mut c_void
 }
 
-/// Get the C API callback params (function pointer and data pointer pair), for an optional
+/// Gets the C API callback params (function pointer and data pointer pair), for an optional
 /// single-use callback closure.
 ///
 /// The proxy function must be specified. If `callback` is `None` then a pair of null pointers will
@@ -127,7 +127,7 @@ pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
     }
 }
 
-/// Convert void single-use-callback closure pointer back to real type.
+/// Converts void single-use-callback closure pointer back to real type.
 ///
 /// For use in callback proxies.
 ///

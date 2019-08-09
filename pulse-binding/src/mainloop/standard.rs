@@ -231,7 +231,7 @@ pub enum IterateResult {
 }
 
 impl IterateResult {
-    /// Returns `true` if the result is a `Success` value.
+    /// Checks if the result is a `Success` value (returns `true` if so).
     #[inline]
     pub fn is_success(&self) -> bool {
         match *self {
@@ -240,7 +240,7 @@ impl IterateResult {
         }
     }
 
-    /// Returns `true` if the result is a `Quit` value.
+    /// Checks if the result is a `Quit` value (returns `true` if so).
     #[inline]
     pub fn is_quit(&self) -> bool {
         match *self {
@@ -249,7 +249,7 @@ impl IterateResult {
         }
     }
 
-    /// Returns `true` if the result is an `Error` value.
+    /// Checks` if the result is an `Error` value (returns `true` if so).
     #[inline]
     pub fn is_error(&self) -> bool {
         match *self {
@@ -291,7 +291,7 @@ impl super::api::MainloopInner<MainloopInternal> {
 }
 
 impl Mainloop {
-    /// Allocate a new main loop object.
+    /// Allocates a new main loop object.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_mainloop_new() };
         if ptr.is_null() {
@@ -313,7 +313,7 @@ impl Mainloop {
         )
     }
 
-    /// Prepare for a single iteration of the main loop.
+    /// Prepares for a single iteration of the main loop.
     ///
     /// Returns `Err` on error or exit request.
     ///
@@ -328,7 +328,7 @@ impl Mainloop {
         }
     }
 
-    /// Execute the previously prepared poll.
+    /// Executes the previously prepared poll.
     pub fn poll(&mut self) -> Result<u32, PAErr> {
         match unsafe { capi::pa_mainloop_poll((*self._inner).ptr) } {
             e if e >= 0 => Ok(e as u32),
@@ -336,8 +336,9 @@ impl Mainloop {
         }
     }
 
-    /// Dispatch timeout, IO and deferred events from the previously executed poll. On success
-    /// returns the number of source dispatched.
+    /// Dispatchs timeout, IO and deferred events from the previously executed poll.
+    ///
+    /// On success returns the number of source dispatched.
     pub fn dispatch(&mut self) -> Result<u32, PAErr> {
         match unsafe { capi::pa_mainloop_dispatch((*self._inner).ptr) } {
             e if e >= 0 => Ok(e as u32),
@@ -345,13 +346,13 @@ impl Mainloop {
         }
     }
 
-    /// Return the return value as specified with the main loop’s [`quit`](#method.quit) routine.
+    /// Gets the return value as specified with the main loop’s [`quit`](#method.quit) routine.
     #[inline]
     pub fn get_retval(&self) -> ::def::Retval {
         ::def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
     }
 
-    /// Run a single iteration of the main loop.
+    /// Runs a single iteration of the main loop.
     ///
     /// This is a convenience function for [`prepare`](#method.prepare), [`poll`](#method.poll)
     /// and [`dispatch`](#method.dispatch).
@@ -373,7 +374,7 @@ impl Mainloop {
         }
     }
 
-    /// Run unlimited iterations of the main loop object until the main loop’s
+    /// Runs unlimited iterations of the main loop object until the main loop’s
     /// [`quit`](#method.quit) routine is called.
     ///
     /// On success, returns `Ok` containing quit’s return value. On error returns `Err` containing a
@@ -386,7 +387,7 @@ impl Mainloop {
         }
     }
 
-    /// Return the abstract main loop abstraction layer vtable for this main loop.
+    /// Gets the abstract main loop abstraction layer vtable for this main loop.
     ///
     /// No need to free the API as it is owned by the loop and is destroyed when the loop is freed.
     ///
@@ -401,19 +402,19 @@ impl Mainloop {
         unsafe { &*ptr }
     }
 
-    /// Shutdown the main loop with the specified return value.
+    /// Shuts down the main loop with the specified return value.
     #[inline]
     pub fn quit(&mut self, retval: ::def::Retval) {
         unsafe { capi::pa_mainloop_quit((*self._inner).ptr, retval.0); }
     }
 
-    /// Interrupt a running poll (for threaded systems).
+    /// Interrupts a running poll (for threaded systems).
     #[inline]
     pub fn wakeup(&mut self) {
         unsafe { capi::pa_mainloop_wakeup((*self._inner).ptr); }
     }
 
-    /// Change the poll() implementation.
+    /// Changes the poll() implementation.
     #[inline]
     pub fn set_poll_func(&mut self, poll_cb: (PollFn, *mut c_void)) {
         unsafe { capi::pa_mainloop_set_poll_func((*self._inner).ptr, Some(poll_cb.0), poll_cb.1); }

@@ -62,31 +62,31 @@ impl std::fmt::Debug for Timeval {
 }
 
 impl Timeval {
-    /// Create a new instance, with values provided.
+    /// Creates a new instance, with values provided.
     #[inline]
     pub fn new(sec: libc::time_t, usec: libc::suseconds_t) -> Self {
         Timeval(libc::timeval { tv_sec: sec, tv_usec: usec })
     }
 
-    /// Create a new instance, with value of zero.
+    /// Creates a new instance, with value of zero.
     #[inline]
     pub fn new_zero() -> Self {
         Timeval::new(0, 0)
     }
 
-    /// Calculate the difference between the two specified timeval structs.
+    /// Calculates the difference between the two specified timeval structs.
     #[inline]
     pub fn diff(a: &Self, b: &Self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_diff(&a.0, &b.0) })
     }
 
-    /// Return the time difference between now and self.
+    /// Gets the time difference between now and self.
     #[inline]
     pub fn age(&self) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_age(&self.0) })
     }
 
-    /// Set to the specified (monotonic) value.
+    /// Sets to the specified (monotonic) value.
     ///
     /// The `rtclock` boolean is used for indicating support of the rtclock (monotonic time). If
     /// `true` then the conversion from `MicroSeconds` to `Timeval` is done, and a special ‘rt’ flag
