@@ -274,7 +274,7 @@ impl Proplist {
         }
     }
 
-    #[deprecated(note="`sets()` has been renamed to `set_str()`")]
+    #[deprecated(since = "2.7.0", note="`sets()` has been renamed to `set_str()`")]
     pub fn sets(&mut self, key: &str, value: &str) -> Result<(), ()> {
         self.set_str(key, value)
     }
@@ -295,7 +295,7 @@ impl Proplist {
         }
     }
 
-    #[deprecated(note="`setp()` has been renamed to `set_pl()`")]
+    #[deprecated(since = "2.7.0", note="`setp()` has been renamed to `set_pl()`")]
     pub fn setp(&mut self, pair: &str) -> Result<(), ()> {
         self.set_pl(pair)
     }
@@ -330,7 +330,7 @@ impl Proplist {
         }
     }
 
-    #[deprecated(note="`gets()` has been renamed to `get_str()`")]
+    #[deprecated(since = "2.7.0", note="`gets()` has been renamed to `get_str()`")]
     pub fn gets(&self, key: &str) -> Option<String> {
         self.get_str(key)
     }
@@ -498,7 +498,7 @@ impl Proplist {
 
     /// Checks if self and `to` have the same keys and values.
     #[inline(always)]
-    #[deprecated(note="use the `PartialEq` implementation instead")]
+    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
     pub fn equal_to(&self, to: &Self) -> bool {
         self.eq(to)
     }

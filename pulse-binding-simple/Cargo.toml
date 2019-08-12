@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-simple-binding"
-version = "2.6.1"
+version = "2.7.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
@@ -13,9 +13,9 @@ repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
 
 [dependencies]
-libpulse-binding = { path = "../pulse-binding", version = "2.6", default-features = false }
-libpulse-sys = { path = "../pulse-sys", version = "1.5", default-features = false }
-libpulse-simple-sys = { path = "../pulse-sys-simple", version = "1.5", default-features = false }
+libpulse-binding = { path = "../pulse-binding", version = "2.7", default-features = false }
+libpulse-sys = { path = "../pulse-sys", version = "1.6", default-features = false }
+libpulse-simple-sys = { path = "../pulse-sys-simple", version = "1.6", default-features = false }
 
 [features]
 default = ["latest_pa_common_compatibility"]

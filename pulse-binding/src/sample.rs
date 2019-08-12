@@ -275,7 +275,7 @@ impl Spec {
 
     /// Checks if the two sample type specifications match.
     #[inline(always)]
-    #[deprecated(note="use the `PartialEq` implementation instead")]
+    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
     pub fn equal_to(&self, to: &Self) -> bool {
         self.eq(to)
     }

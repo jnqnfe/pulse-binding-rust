@@ -375,7 +375,7 @@ impl ChannelVolumes {
     /// This checks that the number of channels in self equals the number in `to` and that the
     /// channels volumes in self equal those in `to`.
     #[inline(always)]
-    #[deprecated(note="use the `PartialEq` implementation instead")]
+    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
     pub fn equal_to(&self, to: &Self) -> bool {
         self.eq(to)
     }
@@ -454,7 +454,7 @@ impl ChannelVolumes {
 
     /// Checks if the volume of all channels are equal to the specified value.
     #[inline(always)]
-    #[deprecated(note="use the `PartialEq` implementation instead")]
+    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
     pub fn channels_equal_to(&self, v: Volume) -> bool {
         self.eq(&v)
     }

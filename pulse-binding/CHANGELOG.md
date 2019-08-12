@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.7.0 (August 12th, 2019)
 
  * Renamed a few methods of `Proplist` for clarity: `sets()` → `set_str()`; `gets()` → `(get_str()`;
    and `setp()` → `set_pl()`.
@@ -18,6 +18,7 @@
    `latest_pa_compatibility`.
  * Added tests to assert that size and alignment of certain structs and enums are identical to their
    `sys` crate counterparts.
+ * Updated `libpulse-sys` version dependency (1.5 → 1.6)
 
 # 2.6.0 (March 10th, 2019)
 

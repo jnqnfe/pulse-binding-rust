@@ -361,7 +361,7 @@ impl Map {
 
     /// Compares whether or not two maps are equal.
     #[inline(always)]
-    #[deprecated(note="use the `PartialEq` implementation instead")]
+    #[deprecated(since = "2.7.0", note="use the `PartialEq` implementation instead")]
     pub fn is_equal_to(&self, to: &Self) -> bool {
         self.eq(to)
     }

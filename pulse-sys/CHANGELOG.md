@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.6.0 (August 12th, 2019)
 
  * Replaced use of empty enums for opaque types with a struct based alternative. According to the
    Rust nomicon ([here](https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs))
