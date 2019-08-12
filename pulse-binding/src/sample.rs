@@ -206,7 +206,7 @@ pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
 
 /// A sample format and attribute specification.
 #[repr(C)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Eq)]
 pub struct Spec {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// The sample format.
@@ -250,6 +250,13 @@ impl From<capi::pa_sample_spec> for Spec {
     }
 }
 
+impl PartialEq for Spec {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        unsafe { capi::pa_sample_spec_equal(self.as_ref(), other.as_ref()) != 0 }
+    }
+}
+
 impl Spec {
     /// Initializes the specified sample spec.
     ///
@@ -267,9 +274,10 @@ impl Spec {
     }
 
     /// Checks if the two sample type specifications match.
-    #[inline]
+    #[inline(always)]
+    #[deprecated(note="use the `PartialEq` implementation instead")]
     pub fn equal_to(&self, to: &Self) -> bool {
-        unsafe { capi::pa_sample_spec_equal(self.as_ref(), to.as_ref()) != 0 }
+        self.eq(to)
     }
 
     /// Gets the amount of bytes that constitute playback of one second of audio, with the specified

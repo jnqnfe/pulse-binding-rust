@@ -150,10 +150,15 @@ impl From<capi::pa_cvolume> for ChannelVolumes {
 impl PartialEq for ChannelVolumes {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        match self.channels == other.channels {
-            true => self.values[..self.channels as usize] == other.values[..other.channels as usize],
-            false => false,
-        }
+        unsafe { capi::pa_cvolume_equal(self.as_ref(), other.as_ref()) != 0 }
+    }
+}
+
+impl PartialEq<Volume> for ChannelVolumes {
+    /// Returns `true` if the volume of all channels are equal to the specified value.
+    #[inline]
+    fn eq(&self, v: &Volume) -> bool {
+        unsafe { capi::pa_cvolume_channels_equal_to(self.as_ref(), v.0) != 0 }
     }
 }
 
@@ -369,21 +374,22 @@ impl ChannelVolumes {
     ///
     /// This checks that the number of channels in self equals the number in `to` and that the
     /// channels volumes in self equal those in `to`.
-    #[inline]
+    #[inline(always)]
+    #[deprecated(note="use the `PartialEq` implementation instead")]
     pub fn equal_to(&self, to: &Self) -> bool {
-        unsafe { capi::pa_cvolume_equal(self.as_ref(), to.as_ref()) != 0 }
+        self.eq(to)
     }
 
     /// Checks if all channels are muted.
     #[inline]
     pub fn is_muted(&self) -> bool {
-        self.channels_equal_to(VOLUME_MUTED)
+        self.eq(&VOLUME_MUTED)
     }
 
     /// Checks if all channels are at normal volume level.
     #[inline]
     pub fn is_norm(&self) -> bool {
-        self.channels_equal_to(VOLUME_NORM)
+        self.eq(&VOLUME_NORM)
     }
 
     /// Gets the average volume of all channels.
@@ -447,9 +453,10 @@ impl ChannelVolumes {
     }
 
     /// Checks if the volume of all channels are equal to the specified value.
-    #[inline]
+    #[inline(always)]
+    #[deprecated(note="use the `PartialEq` implementation instead")]
     pub fn channels_equal_to(&self, v: Volume) -> bool {
-        unsafe { capi::pa_cvolume_channels_equal_to(self.as_ref(), v.0) != 0 }
+        self.eq(&v)
     }
 
     /// Multiplies two per-channel volumes.

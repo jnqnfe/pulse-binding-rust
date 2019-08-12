@@ -210,6 +210,13 @@ impl IntoIterator for Proplist {
     }
 }
 
+impl PartialEq for Proplist {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        unsafe { capi::pa_proplist_equal(self.0.ptr, other.0.ptr) != 0 }
+    }
+}
+
 impl Proplist {
     /// Allocates a property list.
     pub fn new() -> Option<Self> {
@@ -490,9 +497,10 @@ impl Proplist {
     }
 
     /// Checks if self and `to` have the same keys and values.
-    #[inline]
+    #[inline(always)]
+    #[deprecated(note="use the `PartialEq` implementation instead")]
     pub fn equal_to(&self, to: &Self) -> bool {
-        unsafe { capi::pa_proplist_equal(self.0.ptr, to.0.ptr) != 0 }
+        self.eq(to)
     }
 }
 

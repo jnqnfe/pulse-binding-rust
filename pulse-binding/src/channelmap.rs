@@ -238,10 +238,7 @@ impl Default for Map {
 impl PartialEq for Map {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        match self.channels == other.channels {
-            true => self.map[..self.channels as usize] == other.map[..other.channels as usize],
-            false => false,
-        }
+        unsafe { capi::pa_channel_map_equal(self.as_ref(), other.as_ref()) == 1 }
     }
 }
 
@@ -363,9 +360,10 @@ impl Map {
     }
 
     /// Compares whether or not two maps are equal.
-    #[inline]
+    #[inline(always)]
+    #[deprecated(note="use the `PartialEq` implementation instead")]
     pub fn is_equal_to(&self, to: &Self) -> bool {
-        unsafe { capi::pa_channel_map_equal(self.as_ref(), to.as_ref()) == 1 }
+        self.eq(to)
     }
 
     /// Checks whether or not the specified map is compatible with the specified sample spec.

@@ -7,6 +7,12 @@
    `Stream::write()`.
  * Changed the `mainloop` param of `Context::rttime_new` from trait object to generic (`dyn` to
    `impl`).
+ * Deprecated `ChannelMap::is_equal_to()`, `ChannelVolumes::equal_to()`,
+   `ChannelVolumes::channels_equal_to()`, `Spec::equal_to()` and `Proplist::equal_to()` methods in
+   favour of `PartialEq` implementations.
+ * Added `PartialEq` implementations for `Proplist` and an `<Volume>` impl for `ChannelVolumes`
+ * Changed `PartialEq` implementations for `channelmap::Map`, `Spec` and `ChannelVolumes` to
+   delegate the logic to the C API.
  * Removed stray `repr(C)` attribute from `SinkPortInfo` introspection type.
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
    `latest_pa_compatibility`.
