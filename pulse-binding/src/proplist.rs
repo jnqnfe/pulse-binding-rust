@@ -270,11 +270,6 @@ impl Proplist {
         }
     }
 
-    #[deprecated(since = "2.7.0", note="`sets()` has been renamed to `set_str()`")]
-    pub fn sets(&mut self, key: &str, value: &str) -> Result<(), ()> {
-        self.set_str(key, value)
-    }
-
     /// Appends a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key.
     ///
@@ -289,11 +284,6 @@ impl Proplist {
             0 => Ok(()),
             _ => Err(()),
         }
-    }
-
-    #[deprecated(since = "2.7.0", note="`setp()` has been renamed to `set_pl()`")]
-    pub fn setp(&mut self, pair: &str) -> Result<(), ()> {
-        self.set_pl(pair)
     }
 
     /// Appends a new arbitrary data entry to the property list, possibly overwriting an already
@@ -324,11 +314,6 @@ impl Proplist {
             false => Some(unsafe { CStr::from_ptr(ptr).to_string_lossy().into_owned() }),
             true => None,
         }
-    }
-
-    #[deprecated(since = "2.7.0", note="`gets()` has been renamed to `get_str()`")]
-    pub fn gets(&self, key: &str) -> Option<String> {
-        self.get_str(key)
     }
 
     /// Gets the value for the specified key.
