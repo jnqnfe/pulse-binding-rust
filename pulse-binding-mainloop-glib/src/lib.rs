@@ -67,7 +67,7 @@ pub use capi::GMainContext;
  */
 
 /// An opaque GLIB main loop object.
-pub enum MainloopInternal {}
+#[repr(C)] pub struct MainloopInternal { _private: [u8; 0] }
 
 impl MainloopInternalType for MainloopInternal {}
 

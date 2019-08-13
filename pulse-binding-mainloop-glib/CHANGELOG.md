@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Fix missed use of UB empty enum trick
+
 # 2.7.0 (August 12th, 2019)
 
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
