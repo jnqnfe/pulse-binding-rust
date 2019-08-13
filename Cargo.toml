@@ -13,6 +13,7 @@ publish = false
 [lib]
 name = "workspace"
 path = "workspace/lib.rs"
+doc = false
 
 [dependencies]
 libpulse-binding =           { path = "pulse-binding",               default-features = false }
