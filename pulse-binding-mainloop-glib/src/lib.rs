@@ -54,12 +54,13 @@
 
 extern crate libpulse_binding as pulse;
 extern crate libpulse_mainloop_glib_sys as capi;
+extern crate glib_sys as glib;
 
 use std::rc::Rc;
 use std::ptr::{null, null_mut};
+#[deprecated(since = "2.8.0", note="use directly from `glib-sys`")]
+pub use glib::GMainContext;
 use pulse::mainloop::api::MainloopInternalType;
-
-pub use capi::GMainContext;
 
 /* Note, we cannot simply use the object defined in the ‘sys’ crate, since either the type or the
  * trait need to be defined locally in order to link them. Thus, we create the below type (an empty
@@ -108,6 +109,7 @@ impl Mainloop {
     ///
     /// This returns the object in an Rc wrapper, allowing multiple references to be held, which
     /// allows event objects to hold one, thus ensuring they do not outlive it.
+    //TODO: use `glib::MainContext` instead? we need to get at the inner `glib-sys::GMainContext` ptr
     pub fn new(context: Option<&mut GMainContext>) -> Option<Self> {
         let p_ctx = context.map_or(null_mut::<GMainContext>(), |c| c);
 

@@ -1,3 +1,9 @@
+# <unreleased>
+
+ * Addressed long standing todo item of linking `GMainContext` to an actual glib crate.
+    - Added dependency on `glib-sys`
+    - Replaced our own `GMainContext` type with the one from the `glib-sys` crate
+
 # 1.6.1 (August 13th, 2019)
 
  * Fix missed use of UB empty enum trick

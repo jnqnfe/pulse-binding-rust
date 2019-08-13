@@ -30,10 +30,9 @@
 #![allow(non_camel_case_types, non_snake_case)]
 
 extern crate libpulse_sys as pulse;
+extern crate glib_sys as glib;
 
-//TODO: link this to a Glib crate object
-/// According to Glib headers, this is an opaque type!
-#[repr(C)] pub struct GMainContext { _private: [u8; 0] }
+use glib::GMainContext;
 
 /// An opaque GLIB main loop object.
 #[repr(C)] pub struct pa_glib_mainloop { _private: [u8; 0] }
