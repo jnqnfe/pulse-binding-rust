@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Fixed overlooked use of new method names in docs
+
 # 2.7.0 (August 12th, 2019)
 
  * Renamed a few methods of `Proplist` for clarity: `sets()` → `set_str()`; `gets()` → `(get_str()`;

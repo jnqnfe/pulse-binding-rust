@@ -282,9 +282,9 @@ impl Proplist {
     /// Appends a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key.
     ///
-    /// This is similar to [`sets`](#method.sets), however here the provided key and value are
-    /// combined into a single string, separated by an `=`. An internal copy is made of the provided
-    /// string.
+    /// This is similar to [`set_strs`](#method.set_str), however here the provided key and value
+    /// are combined into a single string, separated by an `=`. An internal copy is made of the
+    /// provided string.
     pub fn set_pl(&mut self, pair: &str) -> Result<(), ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -414,7 +414,7 @@ impl Proplist {
     /// #
     /// # fn main() {
     /// #     let mut my_props = Proplist::new().unwrap();
-    /// #     my_props.sets(pulse::proplist::properties::APPLICATION_NAME, "FooApp").unwrap();
+    /// #     my_props.set_str(pulse::proplist::properties::APPLICATION_NAME, "FooApp").unwrap();
     /// #
     /// for key in my_props.iter() {
     ///     //do something with it
