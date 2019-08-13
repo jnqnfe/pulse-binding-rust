@@ -109,10 +109,7 @@ impl Mainloop {
     /// This returns the object in an Rc wrapper, allowing multiple references to be held, which
     /// allows event objects to hold one, thus ensuring they do not outlive it.
     pub fn new(context: Option<&mut GMainContext>) -> Option<Self> {
-        let p_ctx: *mut capi::GMainContext = match context {
-            Some(ctx) => ctx,
-            None => null_mut::<capi::GMainContext>(),
-        };
+        let p_ctx = context.map_or(null_mut::<GMainContext>(), |c| c);
 
         let ptr = unsafe { capi::pa_glib_mainloop_new(p_ctx) };
         if ptr.is_null() {

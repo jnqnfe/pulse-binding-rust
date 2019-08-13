@@ -1,6 +1,7 @@
 # <unreleased>
 
  * Fix missed use of UB empty enum trick
+ * Fixed missing simplification of pointer handling
 
 # 2.7.0 (August 12th, 2019)
 
