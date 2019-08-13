@@ -10,6 +10,10 @@ publish = false
 
 [workspace]
 
+[lib]
+name = "workspace"
+path = "workspace/lib.rs"
+
 [dependencies]
 libpulse-binding =           { path = "pulse-binding",               default-features = false }
 libpulse-simple-binding =    { path = "pulse-binding-simple",        default-features = false }

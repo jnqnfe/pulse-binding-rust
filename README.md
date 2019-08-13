@@ -89,4 +89,4 @@ Source Code Contents
  - pulse-sys-mainloop-glib/     - The raw C API interface library for the GLIB mainloop.
  - pulse-sys-simple/            - The raw C API interface library for the PulseAudio ‘simple’
                                   component.
- - src/                         - Just part of the Cargo workspace setup.
+ - workspace/                   - Just part of the Cargo workspace setup.
