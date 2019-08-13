@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.7.1 (August 13th, 2019)
 
  * Fixed overlooked use of new method names in docs
 

@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.6.1 (August 13th, 2019)
 
  * Fix missed use of UB empty enum trick
 

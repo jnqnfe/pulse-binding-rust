@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.7.1 (August 13th, 2019)
 
  * Fix missed use of UB empty enum trick
  * Fixed missing simplification of pointer handling
