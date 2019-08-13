@@ -29,7 +29,7 @@ use of that new version is more widespread. Otherwise, they are enabled by defau
 stable PA release at the time of writing is v12; support for this is default enabled since it is in
 widespread use; a release of PA v13 is being prepared and introduces new symbols, support for which
 will be disabled by default until PA v13 is in widespread use. This is done in order to include the
-maximum number of features by default, whilst reducing likelyhood of users encountering linking
+maximum number of features by default, whilst reducing likelihood of users encountering linking
 issues.
 
 The set of flags provided each **enable** use of symbols added in a particular version.
