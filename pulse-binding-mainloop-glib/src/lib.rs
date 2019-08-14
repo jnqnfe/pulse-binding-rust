@@ -54,12 +54,13 @@
 
 extern crate libpulse_binding as pulse;
 extern crate libpulse_mainloop_glib_sys as capi;
-extern crate glib_sys as glib;
+extern crate glib_sys;
+extern crate glib;
 
 use std::rc::Rc;
 use std::ptr::{null, null_mut};
-#[deprecated(since = "2.8.0", note="use directly from `glib-sys`")]
-pub use glib::GMainContext;
+use glib_sys::GMainContext;
+use glib::{MainContext, translate::ToGlibPtr};
 use pulse::mainloop::api::MainloopInternalType;
 
 /* Note, we cannot simply use the object defined in the ‘sys’ crate, since either the type or the
@@ -104,14 +105,13 @@ fn drop_actual(self_: &mut pulse::mainloop::api::MainloopInner<MainloopInternal>
 impl Mainloop {
     /// Creates a new GLIB main loop object for the specified GLIB main loop context.
     ///
-    /// Takes an argument `context` for the `GMainContext` to use. If context is `None` the default
-    /// context is used.
+    /// Takes an argument `context` for the `glib::MainContext` to use. If context is `None` the
+    /// default context is used.
     ///
     /// This returns the object in an Rc wrapper, allowing multiple references to be held, which
     /// allows event objects to hold one, thus ensuring they do not outlive it.
-    //TODO: use `glib::MainContext` instead? we need to get at the inner `glib-sys::GMainContext` ptr
-    pub fn new(context: Option<&mut GMainContext>) -> Option<Self> {
-        let p_ctx = context.map_or(null_mut::<GMainContext>(), |c| c);
+    pub fn new(context: Option<&mut MainContext>) -> Option<Self> {
+        let p_ctx = context.map_or(null_mut::<GMainContext>(), |c| c.to_glib_none().0);
 
         let ptr = unsafe { capi::pa_glib_mainloop_new(p_ctx) };
         if ptr.is_null() {

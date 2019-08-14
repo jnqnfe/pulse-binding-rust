@@ -16,6 +16,7 @@ exclude = ["README.md"]
 libpulse-binding = { path = "../pulse-binding", version = "2.7", default-features = false }
 libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.7", default-features = false }
 glib-sys = "0"
+glib = "0"
 
 [features]
 default = ["latest_pa_common_compatibility"]
