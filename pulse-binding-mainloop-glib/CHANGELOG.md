@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.9.0 (August 14th, 2019)
 
  * Changed `Mainloop::new()` to take a ref of `glib::MainContext` not `glib_sys::GMainContext`
 

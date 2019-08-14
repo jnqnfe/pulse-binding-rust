@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-glib-binding"
-version = "2.8.0"
+version = "2.9.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
