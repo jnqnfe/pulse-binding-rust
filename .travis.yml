@@ -1,6 +1,6 @@
 language: rust
 rust:
-  - 1.28.0 # Minimum supported version
+  - 1.31.0 # Minimum supported version
   - stable
   - beta
   - nightly
