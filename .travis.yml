@@ -18,5 +18,6 @@ script:
   - cargo build --no-default-features --verbose --all
   - cargo test --no-default-features --verbose --all
   # Check PA v12+ support
-  - cargo build --features pa_v12_compatibility --verbose --all
-  - cargo test --features pa_v12_compatibility --verbose --all
+  # Disabled until travis has an environment with PA v12+ (Bionic, latest, has v11.1)
+  #- cargo build --features pa_v12_compatibility --verbose --all
+  #- cargo test --features pa_v12_compatibility --verbose --all
