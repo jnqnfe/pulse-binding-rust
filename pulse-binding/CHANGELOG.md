@@ -29,7 +29,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
 
 # 2.7.0 (August 12th, 2019)
 
- * Renamed a few methods of `Proplist` for clarity: `sets()` → `set_str()`; `gets()` → `(get_str()`;
+ * Renamed a few methods of `Proplist` for clarity: `sets()` → `set_str()`; `gets()` → `get_str()`;
    and `setp()` → `set_pl()`.
  * Added `Stream::write_copy()` which is just a simplified interface for asking PA to make an
    internal copy of the to-be-written data (same as providing `None` in the `free_cb` param of
