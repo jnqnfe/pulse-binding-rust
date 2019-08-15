@@ -40,7 +40,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Deprecated `ChannelMap::is_equal_to()`, `ChannelVolumes::equal_to()`,
    `ChannelVolumes::channels_equal_to()`, `Spec::equal_to()` and `Proplist::equal_to()` methods in
    favour of `PartialEq` implementations.
- * Added `PartialEq` implementations for `Proplist` and an `<Volume>` impl for `ChannelVolumes`
+ * Added `PartialEq` implementation for `Proplist` and `PartialEq<Volume>` impl for `ChannelVolumes`
  * Changed `PartialEq` implementations for `channelmap::Map`, `Spec` and `ChannelVolumes` to
    delegate the logic to the C API.
  * Removed stray `repr(C)` attribute from `SinkPortInfo` introspection type.
