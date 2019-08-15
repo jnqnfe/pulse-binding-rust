@@ -20,6 +20,7 @@
     - `Timeval::new()` and `Timeval::new_zero()`
     - `subscribe::Facility::to_interest_mask()`
  * Version: purged deprecated items
+ * Updated `libpulse-sys` version dependency (1.6 → 1.8)
 
 Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate changes
 

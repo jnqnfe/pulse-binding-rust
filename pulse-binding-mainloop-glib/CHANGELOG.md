@@ -2,6 +2,8 @@
 
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file
+ * Updated `libpulse-binding` version dependency (2.7 → 2.10)
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.6 → 1.8)
 
 # 2.9.0 (August 14th, 2019)
 
