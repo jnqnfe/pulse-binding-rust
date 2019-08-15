@@ -67,8 +67,6 @@
 //! [`def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
 //! [`def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
 
-#![allow(deprecated)]
-
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;
 #[cfg(any(feature = "pa_v5", feature = "dox"))]
@@ -116,13 +114,9 @@ impl Default for VolumeLinear {
 pub struct ChannelVolumes {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels.
-    //TODO: make non-pub (backwards compatible break)
-    #[deprecated(since = "2.10.0", note="do not access directly, use methods from now on")]
-    pub channels: u8,
+    channels: u8,
     /// Per-channel volume.
-    //TODO: make non-pub (backwards compatible break)
-    #[deprecated(since = "2.10.0", note="do not access directly, use methods from now on")]
-    pub values: [Volume; sample::CHANNELS_MAX],
+    values: [Volume; sample::CHANNELS_MAX],
 }
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)

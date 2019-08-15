@@ -1,5 +1,7 @@
 # <unreleased>
 
+ * Made the attributes of `ChannelVolumes` and `channelmap::Map` private.
+   (Direct access had been deprecated previously).
  * Removed deprecated comparison methods
  * Removed deprecated proplist methods
 
