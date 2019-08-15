@@ -54,8 +54,6 @@
 
 extern crate libpulse_binding as pulse;
 extern crate libpulse_mainloop_glib_sys as capi;
-extern crate glib_sys;
-extern crate glib;
 
 use std::rc::Rc;
 use std::ptr::{null, null_mut};
