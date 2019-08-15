@@ -15,9 +15,9 @@ addons:
 script:
   - dbus-launch pulseaudio --start
   # Check PA v8-11 support
-  - cargo build --no-default-features --verbose --all
-  - cargo test --no-default-features --verbose --all
+  - cargo build --no-default-features --verbose
+  - cargo test --no-default-features --verbose
   # Check PA v12+ support
   # Disabled until travis has an environment with PA v12+ (Bionic, latest, has v11.1)
-  #- cargo build --features pa_v12_compatibility --verbose --all
-  #- cargo test --features pa_v12_compatibility --verbose --all
+  #- cargo build --features pa_v12_compatibility --verbose
+  #- cargo test --features pa_v12_compatibility --verbose
