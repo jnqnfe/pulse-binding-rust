@@ -1,7 +1,9 @@
-# <unreleased>
+# 2.10.0 (August 15th, 2019)
 
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file
+
+Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate changes
 
 # 2.7.0 (August 12th, 2019)
 

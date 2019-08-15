@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.8.0 (August 15th, 2019)
 
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file

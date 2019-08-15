@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.10.0 (August 15th, 2019)
 
  * Modified `ChannelVolumes` and `channelmap::Map` to be more Rust-like.
    Both of these types hold an array of size `sample::CHANNELS_MAX`, along with a `channels`
@@ -20,6 +20,8 @@
     - `Timeval::new()` and `Timeval::new_zero()`
     - `subscribe::Facility::to_interest_mask()`
  * Version: purged deprecated items
+
+Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate changes
 
 # 2.7.1 (August 13th, 2019)
 

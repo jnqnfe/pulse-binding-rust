@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-binding"
-version = "2.7.1"
+version = "2.10.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
@@ -15,7 +15,7 @@ edition = "2018"
 
 [dependencies]
 libc = "0.2"
-libpulse-sys = { path = "../pulse-sys", version = "1.6", default-features = false }
+libpulse-sys = { path = "../pulse-sys", version = "1.8", default-features = false }
 
 [features]
 default = ["latest_pa_common_compatibility"]

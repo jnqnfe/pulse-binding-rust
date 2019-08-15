@@ -1,6 +1,8 @@
-# <unreleased>
+# 1.8.0 (August 15th, 2019)
 
  * Specified edition in toml file
+
+Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate changes
 
 # 1.6.0 (August 12th, 2019)
 

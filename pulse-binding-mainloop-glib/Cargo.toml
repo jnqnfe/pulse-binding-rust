@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-glib-binding"
-version = "2.9.0"
+version = "2.10.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 readme = "README.md"
@@ -14,8 +14,8 @@ exclude = ["README.md"]
 edition = "2018"
 
 [dependencies]
-libpulse-binding = { path = "../pulse-binding", version = "2.7", default-features = false }
-libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.7", default-features = false }
+libpulse-binding = { path = "../pulse-binding", version = "2.10", default-features = false }
+libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.8", default-features = false }
 glib-sys = "0"
 glib = "0"
 
