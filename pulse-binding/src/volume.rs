@@ -69,6 +69,8 @@
 //! [`def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
 //! [`def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
 
+#![allow(deprecated)]
+
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;
 use std::ptr::null;
@@ -116,9 +118,11 @@ pub struct ChannelVolumes {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels.
     //TODO: make non-pub (backwards compatible break)
+    #[deprecated(note="do not access directly, use methods from now on")]
     pub channels: u8,
     /// Per-channel volume.
     //TODO: make non-pub (backwards compatible break)
+    #[deprecated(note="do not access directly, use methods from now on")]
     pub values: [Volume; sample::CHANNELS_MAX],
 }
 

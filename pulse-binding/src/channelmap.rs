@@ -43,6 +43,8 @@
 //! [`Map::init_auto`]: struct.Map.html#method.init_auto
 //! [`Map::init_extend`]: struct.Map.html#method.init_extend
 
+#![allow(deprecated)]
+
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
@@ -189,9 +191,11 @@ pub struct Map {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels mapped.
     //TODO: make non-pub (backwards compatible break)
+    #[deprecated(note="do not access directly, use methods from now on")]
     pub channels: u8,
     /// Channel labels.
     //TODO: make non-pub (backwards compatible break)
+    #[deprecated(note="do not access directly, use methods from now on")]
     pub map: [Position; sample::CHANNELS_MAX],
 }
 
