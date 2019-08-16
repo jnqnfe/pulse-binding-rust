@@ -9,6 +9,14 @@ Workspace: Groups all crates together (as dependencies) for building in one go.
 publish = false
 
 [workspace]
+members = [
+    "pulse-binding",
+    "pulse-binding-simple",
+    "pulse-binding-mainloop-glib",
+    "pulse-sys",
+    "pulse-sys-simple",
+    "pulse-sys-mainloop-glib",
+]
 
 [lib]
 name = "workspace"
