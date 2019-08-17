@@ -1,3 +1,8 @@
+# <unreleased>
+
+ * Changed the license model from LGPL to dual MIT and Apache-2.0.
+   See <https://github.com/jnqnfe/pulse-binding-rust/issues/26> for details.
+
 # 1.10.0 (September 15th, 2019)
 
  * Added PA v13 compatibility control feature
