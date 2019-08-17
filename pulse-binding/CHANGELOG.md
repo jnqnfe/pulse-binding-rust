@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Version: Improved mod documentation
+
 # 2.10.0 (August 15th, 2019)
 
  * Modified `ChannelVolumes` and `channelmap::Map` to be more Rust-like.

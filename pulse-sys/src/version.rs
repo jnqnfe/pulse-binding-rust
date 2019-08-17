@@ -15,38 +15,43 @@
 
 //! Version constants and functions.
 //!
-//! The constants defined here follow those given in the C headers.
+//! The constants here mostly relate to those provided in the PulseAudio (PA) C headers.
 //!
-//! - They are typically updated only following a new major release of PA.
-//! - They are not typically updated following a new minor release of PA. i.e. we may declare
-//!   version `12.0` here, but remain compatible with all `12.x`, so long as PA itself continues to
-//!   adhere to semantic versioning (i.e. no breaking changes in minor releases).
-//! - They are **not** the minimum compatible PA version. We have feature flags for providing
-//!   backwards compatibility with a limited number of past major versions.
+//! - They are typically only updated following a new **major** release of PA.
+//! - Some values are dynamic, depending upon the level of PA compatibility support selected at
+//!   compile time via Cargo feature flags. For instance if you enable support for PA <= v12 then
+//!   they will indicate v12, whereas if you exclude v12 support, they will indicate v11.
 //!
-//! Currently:
+//! Note that:
 //!
-//! - We primarily target PA version `12.x`
-//! - We have backwards compatibility with PA version `11.x` (and down to `8.x`) if the
-//!   `pa_v12_compatibility` feature flag is disabled.
+//! - The minimum supported version of PA is v8.0.
+//! - Where a new major version of PA introduces API changes, such as new function symbols or new
+//!   enum variants, for instance, we add a Cargo feature to allow selective control over inclusion
+//!   of those changed, and thus control over the level of compatibility with newer releases that
+//!   the crate is compiled with.
 //!
-//! When feature flags are used for backwards compatibility, the versions defined here (as of
-//! version `1.4`) are adjusted to return the newest compatible major version.
-//!
-//! The `pa_get_library_version` function always obtains at runtime the version of the actual PA
+//! The [`pa_get_library_version`] function always obtains at runtime the version of the actual PA
 //! library in use.
+//!
+//! The [`get_compatibility`] function gives an indication of the level of compatibility support
+//! built in at compile time, per Cargo feature flags.
+//!
+//! [`pa_get_library_version`]: fn.pa_get_library_version.html
+//! [`get_compatibility`]: fn.get_compatibility.html
 
 use std::os::raw::c_char;
 pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION};
 
-/// PA version compatibility selection.
+/// PulseAudio version compatibility.
 ///
-/// Used for indicating PA version compatibility support, which can vary depending upon feature
-/// flags.
+/// Used for indicating what level of PA version compatibility was selected at compile time via
+/// Cargo feature flags.
+///
+/// Note that PA v8 is the oldest supported.
 pub enum Compatibility {
     /// Support for latest compatible version.
     Latest,
-    /// Support for PA versions < 12 selected.
+    /// Support for PA versions 8-11 selected.
     PreV12,
 }
 
@@ -81,7 +86,8 @@ mod actual {
 pub const PA_API_VERSION: u8 = 12;
 pub const PA_PROTOCOL_VERSION: u16 = 32;
 
-/// Returns indication of PA version compatibility support, depending upon feature flags used.
+/// Returns indication of the level of PulseAudio version compatibility selected at compie time via
+/// Cargo feature flags.
 #[inline(always)]
 pub const fn get_compatibility() -> Compatibility {
     actual::COMPATIBILITY
