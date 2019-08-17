@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.8.1 (August 17th, 2019)
 
  * Version: Improved mod documentation
 

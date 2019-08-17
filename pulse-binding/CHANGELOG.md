@@ -1,6 +1,7 @@
-# <unreleased>
+# 2.10.1 (August 17th, 2019)
 
  * Version: Improved mod documentation
+ * Added missing version info to deprecation notices
 
 # 2.10.0 (August 15th, 2019)
 
