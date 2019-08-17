@@ -118,11 +118,11 @@ pub struct ChannelVolumes {
     /* NOTE: This struct must be directly usable by the C API, thus same attributes/layout/etc */
     /// Number of channels.
     //TODO: make non-pub (backwards compatible break)
-    #[deprecated(note="do not access directly, use methods from now on")]
+    #[deprecated(since = "2.10.0", note="do not access directly, use methods from now on")]
     pub channels: u8,
     /// Per-channel volume.
     //TODO: make non-pub (backwards compatible break)
-    #[deprecated(note="do not access directly, use methods from now on")]
+    #[deprecated(since = "2.10.0", note="do not access directly, use methods from now on")]
     pub values: [Volume; sample::CHANNELS_MAX],
 }
 
