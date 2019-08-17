@@ -1,13 +1,3 @@
-[package]
-name = "workspace"
-version = "0.0.0"
-authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
-readme = "README.md"
-description = """
-Workspace: Groups all crates together (as dependencies) for building in one go.
-"""
-publish = false
-
 [workspace]
 members = [
     "pulse-binding",
@@ -17,38 +7,3 @@ members = [
     "pulse-sys-simple",
     "pulse-sys-mainloop-glib",
 ]
-
-[lib]
-name = "workspace"
-path = "workspace/lib.rs"
-
-[dependencies]
-libpulse-binding =           { path = "pulse-binding",               default-features = false }
-libpulse-simple-binding =    { path = "pulse-binding-simple",        default-features = false }
-libpulse-glib-binding =      { path = "pulse-binding-mainloop-glib", default-features = false }
-libpulse-sys =               { path = "pulse-sys",                   default-features = false }
-libpulse-simple-sys =        { path = "pulse-sys-simple",            default-features = false }
-libpulse-mainloop-glib-sys = { path = "pulse-sys-mainloop-glib",     default-features = false }
-
-[features]
-default = ["latest_pa_common_compatibility"]
-
-# PA version compatibility selection
-# See the overall project `COMPATIBILITY.md` file for explanation.
-#
-# Alias targetting latest compatibility, with the exception only of that for a very new release
-latest_pa_common_compatibility = ["pa_v12_compatibility"]
-# Alias simply targetting latest compatibility
-latest_pa_compatibility = ["pa_v12_compatibility"]
-# Enables PA version 12 support
-pa_v12_compatibility = [
-    "libpulse-binding/pa_v12_compatibility",
-    "libpulse-simple-binding/pa_v12_compatibility",
-    "libpulse-glib-binding/pa_v12_compatibility",
-    "libpulse-sys/pa_v12_compatibility",
-    "libpulse-simple-sys/pa_v12_compatibility",
-    "libpulse-mainloop-glib-sys/pa_v12_compatibility"
-]
-
-[badges]
-travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
