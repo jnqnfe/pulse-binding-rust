@@ -1011,8 +1011,11 @@ impl Stream {
     /// * `offset`: Offset for seeking. Must be `0` for upload streams.
     /// * `seek`: Seek mode, must be [`SeekMode::Relative`] for upload streams.
     ///
+    /// Available since PA version 6.
+    ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`write`]: #method.write
+    #[cfg(feature = "pa_v6_compatibility")]
     pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(def::FreeCb, *mut c_void)>,
         offset: i64, seek: SeekMode) -> Result<(), PAErr>
     {

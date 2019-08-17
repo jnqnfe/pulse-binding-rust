@@ -34,7 +34,11 @@ pa_v12_compatibility = [
     "pa_v8_compatibility", #include older
 ]
 # Enables PA version 8 support
-pa_v8_compatibility = []
+pa_v8_compatibility = [
+    "pa_v6_compatibility", #include older
+]
+# Enables PA version 6 support
+pa_v6_compatibility = []
 
 # DEPRECATED, use `pa_v12_compatibility` instead
 pa_encoding_from_string = ["pa_v12_compatibility"]

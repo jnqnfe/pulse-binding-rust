@@ -2,7 +2,7 @@ PulseAudio Version Compatibility
 =============================
 
 This project aims to always provide compatibility with the latest stable version of PulseAudio (PA).
-The minimum supported version is v6.0.
+The minimum supported version is v5.0.
 
 ## Compiling & Linking Concerns
 
@@ -47,7 +47,7 @@ Specifically enabling PA v12+ compatibility:
 libpulse-binding = { version = "2.0", default-features = false, features = "pa_v12_compatibility" }
 ```
 
-Specifically lowering to minimal compatibility (PA v6+):
+Specifically lowering to minimal compatibility (PA v5+):
 
 ```toml
 libpulse-binding = { version = "2.0", default-features = false }

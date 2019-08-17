@@ -24,7 +24,7 @@
 //!
 //! Note that:
 //!
-//! - The minimum supported version of PA is v6.0.
+//! - The minimum supported version of PA is v5.0.
 //! - Where a new major version of PA introduces API changes, such as new function symbols or new
 //!   enum variants, for instance, we add a Cargo feature to allow selective control over inclusion
 //!   of those changed, and thus control over the level of compatibility with newer releases that
@@ -46,7 +46,7 @@ use std::os::raw::c_char;
 /// Used for indicating what level of PA version compatibility was selected at compile time via
 /// Cargo feature flags.
 ///
-/// Note that PA v6 is the oldest supported.
+/// Note that PA v5 is the oldest supported.
 pub enum Compatibility {
     /// Support for latest compatible version.
     Latest,
@@ -54,6 +54,8 @@ pub enum Compatibility {
     PreV12,
     /// Support for PA versions <= 7 selected.
     PreV8,
+    /// Support for PA versions <= 5 selected.
+    PreV6,
 }
 
 // Current
@@ -75,12 +77,21 @@ mod actual {
 }
 
 // Pre-v8
-#[cfg(not(feature="pa_v8_compatibility"))]
+#[cfg(all(not(feature="pa_v8_compatibility"), feature="pa_v6_compatibility"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV8;
     pub const TARGET_VERSION_STRING: &str = "7.0.0";
     pub const TARGET_VERSION: (u8, u8) = (7, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 30;
+}
+
+// Pre-v6
+#[cfg(not(feature="pa_v6_compatibility"))]
+mod actual {
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV6;
+    pub const TARGET_VERSION_STRING: &str = "5.0.0";
+    pub const TARGET_VERSION: (u8, u8) = (5, 0);
+    pub const PA_PROTOCOL_VERSION: u16 = 29;
 }
 
 /// The newest version of the PulseAudio client library this linking library is known to be

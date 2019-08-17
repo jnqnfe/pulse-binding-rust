@@ -15,6 +15,7 @@
 
 //! Utility functions for Direction.
 
+#[cfg(feature = "pa_v6_compatibility")]
 use std::ffi::CStr;
 
 pub type FlagSet = capi::direction::pa_direction_t;
@@ -28,13 +29,19 @@ pub mod flags {
 }
 
 /// Checks whether direction is valid (either input, output or bidirectional).
+///
+/// Available since PA version 6.
 #[inline]
+#[cfg(feature = "pa_v6_compatibility")]
 pub fn is_valid(f: FlagSet) -> bool {
     unsafe { capi::pa_direction_valid(f) != 0 }
 }
 
 /// Gets a textual representation of the direction.
+///
+/// Available since PA version 6.
 #[inline]
+#[cfg(feature = "pa_v6_compatibility")]
 pub fn to_string(f: FlagSet) -> String {
     unsafe { CStr::from_ptr(capi::pa_direction_to_string(f)).to_string_lossy().into_owned() }
 }
