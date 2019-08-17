@@ -446,7 +446,10 @@ impl Map {
     /// Checks whether or not it makes sense to apply a volume “LFE balance” (i.e. “balance” between
     /// LFE and non-LFE channels) with this mapping, i.e. if there are LFE and non-LFE channels
     /// available.
+    ///
+    /// Available since PA version 8.
     #[inline]
+    #[cfg(feature = "pa_v8_compatibility")]
     pub fn can_lfe_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_lfe_balance(self.as_ref()) != 0 }
     }

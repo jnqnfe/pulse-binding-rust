@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Extended support to older versions of PA, specifically v6
+
 # 2.10.0 (August 15th, 2019)
 
  * Updated `use` conventions to that of Rust 1.30/1.31

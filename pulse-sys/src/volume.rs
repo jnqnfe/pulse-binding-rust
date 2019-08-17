@@ -160,7 +160,9 @@ extern "C" {
     pub fn pa_cvolume_set_balance(v: *mut pa_cvolume, map: *const pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
     pub fn pa_cvolume_get_fade(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
     pub fn pa_cvolume_set_fade(v: *mut pa_cvolume, map: *const pa_channel_map, new_fade: f32) -> *mut pa_cvolume;
+    #[cfg(feature = "pa_v8_compatibility")]
     pub fn pa_cvolume_get_lfe_balance(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
+    #[cfg(feature = "pa_v8_compatibility")]
     pub fn pa_cvolume_set_lfe_balance(v: *mut pa_cvolume, map: *const pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
     pub fn pa_cvolume_scale(v: *mut pa_cvolume, max: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_scale_mask(v: *mut pa_cvolume, max: pa_volume_t, cm: *const pa_channel_map, mask: pa_channel_position_mask_t) -> *mut pa_cvolume;

@@ -94,8 +94,6 @@ impl Default for pa_prop_type_t {
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_encoding_to_string(e: pa_encoding_t) -> *const c_char;
-
-    // Symbol was missing from PA’s symbol file prior to PA v12
     #[cfg(feature = "pa_v12_compatibility")]
     pub fn pa_encoding_from_string(encoding: *const c_char) -> pa_encoding_t;
 

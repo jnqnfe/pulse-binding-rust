@@ -25,7 +25,7 @@
 //!
 //! Note that:
 //!
-//! - The minimum supported version of PA is v8.0.
+//! - The minimum supported version of PA is v6.0.
 //! - Where a new major version of PA introduces API changes, such as new function symbols or new
 //!   enum variants, for instance, we add a Cargo feature to allow selective control over inclusion
 //!   of those changed, and thus control over the level of compatibility with newer releases that

@@ -639,9 +639,11 @@ impl ChannelVolumes {
     /// balanced. If no value is applicable to this channel map the return value will always be
     /// `0.0`. See [`channelmap::Map::can_lfe_balance`].
     ///
-    /// [`channelmap::Map::can_lfe_balance`]:
-    /// ../channelmap/struct.Map.html#method.can_lfe_balance
+    /// Available since PA version 8.
+    ///
+    /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
+    #[cfg(feature = "pa_v8_compatibility")]
     pub fn get_lfe_balance(&self, map: &channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
@@ -656,9 +658,12 @@ impl ChannelVolumes {
     ///
     /// Returns pointer to self, or `None` on error.
     ///
+    /// Available since PA version 8.
+    ///
     /// [`get_lfe_balance`]: #method.get_lfe_balance
     /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
+    #[cfg(feature = "pa_v8_compatibility")]
     pub fn set_lfe_balance(&mut self, map: &channelmap::Map, new_balance: f32)
         -> Option<&mut Self>
     {
