@@ -33,7 +33,7 @@
 //! When feature flags are used for backwards compatibility, the versions defined here (as of
 //! version `1.4`) are adjusted to return the newest compatible major version.
 //!
-//! The `get_library_version` function always obtains at runtime the version of the actual PA
+//! The `pa_get_library_version` function always obtains at runtime the version of the actual PA
 //! library in use.
 
 use std::os::raw::c_char;
