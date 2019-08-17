@@ -28,7 +28,7 @@
 //!
 //! - We primarily target PA version `12.x`
 //! - We have backwards compatibility with PA version `11.x` (and down to `8.x`) if the
-//!   `pa_encoding_from_string` feature flag is disabled.
+//!   `pa_v12_compatibility` feature flag is disabled.
 //!
 //! When feature flags are used for backwards compatibility, the versions defined here (as of
 //! version `2.3`) are adjusted to return the newest compatible major version.
