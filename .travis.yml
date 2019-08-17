@@ -14,5 +14,22 @@ addons:
       - libpulse-mainloop-glib0
 script:
   - dbus-launch pulseaudio --start
-  - cargo check --verbose --all
-  - cargo test --verbose --all
+  #
+  # TODO - Enable PA v12 feature once a newer environment that has it is available
+  # TODO - Switch to running tests from the workspace level once workspace+feature control is
+  #        something actually supported by cargo.
+  #
+  # Main binding
+  - cd pulse-binding
+  - cargo check --verbose --no-default-features
+  - cargo test --verbose --no-default-features
+  #
+  # 'Simple' binding
+  - cd ../pulse-binding-simple
+  - cargo check --verbose --no-default-features
+  - cargo test --verbose --no-default-features
+  #
+  # Glib mainloop binding
+  - cd ../pulse-binding-mainloop-glib
+  - cargo check --verbose --no-default-features
+  - cargo test --verbose --no-default-features
