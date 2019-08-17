@@ -31,10 +31,10 @@
 //!   of those changed, and thus control over the level of compatibility with newer releases that
 //!   the crate is compiled with.
 //!
-//! The `get_library_version` function always obtains at runtime the version of the actual PA
+//! The [`get_library_version`] function always obtains at runtime the version of the actual PA
 //! library in use.
 //!
-//! The `get_compatibility` function gives an indication of the level of compatibility support
+//! The [`get_compatibility`] function gives an indication of the level of compatibility support
 //! built in at compile time, per Cargo feature flags.
 //!
 //! [`get_library_version`]: fn.get_library_version.html
