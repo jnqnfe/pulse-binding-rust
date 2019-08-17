@@ -149,8 +149,11 @@ extern "C" {
     pub fn pa_bytes_to_usec(length: u64, spec: *const pa_sample_spec) -> pa_usec_t;
     pub fn pa_usec_to_bytes(t: pa_usec_t, spec: *const pa_sample_spec) -> usize;
     pub fn pa_sample_spec_init(spec: *mut pa_sample_spec) -> *mut pa_sample_spec;
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn pa_sample_format_valid(format: u32) -> i32;
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn pa_sample_rate_valid(rate: u32) -> i32;
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn pa_channels_valid(channels: u8) -> i32;
     pub fn pa_sample_spec_valid(spec: *const pa_sample_spec) -> i32;
     pub fn pa_sample_spec_equal(a: *const pa_sample_spec, b: *const pa_sample_spec) -> i32;

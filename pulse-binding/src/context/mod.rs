@@ -578,6 +578,9 @@ impl Context {
     /// cookie from a custom location. Applications don’t usually need to care about the cookie at
     /// all, but if it happens that you know what the authentication cookie is and your application
     /// needs to load it from a non-standard location, feel free to use this function.
+    ///
+    /// Available since PA version 5.
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

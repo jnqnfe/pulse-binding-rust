@@ -73,6 +73,7 @@
 
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;
+#[cfg(feature = "pa_v5_compatibility")]
 use std::ptr::null;
 use crate::{channelmap, sample};
 
@@ -335,6 +336,9 @@ impl Volume {
     ///
     /// The volume is printed in several formats: the raw volume value, percentage, and if
     /// `print_db` is true, also the dB value.
+    ///
+    /// Available since PA version 5.
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn print_verbose(&self, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
         let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
@@ -806,6 +810,9 @@ impl ChannelVolumes {
     /// The volume for each channel is printed in several formats: the raw volume value,
     /// percentage, and if `print_db` is non-zero, also the dB value. If `map` is provided, the
     /// channel names will be printed.
+    ///
+    /// Available since PA version 5.
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn print_verbose(&self, map: Option<&channelmap::Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 

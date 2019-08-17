@@ -233,6 +233,9 @@ use capi::pa_source_info as SourceInfoInternal;
 use capi::pa_server_info as ServerInfoInternal;
 use capi::pa_module_info as ModuleInfoInternal;
 use capi::pa_client_info as ClientInfoInternal;
+#[cfg(not(feature = "pa_v5_compatibility"))]
+use capi::pa_card_profile_info as CardProfileInfoInternal;
+#[cfg(feature = "pa_v5_compatibility")]
 use capi::pa_card_profile_info2 as CardProfileInfo2Internal;
 use capi::pa_card_port_info as CardPortInfoInternal;
 use capi::pa_card_info as CardInfoInternal;
@@ -1416,7 +1419,31 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
+///
+/// Replaced with `CardProfileInfo2` in PA version 5+.
 #[derive(Debug)]
+#[cfg(not(feature = "pa_v5_compatibility"))]
+pub struct CardProfileInfo<'a> {
+    /// Name of this profile.
+    pub name: Option<Cow<'a, str>>,
+    /// Description of this profile.
+    pub description: Option<Cow<'a, str>>,
+    /// Number of sinks this profile would create.
+    pub n_sinks: u32,
+    /// Number of sources this profile would create.
+    pub n_sources: u32,
+    /// The higher this value is, the more useful this profile is as a default.
+    pub priority: u32,
+}
+
+/// Stores information about a specific profile of a card.
+///
+/// Please note that this structure can be extended as part of evolutionary API updates at any time
+/// in any new release.
+///
+/// Available since PA version 5.
+#[derive(Debug)]
+#[cfg(feature = "pa_v5_compatibility")]
 pub struct CardProfileInfo2<'a> {
     /// Name of this profile.
     pub name: Option<Cow<'a, str>>,
@@ -1428,7 +1455,6 @@ pub struct CardProfileInfo2<'a> {
     pub n_sources: u32,
     /// The higher this value is, the more useful this profile is as a default.
     pub priority: u32,
-
     /// Is this profile available? If this is `false`, meaning “unavailable”, then it makes no sense
     /// to try to activate this profile. If this is `true`, it’s still not a guarantee that
     /// activating the profile will result in anything useful, it just means that the server isn’t
@@ -1436,6 +1462,30 @@ pub struct CardProfileInfo2<'a> {
     pub available: bool,
 }
 
+#[cfg(not(feature = "pa_v5_compatibility"))]
+impl<'a> CardProfileInfo<'a> {
+    fn new_from_raw(p: *const CardProfileInfoInternal) -> Self {
+        assert!(!p.is_null());
+        let src = unsafe { p.as_ref().unwrap() };
+        unsafe {
+            CardProfileInfo {
+                name: match src.name.is_null() {
+                    false => Some(CStr::from_ptr(src.name).to_string_lossy()),
+                    true => None,
+                },
+                description: match src.description.is_null() {
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    true => None,
+                },
+                n_sinks: src.n_sinks,
+                n_sources: src.n_sources,
+                priority: src.priority,
+            }
+        }
+    }
+}
+
+#[cfg(feature = "pa_v5_compatibility")]
 impl<'a> CardProfileInfo2<'a> {
     fn new_from_raw(p: *const CardProfileInfo2Internal) -> Self {
         assert!(!p.is_null());
@@ -1481,6 +1531,10 @@ pub struct CardPortInfo<'a> {
     /// active.
     pub latency_offset: i64,
     /// Set of available profiles.
+    #[cfg(not(feature = "pa_v5_compatibility"))]
+    pub profiles: Vec<CardProfileInfo<'a>>,
+    /// Set of available profiles.
+    #[cfg(feature = "pa_v5_compatibility")]
     pub profiles: Vec<CardProfileInfo2<'a>>,
 }
 
@@ -1490,7 +1544,20 @@ impl<'a> CardPortInfo<'a> {
         let src = unsafe { p.as_ref().unwrap() };
 
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
+
+        #[cfg(not(feature = "pa_v5_compatibility"))]
+        assert!(src.n_profiles == 0 || !src.profiles.is_null());
+        #[cfg(not(feature = "pa_v5_compatibility"))]
+        for i in 0..src.n_profiles as isize {
+            let indexed_ptr = unsafe { (*src.profiles.offset(i)) as *mut CardProfileInfoInternal };
+            if !indexed_ptr.is_null() {
+                profiles_vec.push(CardProfileInfo::new_from_raw(indexed_ptr));
+            }
+        }
+
+        #[cfg(feature = "pa_v5_compatibility")]
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
+        #[cfg(feature = "pa_v5_compatibility")]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
@@ -1538,8 +1605,16 @@ pub struct CardInfo<'a> {
     /// Set of ports.
     pub ports: Vec<CardPortInfo<'a>>,
     /// Set of available profiles.
+    #[cfg(not(feature = "pa_v5_compatibility"))]
+    pub profiles: Vec<CardProfileInfo<'a>>,
+    /// Pointer to active profile in the set, or `None`.
+    #[cfg(not(feature = "pa_v5_compatibility"))]
+    pub active_profile: Option<Box<CardProfileInfo<'a>>>,
+    /// Set of available profiles.
+    #[cfg(feature = "pa_v5_compatibility")]
     pub profiles: Vec<CardProfileInfo2<'a>>,
     /// Pointer to active profile in the set, or `None`.
+    #[cfg(feature = "pa_v5_compatibility")]
     pub active_profile: Option<Box<CardProfileInfo2<'a>>>,
 }
 
@@ -1557,7 +1632,20 @@ impl<'a> CardInfo<'a> {
             }
         }
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
+
+        #[cfg(not(feature = "pa_v5_compatibility"))]
+        assert!(src.n_profiles == 0 || !src.profiles.is_null());
+        #[cfg(not(feature = "pa_v5_compatibility"))]
+        for i in 0..src.n_profiles as isize {
+            let indexed_ptr = unsafe { src.profiles.offset(i) as *mut CardProfileInfoInternal };
+            if !indexed_ptr.is_null() {
+                profiles_vec.push(CardProfileInfo::new_from_raw(indexed_ptr));
+            }
+        }
+
+        #[cfg(feature = "pa_v5_compatibility")]
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
+        #[cfg(feature = "pa_v5_compatibility")]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
@@ -1583,6 +1671,12 @@ impl<'a> CardInfo<'a> {
                 proplist: Proplist::from_raw_weak(src.proplist),
                 ports: ports_vec,
                 profiles: profiles_vec,
+                #[cfg(not(feature = "pa_v5_compatibility"))]
+                active_profile: match src.active_profile.is_null() {
+                    true => None,
+                    false => Some(Box::new(CardProfileInfo::new_from_raw(src.active_profile))),
+                },
+                #[cfg(feature = "pa_v5_compatibility")]
                 active_profile: match src.active_profile2.is_null() {
                     true => None,
                     false => Some(Box::new(CardProfileInfo2::new_from_raw(src.active_profile2))),

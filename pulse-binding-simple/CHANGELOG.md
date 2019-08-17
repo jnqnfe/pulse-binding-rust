@@ -1,6 +1,6 @@
 # <unreleased>
 
- * Extended support to older versions of PA, specifically v5
+ * Extended support to older versions of PA, specifically v4
 
 # 2.10.0 (August 15th, 2019)
 

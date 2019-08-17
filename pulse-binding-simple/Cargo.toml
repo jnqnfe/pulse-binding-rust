@@ -44,9 +44,16 @@ pa_v8_compatibility = [
 ]
 # Enables PA version 6 support
 pa_v6_compatibility = [
+    "pa_v5_compatibility", #include older
     "libpulse-binding/pa_v6_compatibility",
     "libpulse-sys/pa_v6_compatibility",
     "libpulse-simple-sys/pa_v6_compatibility",
+]
+# Enables PA version 5 support
+pa_v5_compatibility = [
+    "libpulse-binding/pa_v5_compatibility",
+    "libpulse-sys/pa_v5_compatibility",
+    "libpulse-simple-sys/pa_v5_compatibility",
 ]
 
 # DEPRECATED, use `pa_v12_compatibility` instead

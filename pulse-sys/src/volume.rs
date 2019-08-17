@@ -70,6 +70,7 @@ pub const PA_SW_CVOLUME_SNPRINT_DB_MAX: usize = 448;
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
+#[cfg(feature = "pa_v5_compatibility")]
 pub const PA_CVOLUME_SNPRINT_VERBOSE_MAX: usize = 1984;
 
 /// The maximum length of strings returned by [`pa_volume_snprint`](fn.pa_volume_snprint.html).
@@ -91,6 +92,7 @@ pub const PA_SW_VOLUME_SNPRINT_DB_MAX: usize = 11;
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
+#[cfg(feature = "pa_v5_compatibility")]
 pub const PA_VOLUME_SNPRINT_VERBOSE_MAX: usize = 35;
 
 #[inline(always)]
@@ -127,10 +129,12 @@ extern "C" {
     pub fn pa_cvolume_set(a: *mut pa_cvolume, channels: u32, v: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_snprint(s: *mut c_char, l: usize, c: *const pa_cvolume) -> *mut c_char;
     pub fn pa_sw_cvolume_snprint_dB(s: *mut c_char, l: usize, c: *const pa_cvolume) -> *mut c_char;
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn pa_cvolume_snprint_verbose(s: *mut c_char, l: usize, c: *const pa_cvolume, map: *const pa_channel_map, print_dB: i32) -> *mut c_char;
 
     pub fn pa_volume_snprint(s: *mut c_char, l: usize, v: pa_volume_t) -> *mut c_char;
     pub fn pa_sw_volume_snprint_dB(s: *mut c_char, l: usize, v: pa_volume_t) -> *mut c_char;
+    #[cfg(feature = "pa_v5_compatibility")]
     pub fn pa_volume_snprint_verbose(s: *mut c_char, l: usize, v: pa_volume_t, print_dB: i32) -> *mut c_char;
 
     pub fn pa_cvolume_avg(a: *const pa_cvolume) -> pa_volume_t;
