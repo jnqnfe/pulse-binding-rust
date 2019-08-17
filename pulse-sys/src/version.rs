@@ -48,22 +48,22 @@ use std::os::raw::c_char;
 ///
 /// Note that PA v4 is the oldest supported.
 pub enum Compatibility {
-    /// Support for latest compatible version.
-    Latest,
-    /// Support for PA versions <= 11 selected.
-    PreV12,
-    /// Support for PA versions <= 7 selected.
-    PreV8,
-    /// Support for PA versions <= 5 selected.
-    PreV6,
-    /// Support for PA versions <= 4 selected.
-    PreV5,
+    /// Support for PA versions 4+ selected.
+    V4Plus,
+    /// Support for PA version 5+ selected.
+    V5Plus,
+    /// Support for PA version 6+ selected.
+    V6Plus,
+    /// Support for PA version 8+ selected.
+    V8Plus,
+    /// Support for PA version 12+ selected.
+    V12Plus,
 }
 
-// Current
+// Latest
 #[cfg(feature="pa_v12_compatibility")]
 mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::Latest;
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V12Plus;
     pub const TARGET_VERSION_STRING: &str = "12.0.0";
     pub const TARGET_VERSION: (u8, u8) = (12, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 32;
@@ -72,7 +72,7 @@ mod actual {
 // Pre-v12
 #[cfg(all(not(feature="pa_v12_compatibility"), feature="pa_v8_compatibility"))]
 mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV12;
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V8Plus;
     pub const TARGET_VERSION_STRING: &str = "11.0.0";
     pub const TARGET_VERSION: (u8, u8) = (11, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 32;
@@ -81,7 +81,7 @@ mod actual {
 // Pre-v8
 #[cfg(all(not(feature="pa_v8_compatibility"), feature="pa_v6_compatibility"))]
 mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV8;
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V6Plus;
     pub const TARGET_VERSION_STRING: &str = "7.0.0";
     pub const TARGET_VERSION: (u8, u8) = (7, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 30;
@@ -90,7 +90,7 @@ mod actual {
 // Pre-v6
 #[cfg(all(not(feature="pa_v6_compatibility"), feature="pa_v5_compatibility"))]
 mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV6;
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V5Plus;
     pub const TARGET_VERSION_STRING: &str = "5.0.0";
     pub const TARGET_VERSION: (u8, u8) = (5, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 29;
@@ -99,7 +99,7 @@ mod actual {
 // Pre-v5
 #[cfg(not(feature="pa_v5_compatibility"))]
 mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV5;
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V4Plus;
     pub const TARGET_VERSION_STRING: &str = "4.0.0";
     pub const TARGET_VERSION: (u8, u8) = (4, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 28;

@@ -2,6 +2,7 @@
 
  * Extended support to older versions of PA, specifically v4
  * Improved build script
+ * Version: Revised `Compatibility` variants to make more sense
 
 # 1.8.1 (August 17th, 2019)
 
