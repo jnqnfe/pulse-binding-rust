@@ -51,7 +51,7 @@ pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION};
 pub enum Compatibility {
     /// Support for latest compatible version.
     Latest,
-    /// Support for PA versions 8-11 selected.
+    /// Support for PA versions <= 11 selected.
     PreV12,
 }
 

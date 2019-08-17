@@ -41,13 +41,13 @@ By default, `latest_pa_common_compatibility` is enabled.
 
 ### Examples:
 
-Specifically selecting PA v12 compatibility:
+Specifically enabling PA v12+ compatibility:
 
 ```toml
 libpulse-binding = { version = "2.0", default-features = false, features = "pa_v12_compatibility" }
 ```
 
-Specifcally selecting minimal (PA v8-11) compatibility (the oldest supported):
+Specifically lowering to minimal compatibility (PA v8+):
 
 ```toml
 libpulse-binding = { version = "2.0", default-features = false }
