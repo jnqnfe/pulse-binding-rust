@@ -1,6 +1,7 @@
 # <unreleased>
 
  * Extended support to older versions of PA, specifically v4
+ * Improved build script
 
 # 1.8.0 (August 15th, 2019)
 
