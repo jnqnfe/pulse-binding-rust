@@ -40,7 +40,7 @@
 //! [`get_compatibility`]: fn.get_compatibility.html
 
 use std::os::raw::c_char;
-pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION};
+pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION, PA_PROTOCOL_VERSION};
 
 /// PulseAudio version compatibility.
 ///
@@ -67,6 +67,9 @@ mod actual {
     /// The major and minor components of the newest version of the PulseAudio client library this
     /// linking library is known to be compatible with.
     pub const TARGET_VERSION: (u8, u8) = (12, 0);
+
+    /// The current protocol version.
+    pub const PA_PROTOCOL_VERSION: u16 = 32;
 }
 
 // Pre-v12
@@ -81,10 +84,13 @@ mod actual {
     /// The major and minor components of the newest version of the PulseAudio client library this
     /// linking library is known to be compatible with.
     pub const TARGET_VERSION: (u8, u8) = (11, 0);
+
+    /// The current protocol version.
+    pub const PA_PROTOCOL_VERSION: u16 = 32;
 }
 
+// Note, this seems to be constant, as of c95d0d7dcbca0c531b972ece1004caad95c92936
 pub const PA_API_VERSION: u8 = 12;
-pub const PA_PROTOCOL_VERSION: u16 = 32;
 
 /// Returns indication of the level of PulseAudio version compatibility selected at compie time via
 /// Cargo feature flags.
