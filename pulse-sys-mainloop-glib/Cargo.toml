@@ -15,7 +15,7 @@ edition = "2018"
 
 [dependencies]
 libpulse-sys = { path = "../pulse-sys", version = "1.8", default-features = false }
-glib-sys = "0"
+glib-sys = { version = "0", default-features = false }
 
 [target.'cfg(target_os="linux")'.build-dependencies]
 pkg-config = "0.3"

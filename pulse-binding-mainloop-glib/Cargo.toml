@@ -16,8 +16,8 @@ edition = "2018"
 [dependencies]
 libpulse-binding = { path = "../pulse-binding", version = "2.10", default-features = false }
 libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.8", default-features = false }
-glib-sys = "0"
-glib = "0"
+glib-sys = { version = "0", default-features = false }
+glib = { version = "0", default-features = false }
 
 [features]
 default = ["latest_pa_common_compatibility"]
