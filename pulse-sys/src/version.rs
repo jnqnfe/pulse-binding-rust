@@ -40,7 +40,6 @@
 //! [`get_compatibility`]: fn.get_compatibility.html
 
 use std::os::raw::c_char;
-pub use self::actual::{TARGET_VERSION_STRING, TARGET_VERSION, PA_PROTOCOL_VERSION};
 
 /// PulseAudio version compatibility.
 ///
@@ -59,16 +58,8 @@ pub enum Compatibility {
 #[cfg(feature="pa_v12_compatibility")]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::Latest;
-
-    /// The newest version of the PulseAudio client library this linking library is known to be
-    /// compatible with.
     pub const TARGET_VERSION_STRING: &str = "12.0.0";
-
-    /// The major and minor components of the newest version of the PulseAudio client library this
-    /// linking library is known to be compatible with.
     pub const TARGET_VERSION: (u8, u8) = (12, 0);
-
-    /// The current protocol version.
     pub const PA_PROTOCOL_VERSION: u16 = 32;
 }
 
@@ -76,18 +67,21 @@ mod actual {
 #[cfg(not(feature="pa_v12_compatibility"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::PreV12;
-
-    /// The newest version of the PulseAudio client library this linking library is known to be
-    /// compatible with.
     pub const TARGET_VERSION_STRING: &str = "11.0.0";
-
-    /// The major and minor components of the newest version of the PulseAudio client library this
-    /// linking library is known to be compatible with.
     pub const TARGET_VERSION: (u8, u8) = (11, 0);
-
-    /// The current protocol version.
     pub const PA_PROTOCOL_VERSION: u16 = 32;
 }
+
+/// The newest version of the PulseAudio client library this linking library is known to be
+/// compatible with.
+pub const TARGET_VERSION_STRING: &str = actual::TARGET_VERSION_STRING;
+
+/// The major and minor components of the newest version of the PulseAudio client library this
+/// linking library is known to be compatible with.
+pub const TARGET_VERSION: (u8, u8) = actual::TARGET_VERSION;
+
+/// The current protocol version.
+pub const PA_PROTOCOL_VERSION: u16 = actual::PA_PROTOCOL_VERSION;
 
 // Note, this seems to be constant, as of c95d0d7dcbca0c531b972ece1004caad95c92936
 pub const PA_API_VERSION: u8 = 12;
