@@ -12,6 +12,7 @@ addons:
     packages:
       - pulseaudio
       - libpulse-mainloop-glib0
+      - libpulse-dev
 script:
   - dbus-launch pulseaudio --start
   #
