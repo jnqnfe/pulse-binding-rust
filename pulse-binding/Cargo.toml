@@ -18,34 +18,28 @@ libc = "0.2"
 libpulse-sys = { path = "../pulse-sys", version = "1.8", default-features = false }
 
 [features]
-default = ["latest_pa_common_compatibility"]
+default = ["pa_latest_common"]
 
 # PA version compatibility selection
 # See the overall project `COMPATIBILITY.md` file for explanation.
 #
 # Alias targetting latest compatibility, with the exception only of that for a very new release
-latest_pa_common_compatibility = ["pa_v12_compatibility"]
+pa_latest_common = ["pa_v12"]
 # Alias simply targetting latest compatibility
-latest_pa_compatibility = ["pa_v12_compatibility"]
+pa_latest = ["pa_v12"]
 # Enables PA version 12 support
-pa_v12_compatibility = [
-    "pa_v8_compatibility", #include older
-    "libpulse-sys/pa_v12_compatibility",
-]
+pa_v12 = ["pa_v8", "libpulse-sys/pa_v12"]
 # Enables PA version 8 support
-pa_v8_compatibility = [
-    "pa_v6_compatibility", #include older
-    "libpulse-sys/pa_v8_compatibility",
-]
+pa_v8 = ["pa_v6", "libpulse-sys/pa_v8"]
 # Enables PA version 6 support
-pa_v6_compatibility = [
-    "pa_v5_compatibility", #include older
-    "libpulse-sys/pa_v6_compatibility",
-]
+pa_v6 = ["pa_v5", "libpulse-sys/pa_v6"]
 # Enables PA version 5 support
-pa_v5_compatibility = [
-    "libpulse-sys/pa_v5_compatibility",
-]
+pa_v5 = ["libpulse-sys/pa_v5"]
+
+# All deprecated:
+latest_pa_common_compatibility = ["pa_latest_common"]
+latest_pa_compatibility = ["pa_latest"]
+pa_v12_compatibility = ["pa_v12"]
 
 [badges]
 travis-ci = { repository = "jnqnfe/pulse-binding-rust" }

@@ -73,7 +73,7 @@
 
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;
-#[cfg(feature = "pa_v5_compatibility")]
+#[cfg(feature = "pa_v5")]
 use std::ptr::null;
 use crate::{channelmap, sample};
 
@@ -338,7 +338,7 @@ impl Volume {
     /// `print_db` is true, also the dB value.
     ///
     /// Available since PA version 5.
-    #[cfg(feature = "pa_v5_compatibility")]
+    #[cfg(feature = "pa_v5")]
     pub fn print_verbose(&self, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
         let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
@@ -647,7 +647,7 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
-    #[cfg(feature = "pa_v8_compatibility")]
+    #[cfg(feature = "pa_v8")]
     pub fn get_lfe_balance(&self, map: &channelmap::Map) -> f32 {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
@@ -667,7 +667,7 @@ impl ChannelVolumes {
     /// [`get_lfe_balance`]: #method.get_lfe_balance
     /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
-    #[cfg(feature = "pa_v8_compatibility")]
+    #[cfg(feature = "pa_v8")]
     pub fn set_lfe_balance(&mut self, map: &channelmap::Map, new_balance: f32)
         -> Option<&mut Self>
     {
@@ -812,7 +812,7 @@ impl ChannelVolumes {
     /// channel names will be printed.
     ///
     /// Available since PA version 5.
-    #[cfg(feature = "pa_v5_compatibility")]
+    #[cfg(feature = "pa_v5")]
     pub fn print_verbose(&self, map: Option<&channelmap::Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 

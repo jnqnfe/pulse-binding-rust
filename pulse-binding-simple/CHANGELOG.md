@@ -1,6 +1,7 @@
 # <unreleased>
 
  * Extended support to older versions of PA, specifically v4
+ * Simplified feature flags, old ones left as temorary aliases, to be removed later
 
 # 2.10.0 (August 15th, 2019)
 

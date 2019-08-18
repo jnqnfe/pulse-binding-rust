@@ -2,6 +2,7 @@
 
  * Extended support to older versions of PA, specifically v4
  * Improved build script
+ * Simplified feature flags, old ones left as temorary aliases, to be removed later
 
 # 1.8.0 (August 15th, 2019)
 

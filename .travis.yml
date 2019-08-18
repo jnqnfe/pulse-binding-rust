@@ -22,15 +22,15 @@ script:
   #
   # Main binding
   - cd pulse-binding
-  - cargo check --verbose --no-default-features --features pa_v8_compatibility
-  - cargo test --verbose --no-default-features --features pa_v8_compatibility
+  - cargo check --verbose --no-default-features --features pa_v8
+  - cargo test --verbose --no-default-features --features pa_v8
   #
   # 'Simple' binding
   - cd ../pulse-binding-simple
-  - cargo check --verbose --no-default-features --features pa_v8_compatibility
-  - cargo test --verbose --no-default-features --features pa_v8_compatibility
+  - cargo check --verbose --no-default-features --features pa_v8
+  - cargo test --verbose --no-default-features --features pa_v8
   #
   # Glib mainloop binding
   - cd ../pulse-binding-mainloop-glib
-  - cargo check --verbose --no-default-features --features pa_v8_compatibility
-  - cargo test --verbose --no-default-features --features pa_v8_compatibility
+  - cargo check --verbose --no-default-features --features pa_v8
+  - cargo test --verbose --no-default-features --features pa_v8

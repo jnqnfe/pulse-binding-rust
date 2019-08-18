@@ -32,19 +32,18 @@ v13.0 support, this will automatically enable PA v12.x support, on top of the ba
 support. (No API changes occurred from v8.0 until v12.0).
 
 Alongside PA version specific feature flags, two useful aliases are also provided:
- - The `latest_pa_compatibility` feature enables everything, targetting the very latest supported
-   version.
- - The `latest_pa_common_compatibility` feature enables everything except only new features from a
-   very new release, as just discussed.
+ - The `pa_latest` feature enables everything, targetting the very latest supported version.
+ - The `pa_latest_common` feature enables everything except only new features from a very new
+   release, as just discussed.
 
-By default, `latest_pa_common_compatibility` is enabled.
+By default, `pa_latest_common` is enabled.
 
 ### Examples:
 
 Specifically enabling PA v12+ compatibility:
 
 ```toml
-libpulse-binding = { version = "2.0", default-features = false, features = "pa_v12_compatibility" }
+libpulse-binding = { version = "2.0", default-features = false, features = "pa_v12" }
 ```
 
 Specifically lowering to minimal compatibility (PA v4+):

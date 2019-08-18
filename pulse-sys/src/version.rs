@@ -61,7 +61,7 @@ pub enum Compatibility {
 }
 
 // Latest
-#[cfg(feature="pa_v12_compatibility")]
+#[cfg(feature = "pa_v12")]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V12Plus;
     pub const TARGET_VERSION_STRING: &str = "12.0.0";
@@ -70,7 +70,7 @@ mod actual {
 }
 
 // Pre-v12
-#[cfg(all(not(feature="pa_v12_compatibility"), feature="pa_v8_compatibility"))]
+#[cfg(all(not(feature = "pa_v12"), feature = "pa_v8"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V8Plus;
     pub const TARGET_VERSION_STRING: &str = "11.0.0";
@@ -79,7 +79,7 @@ mod actual {
 }
 
 // Pre-v8
-#[cfg(all(not(feature="pa_v8_compatibility"), feature="pa_v6_compatibility"))]
+#[cfg(all(not(feature = "pa_v8"), feature = "pa_v6"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V6Plus;
     pub const TARGET_VERSION_STRING: &str = "7.0.0";
@@ -88,7 +88,7 @@ mod actual {
 }
 
 // Pre-v6
-#[cfg(all(not(feature="pa_v6_compatibility"), feature="pa_v5_compatibility"))]
+#[cfg(all(not(feature = "pa_v6"), feature = "pa_v5"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V5Plus;
     pub const TARGET_VERSION_STRING: &str = "5.0.0";
@@ -97,7 +97,7 @@ mod actual {
 }
 
 // Pre-v5
-#[cfg(not(feature="pa_v5_compatibility"))]
+#[cfg(not(feature = "pa_v5"))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V4Plus;
     pub const TARGET_VERSION_STRING: &str = "4.0.0";

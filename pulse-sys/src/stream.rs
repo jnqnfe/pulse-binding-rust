@@ -146,7 +146,7 @@ extern "C" {
     pub fn pa_stream_begin_write(s: *mut pa_stream, data: *mut *mut c_void, nbytes: *mut usize) -> i32;
     pub fn pa_stream_cancel_write(s: *mut pa_stream) -> i32;
     pub fn pa_stream_write(s: *mut pa_stream, data: *const c_void, nbytes: usize, free_cb: pa_free_cb_t, offset: i64, seek: pa_seek_mode_t) -> i32;
-    #[cfg(feature = "pa_v6_compatibility")]
+    #[cfg(feature = "pa_v6")]
     pub fn pa_stream_write_ext_free(s: *mut pa_stream, data: *const c_void, nbytes: usize, free_cb: pa_free_cb_t, free_cb_data: *mut c_void, offset: i64, seek: pa_seek_mode_t) -> i32;
     pub fn pa_stream_peek(s: *mut pa_stream, data: *mut *const c_void, nbytes: *mut usize) -> i32;
     pub fn pa_stream_drop(s: *mut pa_stream) -> i32;

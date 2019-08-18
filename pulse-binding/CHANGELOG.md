@@ -2,6 +2,7 @@
 
  * Extended support to older versions of PA, specifically v4
  * Version: Revised `Compatibility` variants to make more sense
+ * Simplified feature flags, old ones left as temorary aliases, to be removed later
 
 # 2.10.1 (August 17th, 2019)
 

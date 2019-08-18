@@ -94,7 +94,7 @@ impl Default for pa_prop_type_t {
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_encoding_to_string(e: pa_encoding_t) -> *const c_char;
-    #[cfg(feature = "pa_v12_compatibility")]
+    #[cfg(feature = "pa_v12")]
     pub fn pa_encoding_from_string(encoding: *const c_char) -> pa_encoding_t;
 
     pub fn pa_format_info_new() -> *mut pa_format_info;

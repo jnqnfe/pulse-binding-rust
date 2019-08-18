@@ -449,7 +449,7 @@ impl Map {
     ///
     /// Available since PA version 8.
     #[inline]
-    #[cfg(feature = "pa_v8_compatibility")]
+    #[cfg(feature = "pa_v8")]
     pub fn can_lfe_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_lfe_balance(self.as_ref()) != 0 }
     }
