@@ -53,8 +53,5 @@ pa_v5_compatibility = [
     "libpulse-mainloop-glib-sys/pa_v5_compatibility",
 ]
 
-# DEPRECATED, use `pa_v12_compatibility` instead
-pa_encoding_from_string = ["pa_v12_compatibility"]
-
 [badges]
 travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
