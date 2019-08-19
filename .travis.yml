@@ -21,19 +21,37 @@ script:
   #        something actually supported by cargo.
   #
   # Main binding
+  # ============
   - cd pulse-binding
+  #
+  #- cargo check --verbose --no-default-features --features pa_v12
   - cargo check --verbose --no-default-features --features pa_v8
-  - cargo test --verbose --no-default-features --features pa_v8
+  - cargo check --verbose --no-default-features --features pa_v6
+  - cargo check --verbose --no-default-features --features pa_v5
+  - cargo check --verbose --no-default-features
+  - cargo test --verbose --no-default-features --features pa_v8 #latest available on travis
   - cargo doc --verbose --no-default-features --features dox
   #
   # 'Simple' binding
+  # ================
   - cd ../pulse-binding-simple
+  #
+  #- cargo check --verbose --no-default-features --features pa_v12
   - cargo check --verbose --no-default-features --features pa_v8
-  - cargo test --verbose --no-default-features --features pa_v8
+  - cargo check --verbose --no-default-features --features pa_v6
+  - cargo check --verbose --no-default-features --features pa_v5
+  - cargo check --verbose --no-default-features
+  - cargo test --verbose --no-default-features --features pa_v8 #latest available on travis
   - cargo doc --verbose --no-default-features --features dox
   #
   # Glib mainloop binding
+  # =====================
   - cd ../pulse-binding-mainloop-glib
+  #
+  #- cargo check --verbose --no-default-features --features pa_v12
   - cargo check --verbose --no-default-features --features pa_v8
-  - cargo test --verbose --no-default-features --features pa_v8
+  - cargo check --verbose --no-default-features --features pa_v6
+  - cargo check --verbose --no-default-features --features pa_v5
+  - cargo check --verbose --no-default-features
+  - cargo test --verbose --no-default-features --features pa_v8 #latest available on travis
   - cargo doc --verbose --no-default-features --features dox
