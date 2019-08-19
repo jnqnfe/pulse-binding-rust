@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Fixed broken doc.rs documentation generation
+
 # 2.11.0 (August 19th, 2019)
 
  * Extended support to even older versions of PA, specifically up to and including v4
