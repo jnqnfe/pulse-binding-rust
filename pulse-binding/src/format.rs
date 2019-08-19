@@ -135,6 +135,8 @@ impl Encoding {
 
     /// Converts a string of the form returned by [`to_string`](#method.to_string) back to an
     /// `Encoding`.
+    ///
+    /// Available since PA version 12.
     #[cfg(feature = "pa_v12_compatibility")]
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
