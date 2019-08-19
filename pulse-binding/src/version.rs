@@ -58,45 +58,15 @@
 
 use capi;
 use std::ffi::CStr;
-pub use capi::version::Compatibility;
 
-/// The newest version of the PulseAudio client library this binding is known to be compatible with.
-pub const TARGET_VERSION_STRING: &str = capi::version::TARGET_VERSION_STRING;
-
-/// The major and minor components of the newest version of the PulseAudio client library this
-/// binding is known to be compatible with.
-pub const TARGET_VERSION: (u8, u8) = capi::version::TARGET_VERSION;
-
-/// The current API version, from the PA C header. Note, this seems to be separate from the PA
-/// version number, where is was `12` for the v0.9.11 release, and has not been changed since
-/// (c95d0d7dcbca0c531b972ece1004caad95c92936).
-pub const API_VERSION: u8 = capi::version::PA_API_VERSION;
-
-/// The current protocol version.
-pub const PROTOCOL_VERSION: u16 = capi::version::PA_PROTOCOL_VERSION;
-
-/// Get selected compatibility level.
-///
-/// Returns indication of the level of PulseAudio version compatibility selected at compile time via
-/// Cargo feature flags.
-#[inline(always)]
-pub const fn get_compatibility() -> Compatibility {
-    capi::version::get_compatibility()
-}
+// Re-export from sys
+pub use capi::version::{Compatibility, get_compatibility};
+pub use capi::version::{TARGET_VERSION_STRING, TARGET_VERSION};
+pub use capi::version::{PA_API_VERSION as API_VERSION, PA_PROTOCOL_VERSION as PROTOCOL_VERSION};
+pub use capi::version::pa_check_version as check_version;
 
 /// Gets the version of the (PulseAudio client system) library actually in use at runtime.
 #[inline]
 pub fn get_library_version() -> &'static CStr {
     unsafe { CStr::from_ptr(capi::pa_get_library_version()) }
-}
-
-/// Compare a given version with the targetted version.
-///
-/// Returns `true` if newer or equal to [`TARGET_VERSION`](constant.TARGET_VERSION.html).
-///
-/// Note that as of PulseAudio v1.0 the `micro` component is always zero and so is ignored.
-pub fn check_version(major: u8, minor: u8, _micro: u8) -> bool {
-    // Note, defined micro version is always zero as of PA v1.0, thus ignored here
-    (TARGET_VERSION.0  > major) ||
-    (TARGET_VERSION.0 == major && TARGET_VERSION.1  > minor)
 }
