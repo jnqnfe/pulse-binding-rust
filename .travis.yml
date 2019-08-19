@@ -24,13 +24,16 @@ script:
   - cd pulse-binding
   - cargo check --verbose --no-default-features --features pa_v8
   - cargo test --verbose --no-default-features --features pa_v8
+  - cargo doc --verbose --no-default-features --features dox
   #
   # 'Simple' binding
   - cd ../pulse-binding-simple
   - cargo check --verbose --no-default-features --features pa_v8
   - cargo test --verbose --no-default-features --features pa_v8
+  - cargo doc --verbose --no-default-features --features dox
   #
   # Glib mainloop binding
   - cd ../pulse-binding-mainloop-glib
   - cargo check --verbose --no-default-features --features pa_v8
   - cargo test --verbose --no-default-features --features pa_v8
+  - cargo doc --verbose --no-default-features --features dox
