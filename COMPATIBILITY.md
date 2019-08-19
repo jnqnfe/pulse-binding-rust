@@ -14,9 +14,10 @@ than the version you have installed will result in linker errors.
 Worry not, Cargo feature flags have you covered!
 
 The `sys` and `binding` crates provided by this project each include a set of PA version related
-compatibility feature flags, provided to allow you to avoid use of features from versions of PA newer
-than your version of PA. Note that a feature flag is **not** provided for each and every major new
-PA version, they are only introduced when a new major PA version make API changes that require one.
+compatibility feature flags, provided to allow you to avoid use of features from versions of PA
+newer than your version of PA. Note that a feature flag is **not** provided for each and every
+major new PA version, they are only introduced when a new major PA version make API changes that
+require one.
 
 By default support for new features of a new major PA version are left disabled for a while, until
 use of that new version is more widespread. Otherwise, they are enabled by default. I.e. the current
