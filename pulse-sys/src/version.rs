@@ -15,28 +15,39 @@
 
 //! Version constants and functions.
 //!
-//! The constants here mostly relate to those provided in the PulseAudio (PA) C headers.
+//! This module contains functions and constants relating to PulseAudio (PA) client API version
+//! compatibility.
 //!
-//! - They are typically only updated following a new **major** release of PA.
-//! - Some values are dynamic, depending upon the level of PA compatibility support selected at
-//!   compile time via Cargo feature flags. For instance if you enable support for PA <= v12 then
-//!   they will indicate v12, whereas if you exclude v12 support, they will indicate v11.
+//! # Dynamic compatibility
 //!
-//! Note that:
+//! As discussed in the project `COMPATIBILITY.md` file, support is offered for multiple versions of
+//! the PA client library, with changes made in newer versions being guarded with Cargo feature
+//! flags.
 //!
-//! - The minimum supported version of PA is v4.0.
-//! - Where a new major version of PA introduces API changes, such as new function symbols or new
-//!   enum variants, for instance, we add a Cargo feature to allow selective control over inclusion
-//!   of those changed, and thus control over the level of compatibility with newer releases that
-//!   the crate is compiled with.
+//! Note that the minimum supported version of PA is v4.0.
 //!
-//! The [`pa_get_library_version`] function always obtains at runtime the version of the actual PA
-//! library in use.
+//! # Dynamic constants
 //!
-//! The [`get_compatibility`] function gives an indication of the level of compatibility support
-//! built in at compile time, per Cargo feature flags.
+//! The version constants defined here mostly relate to those provided in the PA C headers. They are
+//! typically only updated following a new **major** release of PA. They are also dynamic, depending
+//! upon the level of compatibility support selected at compile time via the available Cargo feature
+//! flags.
 //!
-//! [`pa_get_library_version`]: fn.pa_get_library_version.html
+//! Note that there is **not** a one-to-one mapping of major PA version to compatibility feature. A
+//! new such feature is only introduced where actual changes in the PA client API require one
+//! because they introduce changes such as the addition of new functions.
+//!
+//! It is not obvious how the constants relate to version compatibility levels without reading the
+//! code, so this needs explaining. Simply put, version numbers are updated typically only on
+//! release of a new major version of PA, and update the existing version number associated with the
+//! current latest compatibility level selector when there are no changes requiring a new
+//! compatibility feature.
+//!
+//! Thus, for instance, PA versions 8 and 12 introduced additions to the API and have corresponding
+//! compatibility features to control the inclusion of those additions on top of the minimum level
+//! of support offered. If you have v8 compatibility enabled but not v12, then the version number
+//! indicated will be v11.
+//!
 //! [`get_compatibility`]: fn.get_compatibility.html
 
 use std::os::raw::c_char;
@@ -105,21 +116,30 @@ mod actual {
     pub const PA_PROTOCOL_VERSION: u16 = 28;
 }
 
-/// The newest version of the PulseAudio client library this linking library is known to be
-/// compatible with.
+/// Version string of targetted version.
+///
+/// See the module level documentation for an explanation.
 pub const TARGET_VERSION_STRING: &str = actual::TARGET_VERSION_STRING;
 
-/// The major and minor components of the newest version of the PulseAudio client library this
-/// linking library is known to be compatible with.
+/// Version number of targetted version.
+///
+/// See the module level documentation for an explanation.
 pub const TARGET_VERSION: (u8, u8) = actual::TARGET_VERSION;
 
-/// The current protocol version.
+/// Protocol version of targetted version.
+///
+/// See the module level documentation for an explanation.
 pub const PA_PROTOCOL_VERSION: u16 = actual::PA_PROTOCOL_VERSION;
 
-// Note, this seems to be constant, as of c95d0d7dcbca0c531b972ece1004caad95c92936
+/// The current API version.
+///
+/// Note, this has not been updated since PA v0.9.11. It is presumed that it would only ever be
+/// updated for backwards-breaking API changes.
 pub const PA_API_VERSION: u8 = 12;
 
-/// Returns indication of the level of PulseAudio version compatibility selected at compie time via
+/// Get selected compatibility level.
+///
+/// Returns indication of the level of PulseAudio version compatibility selected at compile time via
 /// Cargo feature flags.
 #[inline(always)]
 pub const fn get_compatibility() -> Compatibility {
