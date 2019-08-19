@@ -1,11 +1,14 @@
-# <unreleased>
+# 2.11.0 (August 19th, 2019)
 
- * Extended support to older versions of PA, specifically v4
+ * Extended support to even older versions of PA, specifically up to and including v4
  * Simplified feature flags, old ones left as temorary aliases, to be removed later
  * Added a `dox` feature flag, for use with `cargo doc`.
    It enables the very latest PA version compatibility, while bypassing the pkg-config check, thus
    is useful for generating documentation that includes information on features from versions of PA
-   that may be newer than the version you may have installed.
+   that may be newer than the version you have installed.
+ * Updated `libpulse-binding` version dependency (2.10 → 2.11)
+ * Updated `libpulse-sys` version dependency (1.8 → 1.9)
+ * Updated `libpulse-simple-sys` version dependency (1.8 → 1.9)
 
 # 2.10.0 (August 15th, 2019)
 
