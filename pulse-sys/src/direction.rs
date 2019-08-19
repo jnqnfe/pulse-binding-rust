@@ -15,7 +15,7 @@
 
 //! Utility functions for direction.
 
-#[cfg(feature = "pa_v6")]
+#[cfg(any(feature = "pa_v6", feature = "dox"))]
 use std::os::raw::c_char;
 
 /// Direction bitfield.
@@ -29,8 +29,8 @@ pub const PA_DIRECTION_INPUT: pa_direction_t = 0x2;
 
 #[link(name="pulse")]
 extern "C" {
-    #[cfg(feature = "pa_v6")]
+    #[cfg(any(feature = "pa_v6", feature = "dox"))]
     pub fn pa_direction_valid(direction: pa_direction_t) -> i32;
-    #[cfg(feature = "pa_v6")]
+    #[cfg(any(feature = "pa_v6", feature = "dox"))]
     pub fn pa_direction_to_string(direction: pa_direction_t) -> *const c_char;
 }

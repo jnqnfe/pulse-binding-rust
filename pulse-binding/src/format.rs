@@ -137,7 +137,7 @@ impl Encoding {
     /// `Encoding`.
     ///
     /// Available since PA version 12.
-    #[cfg(feature = "pa_v12")]
+    #[cfg(any(feature = "pa_v12", feature = "dox"))]
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

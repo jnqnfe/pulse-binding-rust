@@ -332,7 +332,7 @@ impl Spec {
 ///
 /// Available since PA version 5.
 #[inline]
-#[cfg(feature = "pa_v5")]
+#[cfg(any(feature = "pa_v5", feature = "dox"))]
 pub fn format_is_valid(format: u32) -> bool {
     unsafe { capi::pa_sample_format_valid(format) != 0 }
 }
@@ -341,7 +341,7 @@ pub fn format_is_valid(format: u32) -> bool {
 ///
 /// Available since PA version 5.
 #[inline]
-#[cfg(feature = "pa_v5")]
+#[cfg(any(feature = "pa_v5", feature = "dox"))]
 pub fn rate_is_valid(rate: u32) -> bool {
     unsafe { capi::pa_sample_rate_valid(rate) != 0 }
 }
@@ -350,7 +350,7 @@ pub fn rate_is_valid(rate: u32) -> bool {
 ///
 /// Available since PA version 5.
 #[inline]
-#[cfg(feature = "pa_v5")]
+#[cfg(any(feature = "pa_v5", feature = "dox"))]
 pub fn channels_are_valid(channels: u8) -> bool {
     unsafe { capi::pa_channels_valid(channels) != 0 }
 }

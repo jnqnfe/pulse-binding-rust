@@ -233,9 +233,9 @@ use capi::pa_source_info as SourceInfoInternal;
 use capi::pa_server_info as ServerInfoInternal;
 use capi::pa_module_info as ModuleInfoInternal;
 use capi::pa_client_info as ClientInfoInternal;
-#[cfg(not(feature = "pa_v5"))]
+#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
 use capi::pa_card_profile_info as CardProfileInfoInternal;
-#[cfg(feature = "pa_v5")]
+#[cfg(any(feature = "pa_v5", feature = "dox"))]
 use capi::pa_card_profile_info2 as CardProfileInfo2Internal;
 use capi::pa_card_port_info as CardPortInfoInternal;
 use capi::pa_card_info as CardInfoInternal;
@@ -1422,7 +1422,7 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
 ///
 /// Replaced with `CardProfileInfo2` in PA version 5+.
 #[derive(Debug)]
-#[cfg(not(feature = "pa_v5"))]
+#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
 pub struct CardProfileInfo<'a> {
     /// Name of this profile.
     pub name: Option<Cow<'a, str>>,
@@ -1443,7 +1443,7 @@ pub struct CardProfileInfo<'a> {
 ///
 /// Available since PA version 5.
 #[derive(Debug)]
-#[cfg(feature = "pa_v5")]
+#[cfg(any(feature = "pa_v5", feature = "dox"))]
 pub struct CardProfileInfo2<'a> {
     /// Name of this profile.
     pub name: Option<Cow<'a, str>>,
@@ -1462,7 +1462,7 @@ pub struct CardProfileInfo2<'a> {
     pub available: bool,
 }
 
-#[cfg(not(feature = "pa_v5"))]
+#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
 impl<'a> CardProfileInfo<'a> {
     fn new_from_raw(p: *const CardProfileInfoInternal) -> Self {
         assert!(!p.is_null());
@@ -1485,7 +1485,7 @@ impl<'a> CardProfileInfo<'a> {
     }
 }
 
-#[cfg(feature = "pa_v5")]
+#[cfg(any(feature = "pa_v5", feature = "dox"))]
 impl<'a> CardProfileInfo2<'a> {
     fn new_from_raw(p: *const CardProfileInfo2Internal) -> Self {
         assert!(!p.is_null());
@@ -1531,10 +1531,10 @@ pub struct CardPortInfo<'a> {
     /// active.
     pub latency_offset: i64,
     /// Set of available profiles.
-    #[cfg(not(feature = "pa_v5"))]
+    #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
     pub profiles: Vec<CardProfileInfo<'a>>,
     /// Set of available profiles.
-    #[cfg(feature = "pa_v5")]
+    #[cfg(any(feature = "pa_v5", feature = "dox"))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
 }
 
@@ -1545,9 +1545,9 @@ impl<'a> CardPortInfo<'a> {
 
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
 
-        #[cfg(not(feature = "pa_v5"))]
+        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
         assert!(src.n_profiles == 0 || !src.profiles.is_null());
-        #[cfg(not(feature = "pa_v5"))]
+        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles.offset(i)) as *mut CardProfileInfoInternal };
             if !indexed_ptr.is_null() {
@@ -1555,9 +1555,9 @@ impl<'a> CardPortInfo<'a> {
             }
         }
 
-        #[cfg(feature = "pa_v5")]
+        #[cfg(any(feature = "pa_v5", feature = "dox"))]
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
-        #[cfg(feature = "pa_v5")]
+        #[cfg(any(feature = "pa_v5", feature = "dox"))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
@@ -1605,16 +1605,16 @@ pub struct CardInfo<'a> {
     /// Set of ports.
     pub ports: Vec<CardPortInfo<'a>>,
     /// Set of available profiles.
-    #[cfg(not(feature = "pa_v5"))]
+    #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
     pub profiles: Vec<CardProfileInfo<'a>>,
     /// Pointer to active profile in the set, or `None`.
-    #[cfg(not(feature = "pa_v5"))]
+    #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
     pub active_profile: Option<Box<CardProfileInfo<'a>>>,
     /// Set of available profiles.
-    #[cfg(feature = "pa_v5")]
+    #[cfg(any(feature = "pa_v5", feature = "dox"))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
     /// Pointer to active profile in the set, or `None`.
-    #[cfg(feature = "pa_v5")]
+    #[cfg(any(feature = "pa_v5", feature = "dox"))]
     pub active_profile: Option<Box<CardProfileInfo2<'a>>>,
 }
 
@@ -1633,9 +1633,9 @@ impl<'a> CardInfo<'a> {
         }
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
 
-        #[cfg(not(feature = "pa_v5"))]
+        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
         assert!(src.n_profiles == 0 || !src.profiles.is_null());
-        #[cfg(not(feature = "pa_v5"))]
+        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { src.profiles.offset(i) as *mut CardProfileInfoInternal };
             if !indexed_ptr.is_null() {
@@ -1643,9 +1643,9 @@ impl<'a> CardInfo<'a> {
             }
         }
 
-        #[cfg(feature = "pa_v5")]
+        #[cfg(any(feature = "pa_v5", feature = "dox"))]
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
-        #[cfg(feature = "pa_v5")]
+        #[cfg(any(feature = "pa_v5", feature = "dox"))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
@@ -1671,12 +1671,12 @@ impl<'a> CardInfo<'a> {
                 proplist: Proplist::from_raw_weak(src.proplist),
                 ports: ports_vec,
                 profiles: profiles_vec,
-                #[cfg(not(feature = "pa_v5"))]
+                #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
                 active_profile: match src.active_profile.is_null() {
                     true => None,
                     false => Some(Box::new(CardProfileInfo::new_from_raw(src.active_profile))),
                 },
-                #[cfg(feature = "pa_v5")]
+                #[cfg(any(feature = "pa_v5", feature = "dox"))]
                 active_profile: match src.active_profile2.is_null() {
                     true => None,
                     false => Some(Box::new(CardProfileInfo2::new_from_raw(src.active_profile2))),

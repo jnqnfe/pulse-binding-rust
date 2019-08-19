@@ -51,3 +51,12 @@ Specifically lowering to minimal compatibility (PA v4+):
 ```toml
 libpulse-binding = { version = "2.0", default-features = false }
 ```
+
+## Documentation
+
+A `dox` feature is provided which is intended to be used only with `cargo doc` and **not** combined
+with the version compatibility flags discussed above. It is intended for use in generation of
+documentation; it enables inclusion of the very latest PA version support, and unlike the version
+compatibility related flags, this one bypasses the pkg-config check performed by the build script.
+It thus allows you to generate documentation that includes features for versions of PA newer than
+you may yet have installed.

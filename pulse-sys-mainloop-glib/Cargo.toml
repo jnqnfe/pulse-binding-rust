@@ -39,6 +39,11 @@ pa_v6 = ["pa_v5", "libpulse-sys/pa_v6"]
 # Enables PA version 5 support
 pa_v5 = ["libpulse-sys/pa_v5"]
 
+# Documentation generation
+# This is intended for use with generation of documentation only. It enables inclusion of the latest
+# supported PA version features, but without triggering the build script’s pkg-config check.
+dox = ["libpulse-sys/dox"]
+
 # All deprecated:
 latest_pa_common_compatibility = ["pa_latest_common"]
 latest_pa_compatibility = ["pa_latest"]

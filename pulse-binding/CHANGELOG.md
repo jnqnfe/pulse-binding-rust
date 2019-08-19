@@ -3,6 +3,10 @@
  * Extended support to older versions of PA, specifically v4
  * Version: Revised `Compatibility` variants to make more sense
  * Simplified feature flags, old ones left as temorary aliases, to be removed later
+ * Added a `dox` feature flag, for use with `cargo doc`.
+   It enables the very latest PA version compatibility, while bypassing the pkg-config check, thus
+   is useful for generating documentation that includes information on features from versions of PA
+   that may be newer than the version you may have installed.
 
 # 2.10.1 (August 17th, 2019)
 
