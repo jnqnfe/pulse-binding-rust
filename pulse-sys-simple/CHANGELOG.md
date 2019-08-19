@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.9.1 (August 19th, 2019)
 
  * Fixed broken doc.rs documentation generation
 

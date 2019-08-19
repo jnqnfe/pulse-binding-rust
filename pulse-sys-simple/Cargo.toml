@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-simple-sys"
-version = "1.9.0"
+version = "1.9.1"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "LGPL-2.1+"
 description = """
