@@ -46,11 +46,6 @@ pa_v5 = ["libpulse-sys/pa_v5"]
 # supported PA version features, but without triggering the build script’s pkg-config check.
 dox = ["libpulse-sys/dox"]
 
-# All deprecated:
-latest_pa_common_compatibility = ["pa_latest_common"]
-latest_pa_compatibility = ["pa_latest"]
-pa_v12_compatibility = ["pa_v12"]
-
 [package.metadata.docs.rs]
 features = ["dox"]
 all-features = false

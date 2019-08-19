@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Removed deprecated Cargo features
+
 # 2.15.0 (December 29th, 2019)
 
  * Updated `libpulse-binding` version dependency (2.14 → 2.15)

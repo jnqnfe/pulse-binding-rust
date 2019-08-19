@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Removed deprecated Cargo features
+
 # 1.12.1 (December 29th, 2019)
 
  * Improved the non-pkg-config fallback for lib linking
