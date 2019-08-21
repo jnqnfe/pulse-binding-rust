@@ -38,16 +38,25 @@ the `LICENSE-MIT` and `LICENSE-APACHE` files, or alternatively [here][1] and [he
 [1]: http://opensource.org/licenses/MIT
 [2]: http://www.apache.org/licenses/LICENSE-2.0
 
-## Specifics
+## Documentation Specifics
+
+The documentation of the *binding* and *sys* libraries provided in this source code repository has
+largely been copied (with some modifications in places) from that provided in the LGPL 2.1+ licensed
+C header files of the PulseAudio client library itself. This has been done on a fair-use basis.
+(Fair-use is permitted by the LGPL license as discussed in [the GPL/LGPL FAQ][gpl_faq_fairuse]).
+This should be of no concern for normal use of these crates, you can freely compile them statically
+into your projects under the dual MIT and Apache-2.0 licensing (documentation naturally does not get
+compiled into your library/application), and you should be able to freely use a personal copy of the
+crate documentation generated into HTML form with `cargo doc` (fair-use).
+
+[gpl_faq_fairuse]: https://www.gnu.org/licenses/gpl-faq.en.html#GPLFairUse
+
+## Other Specifics
 
 The files within the ‘includes’ directory, have been copied directly from the PulseAudio source.
 These files are kept for development purposes only (to be compared through diff checking against
 future versions to find changes that may need propagating into the bindings). To be clear, they are
 not used in any compilation processes. They are licensed under LGPL by the PulseAudio project.
-
-The *binding* and *sys* libraries provided in this source code repository have been built upon the
-public API of PulseAudio, as described by the PulseAudio ‘include’ files, with documentation in
-particular largely copied from those files.
 
 The logo image files are a combined derivative of the Rust programming language icon and the
 PulseAudio icon, taking core elements from each. I apply no specific image-oriented license upon
