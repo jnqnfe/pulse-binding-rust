@@ -7,6 +7,9 @@
 // of these licenses either in the LICENSE-MIT and LICENSE-APACHE files, or alternatively at
 // <http://opensource.org/licenses/MIT> and <http://www.apache.org/licenses/LICENSE-2.0>
 // respectively.
+//
+// Portions of documentation are copied from the LGPL 2.1+ licensed PulseAudio C headers on a
+// fair-use basis, as discussed in the overall project readme (available in the git repository).
 
 //! UNIX signal support for main loops.
 //!
