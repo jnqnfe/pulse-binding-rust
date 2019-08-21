@@ -5,7 +5,9 @@ Contributions to this project are very welcome.
 
 ## Submitting changes
 
-Changes can be submitted as “pull requests” on the project [github repository](https://github.com/jnqnfe/pulse-binding-rust).
+Changes can be submitted as “pull requests” on the project [github repository].
+
+[github repository]: https://github.com/jnqnfe/pulse-binding-rust
 
 ## Licensing
 
@@ -20,4 +22,4 @@ change which may be rejected on this basis.
 
 Implicit or explicit acceptance of changes being incorporated under the licensing model of the
 project does not imply consent for your changes to later be re-licensed under a different license
-at the sole discretion of project owner(s).
+at the sole discretion of the project owner(s).
