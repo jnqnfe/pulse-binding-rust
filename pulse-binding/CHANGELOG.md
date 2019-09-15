@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.12.0 (September 15th, 2019)
 
  * Implemented PA v13 enhancements, including:
     - Added `get_sample_format()`, `get_rate()`, `get_channel_count()` and `get_channel_map()` to
@@ -10,6 +10,7 @@
    The C API function allows a null pointer to be used for this param, which was not a use case
    allowed in the binding, for no particular reason. This enables it.
  * Added PA v13 compatibility control feature
+ * Updated `libpulse-sys` version dependency (1.9 → 1.10)
 
 # 2.11.1 (August 19th, 2019)
 

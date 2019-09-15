@@ -1,6 +1,7 @@
-# <unreleased>
+# 1.10.0 (September 15th, 2019)
 
  * Added PA v13 compatibility control feature
+ * Updated `libpulse-sys` version dependency (1.9 → 1.10)
 
 # 1.9.1 (August 19th, 2019)
 
