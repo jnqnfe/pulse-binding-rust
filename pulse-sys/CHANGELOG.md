@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.11.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0.
    See <https://github.com/jnqnfe/pulse-binding-rust/issues/26> for details.

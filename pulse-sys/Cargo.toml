@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-sys"
-version = "1.10.0"
+version = "1.11.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = """

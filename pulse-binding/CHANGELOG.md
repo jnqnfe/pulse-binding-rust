@@ -1,7 +1,8 @@
-# <unreleased>
+# 2.13.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0.
    See <https://github.com/jnqnfe/pulse-binding-rust/issues/26> for details.
+ * Updated `libpulse-sys` version dependency (1.10 → 1.11)
 
 # 2.12.0 (September 15th, 2019)
 
