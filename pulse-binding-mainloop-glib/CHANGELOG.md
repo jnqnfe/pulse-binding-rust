@@ -1,3 +1,7 @@
+# 2.14.0 (October 28th, 2019)
+
+ * Updated `libpulse-binding` version dependency (2.13 → 2.14)
+
 # 2.13.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0.

@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.14.0 (October 28th, 2019)
 
  * Reverted "Changed the `mainloop` param of `Context::rttime_new` from trait object to generic
    (`dyn` to`impl`)" from v2.7. Failed to test sufficiently. This introduces an E0632 error in a
