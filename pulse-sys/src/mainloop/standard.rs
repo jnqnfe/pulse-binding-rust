@@ -14,7 +14,10 @@
 //! Standard/minimal main loop implementation based on poll().
 
 use std::os::raw::{c_ulong, c_void};
+#[cfg(not(windows))]
 use libc::pollfd;
+#[cfg(windows)]
+use winapi::um::winsock2::WSAPOLLFD as pollfd;
 use crate::mainloop::api::pa_mainloop_api;
 
 /// An opaque main loop object.

@@ -1,3 +1,8 @@
+# <unreleased>
+
+ * Fixed an issue compiling on Windows (needed to reference a different `pollfd` definition).
+   Thanks to @allquixotic on github for reporting.
+
 # 1.11.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0.
