@@ -13,7 +13,7 @@
 
 //! Utility functions for handling timeval calculations.
 
-use libc::timeval;
+pub(crate) use libc::timeval;
 use crate::sample::pa_usec_t;
 
 pub const PA_MSEC_PER_SEC: pa_usec_t = 1000;

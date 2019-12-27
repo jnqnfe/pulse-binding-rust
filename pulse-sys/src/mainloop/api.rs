@@ -14,7 +14,7 @@
 //! Main loop abstraction layer API.
 
 use std::os::raw::c_void;
-use libc::timeval;
+use crate::timeval::timeval;
 
 pub type pa_io_event_flags_t = u32;
 
