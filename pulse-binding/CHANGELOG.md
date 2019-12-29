@@ -1,3 +1,7 @@
+# 2.15.0 (December 29th, 2019)
+
+ * Updated `libpulse-sys` version dependency (1.11 → 1.12)
+
 # 2.14.1 (December 29th, 2019)
 
  * Fixed issues compiling on Windows

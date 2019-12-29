@@ -1,6 +1,7 @@
-# <unreleased>
+# 1.12.0 (December 29th, 2019)
 
  * Now using pkg-config in build script for more than just Linux
+ * Updated `libpulse-sys` version dependency (1.11 → 1.12)
 
 # 1.11.0 (September 17th, 2019)
 

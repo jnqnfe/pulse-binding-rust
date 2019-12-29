@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-glib-binding"
-version = "2.14.0"
+version = "2.15.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
@@ -14,8 +14,8 @@ exclude = ["README.md"]
 edition = "2018"
 
 [dependencies]
-libpulse-binding = { path = "../pulse-binding", version = "2.14", default-features = false }
-libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.11", default-features = false }
+libpulse-binding = { path = "../pulse-binding", version = "2.15", default-features = false }
+libpulse-mainloop-glib-sys = { path = "../pulse-sys-mainloop-glib", version = "1.12", default-features = false }
 glib-sys = { version = "0", default-features = false }
 glib = { version = "0", default-features = false }
 

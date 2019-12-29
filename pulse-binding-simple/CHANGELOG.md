@@ -1,3 +1,9 @@
+# 2.15.0 (December 29th, 2019)
+
+ * Updated `libpulse-binding` version dependency (2.14 → 2.15)
+ * Updated `libpulse-sys` version dependency (1.11 → 1.12)
+ * Updated `libpulse-simple-sys` version dependency (1.11 → 1.12)
+
 # 2.14.0 (October 28th, 2019)
 
  * Updated `libpulse-binding` version dependency (2.13 → 2.14)

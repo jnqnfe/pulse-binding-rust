@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.12.0 (December 29th, 2019)
 
  * Now using pkg-config in build script for more than just Linux
 
