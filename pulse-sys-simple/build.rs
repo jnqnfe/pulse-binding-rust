@@ -3,9 +3,13 @@ extern crate pkg_config;
 fn main() {
     let lib_name = "libpulse-simple";
     let fallback_name = {
-        #[cfg(target_os="linux")]
+        #[cfg(target_os = "linux")]
         { "pulse-simple::libpulse-simple.so.0" }
-        #[cfg(not(target_os="linux"))]
+        #[cfg(target_os = "macos")]
+        { "pulse-simple::libpulse-simple.0.dylib" }
+        #[cfg(windows)]
+        { "pulse-simple::libpulse-simple-0.dll" }
+        #[cfg(not(any(target_os = "linux", target_os = "macos", windows)))]
         { "pulse-simple" }
     };
     let min_version = "4.0";

@@ -3,9 +3,13 @@ extern crate pkg_config;
 fn main() {
     let lib_name = "libpulse-mainloop-glib";
     let fallback_name = {
-        #[cfg(target_os="linux")]
+        #[cfg(target_os = "linux")]
         { "pulse-mainloop-glib::libpulse-mainloop-glib.so.0" }
-        #[cfg(not(target_os="linux"))]
+        #[cfg(target_os = "macos")]
+        { "pulse-mainloop-glib::libpulse-mainloop-glib.0.dylib" }
+        #[cfg(windows)]
+        { "pulse-mainloop-glib::libpulse-mainloop-glib-0.dll" }
+        #[cfg(not(any(target_os = "linux", target_os = "macos", windows)))]
         { "pulse-mainloop-glib" }
     };
     let min_version = "4.0";
