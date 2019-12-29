@@ -18,6 +18,11 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, S
 use std::time::Duration;
 use super::{UnixTs, MonotonicTs, MicroSeconds, USEC_INVALID};
 
+#[cfg(not(windows))] pub(crate) type TvSecs = libc::time_t;
+#[cfg(not(windows))] pub(crate) type TvUsecs = libc::suseconds_t;
+#[cfg(windows)] pub(crate) type TvSecs = libc::c_long;
+#[cfg(windows)] pub(crate) type TvUsecs = libc::c_long;
+
 /// Bit to set in `timeval`’s `tv_usec` attribute to mark that the `timeval` is in monotonic time.
 const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
 
@@ -59,7 +64,7 @@ impl std::fmt::Debug for Timeval {
 impl Timeval {
     /// Creates a new instance, with values provided.
     #[inline]
-    pub const fn new(sec: libc::time_t, usec: libc::suseconds_t) -> Self {
+    pub const fn new(sec: TvSecs, usec: TvUsecs) -> Self {
         Timeval(libc::timeval { tv_sec: sec, tv_usec: usec })
     }
 
@@ -97,7 +102,7 @@ impl Timeval {
         *self = v.into();
 
         match rtclock {
-            true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK as libc::suseconds_t; },
+            true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK as TvUsecs; },
             false => { self.wallclock_from_rtclock(); },
         }
         self

@@ -1,7 +1,9 @@
 # <unreleased>
 
- * Fixed an issue compiling on Windows (needed to reference a different `pollfd` definition).
-   Thanks to @allquixotic on github for reporting.
+ * Fixed issues compiling on Windows
+   - Needed to reference a different `pollfd` definition
+   - Needed to reference different inner `timeval` attribute type definitions
+   Thanks to @allquixotic on github for reporting
 
 # 2.14.0 (October 28th, 2019)
 
