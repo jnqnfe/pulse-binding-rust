@@ -17,6 +17,9 @@ edition = "2018"
 libc = "0.2"
 libpulse-sys = { path = "../pulse-sys", version = "1.11", default-features = false }
 
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3", features = ["winsock2"], default-features = false }
+
 [features]
 default = ["pa_latest_common"]
 

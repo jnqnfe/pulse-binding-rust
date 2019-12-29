@@ -1,3 +1,8 @@
+# <unreleased>
+
+ * Fixed an issue compiling on Windows (needed to reference a different `pollfd` definition).
+   Thanks to @allquixotic on github for reporting.
+
 # 2.14.0 (October 28th, 2019)
 
  * Reverted "Changed the `mainloop` param of `Context::rttime_new` from trait object to generic

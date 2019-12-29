@@ -204,7 +204,10 @@
 use std::os::raw::{c_ulong, c_void};
 use std::rc::Rc;
 use std::ptr::null_mut;
+#[cfg(not(windows))]
 use libc::pollfd;
+#[cfg(windows)]
+use winapi::um::winsock2::WSAPOLLFD as pollfd;
 use crate::def;
 use crate::error::PAErr;
 use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi, Mainloop as MainloopTrait};
