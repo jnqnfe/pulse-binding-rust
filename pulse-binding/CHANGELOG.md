@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.14.1 (December 29th, 2019)
 
  * Fixed issues compiling on Windows
    - Needed to reference a different `pollfd` definition
