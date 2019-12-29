@@ -1,10 +1,13 @@
-#[cfg(target_os="linux")]
 extern crate pkg_config;
 
-#[cfg(target_os="linux")]
 fn main() {
     let lib_name = "libpulse-simple";
-    let fallback_name = "pulse-simple::libpulse-simple.so.0";
+    let fallback_name = {
+        #[cfg(target_os="linux")]
+        { "pulse-simple::libpulse-simple.so.0" }
+        #[cfg(not(target_os="linux"))]
+        { "pulse-simple" }
+    };
     let min_version = "4.0";
 
     let mut config = pkg_config::Config::new();
@@ -50,9 +53,4 @@ fn main() {
         },
         Ok(_) => {},
     }
-}
-
-#[cfg(not(target_os="linux"))]
-fn main() {
-    println!("cargo:rustc-link-lib=pulse-simple");
 }

@@ -1,10 +1,13 @@
-#[cfg(target_os="linux")]
 extern crate pkg_config;
 
-#[cfg(target_os="linux")]
 fn main() {
     let lib_name = "libpulse-mainloop-glib";
-    let fallback_name = "pulse-mainloop-glib::libpulse-mainloop-glib.so.0";
+    let fallback_name = {
+        #[cfg(target_os="linux")]
+        { "pulse-mainloop-glib::libpulse-mainloop-glib.so.0" }
+        #[cfg(not(target_os="linux"))]
+        { "pulse-mainloop-glib" }
+    };
     let min_version = "4.0";
 
     let mut config = pkg_config::Config::new();
@@ -50,9 +53,4 @@ fn main() {
         },
         Ok(_) => {},
     }
-}
-
-#[cfg(not(target_os="linux"))]
-fn main() {
-    println!("cargo:rustc-link-lib=pulse-mainloop-glib");
 }

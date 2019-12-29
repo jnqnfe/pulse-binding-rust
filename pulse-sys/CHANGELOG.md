@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Now using pkg-config in build script for more than just Linux
+
 # 1.11.1 (December 27th, 2019)
 
  * Fixed an issue compiling on Windows (needed to reference a different `pollfd` definition).

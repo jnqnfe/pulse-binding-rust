@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Now using pkg-config in build script for more than just Linux
+
 # 1.11.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0.
