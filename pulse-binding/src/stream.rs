@@ -760,7 +760,7 @@ impl Stream {
     ///
     /// # Params
     ///
-    /// * `dev`: Name of the sink to connect to, or `None` for default
+    /// * `dev`: Name of the sink to connect to, or `None` to let the server decide
     /// * `attr`: Buffering attributes, or `None` for default
     /// * `flags`: Additional flags, or `0` for default
     /// * `volume`: Initial volume, or `None` for default
@@ -802,7 +802,7 @@ impl Stream {
     ///
     /// # Params
     ///
-    /// * `dev`: Name of the source to connect to, or `None` for default
+    /// * `dev`: Name of the source to connect to, or `None` to let the server decide
     /// * `attr`: Buffering attributes, or `None` for default
     /// * `flags`: Additional flags, or `0` for default
     pub fn connect_record(&mut self, dev: Option<&str>, attr: Option<&def::BufferAttr>,
