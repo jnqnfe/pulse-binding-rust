@@ -344,7 +344,7 @@ pub fn rate_is_valid(rate: u32) -> bool {
     unsafe { capi::pa_sample_rate_valid(rate) != 0 }
 }
 
-/// Checkss if the channel count is within the supported range.
+/// Checks if the channel count is within the supported range.
 ///
 /// Available since PA version 5.
 #[inline]
