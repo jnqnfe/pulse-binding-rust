@@ -502,7 +502,7 @@ impl Mainloop {
 
     /// Signals all threads waiting for a signalling event in [`wait`](#method.wait).
     ///
-    /// If `wait_for_accept` is non-zero, do not return before the signal was accepted by an
+    /// If `wait_for_accept` is `true`, do not return before the signal was accepted by an
     /// [`accept`](#method.accept) call. While waiting for that condition the event loop object is
     /// unlocked.
     #[inline]
