@@ -150,35 +150,48 @@
 //!
 //! use std::rc::Rc;
 //! use std::cell::RefCell;
+//! use std::sync::atomic::{AtomicBool, Ordering};
 //! use pulse::mainloop::threaded::Mainloop;
 //! use pulse::stream:Stream;
 //!
-//! struct DrainCbData(Option<&mut bool>);
+//! // A data structure to capture all our data in (currently just a pointer to a bool)
+//! struct DrainCbData(*mut bool);
 //!
 //! fn drain_stream(m: Rc<RefCell<Mainloop>>, s: Rc<RefCell<Stream>>) {
 //!     m.borrow_mut().lock();
 //!
-//!     let mut data = DrainCbData(None);
+//!     // For guarding against spurious wakeups
+//!     // Possibly also needed for memory flushing and ordering control
+//!     let mut guard = Rc::new(RefCell::new(AtomicBool::new(true)));
+//!
+//!     let mut data: Rc<RefCell<Option<DrainCbData>>> = Rc::new(RefCell::new(None));
 //!
 //!     // Drain
 //!     let o = {
 //!         let ml_ref = Rc::clone(&m);
-//!         s.borrow_mut().drain(Some(Box::new(move |success: bool| {
-//!             data.0 = Some(&mut success);
-//!             unsafe { (*ml_ref.as_ptr()).signal(true); }
+//!         let guard_ref = Rc::clone(&guard);
+//!         let data_ref = Rc::clone(&data);
+//!         s.borrow_mut().drain(Some(Box::new(move |mut success: bool| {
+//!             unsafe {
+//!                 *data_ref.as_ptr() = Some(DrainCbData(&mut success));
+//!                 (*guard_ref.as_ptr()).store(false, Ordering::Release);
+//!                 (*ml_ref.as_ptr()).signal(true);
+//!             }
 //!         })))
 //!     };
-//!     while o.get_state() != pulse::operation::State::Done {
+//!     while guard.borrow().load(Ordering::Acquire) {
 //!         m.borrow_mut().wait();
 //!     }
 //!
-//!     assert!(!data.0.is_none());
-//!     let success = *(data.0.take());
-//!     m.borrow_mut().accept(); // Allow callback to continue now
+//!     assert!(!data.borrow().is_none());
+//!     let success = unsafe { *(data.borrow_mut().take().unwrap().0) };
+//!
+//!     // Allow callback to continue now
+//!     m.borrow_mut().accept();
 //!
 //!     match success {
-//!         0 => { println!("Bitter defeat..."); },
-//!         _ => { println!("Success!"); },
+//!         false => { println!("Bitter defeat..."); },
+//!         true => { println!("Success!"); },
 //!     }
 //!
 //!     m.borrow_mut().unlock();

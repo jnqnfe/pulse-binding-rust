@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Fixed issues with a threaded mainloop example in the documentation
+
 # 2.15.0 (December 29th, 2019)
 
  * Updated `libpulse-sys` version dependency (1.11 → 1.12)
