@@ -95,7 +95,7 @@
 //!         match mainloop.borrow_mut().iterate(false) {
 //!             IterateResult::Quit(_) |
 //!             IterateResult::Err(_) => {
-//!                 eprintln!("iterate state was not success, quitting...");
+//!                 eprintln!("Iterate state was not success, quitting...");
 //!                 return;
 //!             },
 //!             IterateResult::Success(_) => {},
@@ -104,7 +104,7 @@
 //!             pulse::context::State::Ready => { break; },
 //!             pulse::context::State::Failed |
 //!             pulse::context::State::Terminated => {
-//!                 eprintln!("context state failed/terminated, quitting...");
+//!                 eprintln!("Context state failed/terminated, quitting...");
 //!                 return;
 //!             },
 //!             _ => {},
@@ -126,7 +126,7 @@
 //!         match mainloop.borrow_mut().iterate(false) {
 //!             IterateResult::Quit(_) |
 //!             IterateResult::Err(_) => {
-//!                 eprintln!("iterate state was not success, quitting...");
+//!                 eprintln!("Iterate state was not success, quitting...");
 //!                 return;
 //!             },
 //!             IterateResult::Success(_) => {},
@@ -135,7 +135,7 @@
 //!             pulse::stream::State::Ready => { break; },
 //!             pulse::stream::State::Failed |
 //!             pulse::stream::State::Terminated => {
-//!                 eprintln!("stream state failed/terminated, quitting...");
+//!                 eprintln!("Stream state failed/terminated, quitting...");
 //!                 return;
 //!             },
 //!             _ => {},
@@ -149,7 +149,7 @@
 //!         match mainloop.borrow_mut().iterate(false) {
 //!             IterateResult::Quit(_) |
 //!             IterateResult::Err(_) => {
-//!                 eprintln!("iterate state was not success, quitting...");
+//!                 eprintln!("Iterate state was not success, quitting...");
 //!                 return;
 //!             },
 //!             IterateResult::Success(_) => {},
@@ -172,7 +172,7 @@
 //!             match mainloop.borrow_mut().iterate(false) {
 //!                 IterateResult::Quit(_) |
 //!                 IterateResult::Err(_) => {
-//!                     eprintln!("iterate state was not success, quitting...");
+//!                     eprintln!("Iterate state was not success, quitting...");
 //!                     return;
 //!                 },
 //!                 IterateResult::Success(_) => {},

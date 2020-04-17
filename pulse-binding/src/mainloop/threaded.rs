@@ -289,7 +289,7 @@
 //!             pulse::context::State::Ready => { break; },
 //!             pulse::context::State::Failed |
 //!             pulse::context::State::Terminated => {
-//!                 eprintln!("context state failed/terminated, quitting...");
+//!                 eprintln!("Context state failed/terminated, quitting...");
 //!                 mainloop.borrow_mut().unlock();
 //!                 mainloop.borrow_mut().stop();
 //!                 return;
@@ -332,7 +332,7 @@
 //!             pulse::stream::State::Ready => { break; },
 //!             pulse::stream::State::Failed |
 //!             pulse::stream::State::Terminated => {
-//!                 eprintln!("stream state failed/terminated, quitting...");
+//!                 eprintln!("Stream state failed/terminated, quitting...");
 //!                 mainloop.borrow_mut().unlock();
 //!                 mainloop.borrow_mut().stop();
 //!                 return;
