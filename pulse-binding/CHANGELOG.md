@@ -47,7 +47,7 @@
 
  * Extended support to even older versions of PA, specifically up to and including v4
  * Version: Revised `Compatibility` variants to make more sense
- * Simplified feature flags, old ones left as temorary aliases, to be removed later
+ * Simplified feature flags, old ones left as temporary aliases, to be removed later
  * Added a `dox` feature flag, for use with `cargo doc`.
    It enables the very latest PA version compatibility, while bypassing the pkg-config check, thus
    is useful for generating documentation that includes information on features from versions of PA
@@ -66,13 +66,13 @@
    Both of these types hold an array of size `sample::CHANNELS_MAX`, along with a `channels`
    attribute which controls how much of the initial portion of that array is “active” (equivalent to
    the `len()` of a `Vec`). Previously the array and len were simply public attributes, with changes
-   to be applied directly. While for the time being they remain publically accessible for backwards
-   compatibility, this will become private in a future release. These types should now be used in
-   a way more similar to a `Vec`:
+   to be applied directly. While for the time being they remain publicly accessible for backwards
+   compatibility, this will become private in a future release. These types should now be used in a
+   way more similar to a `Vec`:
     - New methods `len()` and `set_len()` get read/write access to the `channels` attribute that
       records how much of the array is considered “active”.
     - Traits `Borrow<[_]>` and `BorrowMut<[_]>` have been implemented, along with the addition of
-      new methods `get()` and `get_mut()` (for convenience - you can avoid type abiguity), for
+      new methods `get()` and `get_mut()` (for convenience - you can avoid type ambiguity), for
       accessing the array as a slice (of just the “active” portion).
  * Updated `use` conventions to that of Rust 1.30/1.31
  * Specified edition in toml file
@@ -401,7 +401,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
       function call that will be NULL when it reaches the end of the list, not the state variable.
     - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
       cannot be hidden within the iterate function, it causes an infinite loop whereby the function
-      always just returns the first entry wrapped in `Some`. I don’t know wtf I was thinking.
+      always just returns the first entry wrapped in `Some`. I don’t know what I was thinking.
     - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
       an actual Rust `Iterator` object, which makes iterating much more simple and tidy.
  * CVolume: Made `self` for `is_[muted|norm]` immutable
