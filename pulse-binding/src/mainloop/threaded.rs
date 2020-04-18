@@ -61,7 +61,7 @@
 //! use std::rc::Rc;
 //! use std::cell::RefCell;
 //! use pulse::mainloop::threaded::Mainloop;
-//! use pulse::stream:{Stream, State};
+//! use pulse::stream::{Stream, State};
 //!
 //! fn check_stream(m: Rc<RefCell<Mainloop>>, s: Rc<RefCell<Stream>>) {
 //!     m.borrow_mut().lock();
@@ -71,8 +71,8 @@
 //!     m.borrow_mut().unlock();
 //!
 //!     match state {
-//!         State::Ready => { printf!("Stream is ready!"); },
-//!         _ => { printf!("Stream is not ready!"); },
+//!         State::Ready => { println!("Stream is ready!"); },
+//!         _ => { println!("Stream is not ready!"); },
 //!     }
 //! }
 //! ```
@@ -100,7 +100,7 @@
 //! use std::cell::RefCell;
 //! use pulse::mainloop::threaded::Mainloop;
 //! use pulse::operation::State;
-//! use pulse::stream:Stream;
+//! use pulse::stream::Stream;
 //!
 //! fn drain_stream(m: Rc<RefCell<Mainloop>>, s: Rc<RefCell<Stream>>) {
 //!     m.borrow_mut().lock();
@@ -152,7 +152,7 @@
 //! use std::cell::RefCell;
 //! use std::sync::atomic::{AtomicBool, Ordering};
 //! use pulse::mainloop::threaded::Mainloop;
-//! use pulse::stream:Stream;
+//! use pulse::stream::Stream;
 //!
 //! // A data structure to capture all our data in (currently just a pointer to a bool)
 //! struct DrainCbData(*mut bool);
