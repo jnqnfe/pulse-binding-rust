@@ -160,7 +160,7 @@ pub trait Mainloop {
     /// use pulse::time::{UnixTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event(
     ///     &(UnixTs::now() + MicroSeconds(5 * MICROS_PER_SEC)),
-    ///     Box::new(|| { println!("Timer event fired!"); }));
+    ///     Box::new(|_| { println!("Timer event fired!"); }));
     /// ```
     ///
     /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
@@ -206,7 +206,7 @@ pub trait Mainloop {
     /// use pulse::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event_rt(
     ///     MonotonicTs::now() + MicroSeconds(5 * MICROS_PER_SEC),
-    ///     Box::new(|| { println!("Timer event fired!"); }));
+    ///     Box::new(|_| { println!("Timer event fired!"); }));
     /// ```
     ///
     /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html

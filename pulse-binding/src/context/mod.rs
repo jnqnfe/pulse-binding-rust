@@ -516,7 +516,7 @@ impl Context {
     /// use pulse::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = context.rttime_new::<Mainloop, _>(&mainloop,
     ///     MonotonicTs::now() + MicroSeconds(5 * MICROS_PER_SEC),
-    ///     || { println!("Timer event fired!"); });
+    ///     |_| { println!("Timer event fired!"); });
     /// ```
     ///
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
