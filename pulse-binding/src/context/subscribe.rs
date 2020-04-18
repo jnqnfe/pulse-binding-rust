@@ -43,7 +43,7 @@
 //!
 //! let op = my_context.subscribe(
 //!     interest,   // Our interest mask
-//!     None        // We won’t bother with a success callback in this example
+//!     |_| {}      // We won’t bother doing anything in the success callback in this example
 //! );
 //! ```
 //!
