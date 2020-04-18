@@ -1,6 +1,8 @@
-# <unreleased>
+# 2.16.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features
+ * Updated `libpulse-binding` version dependency (2.15 → 2.16)
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.12 → 1.13)
 
 # 2.15.0 (December 29th, 2019)
 

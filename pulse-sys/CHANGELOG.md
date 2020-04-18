@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.13.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features
 

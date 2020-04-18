@@ -1,6 +1,7 @@
-# <unreleased>
+# 1.13.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features
+ * Updated `libpulse-sys` version dependency (1.12 → 1.13)
 
 # 1.12.1 (December 29th, 2019)
 

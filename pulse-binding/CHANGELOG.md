@@ -1,10 +1,11 @@
-# <unreleased>
+# 2.16.0 (April 18th, 2020)
 
  * Made the attributes of `ChannelVolumes` and `channelmap::Map` private.
    (Direct access had been deprecated previously).
  * Removed deprecated comparison methods
  * Removed deprecated proplist methods
  * Removed deprecated Cargo features
+ * Updated `libpulse-sys` version dependency (1.12 → 1.13)
 
 # 2.15.1 (April 18th, 2020)
 
