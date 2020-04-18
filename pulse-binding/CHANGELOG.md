@@ -1,6 +1,7 @@
-# <unreleased>
+# 2.15.1 (April 18th, 2020)
 
  * Fixed issues with a threaded mainloop example in the documentation
+ * Fixed miscellaneous other documentation mistakes
 
 # 2.15.0 (December 29th, 2019)
 
