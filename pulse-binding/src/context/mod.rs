@@ -563,7 +563,7 @@ impl Context {
     ///
     /// ```rust,ignore
     /// let ss = stream.get_sample_spec().unwrap();
-    /// let size = stream.get_context().get_tile_size(Some(ss)).unwrap();
+    /// let size = context.get_tile_size(Some(ss)).unwrap();
     /// ```
     pub fn get_tile_size(&self, ss: Option<&sample::Spec>) -> Option<usize> {
         let p_ss = ss.map_or(null::<capi::pa_sample_spec>(), |s| s.as_ref());
