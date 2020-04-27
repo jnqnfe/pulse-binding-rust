@@ -26,6 +26,13 @@ Author
 These bindings were not produced by the PulseAudio project, they were produced by an independent
 developer - Lyndon Brown.
 
+You can help fund my work through one of the following platforms: [patreon][patreon],
+[liberapay][liberapay], or [buy-me-a-coffee][buymeacoffee].
+
+[patreon]: https://www.patreon.com/jnqnfe
+[liberapay]: https://liberapay.com/jnqnfe/
+[buymeacoffee]: https://www.buymeacoffee.com/jnqnfe
+
 Copyright & Licensing
 =====================
 
