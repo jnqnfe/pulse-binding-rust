@@ -24,14 +24,14 @@ fn main() {
     let fallback = match config.probe(lib_name) {
         // We assume all failure here (being a non-version specific check) indicates no *.pc file
         Err(pkg_config::Error::Failure { .. }) => {
-            eprintln!("Pkg-config seems to not know about PulseAudio (dev package not installed?), \
+            println!("cargo:warning=Pkg-config seems to not know about PulseAudio (dev package not installed?), \
                        trying generic fallback...");
             true
         },
         // Also allow fallback if pkg-config not installed, or disabled
         Err(pkg_config::Error::EnvNoPkgConfig(_)) |
         Err(pkg_config::Error::Command { .. }) => {
-            eprintln!("No pkg-config or disabled, trying generic fallback...");
+            println!("cargo:warning=No pkg-config or disabled, trying generic fallback...");
             true
         },
         // In all other cases we will perform a version-specfic check and honor the result
@@ -52,7 +52,7 @@ fn main() {
     // Do version specific pkg-config check and honor result
     match config.probe(lib_name) {
         Err(e) => {
-            eprintln!("{}", e);
+            println!("cargo:warning={}", e);
             std::process::exit(1);
         },
         Ok(_) => {},
