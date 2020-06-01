@@ -1,3 +1,7 @@
+# 1.13.1 (June 2nd, 2020)
+
+ * Fixed output of build script warning when pkg-config is missing (thanks to @cole-h on github!)
+
 # 1.13.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features

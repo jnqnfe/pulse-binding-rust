@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-simple-sys"
-version = "1.13.0"
+version = "1.13.1"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = """
