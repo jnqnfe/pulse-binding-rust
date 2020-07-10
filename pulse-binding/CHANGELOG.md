@@ -1,3 +1,7 @@
+# 2.16.1 (July 10th, 2020)
+
+ * Fixed some dangling pointer issues with handling of string arrays, thanks to @yatinmaan on github
+
 # 2.16.0 (April 18th, 2020)
 
  * Made the attributes of `ChannelVolumes` and `channelmap::Map` private.
