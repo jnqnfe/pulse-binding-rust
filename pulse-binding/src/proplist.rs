@@ -372,7 +372,7 @@ impl Proplist {
         // Capture array of pointers to the above CString values.
         // We also add a NULL pointer entry on the end, as expected by the C function called here.
         let mut c_keys_ptrs: Vec<*const c_char> = Vec::with_capacity(c_keys.len() + 1);
-        for k in c_keys {
+        for k in &c_keys {
             c_keys_ptrs.push(k.as_ptr());
         }
         c_keys_ptrs.push(null());

@@ -1646,7 +1646,7 @@ impl Stream {
         // Capture array of pointers to the above CString values
         // We also add a null pointer entry on the end, as expected by the C function called here.
         let mut c_key_ptrs: Vec<*const c_char> = Vec::with_capacity(c_keys.len()+1);
-        for c_key in c_keys {
+        for c_key in &c_keys {
             c_key_ptrs.push(c_key.as_ptr());
         }
         c_key_ptrs.push(null());

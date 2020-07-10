@@ -163,7 +163,7 @@ impl StreamRestore {
         // Capture array of pointers to the above CString values.
         // We also add a `NULL` pointer entry on the end, as expected by the C function called here.
         let mut c_stream_ptrs: Vec<*const c_char> = Vec::with_capacity(c_streams.len() + 1);
-        for c_stream in c_streams {
+        for c_stream in &c_streams {
             c_stream_ptrs.push(c_stream.as_ptr());
         }
         c_stream_ptrs.push(null());

@@ -538,7 +538,7 @@ impl Info {
 
         // Capture array of pointers to the above CString values
         let mut c_value_ptrs: Vec<*const c_char> = Vec::with_capacity(c_values.len());
-        for v in c_values {
+        for v in &c_values {
             c_value_ptrs.push(v.as_ptr());
         }
         unsafe {
