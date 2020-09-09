@@ -19,6 +19,7 @@ use crate::time::{Timeval, MicroSeconds};
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;
 pub use capi::pa_device_type_t as Device;
 pub use capi::pa_port_available_t as PortAvailable;
+pub use capi::pa_device_port_type_t as DevicePortType;
 
 pub type FreeCb = extern "C" fn(p: *mut c_void);
 

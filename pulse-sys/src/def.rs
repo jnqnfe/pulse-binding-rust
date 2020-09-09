@@ -172,3 +172,56 @@ pub const PA_PORT_AVAILABLE_UNKNOWN: pa_port_available_t = pa_port_available_t::
 pub const PA_PORT_AVAILABLE_NO: pa_port_available_t = pa_port_available_t::No;
 pub const PA_PORT_AVAILABLE_YES: pa_port_available_t = pa_port_available_t::Yes;
 
+/// Port type
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
+pub enum pa_device_port_type_t {
+    Unknown = 0,
+    Aux = 1,
+    Speaker = 2,
+    Headphones = 3,
+    Line = 4,
+    Mic = 5,
+    Headset = 6,
+    Handset = 7,
+    Earpiece = 8,
+    SPDIF = 9,
+    HDMI = 10,
+    TV = 11,
+    Radio = 12,
+    Video = 13,
+    USB = 14,
+    Bluetooth = 15,
+    Portable = 16,
+    Handsfree = 17,
+    Car = 18,
+    HiFi = 19,
+    Phone = 20,
+    Network = 21,
+    Analog = 22,
+}
+
+pub const PA_DEVICE_PORT_TYPE_UNKNOWN: pa_device_port_type_t = pa_device_port_type_t::Unknown;
+pub const PA_DEVICE_PORT_TYPE_AUX: pa_device_port_type_t = pa_device_port_type_t::Aux;
+pub const PA_DEVICE_PORT_TYPE_SPEAKER: pa_device_port_type_t = pa_device_port_type_t::Speaker;
+pub const PA_DEVICE_PORT_TYPE_HEADPHONES: pa_device_port_type_t = pa_device_port_type_t::Headphones;
+pub const PA_DEVICE_PORT_TYPE_LINE: pa_device_port_type_t = pa_device_port_type_t::Line;
+pub const PA_DEVICE_PORT_TYPE_MIC: pa_device_port_type_t = pa_device_port_type_t::Mic;
+pub const PA_DEVICE_PORT_TYPE_HEADSET: pa_device_port_type_t = pa_device_port_type_t::Headset;
+pub const PA_DEVICE_PORT_TYPE_HANDSET: pa_device_port_type_t = pa_device_port_type_t::Handset;
+pub const PA_DEVICE_PORT_TYPE_EARPIECE: pa_device_port_type_t = pa_device_port_type_t::Earpiece;
+pub const PA_DEVICE_PORT_TYPE_SPDIF: pa_device_port_type_t = pa_device_port_type_t::SPDIF;
+pub const PA_DEVICE_PORT_TYPE_HDMI: pa_device_port_type_t = pa_device_port_type_t::HDMI;
+pub const PA_DEVICE_PORT_TYPE_TV: pa_device_port_type_t = pa_device_port_type_t::TV;
+pub const PA_DEVICE_PORT_TYPE_RADIO: pa_device_port_type_t = pa_device_port_type_t::Radio;
+pub const PA_DEVICE_PORT_TYPE_VIDEO: pa_device_port_type_t = pa_device_port_type_t::Video;
+pub const PA_DEVICE_PORT_TYPE_USB: pa_device_port_type_t = pa_device_port_type_t::USB;
+pub const PA_DEVICE_PORT_TYPE_BLUETOOTH: pa_device_port_type_t = pa_device_port_type_t::Bluetooth;
+pub const PA_DEVICE_PORT_TYPE_PORTABLE: pa_device_port_type_t = pa_device_port_type_t::Portable;
+pub const PA_DEVICE_PORT_TYPE_HANDSFREE: pa_device_port_type_t = pa_device_port_type_t::Handsfree;
+pub const PA_DEVICE_PORT_TYPE_CAR: pa_device_port_type_t = pa_device_port_type_t::Car;
+pub const PA_DEVICE_PORT_TYPE_HIFI: pa_device_port_type_t = pa_device_port_type_t::HiFi;
+pub const PA_DEVICE_PORT_TYPE_PHONE: pa_device_port_type_t = pa_device_port_type_t::Phone;
+pub const PA_DEVICE_PORT_TYPE_NETWORK: pa_device_port_type_t = pa_device_port_type_t::Network;
+pub const PA_DEVICE_PORT_TYPE_ANALOG: pa_device_port_type_t = pa_device_port_type_t::Analog;

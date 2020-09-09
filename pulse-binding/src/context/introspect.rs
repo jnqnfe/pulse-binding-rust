@@ -246,6 +246,8 @@ use crate::time::MicroSeconds;
 use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, get_su_capi_params, get_su_callback, ListInstanceCallback};
 use crate::volume::{ChannelVolumes, Volume};
 use crate::{operation::Operation, proplist::Proplist};
+#[cfg(any(feature = "pa_v14", feature = "dox"))]
+use crate::def::DevicePortType;
 
 pub use capi::pa_stat_info as StatInfo;
 
@@ -303,6 +305,32 @@ pub struct SinkPortInfo<'a> {
     pub priority: u32,
     /// A flag indicating availability status of this port.
     pub available: def::PortAvailable,
+    /// An indentifier for the group of ports that share their availability status with each other.
+    ///
+    /// This is meant especially for handling cases where one 3.5 mm connector is used for
+    /// headphones, headsets and microphones, and the hardware can only tell that something was
+    /// plugged in but not what exactly. In this situation the ports for all those devices share
+    /// their availability status, and PulseAudio can't tell which one is actually plugged in, and
+    /// some application may ask the user what was plugged in. Such applications should get a list
+    /// of all card ports and compare their `availability_group` fields. Ports that have the same
+    /// group are those that need input from the user to determine which device was plugged in. The
+    /// application should then activate the user-chosen port.
+    ///
+    /// May be `None`, in which case the port is not part of any availability group (which is the
+    /// same as having a group with only one member).
+    ///
+    /// The group identifier must be treated as an opaque identifier. The string may look like an
+    /// ALSA control name, but applications must not assume any such relationship. The group naming
+    /// scheme can change without a warning.
+    ///
+    /// Since one group can include both input and output ports, the grouping should be done using
+    /// `CardPortInfo` instead of `SinkPortInfo`, but this field is duplicated also in
+    /// `SinkPortInfo` (and `SourcePortInfo`) in case someone finds that convenient.
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub availability_group: Option<Cow<'a, str>>,
+    /// Port device type.
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub r#type: DevicePortType,
 }
 
 impl<'a> SinkPortInfo<'a> {
@@ -321,6 +349,13 @@ impl<'a> SinkPortInfo<'a> {
                 },
                 priority: src.priority,
                 available: mem::transmute(src.available),
+                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                availability_group: match src.availability_group.is_null() {
+                    false => Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
+                    true => None,
+                },
+                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                r#type: mem::transmute(src.r#type),
             }
         }
     }
@@ -685,6 +720,32 @@ pub struct SourcePortInfo<'a> {
     pub priority: u32,
     /// A flag indicating availability status of this port.
     pub available: def::PortAvailable,
+    /// An indentifier for the group of ports that share their availability status with each other.
+    ///
+    /// This is meant especially for handling cases where one 3.5 mm connector is used for
+    /// headphones, headsets and microphones, and the hardware can only tell that something was
+    /// plugged in but not what exactly. In this situation the ports for all those devices share
+    /// their availability status, and PulseAudio can't tell which one is actually plugged in, and
+    /// some application may ask the user what was plugged in. Such applications should get a list
+    /// of all card ports and compare their `availability_group` fields. Ports that have the same
+    /// group are those that need input from the user to determine which device was plugged in. The
+    /// application should then activate the user-chosen port.
+    ///
+    /// May be `None`, in which case the port is not part of any availability group (which is the
+    /// same as having a group with only one member).
+    ///
+    /// The group identifier must be treated as an opaque identifier. The string may look like an
+    /// ALSA control name, but applications must not assume any such relationship. The group naming
+    /// scheme can change without a warning.
+    ///
+    /// Since one group can include both input and output ports, the grouping should be done using
+    /// `CardPortInfo` instead of `SourcePortInfo`, but this field is duplicated also in
+    /// `SourcePortInfo` (and `SinkPortInfo`) in case someone finds that convenient.
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub availability_group: Option<Cow<'a, str>>,
+    /// Port device type.
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub r#type: DevicePortType,
 }
 
 impl<'a> SourcePortInfo<'a> {
@@ -703,6 +764,13 @@ impl<'a> SourcePortInfo<'a> {
                 },
                 priority: src.priority,
                 available: mem::transmute(src.available),
+                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                availability_group: match src.availability_group.is_null() {
+                    false=> Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
+                    true => None,
+                },
+                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                r#type: mem::transmute(src.r#type),
             }
         }
     }
@@ -1534,6 +1602,28 @@ pub struct CardPortInfo<'a> {
     /// Set of available profiles.
     #[cfg(any(feature = "pa_v5", feature = "dox"))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
+    /// An indentifier for the group of ports that share their availability status with each other.
+    ///
+    /// This is meant especially for handling cases where one 3.5 mm connector is used for
+    /// headphones, headsets and microphones, and the hardware can only tell that something was
+    /// plugged in but not what exactly. In this situation the ports for all those devices share
+    /// their availability status, and PulseAudio can't tell which one is actually plugged in, and
+    /// some application may ask the user what was plugged in. Such applications should get a list
+    /// of all card ports and compare their `availability_group` fields. Ports that have the same
+    /// group are those that need input from the user to determine which device was plugged in. The
+    /// application should then activate the user-chosen port.
+    ///
+    /// May be `None`, in which case the port is not part of any availability group (which is the
+    /// same as having a group with only one member).
+    ///
+    /// The group identifier must be treated as an opaque identifier. The string may look like an
+    /// ALSA control name, but applications must not assume any such relationship. The group naming
+    /// scheme can change without a warning.
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub availability_group: Option<Cow<'a, str>>,
+    /// Port device type.
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub r#type: DevicePortType,
 }
 
 impl<'a> CardPortInfo<'a> {
@@ -1579,6 +1669,13 @@ impl<'a> CardPortInfo<'a> {
                 proplist: Proplist::from_raw_weak(src.proplist),
                 latency_offset: src.latency_offset,
                 profiles: profiles_vec,
+                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                availability_group: match src.availability_group.is_null() {
+                    false => Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
+                    true => None,
+                },
+                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                r#type: mem::transmute(src.r#type),
             }
         }
     }

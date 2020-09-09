@@ -27,6 +27,10 @@ pub struct pa_sink_port_info {
     pub description: *const c_char,
     pub priority: u32,
     pub available: i32,
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub availability_group: *const c_char,
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub r#type: u32,
 }
 
 #[repr(C)]
@@ -65,6 +69,10 @@ pub struct pa_source_port_info {
     pub description: *const c_char,
     pub priority: u32,
     pub available: i32,
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub availability_group: *const c_char,
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub r#type: u32,
 }
 
 #[repr(C)]
@@ -203,6 +211,10 @@ pub struct pa_card_port_info {
     pub latency_offset: i64,
     #[cfg(any(feature = "pa_v5", feature = "dox"))]
     pub profiles2: *mut *mut pa_card_profile_info2,
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub availability_group: *const c_char,
+    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    pub r#type: u32,
 }
 
 #[repr(C)]

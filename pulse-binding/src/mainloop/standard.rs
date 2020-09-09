@@ -321,7 +321,7 @@ impl Mainloop {
     ///
     /// `timeout` specifies a maximum timeout for the subsequent poll, or `None` for blocking
     /// behaviour. Only positive values should be provided, negative values will have the same
-    /// effect as `None`.
+    /// effect as `None`. The timeout is specified in microseconds.
     pub fn prepare(&mut self, timeout: Option<i32>) -> Result<(), PAErr> {
         let t = timeout.unwrap_or(-1);
         match unsafe { capi::pa_mainloop_prepare((*self._inner).ptr, t) } {
