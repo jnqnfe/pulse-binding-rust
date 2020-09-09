@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.16.2 (September 9th, 2020)
 
  * Bumped `pa_latest_common` feature to target PA v13
 

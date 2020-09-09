@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-glib-binding"
-version = "2.16.0"
+version = "2.16.1"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
