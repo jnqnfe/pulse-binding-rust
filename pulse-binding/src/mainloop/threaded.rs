@@ -50,8 +50,9 @@
 //! sure you call [`Mainloop::unlock`] the same number of times you called [`Mainloop::lock`].
 //!
 //! The lock needs to be held whenever you call any PulseAudio function that uses an object
-//! associated with this main loop. Make sure you do not hold on to the lock more than necessary
-//! though, as the threaded main loop stops while the lock is held.
+//! associated with this main loop. Those objects include the mainloop, context, stream and
+//! operation objects, and the various event objects (io, time, defer). Make sure you do not hold on
+//! to the lock more than necessary though, as the threaded main loop stops while the lock is held.
 //!
 //! Example:
 //!
