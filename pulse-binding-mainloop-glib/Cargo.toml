@@ -29,6 +29,8 @@ default = ["pa_latest_common"]
 pa_latest_common = ["pa_v13"]
 # Alias simply targetting latest compatibility
 pa_latest = ["pa_v13"]
+# Enables PA version 14 support
+pa_v14 = ["pa_v13", "libpulse-binding/pa_v14", "libpulse-mainloop-glib-sys/pa_v14"]
 # Enables PA version 13 support
 pa_v13 = ["pa_v12", "libpulse-binding/pa_v13", "libpulse-mainloop-glib-sys/pa_v13"]
 # Enables PA version 12 support

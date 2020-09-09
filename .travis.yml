@@ -18,6 +18,7 @@ script:
   #
   # TODO - Enable PA v12 feature once a newer environment that has it is available
   # TODO - Enable PA v13 feature once a newer environment that has it is available
+  # TODO - Enable PA v14 feature once a newer environment that has it is available
   # TODO - Switch to running tests from the workspace level once workspace+feature control is
   #        something actually supported by cargo.
   #
@@ -25,6 +26,7 @@ script:
   # ============
   - cd pulse-binding
   #
+  #- cargo check --verbose --no-default-features --features pa_v14
   #- cargo check --verbose --no-default-features --features pa_v13
   #- cargo check --verbose --no-default-features --features pa_v12
   - cargo check --verbose --no-default-features --features pa_v8
@@ -38,6 +40,7 @@ script:
   # ================
   - cd ../pulse-binding-simple
   #
+  #- cargo check --verbose --no-default-features --features pa_v14
   #- cargo check --verbose --no-default-features --features pa_v13
   #- cargo check --verbose --no-default-features --features pa_v12
   - cargo check --verbose --no-default-features --features pa_v8
@@ -51,6 +54,7 @@ script:
   # =====================
   - cd ../pulse-binding-mainloop-glib
   #
+  #- cargo check --verbose --no-default-features --features pa_v14
   #- cargo check --verbose --no-default-features --features pa_v13
   #- cargo check --verbose --no-default-features --features pa_v12
   - cargo check --verbose --no-default-features --features pa_v8
