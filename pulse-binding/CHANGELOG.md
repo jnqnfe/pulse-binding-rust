@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Bumped `pa_latest_common` feature to target PA v13
+
 # 2.16.1 (July 10th, 2020)
 
  * Fixed some dangling pointer issues with handling of string arrays, thanks to @yatinmaan on github

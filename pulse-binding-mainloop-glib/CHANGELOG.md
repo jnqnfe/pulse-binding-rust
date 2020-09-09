@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Bumped `pa_latest_common` feature to target PA v13
+
 # 2.16.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features

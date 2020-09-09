@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Bumped `pa_latest_common` feature to target PA v13
+
 # 1.13.1 (June 2nd, 2020)
 
  * Fixed output of build script warning when pkg-config is missing (thanks to @cole-h on github!)
