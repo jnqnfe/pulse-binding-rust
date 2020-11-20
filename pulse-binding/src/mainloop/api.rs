@@ -122,6 +122,7 @@ pub trait Mainloop {
     /// it’s callback execution.
     ///
     /// [`IoEventRef`]: ../events/io/struct.IoEventRef.html
+    /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
         mut callback: Box<dyn FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>)
         -> Option<IoEvent<Self::MI>>
