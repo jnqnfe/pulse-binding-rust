@@ -18,7 +18,7 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, S
 use std::time::Duration;
 use super::op_err;
 
-/// Microseconds. Represents a span of time like `std::time::Duration`.
+/// Microseconds. Represents a span of time like [`std::time::Duration`].
 ///
 /// This is an unsigned 64-bit type, and thus represents absolute values only.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
@@ -100,7 +100,7 @@ impl MicroSeconds {
         self.0
     }
 
-    /// Returns `true` so long as inner value is not `Self::INVALID`.
+    /// Returns `true` so long as inner value is not [`Self::INVALID`].
     ///
     /// # Examples
     ///
@@ -316,7 +316,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
-    /// using the inner integer’s `checked_add()` method.
+    /// using the inner integer’s [`checked_add()`](u64::checked_add) method.
     ///
     /// # Examples
     ///
@@ -335,7 +335,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
-    /// using the inner integer’s `checked_add()` method.
+    /// using the inner integer’s [`checked_add()`](u64::checked_add) method.
     ///
     /// # Examples
     ///
@@ -356,7 +356,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
-    /// using the inner integer’s `checked_sub()` method.
+    /// using the inner integer’s [`checked_sub()`](u64::checked_sub) method.
     ///
     /// # Examples
     ///
@@ -375,7 +375,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
-    /// using the inner integer’s `checked_sub()` method.
+    /// using the inner integer’s [`checked_sub()`](u64::checked_sub) method.
     ///
     /// # Examples
     ///
@@ -396,7 +396,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer multiplication. Computes `self * rhs`, returning `None` if overflow
-    /// occurred, using the inner integer’s `checked_mul()` method.
+    /// occurred, using the inner integer’s [`checked_mul()`](u64::checked_mul) method.
     ///
     /// # Examples
     ///
@@ -414,7 +414,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer division. Computes `self / rhs`, returning `None` if `rhs == 0`, using the
-    /// inner integer’s `checked_div()` method.
+    /// inner integer’s [`checked_div()`](u64::checked_div) method.
     ///
     /// # Examples
     ///
@@ -432,7 +432,7 @@ impl MicroSeconds {
     }
 
     /// Checked integer remainder. Computes `self % rhs`, returning `None` if `rhs == 0`, using the
-    /// inner integer’s `checked_rem()` method.
+    /// inner integer’s [`checked_rem()`](u64::checked_rem) method.
     ///
     /// # Examples
     ///

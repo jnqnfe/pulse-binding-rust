@@ -51,12 +51,10 @@
 //! When a sample is no longer needed, it should be removed on the server to save resources. The
 //! sample is deleted using [`Context::remove_sample()`].
 //!
-//! [`stream`]: ../../stream/index.html
-//! [`Stream::connect_upload()`]: ../../stream/struct.Stream.html#method.connect_upload
-//! [`Stream::finish_upload()`]: ../../stream/struct.Stream.html#method.finish_upload
-//! [`Stream::disconnect()`]: ../../stream/struct.Stream.html#method.disconnect
-//! [`Context::play_sample()`]: ../struct.Context.html#method.play_sample
-//! [`Context::remove_sample()`]: ../struct.Context.html#method.remove_sample
+//! [`stream`]: mod@crate::stream
+//! [`Stream::connect_upload()`]: crate::stream::Stream::connect_upload
+//! [`Stream::finish_upload()`]: crate::stream::Stream::finish_upload
+//! [`Stream::disconnect()`]: crate::stream::Stream::disconnect
 
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;
@@ -102,8 +100,6 @@ impl Context {
     /// * `callback`: Optional success callback. It must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    ///
-    /// [`Volume::INVALID`]: ../volume/struct.Volume.html#associatedconstant.INVALID
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: Option<Volume>,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
@@ -145,8 +141,6 @@ impl Context {
     ///    failure.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    ///
-    /// [`Volume::INVALID`]: ../volume/struct.Volume.html#associatedconstant.INVALID
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
         volume: Option<Volume>, proplist: &Proplist,
         callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)

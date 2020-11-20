@@ -42,14 +42,14 @@ pub struct BufferAttr {
 
     /// Maximum length of the buffer in bytes.
     ///
-    /// Setting this to `std::u32::MAX` will initialize this to the maximum value supported by the
+    /// Setting this to [`std::u32::MAX`] will initialize this to the maximum value supported by the
     /// server, which is recommended. In strict low-latency playback scenarios you might want to set
     /// this to a lower value, likely together with the [`stream::flags::ADJUST_LATENCY`] flag. If
     /// you do so, you ensure that the latency doesn’t grow beyond what is acceptable for the use
     /// case, at the cost of getting more underruns if the latency is lower than what the server can
     /// reliably handle.
     ///
-    /// [`stream::flags::ADJUST_LATENCY`]: ../stream/flags/constant.ADJUST_LATENCY.html
+    /// [`stream::flags::ADJUST_LATENCY`]: crate::stream::flags::ADJUST_LATENCY
     pub maxlength: u32,
 
     /// Target length of the buffer (playback only). The server tries to assure that at least
@@ -57,10 +57,10 @@ pub struct BufferAttr {
     /// server will only send requests for more data as long as the buffer has less than this number
     /// of bytes of data.
     ///
-    /// It is recommended to set this to `std::u32::MAX`, which will initialize this to a value that
-    /// is deemed sensible by the server. However, this value will default to something like 2s; for
-    /// applications that have specific latency requirements this value should be set to the maximum
-    /// latency that the application can deal with.
+    /// It is recommended to set this to [`std::u32::MAX`], which will initialize this to a value
+    /// that is deemed sensible by the server. However, this value will default to something like
+    /// 2s; for applications that have specific latency requirements this value should be set to
+    /// the maximum latency that the application can deal with.
     ///
     /// When [`stream::flags::ADJUST_LATENCY`] is not set this value will influence only the
     /// per-stream playback buffer size. When [`stream::flags::ADJUST_LATENCY`] is set, the overall
@@ -69,12 +69,12 @@ pub struct BufferAttr {
     /// Don’t set it if you are interested in configuring the server-side per-stream playback buffer
     /// size.
     ///
-    /// [`stream::flags::ADJUST_LATENCY`]: ../stream/flags/constant.ADJUST_LATENCY.html
+    /// [`stream::flags::ADJUST_LATENCY`]: crate::stream::flags::ADJUST_LATENCY
     pub tlength: u32,
 
     /// Pre-buffering (playback only). The server does not start with playback before at least
     /// `prebuf` bytes are available in the buffer. It is recommended to set this to
-    /// `std::u32::MAX`, which will initialize this to the same value as `tlength`, whatever that
+    /// [`std::u32::MAX`], which will initialize this to the same value as `tlength`, whatever that
     /// may be.
     ///
     /// Initialize to `0` to enable manual start/stop control of the stream. This means that
@@ -86,17 +86,18 @@ pub struct BufferAttr {
     /// Start of playback can be forced using [`Stream::trigger()`] even though the prebuffer size
     /// hasn’t been reached. If a buffer underrun occurs, this prebuffering will be again enabled.
     ///
-    /// [`Stream::cork()`]: ../stream/struct.Stream.html#method.cork
-    /// [`Stream::trigger()`]: ../stream/struct.Stream.html#method.trigger
-    /// [`stream::flags::START_CORKED`]: ../stream/flags/constant.START_CORKED.html
+    /// [`Stream::cork()`]: crate::stream::Stream::cork
+    /// [`Stream::trigger()`]: crate::stream::Stream::trigger
+    /// [`stream::flags::START_CORKED`]: crate::stream::flags::START_CORKED
     pub prebuf: u32,
 
     /// Minimum request (playback only). The server does not request less than `minreq` bytes from
     /// the client, instead it waits until the buffer is free enough to request more bytes at once.
     ///
-    /// It is recommended to set this to `std::u32::MAX`, which will initialize this to a value that
-    /// is deemed sensible by the server. This should be set to a value that gives PulseAudio enough
-    /// time to move the data from the per-stream playback buffer into the hardware playback buffer.
+    /// It is recommended to set this to [`std::u32::MAX`], which will initialize this to a value
+    /// that is deemed sensible by the server. This should be set to a value that gives PulseAudio
+    /// enough time to move the data from the per-stream playback buffer into the hardware playback
+    /// buffer.
     pub minreq: u32,
 
     /// Fragment size (recording only). The server sends data in blocks of `fragsize` bytes size.
@@ -110,7 +111,7 @@ pub struct BufferAttr {
     /// If [`stream::flags::ADJUST_LATENCY`] is set the overall source latency will be adjusted
     /// according to this value. If it is not set the source latency is left unmodified.
     ///
-    /// [`stream::flags::ADJUST_LATENCY`]: ../stream/flags/constant.ADJUST_LATENCY.html
+    /// [`stream::flags::ADJUST_LATENCY`]: crate::stream::flags::ADJUST_LATENCY
     pub fragsize: u32,
 }
 
@@ -166,12 +167,12 @@ impl AsRef<BufferAttr> for capi::pa_buffer_attr {
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 ///
-/// [`Spec::bytes_to_usec()`]: ../sample/struct.Spec.html#method.bytes_to_usec
-/// [`Stream::update_timing_info()`]: ../stream/struct.Stream.html#method.update_timing_info
-/// [`Stream::get_timing_info()`]: ../stream/struct.Stream.html#method.get_timing_info
-/// [`Stream::write()`]: ../stream/struct.Stream.html#method.write
-/// [`Stream::flush()`]: ../stream/struct.Stream.html#method.flush
-/// [`Stream::get_latency()`]: ../stream/struct.Stream.html#method.get_latency
+/// [`Spec::bytes_to_usec()`]: crate::sample::Spec::bytes_to_usec
+/// [`Stream::update_timing_info()`]: crate::stream::Stream::update_timing_info
+/// [`Stream::get_timing_info()`]: crate::stream::Stream::get_timing_info
+/// [`Stream::write()`]: crate::stream::Stream::write
+/// [`Stream::flush()`]: crate::stream::Stream::flush
+/// [`Stream::get_latency()`]: crate::stream::Stream::get_latency
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct TimingInfo {
@@ -207,8 +208,8 @@ pub struct TimingInfo {
     /// has been issued in the time since this latency info was current. Only write commands with
     /// [`SeekMode::RelativeOnRead`] and [`SeekMode::RelativeEnd`] can corrupt `write_index`.
     ///
-    /// [`SeekMode::RelativeOnRead`]: ../stream/enum.SeekMode.html#variant.RelativeOnRead
-    /// [`SeekMode::RelativeEnd`]: ../stream/enum.SeekMode.html#variant.RelativeEnd
+    /// [`SeekMode::RelativeOnRead`]: crate::stream::SeekMode::RelativeOnRead
+    /// [`SeekMode::RelativeEnd`]: crate::stream::SeekMode::RelativeEnd
     pub write_index_corrupt: i32,
 
     /// Current write index into the playback buffer in bytes.
@@ -216,7 +217,7 @@ pub struct TimingInfo {
     /// Think twice before using this for seeking purposes: it might be out of date at the time you
     /// want to use it. Consider using [`SeekMode::Relative`] instead.
     ///
-    /// [`SeekMode::Relative`]: ../stream/enum.SeekMode.html#variant.Relative
+    /// [`SeekMode::Relative`]: crate::stream::SeekMode::Relative
     pub write_index: i64,
 
     /// Non-zero if `read_index` is not up-to-date because a local pause or flush request that
@@ -228,7 +229,7 @@ pub struct TimingInfo {
     /// Think twice before using this for seeking purposes: it might be out of date at the time you
     /// want to use it. Consider using [`SeekMode::RelativeOnRead`] instead.
     ///
-    /// [`SeekMode::RelativeOnRead`]: ../stream/enum.SeekMode.html#variant.RelativeOnRead
+    /// [`SeekMode::RelativeOnRead`]: crate::stream::SeekMode::RelativeOnRead
     pub read_index: i64,
 
     /// The configured latency for the sink.
@@ -263,7 +264,7 @@ impl AsRef<TimingInfo> for capi::pa_timing_info {
 /// child’s PID. The spawn routine will not block or ignore SIGCHLD signals, since this cannot be
 /// done in a thread compatible way. You might have to do this in prefork/postfork.
 ///
-/// [`Context::connect()`]: ../context/struct.Context.html#method.connect
+/// [`Context::connect()`]: crate::context::Context::connect
 #[repr(C)]
 #[derive(Debug)]
 pub struct SpawnApi {
@@ -324,9 +325,9 @@ bitflags! {
         /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at
         /// runtime after the sink has initialized.
         ///
-        /// [`Volume`]: ../volume/struct.Volume.html
-        /// [`VolumeDB`]: ../volume/struct.VolumeDB.html
-        /// [`VolumeLinear`]: ../volume/struct.VolumeLinear.html
+        /// [`Volume`]: crate::volume::Volume
+        /// [`VolumeDB`]: crate::volume::VolumeDB
+        /// [`VolumeLinear`]: crate::volume::VolumeLinear
         const DECIBEL_VOLUME = capi::PA_SINK_DECIBEL_VOLUME;
 
         /// This sink is in flat volume mode, i.e. always the maximum of the volume  of all
@@ -371,9 +372,9 @@ pub mod sink_flags {
     /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at runtime
     /// after the sink has initialized.
     ///
-    /// [`Volume`]: ../../volume/struct.Volume.html
-    /// [`VolumeDB`]: ../../volume/struct.VolumeDB.html
-    /// [`VolumeLinear`]: ../../volume/struct.VolumeLinear.html
+    /// [`Volume`]: crate::volume::Volume
+    /// [`VolumeDB`]: crate::volume::VolumeDB
+    /// [`VolumeLinear`]: crate::volume::VolumeLinear
     pub const DECIBEL_VOLUME: SinkFlagSet = SinkFlagSet::DECIBEL_VOLUME;
 
     /// This sink is in flat volume mode, i.e. always the maximum of the volume  of all connected
@@ -479,9 +480,9 @@ bitflags! {
         /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at
         /// runtime after the source has initialized.
         ///
-        /// [`Volume`]: ../volume/struct.Volume.html
-        /// [`VolumeDB`]: ../volume/struct.VolumeDB.html
-        /// [`VolumeLinear`]: ../volume/struct.VolumeLinear.html
+        /// [`Volume`]: crate::volume::Volume
+        /// [`VolumeDB`]: crate::volume::VolumeDB
+        /// [`VolumeLinear`]: crate::volume::VolumeLinear
         const DECIBEL_VOLUME = capi::PA_SOURCE_DECIBEL_VOLUME;
 
         /// The latency can be adjusted dynamically depending on the needs of the connected streams.
@@ -522,9 +523,9 @@ pub mod source_flags {
     /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at runtime
     /// after the source has initialized.
     ///
-    /// [`Volume`]: ../../volume/struct.Volume.html
-    /// [`VolumeDB`]: ../../volume/struct.VolumeDB.html
-    /// [`VolumeLinear`]: ../../volume/struct.VolumeLinear.html
+    /// [`Volume`]: crate::volume::Volume
+    /// [`VolumeDB`]: crate::volume::VolumeDB
+    /// [`VolumeLinear`]: crate::volume::VolumeLinear
     pub const DECIBEL_VOLUME: SourceFlagSet = SourceFlagSet::DECIBEL_VOLUME;
 
     /// The latency can be adjusted dynamically depending on the needs of the connected streams.

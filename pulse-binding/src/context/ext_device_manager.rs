@@ -127,7 +127,7 @@ impl Context {
     /// Gets a device manager object linked to the current context, giving access to device manager
     /// routines.
     ///
-    /// See [`context::ext_device_manager`](ext_device_manager/index.html).
+    /// See [`context::ext_device_manager`](mod@crate::context::ext_device_manager).
     pub fn device_manager(&self) -> DeviceManager {
         unsafe { capi::pa_context_ref(self.ptr) };
         DeviceManager::from_raw(self.ptr)
@@ -135,8 +135,7 @@ impl Context {
 }
 
 impl DeviceManager {
-    /// Creates a new `DeviceManager` from an existing
-    /// [`ContextInternal`](../../../libpulse_sys/context/struct.pa_context.html) pointer.
+    /// Creates a new `DeviceManager` from an existing [`ContextInternal`] pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
     }
@@ -287,7 +286,7 @@ impl DeviceManager {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Sets the subscription callback that is called when [`subscribe()`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe()`](Self::subscribe) was
     /// called.
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
         where F: FnMut() + 'static

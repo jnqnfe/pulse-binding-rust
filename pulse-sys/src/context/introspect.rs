@@ -149,8 +149,7 @@ pub struct pa_client_info {
     pub index: u32,
     /// Name of this client.
     pub name: *const c_char,
-    /// Index of the owning module, or
-    /// [`PA_INVALID_INDEX`](../../def/constant.PA_INVALID_INDEX.html).
+    /// Index of the owning module, or [`PA_INVALID_INDEX`](crate::def::PA_INVALID_INDEX).
     pub owner_module: u32,
     /// Driver name.
     pub driver: *const c_char,

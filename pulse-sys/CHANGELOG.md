@@ -1,3 +1,10 @@
+# [unreleased]
+
+ * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is
+   too great a simplification to maintaining documentation to not implement immediately; the only
+   negative is that links will be broken in locally generated documentation when built with an older
+   Rust compiler than version 1.48.
+
 # 1.17.0 (December 22nd, 2020)
 
  * Tweaked version constants.

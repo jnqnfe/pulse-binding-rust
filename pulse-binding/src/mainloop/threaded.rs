@@ -17,7 +17,7 @@
 //!
 //! The threaded main loop implementation is a special version of the standard main loop
 //! implementation. For the basic design, see the standard main loop documentation
-//! ([`mainloop::standard`]).
+//! ([`mainloop::standard`](mod@crate::mainloop::standard)).
 //!
 //! The added feature in the threaded main loop is that it spawns a new thread that runs the real
 //! main loop in the background. This allows a synchronous application to use the asynchronous API
@@ -386,17 +386,6 @@
 //!     mainloop.borrow_mut().unlock();
 //! }
 //! ```
-//!
-//! [`mainloop::standard`]: ../standard/index.html
-//! [`Mainloop`]: struct.Mainloop.html
-//! [`Mainloop::new()`]: struct.Mainloop.html#method.new
-//! [`Mainloop::start()`]: struct.Mainloop.html#method.start
-//! [`Mainloop::stop()`]: struct.Mainloop.html#method.stop
-//! [`Mainloop::lock()`]: struct.Mainloop.html#method.lock
-//! [`Mainloop::unlock()`]: struct.Mainloop.html#method.unlock
-//! [`Mainloop::wait()`]: struct.Mainloop.html#method.wait
-//! [`Mainloop::signal()`]: struct.Mainloop.html#method.signal
-//! [`Mainloop::accept()`]: struct.Mainloop.html#method.accept
 
 use std::rc::Rc;
 #[cfg(any(doc, feature = "pa_v5"))]
@@ -445,7 +434,7 @@ impl MainloopInner<MainloopInternal> {
 impl Mainloop {
     /// Allocates a new threaded main loop object.
     ///
-    /// You have to call [`start()`](#method.start) before the event loop thread starts running.
+    /// You have to call [`start()`](Self::start) before the event loop thread starts running.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_threaded_mainloop_new() };
         if ptr.is_null() {
@@ -495,7 +484,7 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
     }
 
-    /// Unlocks the event loop object, inverse of [`lock()`](#method.lock).
+    /// Unlocks the event loop object, inverse of [`lock()`](Self::lock).
     #[inline]
     pub fn unlock(&mut self) {
         unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
@@ -505,20 +494,25 @@ impl Mainloop {
     ///
     /// You can use this to pass data from the event loop thread to the main thread in a
     /// synchronized fashion. This function may not be called inside the event loop thread. Prior to
-    /// this call the event loop object needs to be locked using [`lock()`](#method.lock). While
-    /// waiting the lock will be released. Immediately before returning it will be acquired again.
-    /// This function may spuriously wake up even without [`signal()`](#method.signal) being called.
-    /// You need to make sure to handle that!
+    /// this call the event loop object needs to be locked using [`lock()`]. While waiting the lock
+    /// will be released. Immediately before returning it will be acquired again. This function may
+    /// spuriously wake up even without [`signal()`] being called. You need to make sure to handle
+    /// that!
+    ///
+    /// [`lock()`]: Self::lock
+    /// [`signal()`]: Self::signal
     #[inline]
     pub fn wait(&mut self) {
         unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
     }
 
-    /// Signals all threads waiting for a signalling event in [`wait()`](#method.wait).
+    /// Signals all threads waiting for a signalling event in [`wait()`].
     ///
     /// If `wait_for_accept` is `true`, do not return before the signal was accepted by an
-    /// [`accept()`](#method.accept) call. While waiting for that condition the event loop object is
-    /// unlocked.
+    /// [`accept()`] call. While waiting for that condition the event loop object is unlocked.
+    ///
+    /// [`wait()`]: Self::wait
+    /// [`accept()`]: Self::accept
     #[inline]
     pub fn signal(&mut self, wait_for_accept: bool) {
         unsafe { capi::pa_threaded_mainloop_signal((*self._inner).ptr, wait_for_accept as i32); }
@@ -529,7 +523,7 @@ impl Mainloop {
     /// This call should only be used in conjunction with [`signal()`] with `wait_for_accept` as
     /// `true`.
     ///
-    /// [`signal()`]: #method.signal
+    /// [`signal()`]: Self::signal
     #[inline]
     pub fn accept(&mut self) {
         unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }

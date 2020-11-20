@@ -13,7 +13,7 @@
 
 //! Connection contexts for asynchronous communication with a server.
 //! 
-//! A `pa_context` object wraps a connection to a PulseAudio server using its native protocol.
+//! A [`pa_context`] object wraps a connection to a PulseAudio server using its native protocol.
 
 pub mod ext_device_manager;
 pub mod ext_device_restore;

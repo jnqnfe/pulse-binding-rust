@@ -18,8 +18,8 @@ use std::ffi::CStr;
 use num_traits::FromPrimitive as FromPrimitiveTrait;
 use num_derive::{FromPrimitive, ToPrimitive};
 
-/// A wrapper around integer errors returned by PulseAudio. Can be converted to a `Code` variant for
-/// comparison purposes if desired.
+/// A wrapper around integer errors returned by PulseAudio. Can be converted to a [`Code`] variant
+/// for comparison purposes if desired.
 #[repr(transparent)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct PAErr(pub i32);

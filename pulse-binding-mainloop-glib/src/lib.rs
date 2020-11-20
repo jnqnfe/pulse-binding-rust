@@ -43,8 +43,6 @@
 //! See the documentation in [`libpulse-binding`] for further information regarding actual usage of
 //! libpulse mainloops.
 //!
-//! [`Mainloop::new()`]: struct.Mainloop.html#method.new
-//! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
 //! [sys]: https://docs.rs/libpulse-mainloop-glib-sys
 //! [`libpulse-binding`]: https://docs.rs/libpulse-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
@@ -111,7 +109,7 @@ fn drop_actual(self_: &mut MainloopInner<MainloopInternal>) {
 impl Mainloop {
     /// Creates a new GLIB main loop object for the specified GLIB main loop context.
     ///
-    /// Takes an argument `context` for the `glib::MainContext` to use. If context is `None` the
+    /// Takes an argument `context` for the [`glib::MainContext`] to use. If context is `None` the
     /// default context is used.
     ///
     /// This returns the object in an Rc wrapper, allowing multiple references to be held, which

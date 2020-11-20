@@ -16,8 +16,8 @@
 //! # Overview
 //!
 //! This ‘standard’ (minimal) main loop implementation is based on the poll() system call. It
-//! supports the functions defined in the main loop abstraction ([`mainloop::api`]) and very little
-//! else.
+//! supports the functions defined in the main loop abstraction
+//! ([`mainloop::api`](mod@crate::mainloop::api)) and very little else.
 //!
 //! This implementation is thread safe as long as you access the main loop object from a single
 //! thread only.
@@ -194,13 +194,6 @@
 //!     stream.borrow_mut().disconnect().unwrap();
 //! }
 //! ```
-//!
-//! [`mainloop::api`]: ../api/index.html
-//! [`Mainloop`]: struct.Mainloop.html
-//! [`Mainloop::new()`]: struct.Mainloop.html#method.new
-//! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
-//! [`Mainloop::iterate()`]: struct.Mainloop.html#method.iterate
-//! [`Mainloop::run()`]: struct.Mainloop.html#method.run
 
 use std::os::raw::{c_ulong, c_void};
 use std::rc::Rc;
@@ -223,7 +216,7 @@ impl MainloopInternalType for MainloopInternal {}
 pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
     userdata: *mut c_void) -> i32;
 
-/// Return type for [`Mainloop::iterate()`](struct.Mainloop.html#method.iterate).
+/// Return type for [`Mainloop::iterate()`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum IterateResult {
     /// Success, with number of sources dispatched.
@@ -325,8 +318,10 @@ impl Mainloop {
     /// behaviour.
     ///
     /// Note, should the microseconds timeout value provided be too large to pass to the underlying
-    /// C API (larger than `std::i32::MAX`), then the `PAErr` form of the `Code::TooLarge` error
-    /// will be returned (within `Result::Err`).
+    /// C API (larger than [`std::i32::MAX`]), then the [`PAErr`] form of the [`Code::TooLarge`]
+    /// error will be returned (within [`Result::Err`]).
+    ///
+    /// [`Code::TooLarge`]: crate::error::Code::TooLarge
     pub fn prepare(&mut self, timeout: Option<MicroSeconds>) -> Result<(), PAErr> {
         let t: i32 = match timeout {
             // A negative value represents a request for 'blocking' behaviour in the C API
@@ -363,7 +358,7 @@ impl Mainloop {
         }
     }
 
-    /// Gets the return value as specified with the main loop’s [`quit()`](#method.quit) routine.
+    /// Gets the return value as specified with the main loop’s [`quit()`](Self::quit) routine.
     #[inline]
     pub fn get_retval(&self) -> def::Retval {
         def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
@@ -371,17 +366,20 @@ impl Mainloop {
 
     /// Runs a single iteration of the main loop.
     ///
-    /// This is a convenience function for [`prepare()`](#method.prepare), [`poll()`](#method.poll)
-    /// and [`dispatch()`](#method.dispatch).
+    /// This is a convenience function for [`prepare()`], [`poll()`] and [`dispatch()`].
     ///
     /// If `block` is `true`, block for events if none are queued.
     ///
-    /// Returns an [`IterateResult`](enum.IterateResult.html) variant:
+    /// Returns an [`IterateResult`] variant:
     ///
     /// * On success, returns `IterateResult::Success` containing the number of sources dispatched
     ///   in this iteration.
     /// * If exit was requested, returns `IterateResult::Quit` containing quit’s retval.
     /// * On error, returns `IterateResult::Err` containing error value.
+    ///
+    /// [`prepare()`]: Self::prepare
+    /// [`poll()`]: Self::poll
+    /// [`dispatch()`]: Self::dispatch
     pub fn iterate(&mut self, block: bool) -> IterateResult {
         let mut retval: i32 = 0;
         match unsafe { capi::pa_mainloop_iterate((*self._inner).ptr, block as i32, &mut retval) } {
@@ -392,7 +390,7 @@ impl Mainloop {
     }
 
     /// Runs unlimited iterations of the main loop object until the main loop’s
-    /// [`quit()`](#method.quit) routine is called.
+    /// [`quit()`](Self::quit) routine is called.
     ///
     /// On success, returns `Ok` containing quit’s return value. On error returns `Err` containing a
     /// tuple of the error value and quit’s return value.

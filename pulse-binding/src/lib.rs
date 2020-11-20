@@ -58,8 +58,8 @@
 //! ## Asynchronous API
 //!
 //! Use this if you develop your programs in asynchronous, event loop based style or if you want to
-//! use the advanced features of the PulseAudio API. A guide can be found in the [`mainloop`]
-//! module.
+//! use the advanced features of the PulseAudio API. A guide can be found in the
+//! [`mainloop`](mod@mainloop) module.
 //!
 //! By using the built-in threaded main loop, it is possible to achieve a pseudo-synchronous API,
 //! which can be useful in synchronous applications where the simple API is insufficient.
@@ -136,7 +136,6 @@
 //! </p>
 //! </div>
 //!
-//! [`mainloop`]: mainloop/index.html
 //! [sys]: https://docs.rs/libpulse-sys
 //! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio

@@ -176,54 +176,6 @@
 //!
 //! The only operation supported on clients is the possibility of kicking them off the server using
 //! [`Introspector::kill_client()`].
-//!
-//! [`Context`]: ../struct.Context.html
-//! [`ListResult`]: ../../callbacks/enum.ListResult.html
-//! [`Introspector`]: struct.Introspector.html
-//! [`ClientInfo`]: struct.ClientInfo.html
-//! [`ModuleInfo`]: struct.ModuleInfo.html
-//! [`ServerInfo`]: struct.ServerInfo.html
-//! [`SinkInfo`]: struct.SinkInfo.html
-//! [`SinkInputInfo`]: struct.SinkInputInfo.html
-//! [`SourceInfo`]: struct.SourceInfo.html
-//! [`SourceOutputInfo`]: struct.SourceOutputInfo.html
-//! [`StatInfo`]: struct.StatInfo.html
-//! [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
-//! [`Context::introspect()`]: ../struct.Context.html#method.introspect
-//! [`Introspector::get_client_info_list()`]: struct.Introspector.html#method.get_client_info_list
-//! [`Introspector::get_client_info()`]: struct.Introspector.html#method.get_client_info
-//! [`Introspector::get_module_info_list()`]: struct.Introspector.html#method.get_module_info_list
-//! [`Introspector::get_module_info()`]: struct.Introspector.html#method.get_module_info
-//! [`Introspector::get_sample_info_by_index()`]: struct.Introspector.html#method.get_sample_info_by_index
-//! [`Introspector::get_sample_info_by_name()`]: struct.Introspector.html#method.get_sample_info_by_name
-//! [`Introspector::get_sample_info_list()`]: struct.Introspector.html#method.get_sample_info_list
-//! [`Introspector::get_server_info()`]: struct.Introspector.html#method.get_server_info
-//! [`Introspector::get_sink_info_by_index()`]: struct.Introspector.html#method.get_sink_info_by_index
-//! [`Introspector::get_sink_info_by_name()`]: struct.Introspector.html#method.get_sink_info_by_name
-//! [`Introspector::get_sink_info_list()`]: struct.Introspector.html#method.get_sink_info_list
-//! [`Introspector::get_sink_input_info_list()`]: struct.Introspector.html#method.get_sink_input_info_list
-//! [`Introspector::get_sink_input_info()`]: struct.Introspector.html#method.get_sink_input_info
-//! [`Introspector::get_source_info_by_index()`]: struct.Introspector.html#method.get_source_info_by_index
-//! [`Introspector::get_source_info_by_name()`]: struct.Introspector.html#method.get_source_info_by_name
-//! [`Introspector::get_source_info_list()`]: struct.Introspector.html#method.get_source_info_list
-//! [`Introspector::get_source_output_info_list()`]: struct.Introspector.html#method.get_source_output_info_list
-//! [`Introspector::get_source_output_info()`]: struct.Introspector.html#method.get_source_output_info
-//! [`Introspector::kill_client()`]: struct.Introspector.html#method.kill_client
-//! [`Introspector::kill_sink_input()`]: struct.Introspector.html#method.kill_sink_input
-//! [`Introspector::kill_source_output()`]: struct.Introspector.html#method.kill_source_output
-//! [`Introspector::load_module()`]: struct.Introspector.html#method.load_module
-//! [`Introspector::set_sink_input_volume()`]: struct.Introspector.html#method.set_sink_input_volume
-//! [`Introspector::set_sink_mute_by_index()`]: struct.Introspector.html#method.set_sink_mute_by_index
-//! [`Introspector::set_sink_mute_by_name()`]: struct.Introspector.html#method.set_sink_mute_by_name
-//! [`Introspector::set_sink_volume_by_index()`]: struct.Introspector.html#method.set_sink_volume_by_index
-//! [`Introspector::set_sink_volume_by_name()`]: struct.Introspector.html#method.set_sink_volume_by_name
-//! [`Introspector::set_source_mute_by_index()`]: struct.Introspector.html#method.set_source_mute_by_index
-//! [`Introspector::set_source_mute_by_name()`]: struct.Introspector.html#method.set_source_mute_by_name
-//! [`Introspector::set_source_output_volume()`]: struct.Introspector.html#method.set_source_output_volume
-//! [`Introspector::set_source_volume_by_index()`]: struct.Introspector.html#method.set_source_volume_by_index
-//! [`Introspector::set_source_volume_by_name()`]: struct.Introspector.html#method.set_source_volume_by_name
-//! [`Introspector::stat()`]: struct.Introspector.html#method.stat
-//! [`Introspector::unload_module()`]: struct.Introspector.html#method.unload_module
 
 use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
@@ -269,7 +221,7 @@ impl Context {
     /// Gets an introspection object linked to the current context, giving access to introspection
     /// routines.
     ///
-    /// See [`context::introspect`](introspect/index.html).
+    /// See [`context::introspect`](mod@crate::context::introspect).
     #[inline]
     pub fn introspect(&self) -> Introspector {
         unsafe { capi::pa_context_ref(self.ptr) };
@@ -278,8 +230,7 @@ impl Context {
 }
 
 impl Introspector {
-    /// Creates a new `Introspector` from an existing
-    /// [`ContextInternal`](../../../libpulse_sys/context/struct.pa_context.html) pointer.
+    /// Creates a new `Introspector` from an existing [`ContextInternal`] pointer.
     #[inline(always)]
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context }
@@ -634,8 +585,8 @@ impl Introspector {
 
     /// Suspends/Resumes a sink.
     ///
-    /// If `index` is [`def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html) all sinks will
-    /// be suspended. Panics on error, i.e. invalid arguments or state.
+    /// If `index` is [`def::INVALID_INDEX`] all sinks will be suspended.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_sink_by_index(&mut self, index: u32, suspend: bool,
@@ -1055,8 +1006,8 @@ impl Introspector {
 
     /// Suspends/Resumes a source.
     ///
-    /// If `index` is [`def::INVALID_INDEX`](../../def/constant.INVALID_INDEX.html), all sources
-    /// will be suspended. Panics on error, i.e. invalid arguments or state.
+    /// If `index` is [`def::INVALID_INDEX`], all sources will be suspended.
+    /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_source_by_index(&mut self, index: u32, suspend: bool,
@@ -1952,11 +1903,10 @@ pub struct SinkInputInfo<'a> {
     pub channel_map: channelmap::Map,
     /// The volume of this sink input.
     pub volume: ChannelVolumes,
-    /// Latency due to buffering in sink input, see
-    /// [`def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
+    /// Latency due to buffering in sink input, see [`TimingInfo`](crate::def::TimingInfo) for
+    /// details.
     pub buffer_usec: MicroSeconds,
-    /// Latency of the sink device, see
-    /// [`def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
+    /// Latency of the sink device, see [`TimingInfo`](crate::def::TimingInfo) for details.
     pub sink_usec: MicroSeconds,
     /// The resampling method used by this sink input.
     pub resample_method: Option<Cow<'a, str>>,
@@ -2183,11 +2133,10 @@ pub struct SourceOutputInfo<'a> {
     pub sample_spec: sample::Spec,
     /// Channel map.
     pub channel_map: channelmap::Map,
-    /// Latency due to buffering in the source output, see
-    /// [`def::TimingInfo`](../../def/struct.TimingInfo.html) for details.
+    /// Latency due to buffering in the source output, see [`TimingInfo`](crate::def::TimingInfo)
+    /// for details.
     pub buffer_usec: MicroSeconds,
-    /// Latency of the source device, see [`def::TimingInfo`](../../def/struct.TimingInfo.html) for
-    /// details.
+    /// Latency of the source device, see [`TimingInfo`](crate::def::TimingInfo) for details.
     pub source_usec: MicroSeconds,
     /// The resampling method used by this source output.
     pub resample_method: Option<Cow<'a, str>>,
@@ -2201,7 +2150,8 @@ pub struct SourceOutputInfo<'a> {
     pub volume: ChannelVolumes,
     /// Stream muted.
     pub mute: bool,
-    /// Stream has volume. If not set, then the meaning of this struct’s volume member is unspecified.
+    /// Stream has volume. If not set, then the meaning of this struct’s volume member is
+    /// unspecified.
     pub has_volume: bool,
     /// The volume can be set. If not set, the volume can still change even though clients can’t
     /// control the volume.

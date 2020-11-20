@@ -25,7 +25,7 @@
 //!
 //! The mask provided to [`Context::subscribe()`] can be created by binary ORing a set of values,
 //! either produced with [`Facility::to_interest_mask()`], or more simply with the provided
-//! constants in the [`subscription_masks`] submodule.
+//! constants in the [`subscription_masks`](mod@subscription_masks) submodule.
 //!
 //! The callback will be called with event type information representing the event that caused the
 //! callback, detailing *facility* and *operation*, where for instance [`Facility::Source`] with
@@ -46,15 +46,6 @@
 //!     |_| {}      // We won’t bother doing anything in the success callback in this example
 //! );
 //! ```
-//!
-//! [`Facility`]: enum.Facility.html
-//! [`Operation`]: enum.Operation.html
-//! [`Facility::Source`]: enum.Facility.html#variant.Source
-//! [`Operation::New`]: enum.Operation.html#variant.New
-//! [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
-//! [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
-//! [`Context::set_subscribe_callback()`]: ../struct.Context.html#method.set_subscribe_callback
-//! [`subscription_masks`]: subscription_masks/index.html
 
 use std::os::raw::c_void;
 use bitflags::bitflags;
@@ -76,10 +67,6 @@ bitflags! {
     /// A set of facility masks, to be passed to [`Context::subscribe()`].
     ///
     /// Note that you can convert a [`Facility`] to a mask with [`Facility::to_interest_mask()`].
-    ///
-    /// [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
-    /// [`Facility`]: enum.Facility.html
-    /// [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
     #[repr(transparent)]
     pub struct InterestMaskSet: u32 {
         /// No facility (null selection; zero).
@@ -155,8 +142,7 @@ pub enum Facility {
     Client       = 5,
     /// Sample-cache.
     SampleCache  = 6,
-    /// Global server change, only occurring with
-    /// [`Operation::Changed`](enum.Operation.html#variant.Changed).
+    /// Global server change, only occurring with [`Operation::Changed`].
     Server       = 7,
     /* NOTE: value `8` previously assigned, obsoleted */
     /// Card.
@@ -224,12 +210,14 @@ impl Context {
     /// Enables event notification.
     ///
     /// The `mask` parameter is used to specify which facilities you are interested in being
-    /// modified about. Use [`set_subscribe_callback()`](#method.set_subscribe_callback) to set the
-    /// actual callback that will be called when an event occurs.
+    /// modified about. Use [`set_subscribe_callback()`] to set the actual callback that will be
+    /// called when an event occurs.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
+    ///
+    /// [`set_subscribe_callback()`]: Self::set_subscribe_callback
     pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F)
         -> operation::Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -244,8 +232,8 @@ impl Context {
     /// Sets the context specific call back function that is called whenever a subscribed-to event
     /// occurs.
     ///
-    /// Use [`subscribe()`](#method.subscribe) to set the facilities you are interested in receiving
-    /// notifications for, and thus to start receiving notifications with the callback set here.
+    /// Use [`subscribe()`] to set the facilities you are interested in receiving notifications for,
+    /// and thus to start receiving notifications with the callback set here.
     ///
     /// The callback must take three parameters. The first two are the facility and operation
     /// components of the event type respectively (the underlying C API provides this information
@@ -253,6 +241,8 @@ impl Context {
     /// wrapped in `Option` wrappers should the given values ever not map to the enum variants, but
     /// it’s probably safe to always just `unwrap()` them). The third parameter is an associated
     /// index value.
+    ///
+    /// [`subscribe()`]: Self::subscribe
     pub fn set_subscribe_callback(&mut self,
         callback: Option<Box<dyn FnMut(Option<Facility>, Option<Operation>, u32) + 'static>>)
     {

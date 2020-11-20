@@ -24,7 +24,7 @@ use super::{UnixTs, MonotonicTs, MicroSeconds, op_err};
 #[cfg(windows)] pub(crate) type TvSecs = libc::c_long;
 #[cfg(windows)] pub(crate) type TvUsecs = libc::c_long;
 
-/// Wrapper for `libc::timeval`, attaching various methods and trait implementations.
+/// Wrapper for [`libc::timeval`], attaching various methods and trait implementations.
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Timeval(pub libc::timeval); // Warning, this must remain directly transmutable with the inner libc::timeval

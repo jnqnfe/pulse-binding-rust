@@ -79,8 +79,8 @@
 //! # Transferring data
 //!
 //! Once the connection is established to the server, data can start flowing. Using the connection
-//! is very similar to the normal read() and write() system calls using [`read()`] and [`write()`]
-//! methods of the [`Simple`] object. Note that these operations always block.
+//! is very similar to the normal read() and write() system calls using [`Simple::read()`] and
+//! [`Simple::write()`] methods of the [`Simple`] object. Note that these operations always block.
 //!
 //! # Buffer control
 //!
@@ -97,12 +97,6 @@
 //! Once playback or capture is complete, the connection should be closed and resources freed. This
 //! is done automatically once the [`Simple`] object is dropped.
 //!
-//! [`Simple`]: struct.Simple.html
-//! [`read()`]: struct.Simple.html#method.read
-//! [`write()`]: struct.Simple.html#method.write
-//! [`Simple::get_latency()`]: struct.Simple.html#method.get_latency
-//! [`Simple::flush()`]: struct.Simple.html#method.flush
-//! [`Simple::drain()`]: struct.Simple.html#method.drain
 //! [sys]: https://docs.rs/libpulse-simple-sys
 //! [`libpulse-binding`]: https://docs.rs/libpulse-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
@@ -191,7 +185,7 @@ impl Simple {
         }
     }
 
-    /// Creates a new `Simple` from an existing [`SimpleInternal`](../libpulse_simple_sys/struct.pa_simple.html) pointer.
+    /// Creates a new `Simple` from an existing [`SimpleInternal`] pointer.
     fn from_raw(ptr: *mut SimpleInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr }

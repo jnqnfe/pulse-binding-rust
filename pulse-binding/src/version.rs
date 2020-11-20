@@ -54,12 +54,6 @@
 //! obviously corresponds to a minimum compatibility level of PA version 8.0), then the
 //! [`TARGET_VERSION`] constant is set to `(8, 0)`. The “next-newest” feature flag is `pa_v11`,
 //! which if enabled would bump it up to `(11, 0)`.
-//!
-//! [`get_library_version()`]: fn.get_library_version.html
-//! [`get_library_version_numbers()`]: fn.get_library_version_numbers.html
-//! [`compare_with_library_version()`]: fn.compare_with_library_version.html
-//! [`library_version_is_too_old()`]: fn.library_version_is_too_old.html
-//! [`TARGET_VERSION`]: const.TARGET_VERSION.html
 
 use capi;
 use std::borrow::Cow;

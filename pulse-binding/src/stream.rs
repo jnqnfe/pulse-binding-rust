@@ -26,15 +26,14 @@
 //!
 //! # Creating
 //!
-//! To access a stream, a [`Stream`](struct.Stream.html) object must be created using
-//! [`Stream::new()`] or [`Stream::new_extended()`]. `new` is for PCM streams only, while
-//! `new_extended` can be used for both PCM and compressed audio streams. At this point the
-//! application must specify what stream format(s) it supports. See [`sample`](../sample/index.html)
-//! and [`channelmap`](../channelmap/index.html) for more information on the stream format
-//! parameters.
+//! To access a stream, a [`Stream`] object must be created using [`Stream::new()`] or
+//! [`Stream::new_extended()`]. `new` is for PCM streams only, while `new_extended` can be used for
+//! both PCM and compressed audio streams. At this point the application must specify what stream
+//! format(s) it supports. See [`sample`] and [`channelmap`] for more information on the stream
+//! format parameters.
 //!
 //! **FIXME**: Those references only talk about PCM parameters, we should also have an overview
-//! page for how the [`Info`](../format/struct.Info.html) based stream format configuration works.
+//! page for how the [`Info`] based stream format configuration works.
 //! [Bug filed](https://bugs.freedesktop.org/show_bug.cgi?id=72265).
 //!
 //! This first step will only create a client-side object, representing the stream. To use the
@@ -123,8 +122,8 @@
 //! * [`Stream::trigger()`]: Start playback immediately and do not wait for the buffer to fill up to
 //!   the set trigger level.
 //! * [`Stream::prebuf()`]: Re-enable the playback trigger level.
-//! * [`Stream::drain()`]: Wait for the playback buffer to go empty. Will return an
-//!   [`Operation`] object that will indicate when the buffer is completely drained.
+//! * [`Stream::drain()`]: Wait for the playback buffer to go empty. Will return an [`Operation`]
+//!   object that will indicate when the buffer is completely drained.
 //! * [`Stream::flush()`]: Drop all data from the playback or record buffer. Do not wait for it to
 //!   finish playing.
 //!
@@ -213,45 +212,12 @@
 //! you only unreference it, then it will live on and eat resources both locally and on the server
 //! until you disconnect the context. This is done automatically upon drop of the stream object.
 //!
-//! [`context::scache`]: ../context/scache/index.html
-//! [`BufferAttr`]: ../def/struct.BufferAttr.html
-//! [`TimingInfo`]: ../def/struct.TimingInfo.html
-//! [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
-//! [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
-//! [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
-//! [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-//! [`Operation`]: ../operation/struct.Operation.html
-//! [`SeekMode::Absolute`]: enum.SeekMode.html#variant.Absolute
-//! [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
-//! [`SeekMode::RelativeEnd`]: enum.SeekMode.html#variant.RelativeEnd
-//! [`SeekMode::RelativeOnRead`]: enum.SeekMode.html#variant.RelativeOnRead
-//! [`Stream::connect_playback()`]: struct.Stream.html#method.connect_playback
-//! [`Stream::connect_record()`]: struct.Stream.html#method.connect_record
-//! [`Stream::connect_upload()`]: struct.Stream.html#method.connect_upload
-//! [`Stream::cork()`]: struct.Stream.html#method.cork
-//! [`Stream::discard()`]: struct.Stream.html#method.discard
-//! [`Stream::disconnect()`]: struct.Stream.html#method.disconnect
-//! [`Stream::drain()`]: struct.Stream.html#method.drain
-//! [`Stream::flush()`]: struct.Stream.html#method.flush
-//! [`Stream::get_buffer_attr()`]: struct.Stream.html#method.get_buffer_attr
-//! [`Stream::get_latency()`]: struct.Stream.html#method.get_latency
-//! [`Stream::get_time()`]: struct.Stream.html#method.get_time
-//! [`Stream::get_timing_info()`]: struct.Stream.html#method.get_timing_info
-//! [`Stream::new()`]: struct.Stream.html#method.new
-//! [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
-//! [`Stream::peek()`]: struct.Stream.html#method.peek
-//! [`Stream::prebuf()`]: struct.Stream.html#method.prebuf
-//! [`Stream::readable_size()`]: struct.Stream.html#method.readable_size
-//! [`Stream::set_overflow_callback()`]: struct.Stream.html#method.set_overflow_callback
-//! [`Stream::set_read_callback()`]: struct.Stream.html#method.set_read_callback
-//! [`Stream::set_state_callback()`]: struct.Stream.html#method.set_state_callback
-//! [`Stream::set_underflow_callback()`]: struct.Stream.html#method.set_underflow_callback
-//! [`Stream::set_write_callback()`]: struct.Stream.html#method.set_write_callback
-//! [`Stream::trigger()`]: struct.Stream.html#method.trigger
-//! [`Stream::uncork()`]: struct.Stream.html#method.uncork
-//! [`Stream::update_timing_info()`]: struct.Stream.html#method.update_timing_info
-//! [`Stream::writable_size()`]: struct.Stream.html#method.writable_size
-//! [`Stream::write()`]: struct.Stream.html#method.write
+//! [`context::scache`]: mod@crate::context::scache
+//! [`sample`]: mod@crate::sample
+//! [`channelmap`]: mod@crate::channelmap
+//! [`Info`]: crate::format::Info
+//! [`BufferAttr`]: crate::def::BufferAttr
+//! [`TimingInfo`]: crate::def::TimingInfo
 
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
@@ -373,8 +339,6 @@ bitflags! {
         const NOFLAGS = capi::PA_STREAM_NOFLAGS;
 
         /// Create the stream corked, requiring an explicit [`Stream::uncork()`] call to uncork it.
-        ///
-        /// [`Stream::uncork()`]: struct.Stream.html#method.uncork
         const START_CORKED = capi::PA_STREAM_START_CORKED;
 
         /// Interpolate the latency for this stream. When enabled, [`Stream::get_latency()`] and
@@ -385,9 +349,7 @@ bitflags! {
         /// This is especially useful on long latency network connections. It makes a lot of sense
         /// to combine this option with [`AUTO_TIMING_UPDATE`].
         ///
-        /// [`AUTO_TIMING_UPDATE`]: struct.FlagSet.html#associatedconstant.AUTO_TIMING_UPDATE
-        /// [`Stream::get_latency()`]: struct.Stream.html#method.get_latency
-        /// [`Stream::get_time()`]: struct.Stream.html#method.get_time
+        /// [`AUTO_TIMING_UPDATE`]: Self::AUTO_TIMING_UPDATE
         const INTERPOLATE_TIMING = capi::PA_STREAM_INTERPOLATE_TIMING;
 
         /// Don’t force the time to increase monotonically. If this option is enabled,
@@ -395,8 +357,6 @@ bitflags! {
         /// values on each call. This may confuse applications which cannot deal with time going
         /// ‘backwards’, but has the advantage that bad transport latency estimations that caused
         /// the time to jump ahead can be corrected quickly, without the need to wait.
-        ///
-        /// [`Stream::get_time()`]: struct.Stream.html#method.get_time
         const NOT_MONOTONIC = capi::PA_STREAM_NOT_MONOTONIC;
 
         /// If set timing update requests are issued periodically automatically. Combined with
@@ -404,13 +364,11 @@ bitflags! {
         /// [`Stream::get_time()`] and [`Stream::get_latency()`] at all times without a packet round
         /// trip.
         ///
-        /// [`INTERPOLATE_TIMING`]: struct.FlagSet.html#associatedconstant.INTERPOLATE_TIMING
-        /// [`Stream::get_time()`]: struct.Stream.html#method.get_time
-        /// [`Stream::get_latency()`]: struct.Stream.html#method.get_latency
+        /// [`INTERPOLATE_TIMING`]: Self::INTERPOLATE_TIMING
         const AUTO_TIMING_UPDATE = capi::PA_STREAM_AUTO_TIMING_UPDATE;
 
         /// Don’t remap channels by their name, instead map them simply by their index. Implies
-        /// [`NO_REMIX_CHANNELS`](struct.FlagSet.html#associatedconstant.NO_REMIX_CHANNELS).
+        /// [`NO_REMIX_CHANNELS`](Self::NO_REMIX_CHANNELS).
         const NO_REMAP_CHANNELS = capi::PA_STREAM_NO_REMAP_CHANNELS;
 
         /// When remapping channels by name, don’t upmix or downmix them to related channels. Copy
@@ -431,11 +389,8 @@ bitflags! {
         /// means that you can’t use [`Info::new_from_sample_spec()`], because that function always
         /// sets the sample format.
         ///
-        /// [`Stream::get_sample_spec()`]: struct.Stream.html#method.get_sample_spec
-        /// [`Stream::set_buffer_attr()`]: struct.Stream.html#method.set_buffer_attr
-        /// [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
-        /// [`Info`]: ../format/struct.Info.html
-        /// [`Info::new_from_sample_spec()`]: ../format/struct.Info.html#method.new_from_sample_spec
+        /// [`Info`]: crate::format::Info
+        /// [`Info::new_from_sample_spec()`]: crate::format::Info::new_from_sample_spec
         const FIX_FORMAT = capi::PA_STREAM_FIX_FORMAT;
 
         /// Use the sample rate of the sink, and possibly ignore the rate the sample spec contains.
@@ -447,10 +402,9 @@ bitflags! {
         /// you can’t use [`Info::new_from_sample_spec()`], because that function always sets the
         /// sample rate.
         ///
-        /// [`FIX_FORMAT`]: struct.FlagSet.html#associatedconstant.FIX_FORMAT
-        /// [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
-        /// [`Info`]: ../format/struct.Info.html
-        /// [`Info::new_from_sample_spec()`]: ../format/struct.Info.html#method.new_from_sample_spec
+        /// [`FIX_FORMAT`]: Self::FIX_FORMAT
+        /// [`Info`]: crate::format::Info
+        /// [`Info::new_from_sample_spec()`]: crate::format::Info::new_from_sample_spec
         const FIX_RATE = capi::PA_STREAM_FIX_RATE;
 
         /// Use the number of channels and the channel map of the sink, and possibly ignore the number
@@ -465,10 +419,9 @@ bitflags! {
         /// (but if you only want to leave the channel map unspecified, then
         /// [`Info::new_from_sample_spec()`] works, because the channel map parameter is optional).
         ///
-        /// [`FIX_FORMAT`]: struct.FlagSet.html#associatedconstant.FIX_FORMAT
-        /// [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
-        /// [`Info`]: ../format/struct.Info.html
-        /// [`Info::new_from_sample_spec()`]: ../format/struct.Info.html#method.new_from_sample_spec
+        /// [`FIX_FORMAT`]: Self::FIX_FORMAT
+        /// [`Info`]: crate::format::Info
+        /// [`Info::new_from_sample_spec()`]: crate::format::Info::new_from_sample_spec
         const FIX_CHANNELS = capi::PA_STREAM_FIX_CHANNELS;
 
         /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
@@ -479,8 +432,6 @@ bitflags! {
 
         /// Allow dynamic changing of the sampling rate during playback with
         /// [`Stream::update_sample_rate()`].
-        ///
-        /// [`Stream::update_sample_rate()`]: struct.Stream.html#method.update_sample_rate
         const VARIABLE_RATE = capi::PA_STREAM_VARIABLE_RATE;
 
         /// Find peaks instead of resampling.
@@ -489,15 +440,15 @@ bitflags! {
         /// Create in muted state. If neither [`START_UNMUTED`] nor this is specified, it is left to
         /// the server to decide whether to create the stream in muted or in un-muted state.
         ///
-        /// [`START_UNMUTED`]: struct.FlagSet.html#associatedconstant.START_UNMUTED
+        /// [`START_UNMUTED`]: Self::START_UNMUTED
         const START_MUTED = capi::PA_STREAM_START_MUTED;
 
         /// Try to adjust the latency of the sink/source based on the requested buffer metrics and
         /// adjust buffer metrics accordingly. Also see [`BufferAttr`]. This option may not be
         /// specified at the same time as [`EARLY_REQUESTS`].
         ///
-        /// [`EARLY_REQUESTS`]: struct.FlagSet.html#associatedconstant.EARLY_REQUESTS
-        /// [`BufferAttr`]: ../def/struct.BufferAttr.html
+        /// [`EARLY_REQUESTS`]: Self::EARLY_REQUESTS
+        /// [`BufferAttr`]: crate::def::BufferAttr
         const ADJUST_LATENCY = capi::PA_STREAM_ADJUST_LATENCY;
 
         /// Enable compatibility mode for legacy clients that rely on a “classic” hardware device
@@ -511,8 +462,8 @@ bitflags! {
         /// in their playback loops instead of sleeping on the device itself.) Also see
         /// [`BufferAttr`]. This option may not be specified at the same time as [`ADJUST_LATENCY`].
         ///
-        /// [`ADJUST_LATENCY`]: struct.FlagSet.html#associatedconstant.ADJUST_LATENCY
-        /// [`BufferAttr`]: ../def/struct.BufferAttr.html
+        /// [`ADJUST_LATENCY`]: Self::ADJUST_LATENCY
+        /// [`BufferAttr`]: crate::def::BufferAttr
         const EARLY_REQUESTS = capi::PA_STREAM_EARLY_REQUESTS;
 
         /// If set this stream won’t be taken into account when it is checked whether the device
@@ -522,7 +473,7 @@ bitflags! {
         /// Create in unmuted state. If neither [`START_MUTED`] nor this is specified, it is left to
         /// the server to decide whether to create the stream in muted or in unmuted state.
         ///
-        /// [`START_MUTED`]: struct.FlagSet.html#associatedconstant.START_MUTED
+        /// [`START_MUTED`]: Self::START_MUTED
         const START_UNMUTED = capi::PA_STREAM_START_UNMUTED;
 
         /// If the sink/source this stream is connected to is suspended during the creation of this
@@ -566,7 +517,7 @@ pub mod flags {
     /// advantage of not requiring a whole round trip when the current playback/recording time is
     /// needed. Consider using this option when requesting latency information frequently. This is
     /// especially useful on long latency network connections. It makes a lot of sense to combine
-    /// this option with [`AUTO_TIMING_UPDATE`](constant.AUTO_TIMING_UPDATE.html).
+    /// this option with [`AUTO_TIMING_UPDATE`].
     ///
     /// [`Stream::get_latency()`]: ../struct.Stream.html#method.get_latency
     /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
@@ -578,7 +529,7 @@ pub mod flags {
     /// ‘backwards’, but has the advantage that bad transport latency estimations that caused the
     /// time to jump ahead can be corrected quickly, without the need to wait.
     ///
-    /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
+    /// [`Stream::get_time()`]: super::Stream::get_time
     pub const NOT_MONOTONIC: FlagSet = FlagSet::NOT_MONOTONIC;
 
     /// If set timing update requests are issued periodically automatically. Combined with
@@ -586,9 +537,8 @@ pub mod flags {
     /// [`Stream::get_time()`] and [`Stream::get_latency()`] at all times without a packet round
     /// trip.
     ///
-    /// [`INTERPOLATE_TIMING`]: constant.INTERPOLATE_TIMING.html
-    /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
-    /// [`Stream::get_latency()`]: ../struct.Stream.html#method.get_latency
+    /// [`Stream::get_time()`]: super::Stream::get_time
+    /// [`Stream::get_latency()`]: super::Stream::get_latency
     pub const AUTO_TIMING_UPDATE: FlagSet = FlagSet::AUTO_TIMING_UPDATE;
 
     /// Don’t remap channels by their name, instead map them simply by their index. Implies
@@ -612,11 +562,11 @@ pub mod flags {
     /// that you can’t use [`Info::new_from_sample_spec()`], because that function always sets the
     /// sample format.
     ///
-    /// [`Stream::get_sample_spec()`]: ../struct.Stream.html#method.get_sample_spec
-    /// [`Stream::set_buffer_attr()`]: ../struct.Stream.html#method.set_buffer_attr
-    /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
-    /// [`Info`]: ../../format/struct.Info.html
-    /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`Stream::get_sample_spec()`]: super::Stream::get_sample_spec
+    /// [`Stream::set_buffer_attr()`]: super::Stream::set_buffer_attr
+    /// [`Stream::new_extended()`]: super::Stream::new_extended
+    /// [`Info`]: crate::format::Info
+    /// [`Info::new_from_sample_spec()`]: crate::format::Info::new_from_sample_spec
     pub const FIX_FORMAT: FlagSet = FlagSet::FIX_FORMAT;
 
     /// Use the sample rate of the sink, and possibly ignore the rate the sample spec contains.
@@ -628,9 +578,9 @@ pub mod flags {
     /// use [`Info::new_from_sample_spec()`], because that function always sets the sample rate.
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
-    /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
-    /// [`Info`]: ../../format/struct.Info.html
-    /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`Stream::new_extended()`]: super::Stream::new_extended
+    /// [`Info`]: crate::format::Info
+    /// [`Info::new_from_sample_spec()`]: crate::format::Info::new_from_sample_spec
     pub const FIX_RATE: FlagSet = FlagSet::FIX_RATE;
 
     /// Use the number of channels and the channel map of the sink, and possibly ignore the number
@@ -646,9 +596,9 @@ pub mod flags {
     /// map parameter is optional).
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
-    /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
-    /// [`Info`]: ../../format/struct.Info.html
-    /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`Stream::new_extended()`]: super::Stream::new_extended
+    /// [`Info`]: crate::format::Info
+    /// [`Info::new_from_sample_spec()`]: crate::format::Info::new_from_sample_spec
     pub const FIX_CHANNELS: FlagSet = FlagSet::FIX_CHANNELS;
 
     /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
@@ -659,7 +609,7 @@ pub mod flags {
     /// Allow dynamic changing of the sampling rate during playback with
     /// [`Stream::update_sample_rate()`].
     ///
-    /// [`Stream::update_sample_rate()`]: ../struct.Stream.html#method.update_sample_rate
+    /// [`Stream::update_sample_rate()`]: super::Stream::update_sample_rate
     pub const VARIABLE_RATE: FlagSet = FlagSet::VARIABLE_RATE;
 
     /// Find peaks instead of resampling.
@@ -667,15 +617,13 @@ pub mod flags {
 
     /// Create in muted state. If neither [`START_UNMUTED`] nor this is specified, it is left to the
     /// server to decide whether to create the stream in muted or in un-muted state.
-    ///
-    /// [`START_UNMUTED`]: constant.START_UNMUTED.html
     pub const START_MUTED: FlagSet = FlagSet::START_MUTED;
 
     /// Try to adjust the latency of the sink/source based on the requested buffer metrics and
     /// adjust buffer metrics accordingly. Also see [`BufferAttr`]. This option may not be
-    /// specified at the same time as [`EARLY_REQUESTS`](constant.EARLY_REQUESTS.html).
+    /// specified at the same time as [`EARLY_REQUESTS`].
     ///
-    /// [`BufferAttr`]: ../../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: crate::def::BufferAttr
     pub const ADJUST_LATENCY: FlagSet = FlagSet::ADJUST_LATENCY;
 
     /// Enable compatibility mode for legacy clients that rely on a “classic” hardware device
@@ -687,9 +635,9 @@ pub mod flags {
     /// client applications cannot deal with data requests that are delayed to the latest moment
     /// possible. (Usually these are programs that use usleep() or a similar call in their playback
     /// loops instead of sleeping on the device itself.) Also see [`BufferAttr`]. This option may
-    /// not be specified at the same time as [`ADJUST_LATENCY`](constant.ADJUST_LATENCY.html).
+    /// not be specified at the same time as [`ADJUST_LATENCY`].
     ///
-    /// [`BufferAttr`]: ../../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: crate::def::BufferAttr
     pub const EARLY_REQUESTS: FlagSet = FlagSet::EARLY_REQUESTS;
 
     /// If set this stream won’t be taken into account when it is checked whether the device this
@@ -698,8 +646,6 @@ pub mod flags {
 
     /// Create in unmuted state. If neither [`START_MUTED`] nor this is specified, it is left to the
     /// server to decide whether to create the stream in muted or in unmuted state.
-    ///
-    /// [`START_MUTED`]: constant.START_MUTED.html
     pub const START_UNMUTED: FlagSet = FlagSet::START_UNMUTED;
 
     /// If the sink/source this stream is connected to is suspended during the creation of this
@@ -717,9 +663,7 @@ pub mod flags {
     pub const PASSTHROUGH: FlagSet = FlagSet::PASSTHROUGH;
 }
 
-/// Common event names supplied to the [`set_event_callback()`] callback.
-///
-/// [`set_event_callback()`]: ../struct.Stream.html#method.set_event_callback
+/// Common event names supplied to the [`Stream::set_event_callback()`] callback.
 pub mod event_names {
     use capi;
 
@@ -735,8 +679,8 @@ pub mod event_names {
     pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
 }
 
-/// Result type for the [`Stream::peek()`](struct.Stream.html#method.peek) method. See documentation
-/// of the method itself for more information.
+/// Result type for the [`Stream::peek()`] method. See documentation of the method itself for more
+/// information.
 #[derive(Debug)]
 pub enum PeekResult<'a> {
     /// No data (Null data pointer and size of 0 returned by PA).
@@ -747,7 +691,7 @@ pub enum PeekResult<'a> {
     Data(&'a [u8]),
 }
 
-/// Result type for [`Stream::get_latency()`](struct.Stream.html#method.get_latency).
+/// Result type for [`Stream::get_latency()`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Latency {
     /// No latency.
@@ -761,8 +705,8 @@ pub enum Latency {
 impl Stream {
     /// Creates a new, unconnected stream with the specified name and sample type.
     ///
-    /// It is recommended to use [`new_with_proplist()`](#method.new_with_proplist) instead and
-    /// specify some initial properties.
+    /// It is recommended to use [`new_with_proplist()`] instead and specify some initial
+    /// properties.
     ///
     /// # Params
     ///
@@ -770,6 +714,8 @@ impl Stream {
     /// * `name`: A name for this stream
     /// * `ss`: The desired sample format
     /// * `map`: The desired channel map, or `None` for default
+    ///
+    /// [`new_with_proplist()`]: Self::new_with_proplist
     pub fn new(ctx: &mut Context, name: &str, ss: &sample::Spec, map: Option<&channelmap::Map>)
         -> Option<Self>
     {
@@ -841,7 +787,7 @@ impl Stream {
         match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
-    /// Creates a new `Stream` from an existing [`StreamInternal`](../../libpulse_sys/stream/struct.pa_stream.html) pointer.
+    /// Creates a new `Stream` from an existing [`StreamInternal`] pointer.
     #[inline]
     fn from_raw(ptr: *mut StreamInternal) -> Self {
         assert_eq!(false, ptr.is_null());
@@ -859,8 +805,8 @@ impl Stream {
     /// This is useful with the introspection functions such as
     /// [`Introspector::get_sink_input_info()`] or [`Introspector::get_source_output_info()`].
     ///
-    /// [`Introspector::get_sink_input_info()`]: ../context/introspect/struct.Introspector.html#method.get_sink_input_info
-    /// [`Introspector::get_source_output_info()`]: ../context/introspect/struct.Introspector.html#method.get_source_output_info
+    /// [`Introspector::get_sink_input_info()`]: crate::context::introspect::Introspector::get_sink_input_info
+    /// [`Introspector::get_source_output_info()`]: crate::context::introspect::Introspector::get_source_output_info
     pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_index(self.ptr) } {
             def::INVALID_INDEX => None,
@@ -874,10 +820,11 @@ impl Stream {
     /// [`Introspector::get_sink_info_by_index()`] or [`Introspector::get_source_info_by_index()`].
     ///
     /// Please note that streams may be moved between sinks/sources and thus it is recommended to
-    /// use [`set_moved_callback()`](#method.set_moved_callback) to be notified about this.
+    /// use [`set_moved_callback()`] to be notified about this.
     ///
-    /// [`Introspector::get_sink_info_by_index()`]: ../context/introspect/struct.Introspector.html#method.get_sink_info_by_index
-    /// [`Introspector::get_source_info_by_index()`]: ../context/introspect/struct.Introspector.html#method.get_source_info_by_index
+    /// [`set_moved_callback()`]: Self::set_moved_callback
+    /// [`Introspector::get_sink_info_by_index()`]: crate::context::introspect::Introspector::get_sink_info_by_index
+    /// [`Introspector::get_source_info_by_index()`]: crate::context::introspect::Introspector::get_source_info_by_index
     pub fn get_device_index(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_device_index(self.ptr) } {
             def::INVALID_INDEX => None,
@@ -891,10 +838,11 @@ impl Stream {
     /// [`Introspector::get_sink_info_by_name()`] or [`Introspector::get_source_info_by_name()`].
     ///
     /// Please note that streams may be moved between sinks/sources and thus it is recommended to
-    /// use [`set_moved_callback()`](#method.set_moved_callback) to be notified about this.
+    /// use [`set_moved_callback()`] to be notified about this.
     ///
-    /// [`Introspector::get_sink_info_by_name()`]: ../context/struct.Context.html#method.get_sink_info_by_name
-    /// [`Introspector::get_source_info_by_name()`]: ../context/struct.Context.html#method.get_source_info_by_name
+    /// [`set_moved_callback()`]: Self::set_moved_callback
+    /// [`Introspector::get_sink_info_by_name()`]: crate::context::introspect::Introspector::get_sink_info_by_name
+    /// [`Introspector::get_source_info_by_name()`]: crate::context::introspect::Introspector::get_source_info_by_name
     pub fn get_device_name(&self) -> Option<Cow<'static, str>> {
         let ptr: *const c_char = unsafe { capi::pa_stream_get_device_name(self.ptr) };
         match ptr.is_null() {
@@ -952,10 +900,8 @@ impl Stream {
     /// * `sync_stream`: Synchronize this stream with the specified one, or
     ///   `None` for a standalone stream.
     ///
-    /// [`flags::START_MUTED`]: flags/constant.START_MUTED.html
-    /// [`flags::START_UNMUTED`]: flags/constant.START_UNMUTED.html
-    /// [`Introspector::set_sink_input_volume()`]: ../context/struct.Context.html#method.set_sink_input_volume
-    /// [`Introspector::get_sink_info_by_name()`]: ../context/struct.Context.html#method.get_sink_info_by_name
+    /// [`Introspector::set_sink_input_volume()`]: crate::context::introspect::Introspector::set_sink_input_volume
+    /// [`Introspector::get_sink_info_by_name()`]: crate::context::introspect::Introspector::get_sink_info_by_name
     pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&def::BufferAttr>,
         flags: FlagSet, volume: Option<&ChannelVolumes>, sync_stream: Option<&mut Self>)
         -> Result<(), PAErr>
@@ -1009,7 +955,7 @@ impl Stream {
 
     /// Makes this stream a sample upload stream.
     ///
-    /// (See [`scache`](../context/scache/index.html)).
+    /// (See [`scache`](mod@crate::context::scache)).
     pub fn connect_upload(&mut self, length: usize) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_connect_upload(self.ptr, length) } {
             0 => Ok(()),
@@ -1019,7 +965,7 @@ impl Stream {
 
     /// Finishes the sample upload, the stream name will become the sample name.
     ///
-    /// You cancel a sample upload by issuing [`disconnect()`](#method.disconnect).
+    /// You cancel a sample upload by issuing [`disconnect()`](Self::disconnect).
     pub fn finish_upload(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_finish_upload(self.ptr) } {
             0 => Ok(()),
@@ -1056,20 +1002,19 @@ impl Stream {
     /// multiple small writes from it, you **cannot** do this. Any attempt at accessing the memory
     /// returned after the following [`write()`] or [`cancel_write()`] is invalid.
     ///
-    /// If you want to cancel a previously called [`begin_write()`] without calling [`write()`] use
+    /// If you want to cancel a previously called `begin_write()` without calling [`write()`] use
     /// [`cancel_write()`].
     ///
     /// The memory should **not** be explicitly freed by the caller.
     ///
-    /// An invocation of [`write()`] should “quickly” follow a [`begin_write()`]. It is not
-    /// recommended letting an unbounded amount of time pass after calling [`begin_write()`] and
-    /// before calling [`write()`]. Calling [`begin_write()`] twice without calling [`write()`] or
+    /// An invocation of [`write()`] should “quickly” follow a `begin_write()`. It is not
+    /// recommended letting an unbounded amount of time pass after calling `begin_write()` and
+    /// before calling [`write()`]. Calling `begin_write()` twice without calling [`write()`] or
     /// [`cancel_write()`] in between will return exactly the same `data` pointer and `nbytes`
     /// values.
     ///
-    /// [`begin_write()`]: #method.begin_write
-    /// [`cancel_write()`]: #method.cancel_write
-    /// [`write()`]: #method.write
+    /// [`write()`]: Self::write
+    /// [`cancel_write()`]: Self::cancel_write
     pub fn begin_write<'a>(&mut self, nbytes: Option<usize>)
         -> Result<Option<&'a mut [u8]>, PAErr>
     {
@@ -1097,12 +1042,11 @@ impl Stream {
     /// the memory area returned by [`begin_write()`].
     ///
     /// Only valid to call after a call to [`begin_write()`] has been made, and neither
-    /// [`cancel_write()`] nor [`write()`] have been called yet. Accessing the memory previously
+    /// `cancel_write()` nor [`write()`] have been called yet. Accessing the memory previously
     /// returned by [`begin_write()`] after calling this function is invalid.
     ///
-    /// [`begin_write()`]: #method.begin_write
-    /// [`cancel_write()`]: #method.cancel_write
-    /// [`write()`]: #method.write
+    /// [`write()`]: Self::write
+    /// [`begin_write()`]: Self::begin_write
     pub fn cancel_write(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_cancel_write(self.ptr) } {
             0 => Ok(()),
@@ -1123,9 +1067,9 @@ impl Stream {
     ///
     /// As an optimization for avoiding needless memory copies you may call [`begin_write()`] before
     /// this call and then place your audio data directly in the memory area returned by that call.
-    /// Then, pass a pointer to that memory area to [`write()`]. After the invocation of [`write()`]
-    /// the memory area may no longer be accessed. Any further explicit freeing of the memory area
-    /// is not necessary. It is OK to write to the memory area returned by [`begin_write()`] only
+    /// Then, pass a pointer to that memory area to `write()`. After the invocation of `write()` the
+    /// memory area may no longer be accessed. Any further explicit freeing of the memory area is
+    /// not necessary. It is OK to write to the memory area returned by [`begin_write()`] only
     /// partially with this call, skipping bytes both at the end and at the beginning of the
     /// reserved memory area.
     ///
@@ -1139,9 +1083,7 @@ impl Stream {
     ///   stream’s sample spec frame size.
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
-    /// [`begin_write()`]: #method.begin_write
-    /// [`write()`]: #method.write
+    /// [`begin_write()`]: Self::begin_write
     pub fn write(&mut self, data: &[u8], free_cb: Option<def::FreeCb>, offset: i64,
         seek: SeekMode) -> Result<(), PAErr>
     {
@@ -1170,8 +1112,7 @@ impl Stream {
     ///   stream’s sample spec frame size.
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
-    /// [`write()`]: #method.write
+    /// [`write()`]: Self::write
     #[inline(always)]
     pub fn write_copy(&mut self, data: &[u8], offset: i64, seek: SeekMode) -> Result<(), PAErr> {
         self.write(data, None, offset, seek)
@@ -1192,8 +1133,7 @@ impl Stream {
     /// * `offset`: Offset for seeking. Must be `0` for upload streams.
     /// * `seek`: Seek mode, must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
-    /// [`write()`]: #method.write
+    /// [`write()`]: Self::write
     #[cfg(any(doc, feature = "pa_v6"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
     pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(def::FreeCb, *mut c_void)>,
@@ -1234,11 +1174,10 @@ impl Stream {
     /// forward. [`discard()`] should not be called if the buffer is empty, but it should be called
     /// if there is a hole.
     ///
-    /// [`PeekResult`]: enum.PeekResult.html
-    /// [`Empty`]: enum.PeekResult.html#variant.Empty
-    /// [`Hole`]: enum.PeekResult.html#variant.Hole
-    /// [`Data`]: enum.PeekResult.html#variant.Data
-    /// [`discard()`]: #method.discard
+    /// [`Empty`]: PeekResult::Empty
+    /// [`Hole`]: PeekResult::Hole
+    /// [`Data`]: PeekResult::Data
+    /// [`discard()`]: Self::discard
     pub fn peek<'a>(&mut self) -> Result<PeekResult<'a>, PAErr> {
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
@@ -1260,7 +1199,7 @@ impl Stream {
 
     /// Removes the current fragment on record streams.
     ///
-    /// It is invalid to do this without first calling [`peek()`](#method.peek).
+    /// It is invalid to do this without first calling [`peek()`](Self::peek).
     ///
     /// Note: The original C function name used the term `drop`; We instead use `discard` here to
     /// avoid conflict with the Rust `Drop` trait!
@@ -1277,8 +1216,8 @@ impl Stream {
     /// bytes. This is usually not desirable, though, as it would increase stream latency to be
     /// higher than requested ([`buffer_attr.tlength`]).
     ///
-    /// [`buffer_attr.maxlength`]: ../def/struct.BufferAttr.html#structfield.maxlength
-    /// [`buffer_attr.tlength`]: ../def/struct.BufferAttr.html#structfield.tlength
+    /// [`buffer_attr.maxlength`]: crate::def::BufferAttr.maxlength
+    /// [`buffer_attr.tlength`]: crate::def::BufferAttr.tlength
     pub fn writable_size(&self) -> Option<usize> {
         match unsafe { capi::pa_stream_writable_size(self.ptr) } {
             std::usize::MAX => None,
@@ -1286,7 +1225,7 @@ impl Stream {
         }
     }
 
-    /// Gets the number of bytes that may be read using [`peek`](#method.peek).
+    /// Gets the number of bytes that may be read using [`peek()`](Self::peek).
     pub fn readable_size(&self) -> Option<usize> {
         match unsafe { capi::pa_stream_readable_size(self.ptr) } {
             std::usize::MAX => None,
@@ -1321,9 +1260,9 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`get_timing_info()`]: #method.get_timing_info
-    /// [`get_time()`]: #method.get_time
-    /// [`get_latency()`]: #method.get_latency
+    /// [`get_timing_info()`]: Self::get_timing_info
+    /// [`get_time()`]: Self::get_time
+    /// [`get_latency()`]: Self::get_latency
     pub fn update_timing_info(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1409,8 +1348,6 @@ impl Stream {
     /// Sets the callback function that is called whenever a latency information update happens.
     ///
     /// Useful on [`flags::AUTO_TIMING_UPDATE`] streams only.
-    ///
-    /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
     pub fn set_latency_update_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.latency_update;
         *saved = NotifyCb::new(callback);
@@ -1423,8 +1360,8 @@ impl Stream {
     ///
     /// Use [`get_device_name()`] or [`get_device_index()`] to query the new sink/source.
     ///
-    /// [`get_device_name()`]: #method.get_device_name
-    /// [`get_device_index()`]: #method.get_device_index
+    /// [`get_device_name()`]: Self::get_device_name
+    /// [`get_device_index()`]: Self::get_device_index
     pub fn set_moved_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.moved;
         *saved = NotifyCb::new(callback);
@@ -1439,8 +1376,8 @@ impl Stream {
     /// might also change when the stream is moved between devices. Thus if you call this function
     /// you very likely want to call [`set_moved_callback()`] too.
     ///
-    /// [`is_suspended()`]: #method.is_suspended
-    /// [`set_moved_callback()`]: #method.set_moved_callback
+    /// [`is_suspended()`]: Self::is_suspended
+    /// [`set_moved_callback()`]: Self::set_moved_callback
     pub fn set_suspended_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.suspended;
         *saved = NotifyCb::new(callback);
@@ -1453,8 +1390,8 @@ impl Stream {
     /// The callback is given a name which represents what event occurred. The set of defined events
     /// can be extended at any time. Also, server modules may introduce additional message types so
     /// make sure that your callback function ignores messages it doesn’t know. Some well known
-    /// event names can be found in the [`event_names`](event_names/index.html) submodule. It is
-    /// also given an (owned) property list.
+    /// event names can be found in the [`event_names`](mod@self::event_names) submodule. It is also
+    /// given an (owned) property list.
     pub fn set_event_callback(&mut self,
         callback: Option<Box<dyn FnMut(String, Proplist) + 'static>>)
     {
@@ -1471,7 +1408,7 @@ impl Stream {
     /// sink/source too, hence if you use this callback you should use [`set_moved_callback()`] as
     /// well.
     ///
-    /// [`set_moved_callback()`]: #method.set_moved_callback
+    /// [`set_moved_callback()`]: Self::set_moved_callback
     pub fn set_buffer_attr_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.buffer_attr;
         *saved = NotifyCb::new(callback);
@@ -1493,8 +1430,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`is_corked()`]: #method.is_corked
-    /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
+    /// [`is_corked()`]: Self::is_corked
     pub fn cork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1519,8 +1455,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`is_corked()`]: #method.is_corked
-    /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
+    /// [`is_corked()`]: Self::is_corked
     pub fn uncork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1534,7 +1469,7 @@ impl Stream {
     /// Flushes the playback or record buffer of this stream.
     ///
     /// This discards any audio data in the buffer. Most of the time you’re better off using the
-    /// parameter `seek` of [`write()`](#method.write) instead of this function.
+    /// parameter `seek` of [`write()`](Self::write) instead of this function.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1557,7 +1492,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`BufferAttr`]: ../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: crate::def::BufferAttr
     pub fn prebuf(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1577,7 +1512,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`BufferAttr`]: ../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: crate::def::BufferAttr
     pub fn trigger(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1636,10 +1571,8 @@ impl Stream {
     /// If no timing information has been received yet this call will return `Ok(None)`. For more
     /// details see [`get_timing_info()`].
     ///
-    /// [`get_timing_info()`]: #method.get_timing_info
-    /// [`update_timing_info()`]: #method.update_timing_info
-    /// [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
-    /// [`flags::NOT_MONOTONIC`]: flags/constant.NOT_MONOTONIC.html
+    /// [`get_timing_info()`]: Self::get_timing_info
+    /// [`update_timing_info()`]: Self::update_timing_info
     pub fn get_time(&self) -> Result<Option<MicroSeconds>, PAErr> {
         let mut r_usecs = MicroSeconds(0);
         match unsafe { capi::pa_stream_get_time(self.ptr, &mut r_usecs.0) } {
@@ -1662,8 +1595,8 @@ impl Stream {
     ///
     /// For more details see [`get_timing_info()`] and [`get_time()`].
     ///
-    /// [`get_time()`]: #method.get_time
-    /// [`get_timing_info()`]: #method.get_timing_info
+    /// [`get_time()`]: Self::get_time
+    /// [`get_timing_info()`]: Self::get_timing_info
     pub fn get_latency(&self) -> Result<Latency, PAErr> {
         let mut r_usecs = MicroSeconds(0);
         let mut negative: i32 = 0;
@@ -1690,9 +1623,8 @@ impl Stream {
     /// Please note that the `write_index` member field (and only this field) is updated on each
     /// [`write()`] call, not just when a timing update has been received.
     ///
-    /// [`update_timing_info()`]: #method.update_timing_info
-    /// [`write()`]: #method.write
-    /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
+    /// [`update_timing_info()`]: Self::update_timing_info
+    /// [`write()`]: Self::write
     pub fn get_timing_info<'a>(&mut self) -> Option<&'a def::TimingInfo> {
         unsafe {
             let ptr = capi::pa_stream_get_timing_info(self.ptr);
@@ -1733,9 +1665,8 @@ impl Stream {
     /// per-stream server-side buffer metrics, regardless whether [`flags::ADJUST_LATENCY`] is set
     /// or not.
     ///
-    /// [`connect_record()`]: #method.connect_record
-    /// [`connect_playback()`]: #method.connect_playback
-    /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
+    /// [`connect_record()`]: Self::connect_record
+    /// [`connect_playback()`]: Self::connect_playback
     pub fn get_buffer_attr<'a>(&mut self) -> Option<&'a def::BufferAttr> {
         unsafe {
             let ptr = capi::pa_stream_get_buffer_attr(self.ptr);
@@ -1754,8 +1685,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`get_buffer_attr()`]: #method.get_buffer_attr
-    /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
+    /// [`get_buffer_attr()`]: Self::get_buffer_attr
     pub fn set_buffer_attr<F>(&mut self, attr: &def::BufferAttr, callback: F)
         -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -1777,8 +1707,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`connect_playback()`]: #method.connect_playback
-    /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
+    /// [`connect_playback()`]: Self::connect_playback
     pub fn update_sample_rate<F>(&mut self, rate: u32, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
@@ -1799,7 +1728,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`new_with_proplist()`]: #method.new_with_proplist
+    /// [`new_with_proplist()`]: Self::new_with_proplist
     pub fn update_proplist<F>(&mut self, mode: proplist::UpdateMode, proplist: &mut Proplist,
         callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -1846,7 +1775,7 @@ impl Stream {
     /// For record streams connected to a monitor source: monitors only a very specific sink input
     /// of the sink.
     ///
-    /// This function needs to be called before [`connect_record()`](#method.connect_record) is
+    /// This function needs to be called before [`connect_record()`](Self::connect_record) is
     /// called.
     pub fn set_monitor_stream(&mut self, sink_input_index: u32) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_index) } {
@@ -1855,8 +1784,9 @@ impl Stream {
         }
     }
 
-    /// Gets the sink input index previously set with
-    /// [`set_monitor_stream()`](#method.set_monitor_stream).
+    /// Gets the sink input index previously set with [`set_monitor_stream()`].
+    ///
+    /// [`set_monitor_stream()`]: Self::set_monitor_stream
     pub fn get_monitor_stream(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_monitor_stream(self.ptr) } {
             def::INVALID_INDEX => None,

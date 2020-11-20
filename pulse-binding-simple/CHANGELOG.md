@@ -1,3 +1,10 @@
+# [unreleased]
+
+ * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is
+   too great a simplification to maintaining documentation to not implement immediately; the only
+   negative is that links will be broken in locally generated documentation when built with an older
+   Rust compiler than version 1.48.
+
 # 2.20.1 (December 15th, 2020)
 
  * Fixed mistake made trying to conditionally enable `#[cfg(doc)]` for docs.rs.

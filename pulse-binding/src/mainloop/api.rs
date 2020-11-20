@@ -124,9 +124,6 @@ pub trait Mainloop {
     /// given file descriptor, and an event flag set, indicating the event(s) that occurred. The
     /// [`DeferEventRef`] object gives you some opportunity to manage the event source from within
     /// it’s callback execution.
-    ///
-    /// [`IoEventRef`]: ../events/io/struct.IoEventRef.html
-    /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
     fn new_io_event(&mut self, fd: i32, events: IoEventFlagSet,
         mut callback: Box<dyn FnMut(IoEventRef<Self::MI>, i32, IoEventFlagSet) + 'static>)
         -> Option<IoEvent<Self::MI>>
@@ -167,8 +164,6 @@ pub trait Mainloop {
     ///     &(UnixTs::now() + MicroSeconds::from_secs(5).unwrap()),
     ///     Box::new(|_| { println!("Timer event fired!"); }));
     /// ```
-    ///
-    /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
     fn new_timer_event(&mut self, tv: &UnixTs,
         mut callback: Box<dyn FnMut(TimeEventRef<Self::MI>) + 'static>)
         -> Option<TimeEvent<Self::MI>>
@@ -213,8 +208,6 @@ pub trait Mainloop {
     ///     MonotonicTs::now() + MicroSeconds::from_secs(5).unwrap(),
     ///     Box::new(|_| { println!("Timer event fired!"); }));
     /// ```
-    ///
-    /// [`TimeEventRef`]: ../events/timer/struct.TimeEventRef.html
     fn new_timer_event_rt(&mut self, t: MonotonicTs,
         mut callback: Box<dyn FnMut(TimeEventRef<Self::MI>) + 'static>)
         -> Option<TimeEvent<Self::MI>>
@@ -252,8 +245,6 @@ pub trait Mainloop {
     ///
     /// The callback must take a [`DeferEventRef`] object, which gives you some opportunity to
     /// manage the event source from within it’s callback execution.
-    ///
-    /// [`DeferEventRef`]: ../events/deferred/struct.DeferEventRef.html
     fn new_deferred_event(&mut self,
         mut callback: Box<dyn FnMut(DeferEventRef<Self::MI>) + 'static>)
         -> Option<DeferEvent<Self::MI>>
@@ -281,8 +272,8 @@ pub trait Mainloop {
     ///
     /// If the mainloop runs in a different thread, you need to follow the mainloop implementation’s
     /// rules regarding how to safely create defer events. In particular, if you’re using
-    /// [`mainloop::threaded`](../threaded/index.html), you must lock the mainloop before calling
-    /// this function.
+    /// [`mainloop::threaded`](mod@crate::mainloop::threaded), you must lock the mainloop before
+    /// calling this function.
     fn once_event(&mut self, callback: Box<dyn FnMut() + 'static>) {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _)>, _) =
             get_su_capi_params::<_, _>(Some(callback), once_cb_proxy);

@@ -57,21 +57,10 @@
 //!
 //! The sound server’s functionality can be divided into a number of subsections:
 //!
-//! * [`stream`]
-//! * [`context::scache`]
-//! * [`context::introspect`]
-//! * [`context::subscribe`]
-//!
-//! [`Context::connect()`]: struct.Context.html#method.connect
-//! [`Context::disconnect()`]: struct.Context.html#method.disconnect
-//! [`Context::set_state_callback()`]: struct.Context.html#method.set_state_callback
-//! [`context::introspect`]: ../context/introspect/index.html
-//! [`context::scache`]: ../context/scache/index.html
-//! [`context::subscribe`]: ../context/subscribe/index.html
-//! [`Operation::cancel()`]: ../operation/struct.Operation.html#method.cancel
-//! [`Operation::get_state()`]: ../operation/struct.Operation.html#method.get_state
-//! [`Operation`]: ../operation/struct.Operation.html
-//! [`stream`]: ../stream/index.html
+//! * [`stream`](mod@crate::stream)
+//! * [`context::scache`](mod@crate::context::scache)
+//! * [`context::introspect`](mod@crate::context::introspect)
+//! * [`context::subscribe`](mod@crate::context::subscribe)
 
 pub mod ext_device_manager;
 pub mod ext_device_restore;
@@ -199,10 +188,8 @@ bitflags! {
         const NOFLAGS = capi::PA_CONTEXT_NOFLAGS;
         /// Disable autospawning of the PulseAudio daemon if required.
         const NOAUTOSPAWN = capi::PA_CONTEXT_NOAUTOSPAWN;
-        /// Don’t fail if the daemon is not available when
-        /// [`Context::connect()`](struct.Context.html#method.connect) is called, instead enter
-        /// [`State::Connecting`](enum.State.html#variant.Connecting) state and wait for the daemon
-        /// to appear.
+        /// Don’t fail if the daemon is not available when [`Context::connect()`] is called, instead
+        /// enter [`State::Connecting`] state and wait for the daemon to appear.
         const NOFAIL = capi::PA_CONTEXT_NOFAIL;
     }
 }
@@ -216,17 +203,18 @@ pub mod flags {
     pub const NOFLAGS:     FlagSet = FlagSet::NOFLAGS;
     /// Disable autospawning of the PulseAudio daemon if required.
     pub const NOAUTOSPAWN: FlagSet = FlagSet::NOAUTOSPAWN;
-    /// Don’t fail if the daemon is not available when
-    /// [`Context::connect()`](../struct.Context.html#method.connect) is called, instead enter
-    /// [`State::Connecting`](../enum.State.html#variant.Connecting) state and wait for the daemon
-    /// to appear.
+    /// Don’t fail if the daemon is not available when [`Context::connect()`] is called, instead
+    /// enter [`State::Connecting`] state and wait for the daemon to appear.
+    ///
+    /// [`Context::connect()`]: super::Context::connect
+    /// [`State::Connecting`]: super::State::Connecting
     pub const NOFAIL:      FlagSet = FlagSet::NOFAIL;
 }
 
 impl Context {
     /// Instantiates a new connection context with an abstract mainloop API and an application name.
     ///
-    /// It is recommended to use [`new_with_proplist()`](#method.new_with_proplist) instead and
+    /// It is recommended to use [`new_with_proplist()`](Self::new_with_proplist) instead and
     /// specify some initial properties.
     ///
     /// Note, this will fail either should the underlying C API call return a null pointer for some
@@ -278,8 +266,6 @@ impl Context {
     }
 
     /// Creates a new `Context` from an existing [`ContextInternal`] pointer.
-    ///
-    /// [`ContextInternal`]: ../../libpulse_sys/context/struct.pa_context.html
     #[inline]
     pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());
@@ -330,11 +316,12 @@ impl Context {
     /// Connects the context to the specified server.
     ///
     /// If server is `None`, connect to the default server. This routine may but will not always
-    /// return synchronously on error. Use [`set_state_callback()`](#method.set_state_callback) to
-    /// be notified when the connection is established. If `flags` doesn’t have
-    /// [`flags::NOAUTOSPAWN`](flags/constant.NOAUTOSPAWN.html) set and no specific server is
-    /// specified or accessible, a new daemon is spawned. If `api` is not `None`, the functions
-    /// specified in the structure are used when forking a new child process.
+    /// return synchronously on error. Use [`set_state_callback()`] to be notified when the
+    /// connection is established. If `flags` doesn’t have [`flags::NOAUTOSPAWN`] set and no
+    /// specific server is specified or accessible, a new daemon is spawned. If `api` is not `None`,
+    /// the functions specified in the structure are used when forking a new child process.
+    ///
+    /// [`set_state_callback()`]: Self::set_state_callback
     pub fn connect(&mut self, server: Option<&str>, flags: FlagSet, api: Option<&def::SpawnApi>)
         -> Result<(), PAErr>
     {
@@ -497,8 +484,8 @@ impl Context {
     /// Updates the property list of the client, adding new entries.
     ///
     /// Please note that it is highly recommended to set as many properties initially via
-    /// [`new_with_proplist()`](#method.new_with_proplist) as possible instead a posteriori with
-    /// this function, since that information may then be used to route streams of the client to the
+    /// [`new_with_proplist()`](Self::new_with_proplist) as possible instead a posteriori with this
+    /// function, since that information may then be used to route streams of the client to the
     /// right device.
     ///
     /// Panics if the underlying C function returns a null pointer.
@@ -544,11 +531,9 @@ impl Context {
     /// Gets the client index this context is identified in the server with.
     ///
     /// This is useful for usage with the introspection functions, such as
-    /// [`Introspector::get_client_info()`].
+    /// [`Introspector::get_client_info()`](self::introspect::Introspector::get_client_info).
     ///
     /// Returns `None` on error.
-    ///
-    /// [`Introspector::get_client_info()`]: introspect/struct.Introspector.html#method.get_client_info
     pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_context_get_index(self.ptr) } {
             def::INVALID_INDEX => None,
@@ -564,7 +549,7 @@ impl Context {
     /// it. The association is done to ensure the event does not outlive the mainloop.
     ///
     /// If pointer returned by underlying C function is `NULL`, `None` will be returned, otherwise a
-    /// [`TimeEvent`] object will be returned.
+    /// [`TimeEvent`](crate::mainloop::events::timer::TimeEvent) object will be returned.
     ///
     /// Example event set to fire in five seconds time:
     ///
@@ -578,8 +563,6 @@ impl Context {
     /// **Note**: You must ensure that the returned event object lives for as long as you want its
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
-    ///
-    /// [`TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     pub fn rttime_new<T, F>(&self, mainloop: &dyn Mainloop<MI=T::MI>, time: MonotonicTs,
         mut callback: F) -> Option<TimeEvent<T::MI>>
         where T: Mainloop + 'static,

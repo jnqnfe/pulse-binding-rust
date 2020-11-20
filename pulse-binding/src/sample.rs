@@ -48,7 +48,7 @@
 //!
 //! PulseAudio supports up to 32 individual channels. The order of the channels is up to the
 //! application, but they must be continuous. To map channels to speakers, see
-//! [`channelmap`](../channelmap/index.html).
+//! [`channelmap`](mod@crate::channelmap).
 //!
 //! # Calculations
 //!
@@ -62,11 +62,6 @@
 //! * [`Spec::sample_size()`]: The size, in bytes, of one sample.
 //! * [`Spec::bytes_to_usec()`]: Calculate the time it would take to play a buffer of a certain
 //!   size.
-//!
-//! [`Spec::bytes_per_second()`]: struct.Spec.html#method.bytes_per_second
-//! [`Spec::frame_size()`]: struct.Spec.html#method.frame_size
-//! [`Spec::sample_size()`]: struct.Spec.html#method.sample_size
-//! [`Spec::bytes_to_usec()`]: struct.Spec.html#method.bytes_to_usec
 
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
@@ -166,7 +161,7 @@ impl Default for Format {
 
 // The following are endian-independant format references.
 
-/// A shortcut for [`SAMPLE_FLOAT32NE`](constant.SAMPLE_FLOAT32NE.html).
+/// A shortcut for [`SAMPLE_FLOAT32NE`].
 #[allow(deprecated)]
 #[deprecated(since = "2.20.0", note="use the `FLOAT32NE` associated constant on `Format` instead")]
 pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
@@ -300,7 +295,7 @@ impl Spec {
 
     /// Initializes the specified sample spec.
     ///
-    /// The sample spec will have a defined state but [`is_valid()`](#method.is_valid) will fail for
+    /// The sample spec will have a defined state but [`is_valid()`](Self::is_valid) will fail for
     /// it.
     #[inline]
     pub fn init(&mut self) {
@@ -422,8 +417,7 @@ impl Format {
     /// Signed 24-bit PCM, in LSB of 32-bit words, reverse endian.
     pub const S24_32RE:  Self = self::ei_formats::SAMPLE_S24_32RE;
 
-    /// Similar to [`Spec::sample_size()`](struct.Spec.html#method.sample_size) but take a sample
-    /// format instead of full sample spec.
+    /// Similar to [`Spec::sample_size()`] but take a sample format instead of full sample spec.
     #[inline]
     pub fn size(&self) -> usize {
         unsafe { capi::pa_sample_size_of_format((*self).into()) }
@@ -438,7 +432,7 @@ impl Format {
         }
     }
 
-    /// Parses a sample format text. Inverse of [`to_string()`](#method.to_string).
+    /// Parses a sample format text. Inverse of [`to_string()`](Self::to_string).
     pub fn parse(format: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

@@ -17,9 +17,9 @@
 //!
 //! In contrast to other main loop event sources such as timer and IO events, UNIX signal support
 //! requires modification of the global process environment. Due to this the generic main loop
-//! abstraction layer as defined in [`mainloop::api`](../api/index.html) doesn’t have direct support
-//! for UNIX signals. However, you may hook signal support into an abstract main loop via the
-//! routines defined herein.
+//! abstraction layer as defined in [`mainloop::api`](mod@crate::mainloop::api) doesn’t have direct
+//! support for UNIX signals. However, you may hook signal support into an abstract main loop via
+//! the routines defined herein.
 
 use std::os::raw::c_void;
 use std::ptr::null_mut;

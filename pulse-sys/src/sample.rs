@@ -106,7 +106,7 @@ mod ei_formats {
     pub const PA_SAMPLE_S24_32RE:  pa_sample_format_t = pa_sample_format_t::S24_32be;
 }
 
-/// A shortcut for [`PA_SAMPLE_FLOAT32NE`](ei_formats/constant.PA_SAMPLE_FLOAT32NE.html).
+/// A shortcut for [`PA_SAMPLE_FLOAT32NE`].
 pub const PA_SAMPLE_FLOAT32: pa_sample_format_t = PA_SAMPLE_FLOAT32NE;
 
 /// A sample format and attribute specification.
@@ -126,14 +126,14 @@ pub struct pa_sample_spec {
 /// Type for usec specifications (unsigned). Always 64 bit.
 pub type pa_usec_t = u64;
 
-/// The maximum length of strings returned by [`pa_sample_spec_snprint()`](fn.pa_sample_spec_snprint.html).
+/// The maximum length of strings returned by [`pa_sample_spec_snprint()`].
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 pub const PA_SAMPLE_SPEC_SNPRINT_MAX: usize = 32;
 
-/// The maximum length of strings returned by [`pa_bytes_snprint()`](fn.pa_bytes_snprint.html).
+/// The maximum length of strings returned by [`pa_bytes_snprint()`].
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might

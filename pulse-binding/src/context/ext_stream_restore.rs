@@ -86,7 +86,7 @@ impl Context {
     /// Gets a stream restore object linked to the current context, giving access to stream restore
     /// routines.
     ///
-    /// See [`context::ext_stream_restore`](ext_stream_restore/index.html).
+    /// See [`context::ext_stream_restore`](mod@crate::context::ext_stream_restore).
     pub fn stream_restore(&self) -> StreamRestore {
         unsafe { capi::pa_context_ref(self.ptr) };
         StreamRestore::from_raw(self.ptr)
@@ -94,8 +94,7 @@ impl Context {
 }
 
 impl StreamRestore {
-    /// Creates a new `StreamRestore` from an existing
-    /// [`ContextInternal`](../../../libpulse_sys/context/struct.pa_context.html) pointer.
+    /// Creates a new `StreamRestore` from an existing [`ContextInternal`] pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
     }
@@ -190,7 +189,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Sets the subscription callback that is called when [`subscribe()`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe()`](Self::subscribe) was
     /// called.
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
         where F: FnMut() + 'static

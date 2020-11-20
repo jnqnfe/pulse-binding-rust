@@ -41,14 +41,14 @@ impl UnixTs {
     }
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
-    /// using the inner integer’s `checked_add()` method.
+    /// using the inner integer’s [`checked_add()`](Timeval::checked_add) method.
     #[inline]
     pub fn checked_add(self, rhs: MicroSeconds) -> Option<Self> {
         self.0.checked_add_us(rhs).and_then(|us| Some(Self(us)))
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
-    /// using the inner integer’s `checked_sub()` method.
+    /// using the inner integer’s [`checked_sub()`](Timeval::checked_sub) method.
     #[inline]
     pub fn checked_sub(self, rhs: MicroSeconds) -> Option<Self> {
         self.0.checked_sub_us(rhs).and_then(|us| Some(Self(us)))
