@@ -78,7 +78,7 @@
 //!
 //! Normally when holding multiple references to objects across threads in Rust you would use an
 //! `Arc` wrapper. However, with the [`Threaded`] mainloop, you may be able to get away with using
-//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use it’s `lock`
+//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use its `lock`
 //! method to synchronise access to objects, and so you know that at any one moment either your
 //! thread (when you take the lock) **or** the event loop thread hold the lock, never both, and thus
 //! only one thread is ever working with objects at any one time, and since Rust actually has no
