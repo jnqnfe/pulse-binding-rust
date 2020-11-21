@@ -222,7 +222,7 @@ impl Context {
         match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
-    /// Creates a new `Context` from an existing [`ContextInternal`](enum.ContextInternal.html)
+    /// Creates a new `Context` from an existing [`ContextInternal`](struct.ContextInternal.html)
     /// pointer.
     #[inline]
     pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {

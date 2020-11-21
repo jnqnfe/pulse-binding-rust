@@ -229,7 +229,7 @@ impl Proplist {
         match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
-    /// Creates a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
+    /// Creates a new `Proplist` from an existing [`ProplistInternal`](struct.ProplistInternal.html)
     /// pointer.
     #[inline]
     pub(crate) fn from_raw(ptr: *mut ProplistInternal) -> Self {
@@ -237,7 +237,7 @@ impl Proplist {
         Proplist(ProplistInner { ptr: ptr, weak: false })
     }
 
-    /// Creates a new `Proplist` from an existing [`ProplistInternal`](enum.ProplistInternal.html)
+    /// Creates a new `Proplist` from an existing [`ProplistInternal`](struct.ProplistInternal.html)
     /// pointer.
     ///
     /// This is the ‘weak’ version, which avoids destroying the internal object when dropped.
