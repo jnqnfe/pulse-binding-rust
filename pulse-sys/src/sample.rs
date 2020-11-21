@@ -104,7 +104,7 @@ mod ei_formats {
     pub const PA_SAMPLE_S24_32RE: pa_sample_format_t = pa_sample_format_t::S24_32be;
 }
 
-/// A Shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.PA_SAMPLE_FLOAT32NE.html).
+/// A shortcut for [`PA_SAMPLE_FLOAT32NE`](ei_formats/constant.PA_SAMPLE_FLOAT32NE.html).
 pub const PA_SAMPLE_FLOAT32: pa_sample_format_t = PA_SAMPLE_FLOAT32NE;
 
 /// A sample format and attribute specification.

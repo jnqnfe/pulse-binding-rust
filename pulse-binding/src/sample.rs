@@ -197,7 +197,7 @@ mod ei_formats {
     pub const SAMPLE_S24_32RE: Format = Format::S24_32be;
 }
 
-/// A Shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.SAMPLE_FLOAT32NE.html).
+/// A shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.SAMPLE_FLOAT32NE.html).
 pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
 
 /// A sample format and attribute specification.
