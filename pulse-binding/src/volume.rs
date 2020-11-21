@@ -71,7 +71,8 @@ use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;
 #[cfg(any(feature = "pa_v5", feature = "dox"))]
 use std::ptr::null;
-use crate::{channelmap, sample};
+use crate::sample;
+use crate::channelmap::{Map, Position, PositionMask, POSITION_MASK_ALL};
 
 pub const VOLUME_NORM: Volume = Volume(capi::PA_VOLUME_NORM);
 pub const VOLUME_MUTED: Volume = Volume(capi::PA_VOLUME_MUTED);
@@ -442,10 +443,8 @@ impl ChannelVolumes {
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     #[inline]
-    pub fn avg_mask(&self, cm: &channelmap::Map, mask: Option<channelmap::PositionMask>)
-        -> Volume
-    {
-        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
+    pub fn avg_mask(&self, cm: &Map, mask: Option<PositionMask>) -> Volume {
+        let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_avg_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
@@ -462,10 +461,8 @@ impl ChannelVolumes {
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     #[inline]
-    pub fn max_mask(&self, cm: &channelmap::Map, mask: Option<channelmap::PositionMask>)
-        -> Volume
-    {
-        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
+    pub fn max_mask(&self, cm: &Map, mask: Option<PositionMask>) -> Volume {
+        let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_max_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
@@ -482,10 +479,8 @@ impl ChannelVolumes {
     /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
     /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
     #[inline]
-    pub fn min_mask(&self, cm: &channelmap::Map, mask: Option<channelmap::PositionMask>)
-        -> Volume
-    {
-        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
+    pub fn min_mask(&self, cm: &Map, mask: Option<PositionMask>) -> Volume {
+        let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);
         Volume(unsafe { capi::pa_cvolume_min_mask(self.as_ref(), cm.as_ref(), mask_actual) })
     }
 
@@ -533,7 +528,7 @@ impl ChannelVolumes {
     ///
     /// Returns pointer to self.
     #[inline]
-    pub fn remap(&mut self, from: &channelmap::Map, to: &channelmap::Map) -> &mut Self {
+    pub fn remap(&mut self, from: &Map, to: &Map) -> &mut Self {
         unsafe { capi::pa_cvolume_remap(self.as_mut(), from.as_ref(), to.as_ref()) };
         self
     }
@@ -546,7 +541,7 @@ impl ChannelVolumes {
 
     /// Checks if the specified volume is compatible with the specified channel map.
     #[inline]
-    pub fn is_compatible_with_cm(&self, cm: &channelmap::Map) -> bool {
+    pub fn is_compatible_with_cm(&self, cm: &Map) -> bool {
         unsafe { capi::pa_cvolume_compatible_with_channel_map(self.as_ref(), cm.as_ref()) != 0 }
     }
 
@@ -558,7 +553,7 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
     #[inline]
-    pub fn get_balance(&self, map: &channelmap::Map) -> f32 {
+    pub fn get_balance(&self, map: &Map) -> f32 {
         unsafe { capi::pa_cvolume_get_balance(self.as_ref(), map.as_ref()) }
     }
 
@@ -575,7 +570,7 @@ impl ChannelVolumes {
     /// [`get_balance`]: #method.get_balance
     /// [`channelmap::Map::can_balance`]: ../channelmap/struct.Map.html#method.can_balance
     #[inline]
-    pub fn set_balance(&mut self, map: &channelmap::Map, new_balance: f32) -> Option<&mut Self> {
+    pub fn set_balance(&mut self, map: &Map, new_balance: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_balance(self.as_mut(), map.as_ref(), new_balance) };
         match ptr.is_null() { false => Some(self), true => None }
     }
@@ -589,7 +584,7 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
     #[inline]
-    pub fn get_fade(&self, map: &channelmap::Map) -> f32 {
+    pub fn get_fade(&self, map: &Map) -> f32 {
         unsafe { capi::pa_cvolume_get_fade(self.as_ref(), map.as_ref()) }
     }
 
@@ -607,7 +602,7 @@ impl ChannelVolumes {
     /// [`get_fade`]: #method.get_fade
     /// [`channelmap::Map::can_fade`]: ../channelmap/struct.Map.html#method.can_fade
     #[inline]
-    pub fn set_fade(&mut self, map: &channelmap::Map, new_fade: f32) -> Option<&mut Self> {
+    pub fn set_fade(&mut self, map: &Map, new_fade: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_fade(self.as_mut(), map.as_ref(), new_fade) };
         match ptr.is_null() { false => Some(self), true => None }
     }
@@ -623,7 +618,7 @@ impl ChannelVolumes {
     /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
     #[cfg(any(feature = "pa_v8", feature = "dox"))]
-    pub fn get_lfe_balance(&self, map: &channelmap::Map) -> f32 {
+    pub fn get_lfe_balance(&self, map: &Map) -> f32 {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
 
@@ -643,9 +638,7 @@ impl ChannelVolumes {
     /// [`channelmap::Map::can_lfe_balance`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
     #[cfg(any(feature = "pa_v8", feature = "dox"))]
-    pub fn set_lfe_balance(&mut self, map: &channelmap::Map, new_balance: f32)
-        -> Option<&mut Self>
-    {
+    pub fn set_lfe_balance(&mut self, map: &Map, new_balance: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(self.as_mut(), map.as_ref(),
             new_balance) };
         match ptr.is_null() { false => Some(self), true => None }
@@ -672,10 +665,10 @@ impl ChannelVolumes {
     ///
     /// Returns pointer to self, or `None` on error.
     #[inline]
-    pub fn scale_mask(&mut self, max: Volume, cm: &mut channelmap::Map,
-        mask: Option<channelmap::PositionMask>) -> Option<&mut Self>
+    pub fn scale_mask(&mut self, max: Volume, cm: &mut Map, mask: Option<PositionMask>)
+        -> Option<&mut Self>
     {
-        let mask_actual = mask.unwrap_or(channelmap::POSITION_MASK_ALL);
+        let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);
         let ptr = unsafe { capi::pa_cvolume_scale_mask(self.as_mut(), max.0, cm.as_ref(),
             mask_actual) };
         match ptr.is_null() { false => Some(self), true => None }
@@ -689,9 +682,7 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     #[inline]
-    pub fn set_position(&mut self, map: &channelmap::Map, t: channelmap::Position, v: Volume)
-        -> Option<&mut Self>
-    {
+    pub fn set_position(&mut self, map: &Map, t: Position, v: Volume) -> Option<&mut Self> {
         // Note: C function returns NULL on invalid data or no channel at position specified (no
         // change needed). We could ignore failure and always return self ptr, but it does not seem
         // ideal to leave callers unaware should they be passing in invalid data.
@@ -707,7 +698,7 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     #[inline]
-    pub fn get_position(&self, map: &channelmap::Map, t: channelmap::Position) -> Volume {
+    pub fn get_position(&self, map: &Map, t: Position) -> Volume {
         Volume(unsafe { capi::pa_cvolume_get_position(self.as_ref(), map.as_ref(), t.into()) })
     }
 
@@ -788,7 +779,7 @@ impl ChannelVolumes {
     ///
     /// Available since PA version 5.
     #[cfg(any(feature = "pa_v5", feature = "dox"))]
-    pub fn print_verbose(&self, map: Option<&channelmap::Map>, print_db: bool) -> String {
+    pub fn print_verbose(&self, map: Option<&Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
