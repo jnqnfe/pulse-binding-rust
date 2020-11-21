@@ -48,7 +48,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     /// We also take a copy of the closure callback pointer, in order to free the memory on
     /// cancellation.
     ///
-    /// [`OperationInternal`]: struct.OperationInternal.html
+    /// [`OperationInternal`]: ../../libpulse_sys/operation/struct.pa_operation.html
     pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>)
         -> Self
     {

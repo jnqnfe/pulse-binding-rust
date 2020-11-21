@@ -185,7 +185,7 @@ impl Simple {
         }
     }
 
-    /// Creates a new `Simple` from an existing [`SimpleInternal`](capi/struct.pa_simple.html) pointer.
+    /// Creates a new `Simple` from an existing [`SimpleInternal`](../libpulse_simple_sys/struct.pa_simple.html) pointer.
     fn from_raw(ptr: *mut SimpleInternal) -> Self {
         assert_eq!(false, ptr.is_null());
         Self { ptr }

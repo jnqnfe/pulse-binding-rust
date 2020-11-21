@@ -222,8 +222,9 @@ impl Context {
         match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
-    /// Creates a new `Context` from an existing [`ContextInternal`](struct.ContextInternal.html)
-    /// pointer.
+    /// Creates a new `Context` from an existing [`ContextInternal`] pointer.
+    ///
+    /// [`ContextInternal`]: ../../libpulse_sys/context/struct.pa_context.html
     #[inline]
     pub(crate) fn from_raw(ptr: *mut ContextInternal) -> Self {
         assert_eq!(false, ptr.is_null());

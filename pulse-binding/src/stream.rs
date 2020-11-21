@@ -646,7 +646,7 @@ impl Stream {
         match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
     }
 
-    /// Creates a new `Stream` from an existing [`StreamInternal`](struct.StreamInternal.html) pointer.
+    /// Creates a new `Stream` from an existing [`StreamInternal`](../../libpulse_sys/stream/struct.pa_stream.html) pointer.
     #[inline]
     fn from_raw(ptr: *mut StreamInternal) -> Self {
         assert_eq!(false, ptr.is_null());

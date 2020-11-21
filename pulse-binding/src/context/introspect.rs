@@ -271,7 +271,7 @@ impl Context {
 
 impl Introspector {
     /// Creates a new `Introspector` from an existing
-    /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
+    /// [`ContextInternal`](../../../libpulse_sys/context/struct.pa_context.html) pointer.
     #[inline(always)]
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context }

@@ -133,7 +133,7 @@ impl Context {
 
 impl DeviceManager {
     /// Creates a new `DeviceManager` from an existing
-    /// [`ContextInternal`](../struct.ContextInternal.html) pointer.
+    /// [`ContextInternal`](../../../libpulse_sys/context/struct.pa_context.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
     }
