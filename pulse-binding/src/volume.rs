@@ -682,11 +682,11 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     #[inline]
-    pub fn set_position(&mut self, map: &Map, t: Position, v: Volume) -> Option<&mut Self> {
+    pub fn set_position(&mut self, map: &Map, p: Position, v: Volume) -> Option<&mut Self> {
         // Note: C function returns NULL on invalid data or no channel at position specified (no
         // change needed). We could ignore failure and always return self ptr, but it does not seem
         // ideal to leave callers unaware should they be passing in invalid data.
-        let ptr = unsafe { capi::pa_cvolume_set_position(self.as_mut(), map.as_ref(), t.into(),
+        let ptr = unsafe { capi::pa_cvolume_set_position(self.as_mut(), map.as_ref(), p.into(),
             v.0) };
         match ptr.is_null() { false => Some(self), true => None }
     }
@@ -698,8 +698,8 @@ impl ChannelVolumes {
     ///
     /// [`channelmap::Map::has_position`]: ../channelmap/struct.Map.html#method.has_position
     #[inline]
-    pub fn get_position(&self, map: &Map, t: Position) -> Volume {
-        Volume(unsafe { capi::pa_cvolume_get_position(self.as_ref(), map.as_ref(), t.into()) })
+    pub fn get_position(&self, map: &Map, p: Position) -> Volume {
+        Volume(unsafe { capi::pa_cvolume_get_position(self.as_ref(), map.as_ref(), p.into()) })
     }
 
     /// Merges one set of channel volumes with another.
