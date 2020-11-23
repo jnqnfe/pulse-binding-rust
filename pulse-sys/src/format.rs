@@ -38,18 +38,18 @@ pub enum pa_encoding_t {
 
 pub const PA_ENCODING_MAX: usize = 7;
 
-pub const PA_ENCODING_ANY: pa_encoding_t = pa_encoding_t::Any;
-pub const PA_ENCODING_PCM: pa_encoding_t = pa_encoding_t::PCM;
-pub const PA_ENCODING_AC3_IEC61937: pa_encoding_t = pa_encoding_t::AC3_IEC61937;
-pub const PA_ENCODING_EAC3_IEC61937: pa_encoding_t = pa_encoding_t::EAC3_IEC61937;
-pub const PA_ENCODING_MPEG_IEC61937: pa_encoding_t = pa_encoding_t::MPEG_IEC61937;
-pub const PA_ENCODING_DTS_IEC61937: pa_encoding_t = pa_encoding_t::DTS_IEC61937;
+pub const PA_ENCODING_ANY:                pa_encoding_t = pa_encoding_t::Any;
+pub const PA_ENCODING_PCM:                pa_encoding_t = pa_encoding_t::PCM;
+pub const PA_ENCODING_AC3_IEC61937:       pa_encoding_t = pa_encoding_t::AC3_IEC61937;
+pub const PA_ENCODING_EAC3_IEC61937:      pa_encoding_t = pa_encoding_t::EAC3_IEC61937;
+pub const PA_ENCODING_MPEG_IEC61937:      pa_encoding_t = pa_encoding_t::MPEG_IEC61937;
+pub const PA_ENCODING_DTS_IEC61937:       pa_encoding_t = pa_encoding_t::DTS_IEC61937;
 pub const PA_ENCODING_MPEG2_AAC_IEC61937: pa_encoding_t = pa_encoding_t::MPEG2_AAC_IEC61937;
 #[cfg(any(feature = "pa_v13", feature = "dox"))]
-pub const PA_ENCODING_TRUEHD_IEC61937: pa_encoding_t = pa_encoding_t::TRUEHD_IEC61937;
+pub const PA_ENCODING_TRUEHD_IEC61937:    pa_encoding_t = pa_encoding_t::TRUEHD_IEC61937;
 #[cfg(any(feature = "pa_v13", feature = "dox"))]
-pub const PA_ENCODING_DTSHD_IEC61937: pa_encoding_t = pa_encoding_t::DTSHD_IEC61937;
-pub const PA_ENCODING_INVALID: pa_encoding_t = pa_encoding_t::Invalid;
+pub const PA_ENCODING_DTSHD_IEC61937:     pa_encoding_t = pa_encoding_t::DTSHD_IEC61937;
+pub const PA_ENCODING_INVALID:            pa_encoding_t = pa_encoding_t::Invalid;
 
 impl Default for pa_encoding_t {
     fn default() -> Self {
@@ -84,12 +84,12 @@ pub enum pa_prop_type_t {
     Invalid = -1,
 }
 
-pub const PA_PROP_TYPE_INT: pa_prop_type_t = pa_prop_type_t::Int;
-pub const PA_PROP_TYPE_INT_RANGE: pa_prop_type_t = pa_prop_type_t::IntRange;
-pub const PA_PROP_TYPE_INT_ARRAY: pa_prop_type_t = pa_prop_type_t::IntArray;
-pub const PA_PROP_TYPE_STRING: pa_prop_type_t = pa_prop_type_t::String;
+pub const PA_PROP_TYPE_INT:          pa_prop_type_t = pa_prop_type_t::Int;
+pub const PA_PROP_TYPE_INT_RANGE:    pa_prop_type_t = pa_prop_type_t::IntRange;
+pub const PA_PROP_TYPE_INT_ARRAY:    pa_prop_type_t = pa_prop_type_t::IntArray;
+pub const PA_PROP_TYPE_STRING:       pa_prop_type_t = pa_prop_type_t::String;
 pub const PA_PROP_TYPE_STRING_ARRAY: pa_prop_type_t = pa_prop_type_t::StringArray;
-pub const PA_PROP_TYPE_INVALID: pa_prop_type_t = pa_prop_type_t::Invalid;
+pub const PA_PROP_TYPE_INVALID:      pa_prop_type_t = pa_prop_type_t::Invalid;
 
 impl Default for pa_prop_type_t {
     fn default() -> Self {

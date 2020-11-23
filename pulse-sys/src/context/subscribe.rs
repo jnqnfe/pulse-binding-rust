@@ -26,7 +26,7 @@ pub type pa_subscription_mask_t = u32;
 /// Mask to extract facility value from the event type passed to the user callback.
 pub const PA_SUBSCRIPTION_EVENT_FACILITY_MASK: pa_subscription_event_type_t = 0xf;
 /// Mask to extract operation value from the event type passed to the user callback.
-pub const PA_SUBSCRIPTION_EVENT_TYPE_MASK: pa_subscription_event_type_t = 0x30;
+pub const PA_SUBSCRIPTION_EVENT_TYPE_MASK:     pa_subscription_event_type_t = 0x30;
 
 pub use self::subscription_masks::*;
 
@@ -34,18 +34,18 @@ pub use self::subscription_masks::*;
 pub mod subscription_masks {
     use super::pa_subscription_mask_t;
 
-    pub const PA_SUBSCRIPTION_MASK_NULL: pa_subscription_mask_t = 0;
-    pub const PA_SUBSCRIPTION_MASK_SINK: pa_subscription_mask_t = 0x1;
-    pub const PA_SUBSCRIPTION_MASK_SOURCE: pa_subscription_mask_t = 0x2;
-    pub const PA_SUBSCRIPTION_MASK_SINK_INPUT: pa_subscription_mask_t = 0x4;
+    pub const PA_SUBSCRIPTION_MASK_NULL:          pa_subscription_mask_t = 0;
+    pub const PA_SUBSCRIPTION_MASK_SINK:          pa_subscription_mask_t = 0x1;
+    pub const PA_SUBSCRIPTION_MASK_SOURCE:        pa_subscription_mask_t = 0x2;
+    pub const PA_SUBSCRIPTION_MASK_SINK_INPUT:    pa_subscription_mask_t = 0x4;
     pub const PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT: pa_subscription_mask_t = 0x8;
-    pub const PA_SUBSCRIPTION_MASK_MODULE: pa_subscription_mask_t = 0x10;
-    pub const PA_SUBSCRIPTION_MASK_CLIENT: pa_subscription_mask_t = 0x20;
-    pub const PA_SUBSCRIPTION_MASK_SAMPLE_CACHE: pa_subscription_mask_t = 0x40;
-    pub const PA_SUBSCRIPTION_MASK_SERVER: pa_subscription_mask_t = 0x80;
+    pub const PA_SUBSCRIPTION_MASK_MODULE:        pa_subscription_mask_t = 0x10;
+    pub const PA_SUBSCRIPTION_MASK_CLIENT:        pa_subscription_mask_t = 0x20;
+    pub const PA_SUBSCRIPTION_MASK_SAMPLE_CACHE:  pa_subscription_mask_t = 0x40;
+    pub const PA_SUBSCRIPTION_MASK_SERVER:        pa_subscription_mask_t = 0x80;
     /* NOTE: value `0x100` previously assigned, obsoleted */
-    pub const PA_SUBSCRIPTION_MASK_CARD: pa_subscription_mask_t = 0x200;
-    pub const PA_SUBSCRIPTION_MASK_ALL: pa_subscription_mask_t = 0x2ff;
+    pub const PA_SUBSCRIPTION_MASK_CARD:          pa_subscription_mask_t = 0x200;
+    pub const PA_SUBSCRIPTION_MASK_ALL:           pa_subscription_mask_t = 0x2ff;
 }
 
 pub use self::event_facilities::*;
@@ -54,17 +54,17 @@ pub use self::event_facilities::*;
 pub mod event_facilities {
     use super::pa_subscription_event_type_t;
 
-    pub const PA_SUBSCRIPTION_EVENT_SINK: pa_subscription_event_type_t = 0;
-    pub const PA_SUBSCRIPTION_EVENT_SOURCE: pa_subscription_event_type_t = 1;
-    pub const PA_SUBSCRIPTION_EVENT_SINK_INPUT: pa_subscription_event_type_t = 2;
+    pub const PA_SUBSCRIPTION_EVENT_SINK:          pa_subscription_event_type_t = 0;
+    pub const PA_SUBSCRIPTION_EVENT_SOURCE:        pa_subscription_event_type_t = 1;
+    pub const PA_SUBSCRIPTION_EVENT_SINK_INPUT:    pa_subscription_event_type_t = 2;
     pub const PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT: pa_subscription_event_type_t = 3;
-    pub const PA_SUBSCRIPTION_EVENT_MODULE: pa_subscription_event_type_t = 4;
-    pub const PA_SUBSCRIPTION_EVENT_CLIENT: pa_subscription_event_type_t = 5;
-    pub const PA_SUBSCRIPTION_EVENT_SAMPLE_CACHE: pa_subscription_event_type_t = 6;
+    pub const PA_SUBSCRIPTION_EVENT_MODULE:        pa_subscription_event_type_t = 4;
+    pub const PA_SUBSCRIPTION_EVENT_CLIENT:        pa_subscription_event_type_t = 5;
+    pub const PA_SUBSCRIPTION_EVENT_SAMPLE_CACHE:  pa_subscription_event_type_t = 6;
     /// Global server change, only occurring with a change operation.
-    pub const PA_SUBSCRIPTION_EVENT_SERVER: pa_subscription_event_type_t = 7;
+    pub const PA_SUBSCRIPTION_EVENT_SERVER:        pa_subscription_event_type_t = 7;
     /* NOTE: value `8` previously assigned, obsoleted */
-    pub const PA_SUBSCRIPTION_EVENT_CARD: pa_subscription_event_type_t = 9;
+    pub const PA_SUBSCRIPTION_EVENT_CARD:          pa_subscription_event_type_t = 9;
 }
 
 pub use self::event_operations::*;
@@ -73,7 +73,7 @@ pub use self::event_operations::*;
 pub mod event_operations {
     use super::pa_subscription_event_type_t;
 
-    pub const PA_SUBSCRIPTION_EVENT_NEW: pa_subscription_event_type_t = 0;
+    pub const PA_SUBSCRIPTION_EVENT_NEW:    pa_subscription_event_type_t = 0;
     pub const PA_SUBSCRIPTION_EVENT_CHANGE: pa_subscription_event_type_t = 0x10;
     pub const PA_SUBSCRIPTION_EVENT_REMOVE: pa_subscription_event_type_t = 0x20;
 }

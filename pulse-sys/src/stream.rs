@@ -34,10 +34,10 @@ pub enum pa_stream_state_t {
 }
 
 pub const PA_STREAM_UNCONNECTED: pa_stream_state_t = pa_stream_state_t::Unconnected;
-pub const PA_STREAM_CREATING: pa_stream_state_t = pa_stream_state_t::Creating;
-pub const PA_STREAM_READY: pa_stream_state_t = pa_stream_state_t::Ready;
-pub const PA_STREAM_FAILED: pa_stream_state_t = pa_stream_state_t::Failed;
-pub const PA_STREAM_TERMINATED: pa_stream_state_t = pa_stream_state_t::Terminated;
+pub const PA_STREAM_CREATING:    pa_stream_state_t = pa_stream_state_t::Creating;
+pub const PA_STREAM_READY:       pa_stream_state_t = pa_stream_state_t::Ready;
+pub const PA_STREAM_FAILED:      pa_stream_state_t = pa_stream_state_t::Failed;
+pub const PA_STREAM_TERMINATED:  pa_stream_state_t = pa_stream_state_t::Terminated;
 
 /// Checks if the passed state is one of the connected states (returns `true` if so).
 #[inline(always)]
@@ -56,9 +56,9 @@ pub enum pa_stream_direction_t {
 }
 
 pub const PA_STREAM_NODIRECTION: pa_stream_direction_t = pa_stream_direction_t::Invalid;
-pub const PA_STREAM_PLAYBACK: pa_stream_direction_t = pa_stream_direction_t::Playback;
-pub const PA_STREAM_RECORD: pa_stream_direction_t = pa_stream_direction_t::Record;
-pub const PA_STREAM_UPLOAD: pa_stream_direction_t = pa_stream_direction_t::Upload;
+pub const PA_STREAM_PLAYBACK:    pa_stream_direction_t = pa_stream_direction_t::Playback;
+pub const PA_STREAM_RECORD:      pa_stream_direction_t = pa_stream_direction_t::Record;
+pub const PA_STREAM_UPLOAD:      pa_stream_direction_t = pa_stream_direction_t::Upload;
 
 pub type pa_stream_flags_t = u32;
 
@@ -68,27 +68,27 @@ pub use self::flags::*;
 pub mod flags {
     use super::pa_stream_flags_t;
 
-    pub const PA_STREAM_NOFLAGS: pa_stream_flags_t = 0x0;
-    pub const PA_STREAM_START_CORKED: pa_stream_flags_t = 0x1;
-    pub const PA_STREAM_INTERPOLATE_TIMING: pa_stream_flags_t = 0x2;
-    pub const PA_STREAM_NOT_MONOTONIC: pa_stream_flags_t = 0x4;
-    pub const PA_STREAM_AUTO_TIMING_UPDATE: pa_stream_flags_t = 0x8;
-    pub const PA_STREAM_NO_REMAP_CHANNELS: pa_stream_flags_t = 0x10;
-    pub const PA_STREAM_NO_REMIX_CHANNELS: pa_stream_flags_t = 0x20;
-    pub const PA_STREAM_FIX_FORMAT: pa_stream_flags_t = 0x40;
-    pub const PA_STREAM_FIX_RATE: pa_stream_flags_t = 0x80;
-    pub const PA_STREAM_FIX_CHANNELS: pa_stream_flags_t = 0x100;
-    pub const PA_STREAM_DONT_MOVE: pa_stream_flags_t = 0x200;
-    pub const PA_STREAM_VARIABLE_RATE: pa_stream_flags_t = 0x400;
-    pub const PA_STREAM_PEAK_DETECT: pa_stream_flags_t = 0x800;
-    pub const PA_STREAM_START_MUTED: pa_stream_flags_t = 0x1000;
-    pub const PA_STREAM_ADJUST_LATENCY: pa_stream_flags_t = 0x2000;
-    pub const PA_STREAM_EARLY_REQUESTS: pa_stream_flags_t = 0x4000;
+    pub const PA_STREAM_NOFLAGS:                   pa_stream_flags_t = 0x0;
+    pub const PA_STREAM_START_CORKED:              pa_stream_flags_t = 0x1;
+    pub const PA_STREAM_INTERPOLATE_TIMING:        pa_stream_flags_t = 0x2;
+    pub const PA_STREAM_NOT_MONOTONIC:             pa_stream_flags_t = 0x4;
+    pub const PA_STREAM_AUTO_TIMING_UPDATE:        pa_stream_flags_t = 0x8;
+    pub const PA_STREAM_NO_REMAP_CHANNELS:         pa_stream_flags_t = 0x10;
+    pub const PA_STREAM_NO_REMIX_CHANNELS:         pa_stream_flags_t = 0x20;
+    pub const PA_STREAM_FIX_FORMAT:                pa_stream_flags_t = 0x40;
+    pub const PA_STREAM_FIX_RATE:                  pa_stream_flags_t = 0x80;
+    pub const PA_STREAM_FIX_CHANNELS:              pa_stream_flags_t = 0x100;
+    pub const PA_STREAM_DONT_MOVE:                 pa_stream_flags_t = 0x200;
+    pub const PA_STREAM_VARIABLE_RATE:             pa_stream_flags_t = 0x400;
+    pub const PA_STREAM_PEAK_DETECT:               pa_stream_flags_t = 0x800;
+    pub const PA_STREAM_START_MUTED:               pa_stream_flags_t = 0x1000;
+    pub const PA_STREAM_ADJUST_LATENCY:            pa_stream_flags_t = 0x2000;
+    pub const PA_STREAM_EARLY_REQUESTS:            pa_stream_flags_t = 0x4000;
     pub const PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND: pa_stream_flags_t = 0x8000;
-    pub const PA_STREAM_START_UNMUTED: pa_stream_flags_t = 0x10000;
-    pub const PA_STREAM_FAIL_ON_SUSPEND: pa_stream_flags_t = 0x20000;
-    pub const PA_STREAM_RELATIVE_VOLUME: pa_stream_flags_t = 0x40000;
-    pub const PA_STREAM_PASSTHROUGH: pa_stream_flags_t = 0x80000;
+    pub const PA_STREAM_START_UNMUTED:             pa_stream_flags_t = 0x10000;
+    pub const PA_STREAM_FAIL_ON_SUSPEND:           pa_stream_flags_t = 0x20000;
+    pub const PA_STREAM_RELATIVE_VOLUME:           pa_stream_flags_t = 0x40000;
+    pub const PA_STREAM_PASSTHROUGH:               pa_stream_flags_t = 0x80000;
 }
 
 #[repr(C)]
@@ -104,14 +104,14 @@ pub enum pa_seek_mode_t {
     RelativeEnd = 3,
 }
 
-pub const PA_SEEK_RELATIVE: pa_seek_mode_t = pa_seek_mode_t::Relative;
-pub const PA_SEEK_ABSOLUTE: pa_seek_mode_t = pa_seek_mode_t::Absolute;
+pub const PA_SEEK_RELATIVE:         pa_seek_mode_t = pa_seek_mode_t::Relative;
+pub const PA_SEEK_ABSOLUTE:         pa_seek_mode_t = pa_seek_mode_t::Absolute;
 pub const PA_SEEK_RELATIVE_ON_READ: pa_seek_mode_t = pa_seek_mode_t::RelativeOnRead;
-pub const PA_SEEK_RELATIVE_END: pa_seek_mode_t = pa_seek_mode_t::RelativeEnd;
+pub const PA_SEEK_RELATIVE_END:     pa_seek_mode_t = pa_seek_mode_t::RelativeEnd;
 
-pub const PA_STREAM_EVENT_REQUEST_CORK: &str = "request-cork";
+pub const PA_STREAM_EVENT_REQUEST_CORK:   &str = "request-cork";
 pub const PA_STREAM_EVENT_REQUEST_UNCORK: &str = "request-uncork";
-pub const PA_STREAM_EVENT_FORMAT_LOST: &str = "format-lost";
+pub const PA_STREAM_EVENT_FORMAT_LOST:    &str = "format-lost";
 
 pub type pa_stream_success_cb_t = Option<extern "C" fn(s: *mut pa_stream, success: i32, userdata: *mut c_void)>;
 

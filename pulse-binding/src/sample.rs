@@ -147,26 +147,26 @@ mod ei_formats {
     use super::Format;
 
     /// Signed 16 Bit PCM, native endian.
-    pub const SAMPLE_S16NE: Format = Format::S16be;
+    pub const SAMPLE_S16NE:     Format = Format::S16be;
     /// 32 Bit IEEE floating point, native endian.
     pub const SAMPLE_FLOAT32NE: Format = Format::F32be;
     /// Signed 32 Bit PCM, native endian.
-    pub const SAMPLE_S32NE: Format = Format::S32be;
+    pub const SAMPLE_S32NE:     Format = Format::S32be;
     /// Signed 24 Bit PCM packed, native endian.
-    pub const SAMPLE_S24NE: Format = Format::S24be;
+    pub const SAMPLE_S24NE:     Format = Format::S24be;
     /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
-    pub const SAMPLE_S24_32NE: Format = Format::S24_32be;
+    pub const SAMPLE_S24_32NE:  Format = Format::S24_32be;
 
     /// Signed 16 Bit PCM reverse endian.
-    pub const SAMPLE_S16RE: Format = Format::S16le;
+    pub const SAMPLE_S16RE:     Format = Format::S16le;
     /// 32 Bit IEEE floating point, reverse endian.
     pub const SAMPLE_FLOAT32RE: Format = Format::F32le;
     /// Signed 32 Bit PCM, reverse endian.
-    pub const SAMPLE_S32RE: Format = Format::S32le;
+    pub const SAMPLE_S32RE:     Format = Format::S32le;
     /// Signed 24 Bit PCM, packed reverse endian.
-    pub const SAMPLE_S24RE: Format = Format::S24le;
+    pub const SAMPLE_S24RE:     Format = Format::S24le;
     /// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
-    pub const SAMPLE_S24_32RE: Format = Format::S24_32le;
+    pub const SAMPLE_S24_32RE:  Format = Format::S24_32le;
 }
 
 /// Endian-independent format identifiers
@@ -175,26 +175,26 @@ mod ei_formats {
     use super::Format;
 
     /// Signed 16 Bit PCM, native endian.
-    pub const SAMPLE_S16NE: Format = Format::S16le;
+    pub const SAMPLE_S16NE:     Format = Format::S16le;
     /// 32 Bit IEEE floating point, native endian.
     pub const SAMPLE_FLOAT32NE: Format = Format::F32le;
     /// Signed 32 Bit PCM, native endian.
-    pub const SAMPLE_S32NE: Format = Format::S32le;
+    pub const SAMPLE_S32NE:     Format = Format::S32le;
     /// Signed 24 Bit PCM packed, native endian.
-    pub const SAMPLE_S24NE: Format = Format::S24le;
+    pub const SAMPLE_S24NE:     Format = Format::S24le;
     /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
-    pub const SAMPLE_S24_32NE: Format = Format::S24_32le;
+    pub const SAMPLE_S24_32NE:  Format = Format::S24_32le;
 
     /// Signed 16 Bit PCM, reverse endian.
-    pub const SAMPLE_S16RE: Format = Format::S16be;
+    pub const SAMPLE_S16RE:     Format = Format::S16be;
     /// 32 Bit IEEE floating point, reverse endian.
     pub const SAMPLE_FLOAT32RE: Format = Format::F32be;
     /// Signed 32 Bit PCM, reverse endian.
-    pub const SAMPLE_S32RE: Format = Format::S32be;
+    pub const SAMPLE_S32RE:     Format = Format::S32be;
     /// Signed 24 Bit PCM, packed reverse endian.
-    pub const SAMPLE_S24RE: Format = Format::S24be;
+    pub const SAMPLE_S24RE:     Format = Format::S24be;
     /// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
-    pub const SAMPLE_S24_32RE: Format = Format::S24_32be;
+    pub const SAMPLE_S24_32RE:  Format = Format::S24_32be;
 }
 
 /// A shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.SAMPLE_FLOAT32NE.html).

@@ -23,7 +23,7 @@ pub mod flags {
     use super::FlagSet;
 
     pub const OUTPUT: FlagSet = capi::PA_DIRECTION_OUTPUT;
-    pub const INPUT: FlagSet = capi::PA_DIRECTION_INPUT;
+    pub const INPUT:  FlagSet = capi::PA_DIRECTION_INPUT;
 }
 
 /// Checks whether direction is valid (either input, output or bidirectional).

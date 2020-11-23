@@ -45,20 +45,20 @@ pub enum pa_sample_format_t {
 
 pub const PA_SAMPLE_MAX: usize = 13;
 
-pub const PA_SAMPLE_U8: pa_sample_format_t = pa_sample_format_t::U8;
-pub const PA_SAMPLE_ALAW: pa_sample_format_t = pa_sample_format_t::ALaw;
-pub const PA_SAMPLE_ULAW: pa_sample_format_t = pa_sample_format_t::ULaw;
-pub const PA_SAMPLE_S16LE: pa_sample_format_t = pa_sample_format_t::S16le;
-pub const PA_SAMPLE_S16BE: pa_sample_format_t = pa_sample_format_t::S16be;
+pub const PA_SAMPLE_U8:        pa_sample_format_t = pa_sample_format_t::U8;
+pub const PA_SAMPLE_ALAW:      pa_sample_format_t = pa_sample_format_t::ALaw;
+pub const PA_SAMPLE_ULAW:      pa_sample_format_t = pa_sample_format_t::ULaw;
+pub const PA_SAMPLE_S16LE:     pa_sample_format_t = pa_sample_format_t::S16le;
+pub const PA_SAMPLE_S16BE:     pa_sample_format_t = pa_sample_format_t::S16be;
 pub const PA_SAMPLE_FLOAT32LE: pa_sample_format_t = pa_sample_format_t::F32le;
 pub const PA_SAMPLE_FLOAT32BE: pa_sample_format_t = pa_sample_format_t::F32be;
-pub const PA_SAMPLE_S32LE: pa_sample_format_t = pa_sample_format_t::S32le;
-pub const PA_SAMPLE_S32BE: pa_sample_format_t = pa_sample_format_t::S32be;
-pub const PA_SAMPLE_S24LE: pa_sample_format_t = pa_sample_format_t::S24le;
-pub const PA_SAMPLE_S24BE: pa_sample_format_t = pa_sample_format_t::S24be;
-pub const PA_SAMPLE_S24_32LE: pa_sample_format_t = pa_sample_format_t::S24_32le;
-pub const PA_SAMPLE_S24_32BE: pa_sample_format_t = pa_sample_format_t::S24_32be;
-pub const PA_SAMPLE_INVALID: pa_sample_format_t = pa_sample_format_t::Invalid;
+pub const PA_SAMPLE_S32LE:     pa_sample_format_t = pa_sample_format_t::S32le;
+pub const PA_SAMPLE_S32BE:     pa_sample_format_t = pa_sample_format_t::S32be;
+pub const PA_SAMPLE_S24LE:     pa_sample_format_t = pa_sample_format_t::S24le;
+pub const PA_SAMPLE_S24BE:     pa_sample_format_t = pa_sample_format_t::S24be;
+pub const PA_SAMPLE_S24_32LE:  pa_sample_format_t = pa_sample_format_t::S24_32le;
+pub const PA_SAMPLE_S24_32BE:  pa_sample_format_t = pa_sample_format_t::S24_32be;
+pub const PA_SAMPLE_INVALID:   pa_sample_format_t = pa_sample_format_t::Invalid;
 
 impl Default for pa_sample_format_t {
     fn default() -> Self {
@@ -73,17 +73,17 @@ pub use self::ei_formats::*;
 mod ei_formats {
     use super::pa_sample_format_t;
 
-    pub const PA_SAMPLE_S16NE: pa_sample_format_t = pa_sample_format_t::S16be;
+    pub const PA_SAMPLE_S16NE:     pa_sample_format_t = pa_sample_format_t::S16be;
     pub const PA_SAMPLE_FLOAT32NE: pa_sample_format_t = pa_sample_format_t::F32be;
-    pub const PA_SAMPLE_S32NE: pa_sample_format_t = pa_sample_format_t::S32be;
-    pub const PA_SAMPLE_S24NE: pa_sample_format_t = pa_sample_format_t::S24be;
-    pub const PA_SAMPLE_S24_32NE: pa_sample_format_t = pa_sample_format_t::S24_32be;
+    pub const PA_SAMPLE_S32NE:     pa_sample_format_t = pa_sample_format_t::S32be;
+    pub const PA_SAMPLE_S24NE:     pa_sample_format_t = pa_sample_format_t::S24be;
+    pub const PA_SAMPLE_S24_32NE:  pa_sample_format_t = pa_sample_format_t::S24_32be;
 
-    pub const PA_SAMPLE_S16RE: pa_sample_format_t = pa_sample_format_t::S16le;
+    pub const PA_SAMPLE_S16RE:     pa_sample_format_t = pa_sample_format_t::S16le;
     pub const PA_SAMPLE_FLOAT32RE: pa_sample_format_t = pa_sample_format_t::F32le;
-    pub const PA_SAMPLE_S32RE: pa_sample_format_t = pa_sample_format_t::S32le;
-    pub const PA_SAMPLE_S24RE: pa_sample_format_t = pa_sample_format_t::S24le;
-    pub const PA_SAMPLE_S24_32RE: pa_sample_format_t = pa_sample_format_t::S24_32le;
+    pub const PA_SAMPLE_S32RE:     pa_sample_format_t = pa_sample_format_t::S32le;
+    pub const PA_SAMPLE_S24RE:     pa_sample_format_t = pa_sample_format_t::S24le;
+    pub const PA_SAMPLE_S24_32RE:  pa_sample_format_t = pa_sample_format_t::S24_32le;
 }
 
 /// Endian-independent format identifiers.
@@ -91,17 +91,17 @@ mod ei_formats {
 mod ei_formats {
     use super::pa_sample_format_t;
 
-    pub const PA_SAMPLE_S16NE: pa_sample_format_t = pa_sample_format_t::S16le;
+    pub const PA_SAMPLE_S16NE:     pa_sample_format_t = pa_sample_format_t::S16le;
     pub const PA_SAMPLE_FLOAT32NE: pa_sample_format_t = pa_sample_format_t::F32le;
-    pub const PA_SAMPLE_S32NE: pa_sample_format_t = pa_sample_format_t::S32le;
-    pub const PA_SAMPLE_S24NE: pa_sample_format_t = pa_sample_format_t::S24le;
-    pub const PA_SAMPLE_S24_32NE: pa_sample_format_t = pa_sample_format_t::S24_32le;
+    pub const PA_SAMPLE_S32NE:     pa_sample_format_t = pa_sample_format_t::S32le;
+    pub const PA_SAMPLE_S24NE:     pa_sample_format_t = pa_sample_format_t::S24le;
+    pub const PA_SAMPLE_S24_32NE:  pa_sample_format_t = pa_sample_format_t::S24_32le;
 
-    pub const PA_SAMPLE_S16RE: pa_sample_format_t = pa_sample_format_t::S16be;
+    pub const PA_SAMPLE_S16RE:     pa_sample_format_t = pa_sample_format_t::S16be;
     pub const PA_SAMPLE_FLOAT32RE: pa_sample_format_t = pa_sample_format_t::F32be;
-    pub const PA_SAMPLE_S32RE: pa_sample_format_t = pa_sample_format_t::S32be;
-    pub const PA_SAMPLE_S24RE: pa_sample_format_t = pa_sample_format_t::S24be;
-    pub const PA_SAMPLE_S24_32RE: pa_sample_format_t = pa_sample_format_t::S24_32be;
+    pub const PA_SAMPLE_S32RE:     pa_sample_format_t = pa_sample_format_t::S32be;
+    pub const PA_SAMPLE_S24RE:     pa_sample_format_t = pa_sample_format_t::S24be;
+    pub const PA_SAMPLE_S24_32RE:  pa_sample_format_t = pa_sample_format_t::S24_32be;
 }
 
 /// A shortcut for [`PA_SAMPLE_FLOAT32NE`](ei_formats/constant.PA_SAMPLE_FLOAT32NE.html).

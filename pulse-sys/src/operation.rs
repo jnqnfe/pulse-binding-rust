@@ -30,9 +30,9 @@ pub enum pa_operation_state_t {
     Cancelled,
 }
 
-pub const PA_OPERATION_RUNNING: pa_operation_state_t = pa_operation_state_t::Running;
-pub const PA_OPERATION_DONE: pa_operation_state_t = pa_operation_state_t::Done;
-pub const PA_OPERATION_CANCELED: pa_operation_state_t = pa_operation_state_t::Cancelled;
+pub const PA_OPERATION_RUNNING:   pa_operation_state_t = pa_operation_state_t::Running;
+pub const PA_OPERATION_DONE:      pa_operation_state_t = pa_operation_state_t::Done;
+pub const PA_OPERATION_CANCELED:  pa_operation_state_t = pa_operation_state_t::Cancelled;
 pub const PA_OPERATION_CANCELLED: pa_operation_state_t = pa_operation_state_t::Cancelled;
 
 /// A callback for operation state changes.

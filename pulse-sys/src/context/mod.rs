@@ -51,13 +51,13 @@ pub enum pa_context_state_t {
     Terminated,
 }
 
-pub const PA_CONTEXT_UNCONNECTED: pa_context_state_t = pa_context_state_t::Unconnected;
-pub const PA_CONTEXT_CONNECTING: pa_context_state_t = pa_context_state_t::Connecting;
-pub const PA_CONTEXT_AUTHORIZING: pa_context_state_t = pa_context_state_t::Authorizing;
+pub const PA_CONTEXT_UNCONNECTED:  pa_context_state_t = pa_context_state_t::Unconnected;
+pub const PA_CONTEXT_CONNECTING:   pa_context_state_t = pa_context_state_t::Connecting;
+pub const PA_CONTEXT_AUTHORIZING:  pa_context_state_t = pa_context_state_t::Authorizing;
 pub const PA_CONTEXT_SETTING_NAME: pa_context_state_t = pa_context_state_t::SettingName;
-pub const PA_CONTEXT_READY: pa_context_state_t = pa_context_state_t::Ready;
-pub const PA_CONTEXT_FAILED: pa_context_state_t = pa_context_state_t::Failed;
-pub const PA_CONTEXT_TERMINATED: pa_context_state_t = pa_context_state_t::Terminated;
+pub const PA_CONTEXT_READY:        pa_context_state_t = pa_context_state_t::Ready;
+pub const PA_CONTEXT_FAILED:       pa_context_state_t = pa_context_state_t::Failed;
+pub const PA_CONTEXT_TERMINATED:   pa_context_state_t = pa_context_state_t::Terminated;
 
 /// Checks if the passed state is one of the connected states (returns `true` if so).
 #[inline(always)]
@@ -76,9 +76,9 @@ pub use self::flags::*;
 pub mod flags {
     use super::pa_context_flags_t;
 
-    pub const PA_CONTEXT_NOFLAGS: pa_context_flags_t = 0x0;
+    pub const PA_CONTEXT_NOFLAGS:     pa_context_flags_t = 0x0;
     pub const PA_CONTEXT_NOAUTOSPAWN: pa_context_flags_t = 0x1;
-    pub const PA_CONTEXT_NOFAIL: pa_context_flags_t = 0x2;
+    pub const PA_CONTEXT_NOFAIL:      pa_context_flags_t = 0x2;
 }
 
 pub type pa_context_notify_cb_t = Option<extern "C" fn(c: *mut pa_context, userdata: *mut c_void)>;

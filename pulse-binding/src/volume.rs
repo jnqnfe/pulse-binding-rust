@@ -74,9 +74,9 @@ use std::ptr::null;
 use crate::sample;
 use crate::channelmap::{Map, Position, PositionMask, POSITION_MASK_ALL};
 
-pub const VOLUME_NORM: Volume = Volume(capi::PA_VOLUME_NORM);
-pub const VOLUME_MUTED: Volume = Volume(capi::PA_VOLUME_MUTED);
-pub const VOLUME_MAX: Volume = Volume(capi::PA_VOLUME_MAX);
+pub const VOLUME_NORM:    Volume = Volume(capi::PA_VOLUME_NORM);
+pub const VOLUME_MUTED:   Volume = Volume(capi::PA_VOLUME_MUTED);
+pub const VOLUME_MAX:     Volume = Volume(capi::PA_VOLUME_MAX);
 pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 
 /// Minus Infinity.

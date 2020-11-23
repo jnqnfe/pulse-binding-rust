@@ -26,12 +26,12 @@ pub use self::timeval::*;
 pub use self::unix::*;
 
 // (Copied constants from rust’s std/time/duration.rs)
-pub const NANOS_PER_SEC: u32 = 1_000_000_000;
-pub const NANOS_PER_MILLI: u32 = 1_000_000;
-pub const NANOS_PER_MICRO: u32 = 1_000;
-pub const MICROS_PER_SEC: u64 = 1_000_000;
+pub const NANOS_PER_SEC:    u32 = 1_000_000_000;
+pub const NANOS_PER_MILLI:  u32 = 1_000_000;
+pub const NANOS_PER_MICRO:  u32 = 1_000;
+pub const MICROS_PER_SEC:   u64 = 1_000_000;
 pub const MICROS_PER_MILLI: u64 = 1_000;
-pub const MILLIS_PER_SEC: u64 = 1_000;
+pub const MILLIS_PER_SEC:   u64 = 1_000;
 
 /// Invalid time. Microseconds value representing ‘invalid’.
 pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);

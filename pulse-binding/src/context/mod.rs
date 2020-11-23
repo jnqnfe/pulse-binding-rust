@@ -185,14 +185,14 @@ pub mod flags {
     use capi;
     use super::FlagSet;
 
-    pub const NOFLAGS: FlagSet = capi::PA_CONTEXT_NOFLAGS;
+    pub const NOFLAGS:     FlagSet = capi::PA_CONTEXT_NOFLAGS;
     /// Disable autospawning of the PulseAudio daemon if required.
     pub const NOAUTOSPAWN: FlagSet = capi::PA_CONTEXT_NOAUTOSPAWN;
     /// Don’t fail if the daemon is not available when
     /// [`Context::connect`](../struct.Context.html#method.connect) is called, instead enter
     /// [`State::Connecting`](../enum.State.html#Connecting.v) state and wait for the daemon to
     /// appear.
-    pub const NOFAIL: FlagSet = capi::PA_CONTEXT_NOFAIL;
+    pub const NOFAIL:      FlagSet = capi::PA_CONTEXT_NOFAIL;
 }
 
 impl Context {

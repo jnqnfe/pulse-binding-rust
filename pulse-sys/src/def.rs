@@ -29,7 +29,7 @@ pub enum pa_device_type_t {
     Source,
 }
 
-pub const PA_DEVICE_TYPE_SINK: pa_device_type_t = pa_device_type_t::Sink;
+pub const PA_DEVICE_TYPE_SINK:   pa_device_type_t = pa_device_type_t::Sink;
 pub const PA_DEVICE_TYPE_SOURCE: pa_device_type_t = pa_device_type_t::Source;
 
 #[repr(C)]
@@ -74,16 +74,16 @@ pub use self::sink_flags::*;
 pub mod sink_flags {
     use super::pa_sink_flags_t;
 
-    pub const PA_SINK_NOFLAGS: pa_sink_flags_t = 0x0;
-    pub const PA_SINK_HW_VOLUME_CTRL: pa_sink_flags_t = 0x1;
-    pub const PA_SINK_LATENCY: pa_sink_flags_t = 0x2;
-    pub const PA_SINK_HARDWARE: pa_sink_flags_t = 0x4;
-    pub const PA_SINK_NETWORK: pa_sink_flags_t = 0x8;
-    pub const PA_SINK_HW_MUTE_CTRL: pa_sink_flags_t = 0x10;
-    pub const PA_SINK_DECIBEL_VOLUME: pa_sink_flags_t = 0x20;
-    pub const PA_SINK_FLAT_VOLUME: pa_sink_flags_t = 0x40;
+    pub const PA_SINK_NOFLAGS:         pa_sink_flags_t = 0x0;
+    pub const PA_SINK_HW_VOLUME_CTRL:  pa_sink_flags_t = 0x1;
+    pub const PA_SINK_LATENCY:         pa_sink_flags_t = 0x2;
+    pub const PA_SINK_HARDWARE:        pa_sink_flags_t = 0x4;
+    pub const PA_SINK_NETWORK:         pa_sink_flags_t = 0x8;
+    pub const PA_SINK_HW_MUTE_CTRL:    pa_sink_flags_t = 0x10;
+    pub const PA_SINK_DECIBEL_VOLUME:  pa_sink_flags_t = 0x20;
+    pub const PA_SINK_FLAT_VOLUME:     pa_sink_flags_t = 0x40;
     pub const PA_SINK_DYNAMIC_LATENCY: pa_sink_flags_t = 0x80;
-    pub const PA_SINK_SET_FORMATS: pa_sink_flags_t = 0x100;
+    pub const PA_SINK_SET_FORMATS:     pa_sink_flags_t = 0x100;
 }
 
 #[repr(C)]
@@ -96,9 +96,9 @@ pub enum pa_sink_state_t {
 }
 
 pub const PA_SINK_INVALID_STATE: pa_sink_state_t = pa_sink_state_t::Invalid;
-pub const PA_SINK_RUNNING: pa_sink_state_t = pa_sink_state_t::Running;
-pub const PA_SINK_IDLE: pa_sink_state_t = pa_sink_state_t::Idle;
-pub const PA_SINK_SUSPENDED: pa_sink_state_t = pa_sink_state_t::Suspended;
+pub const PA_SINK_RUNNING:       pa_sink_state_t = pa_sink_state_t::Running;
+pub const PA_SINK_IDLE:          pa_sink_state_t = pa_sink_state_t::Idle;
+pub const PA_SINK_SUSPENDED:     pa_sink_state_t = pa_sink_state_t::Suspended;
 
 /// Checks if state is playing, i.e. running or idle (returns `true` if so).
 #[inline(always)]
@@ -121,15 +121,15 @@ pub use self::source_flags::*;
 pub mod source_flags {
     use super::pa_source_flags_t;
 
-    pub const PA_SOURCE_NOFLAGS: pa_source_flags_t = 0x0;
-    pub const PA_SOURCE_HW_VOLUME_CTRL: pa_source_flags_t = 0x1;
-    pub const PA_SOURCE_LATENCY: pa_source_flags_t = 0x2;
-    pub const PA_SOURCE_HARDWARE: pa_source_flags_t = 0x4;
-    pub const PA_SOURCE_NETWORK: pa_source_flags_t = 0x8;
-    pub const PA_SOURCE_HW_MUTE_CTRL: pa_source_flags_t = 0x10;
-    pub const PA_SOURCE_DECIBEL_VOLUME: pa_source_flags_t = 0x20;
+    pub const PA_SOURCE_NOFLAGS:         pa_source_flags_t = 0x0;
+    pub const PA_SOURCE_HW_VOLUME_CTRL:  pa_source_flags_t = 0x1;
+    pub const PA_SOURCE_LATENCY:         pa_source_flags_t = 0x2;
+    pub const PA_SOURCE_HARDWARE:        pa_source_flags_t = 0x4;
+    pub const PA_SOURCE_NETWORK:         pa_source_flags_t = 0x8;
+    pub const PA_SOURCE_HW_MUTE_CTRL:    pa_source_flags_t = 0x10;
+    pub const PA_SOURCE_DECIBEL_VOLUME:  pa_source_flags_t = 0x20;
     pub const PA_SOURCE_DYNAMIC_LATENCY: pa_source_flags_t = 0x42;
-    pub const PA_SOURCE_FLAT_VOLUME: pa_source_flags_t = 0x80;
+    pub const PA_SOURCE_FLAT_VOLUME:     pa_source_flags_t = 0x80;
 }
 
 #[repr(C)]
@@ -142,9 +142,9 @@ pub enum pa_source_state_t {
 }
 
 pub const PA_SOURCE_INVALID_STATE: pa_source_state_t = pa_source_state_t::Invalid;
-pub const PA_SOURCE_RUNNING: pa_source_state_t = pa_source_state_t::Running;
-pub const PA_SOURCE_IDLE: pa_source_state_t = pa_source_state_t::Idle;
-pub const PA_SOURCE_SUSPENDED: pa_source_state_t = pa_source_state_t::Suspended;
+pub const PA_SOURCE_RUNNING:       pa_source_state_t = pa_source_state_t::Running;
+pub const PA_SOURCE_IDLE:          pa_source_state_t = pa_source_state_t::Idle;
+pub const PA_SOURCE_SUSPENDED:     pa_source_state_t = pa_source_state_t::Suspended;
 
 #[inline(always)]
 pub fn pa_source_is_opened(state: pa_source_state_t) -> bool {
@@ -169,8 +169,8 @@ pub enum pa_port_available_t {
 }
 
 pub const PA_PORT_AVAILABLE_UNKNOWN: pa_port_available_t = pa_port_available_t::Unknown;
-pub const PA_PORT_AVAILABLE_NO: pa_port_available_t = pa_port_available_t::No;
-pub const PA_PORT_AVAILABLE_YES: pa_port_available_t = pa_port_available_t::Yes;
+pub const PA_PORT_AVAILABLE_NO:      pa_port_available_t = pa_port_available_t::No;
+pub const PA_PORT_AVAILABLE_YES:     pa_port_available_t = pa_port_available_t::Yes;
 
 /// Port type
 #[repr(C)]
@@ -202,26 +202,26 @@ pub enum pa_device_port_type_t {
     Analog = 22,
 }
 
-pub const PA_DEVICE_PORT_TYPE_UNKNOWN: pa_device_port_type_t = pa_device_port_type_t::Unknown;
-pub const PA_DEVICE_PORT_TYPE_AUX: pa_device_port_type_t = pa_device_port_type_t::Aux;
-pub const PA_DEVICE_PORT_TYPE_SPEAKER: pa_device_port_type_t = pa_device_port_type_t::Speaker;
+pub const PA_DEVICE_PORT_TYPE_UNKNOWN:    pa_device_port_type_t = pa_device_port_type_t::Unknown;
+pub const PA_DEVICE_PORT_TYPE_AUX:        pa_device_port_type_t = pa_device_port_type_t::Aux;
+pub const PA_DEVICE_PORT_TYPE_SPEAKER:    pa_device_port_type_t = pa_device_port_type_t::Speaker;
 pub const PA_DEVICE_PORT_TYPE_HEADPHONES: pa_device_port_type_t = pa_device_port_type_t::Headphones;
-pub const PA_DEVICE_PORT_TYPE_LINE: pa_device_port_type_t = pa_device_port_type_t::Line;
-pub const PA_DEVICE_PORT_TYPE_MIC: pa_device_port_type_t = pa_device_port_type_t::Mic;
-pub const PA_DEVICE_PORT_TYPE_HEADSET: pa_device_port_type_t = pa_device_port_type_t::Headset;
-pub const PA_DEVICE_PORT_TYPE_HANDSET: pa_device_port_type_t = pa_device_port_type_t::Handset;
-pub const PA_DEVICE_PORT_TYPE_EARPIECE: pa_device_port_type_t = pa_device_port_type_t::Earpiece;
-pub const PA_DEVICE_PORT_TYPE_SPDIF: pa_device_port_type_t = pa_device_port_type_t::SPDIF;
-pub const PA_DEVICE_PORT_TYPE_HDMI: pa_device_port_type_t = pa_device_port_type_t::HDMI;
-pub const PA_DEVICE_PORT_TYPE_TV: pa_device_port_type_t = pa_device_port_type_t::TV;
-pub const PA_DEVICE_PORT_TYPE_RADIO: pa_device_port_type_t = pa_device_port_type_t::Radio;
-pub const PA_DEVICE_PORT_TYPE_VIDEO: pa_device_port_type_t = pa_device_port_type_t::Video;
-pub const PA_DEVICE_PORT_TYPE_USB: pa_device_port_type_t = pa_device_port_type_t::USB;
-pub const PA_DEVICE_PORT_TYPE_BLUETOOTH: pa_device_port_type_t = pa_device_port_type_t::Bluetooth;
-pub const PA_DEVICE_PORT_TYPE_PORTABLE: pa_device_port_type_t = pa_device_port_type_t::Portable;
-pub const PA_DEVICE_PORT_TYPE_HANDSFREE: pa_device_port_type_t = pa_device_port_type_t::Handsfree;
-pub const PA_DEVICE_PORT_TYPE_CAR: pa_device_port_type_t = pa_device_port_type_t::Car;
-pub const PA_DEVICE_PORT_TYPE_HIFI: pa_device_port_type_t = pa_device_port_type_t::HiFi;
-pub const PA_DEVICE_PORT_TYPE_PHONE: pa_device_port_type_t = pa_device_port_type_t::Phone;
-pub const PA_DEVICE_PORT_TYPE_NETWORK: pa_device_port_type_t = pa_device_port_type_t::Network;
-pub const PA_DEVICE_PORT_TYPE_ANALOG: pa_device_port_type_t = pa_device_port_type_t::Analog;
+pub const PA_DEVICE_PORT_TYPE_LINE:       pa_device_port_type_t = pa_device_port_type_t::Line;
+pub const PA_DEVICE_PORT_TYPE_MIC:        pa_device_port_type_t = pa_device_port_type_t::Mic;
+pub const PA_DEVICE_PORT_TYPE_HEADSET:    pa_device_port_type_t = pa_device_port_type_t::Headset;
+pub const PA_DEVICE_PORT_TYPE_HANDSET:    pa_device_port_type_t = pa_device_port_type_t::Handset;
+pub const PA_DEVICE_PORT_TYPE_EARPIECE:   pa_device_port_type_t = pa_device_port_type_t::Earpiece;
+pub const PA_DEVICE_PORT_TYPE_SPDIF:      pa_device_port_type_t = pa_device_port_type_t::SPDIF;
+pub const PA_DEVICE_PORT_TYPE_HDMI:       pa_device_port_type_t = pa_device_port_type_t::HDMI;
+pub const PA_DEVICE_PORT_TYPE_TV:         pa_device_port_type_t = pa_device_port_type_t::TV;
+pub const PA_DEVICE_PORT_TYPE_RADIO:      pa_device_port_type_t = pa_device_port_type_t::Radio;
+pub const PA_DEVICE_PORT_TYPE_VIDEO:      pa_device_port_type_t = pa_device_port_type_t::Video;
+pub const PA_DEVICE_PORT_TYPE_USB:        pa_device_port_type_t = pa_device_port_type_t::USB;
+pub const PA_DEVICE_PORT_TYPE_BLUETOOTH:  pa_device_port_type_t = pa_device_port_type_t::Bluetooth;
+pub const PA_DEVICE_PORT_TYPE_PORTABLE:   pa_device_port_type_t = pa_device_port_type_t::Portable;
+pub const PA_DEVICE_PORT_TYPE_HANDSFREE:  pa_device_port_type_t = pa_device_port_type_t::Handsfree;
+pub const PA_DEVICE_PORT_TYPE_CAR:        pa_device_port_type_t = pa_device_port_type_t::Car;
+pub const PA_DEVICE_PORT_TYPE_HIFI:       pa_device_port_type_t = pa_device_port_type_t::HiFi;
+pub const PA_DEVICE_PORT_TYPE_PHONE:      pa_device_port_type_t = pa_device_port_type_t::Phone;
+pub const PA_DEVICE_PORT_TYPE_NETWORK:    pa_device_port_type_t = pa_device_port_type_t::Network;
+pub const PA_DEVICE_PORT_TYPE_ANALOG:     pa_device_port_type_t = pa_device_port_type_t::Analog;

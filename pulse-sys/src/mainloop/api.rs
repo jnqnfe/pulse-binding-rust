@@ -23,11 +23,11 @@ pub use self::io_event_flags::*;
 pub mod io_event_flags {
     use super::pa_io_event_flags_t;
 
-    pub const PA_IO_EVENT_NULL: pa_io_event_flags_t = 0;
-    pub const PA_IO_EVENT_INPUT: pa_io_event_flags_t = 1;
+    pub const PA_IO_EVENT_NULL:   pa_io_event_flags_t = 0;
+    pub const PA_IO_EVENT_INPUT:  pa_io_event_flags_t = 1;
     pub const PA_IO_EVENT_OUTPUT: pa_io_event_flags_t = 2;
     pub const PA_IO_EVENT_HANGUP: pa_io_event_flags_t = 4;
-    pub const PA_IO_EVENT_ERROR: pa_io_event_flags_t = 8;
+    pub const PA_IO_EVENT_ERROR:  pa_io_event_flags_t = 8;
 }
 
 /// An opaque IO event source object.

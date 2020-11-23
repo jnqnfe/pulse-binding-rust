@@ -73,17 +73,17 @@ pub mod subscription_masks {
     use capi;
     use super::InterestMaskSet;
 
-    pub const NULL: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_NULL;
-    pub const SINK: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SINK;
-    pub const SOURCE: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SOURCE;
-    pub const SINK_INPUT: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SINK_INPUT;
+    pub const NULL:          InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_NULL;
+    pub const SINK:          InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SINK;
+    pub const SOURCE:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SOURCE;
+    pub const SINK_INPUT:    InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SINK_INPUT;
     pub const SOURCE_OUTPUT: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT;
-    pub const MODULE: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_MODULE;
-    pub const CLIENT: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CLIENT;
-    pub const SAMPLE_CACHE: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SAMPLE_CACHE;
-    pub const SERVER: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SERVER;
-    pub const MASK_CARD: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CARD;
-    pub const ALL: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_ALL;
+    pub const MODULE:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_MODULE;
+    pub const CLIENT:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CLIENT;
+    pub const SAMPLE_CACHE:  InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SAMPLE_CACHE;
+    pub const SERVER:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SERVER;
+    pub const MASK_CARD:     InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CARD;
+    pub const ALL:           InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_ALL;
 }
 
 /// Facility component of an event.

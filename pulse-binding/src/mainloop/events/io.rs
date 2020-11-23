@@ -28,15 +28,15 @@ pub mod flags {
     use super::IoEventFlagSet;
 
     /// No event.
-    pub const NULL: IoEventFlagSet = capi::PA_IO_EVENT_NULL;
+    pub const NULL:   IoEventFlagSet = capi::PA_IO_EVENT_NULL;
     /// Input event.
-    pub const INPUT: IoEventFlagSet = capi::PA_IO_EVENT_INPUT;
+    pub const INPUT:  IoEventFlagSet = capi::PA_IO_EVENT_INPUT;
     /// Output event.
     pub const OUTPUT: IoEventFlagSet = capi::PA_IO_EVENT_OUTPUT;
     /// Hangup event.
     pub const HANGUP: IoEventFlagSet = capi::PA_IO_EVENT_HANGUP;
     /// Error event.
-    pub const ERROR: IoEventFlagSet = capi::PA_IO_EVENT_ERROR;
+    pub const ERROR:  IoEventFlagSet = capi::PA_IO_EVENT_ERROR;
 }
 
 /// An IO event source

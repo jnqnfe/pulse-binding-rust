@@ -309,8 +309,8 @@ pub enum pa_update_mode_t {
     Replace,
 }
 
-pub const PA_UPDATE_SET: pa_update_mode_t = pa_update_mode_t::Set;
-pub const PA_UPDATE_MERGE: pa_update_mode_t = pa_update_mode_t::Merge;
+pub const PA_UPDATE_SET:     pa_update_mode_t = pa_update_mode_t::Set;
+pub const PA_UPDATE_MERGE:   pa_update_mode_t = pa_update_mode_t::Merge;
 pub const PA_UPDATE_REPLACE: pa_update_mode_t = pa_update_mode_t::Replace;
 
 #[link(name="pulse")]

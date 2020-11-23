@@ -23,7 +23,7 @@ use std::os::raw::c_char;
 pub type pa_direction_t = i32;
 
 pub const PA_DIRECTION_OUTPUT: pa_direction_t = 0x1;
-pub const PA_DIRECTION_INPUT: pa_direction_t = 0x2;
+pub const PA_DIRECTION_INPUT:  pa_direction_t = 0x2;
 
 #[link(name="pulse")]
 extern "C" {
