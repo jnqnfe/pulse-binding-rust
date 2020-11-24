@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.14.0 (November 24th, 2020)
 
  * Added PA v14 support (API additions)
 
