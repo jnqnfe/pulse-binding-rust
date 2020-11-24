@@ -1,4 +1,4 @@
-libpulse_glib_binding
+libpulse-glib-binding
 =====================
 
 [<img alt="travis.com" src="https://img.shields.io/travis/com/jnqnfe/pulse-binding-rust?style=for-the-badge" height="24">](https://travis-ci.com/jnqnfe/pulse-binding-rust)
