@@ -90,18 +90,18 @@ pub mod subscription_masks {
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Facility {
-    Sink = 0,
-    Source = 1,
-    SinkInput = 2,
+    Sink         = 0,
+    Source       = 1,
+    SinkInput    = 2,
     SourceOutput = 3,
-    Module = 4,
-    Client = 5,
-    SampleCache = 6,
+    Module       = 4,
+    Client       = 5,
+    SampleCache  = 6,
     /// Global server change, only occurring with
     /// [`Operation::Changed`](enum.Operation.html#Changed.v).
-    Server = 7,
+    Server       = 7,
     /* NOTE: value `8` previously assigned, obsoleted */
-    Card = 9,
+    Card         = 9,
 }
 
 /// Operation component of an event.
@@ -109,7 +109,7 @@ pub enum Facility {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Operation {
     /// A new object was created
-    New = 0,
+    New     = 0,
     /// A property of the object was modified
     Changed = 0x10,
     /// An object was removed

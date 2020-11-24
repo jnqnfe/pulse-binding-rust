@@ -89,9 +89,9 @@ pub mod sink_flags {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum pa_sink_state_t {
-    Invalid = -1,
-    Running = 0,
-    Idle = 1,
+    Invalid   = -1,
+    Running   = 0,
+    Idle      = 1,
     Suspended = 2,
 }
 
@@ -135,9 +135,9 @@ pub mod source_flags {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum pa_source_state_t {
-    Invalid = -1,
-    Running = 0,
-    Idle = 1,
+    Invalid   = -1,
+    Running   = 0,
+    Idle      = 1,
     Suspended = 2,
 }
 
@@ -163,9 +163,9 @@ pub enum pa_port_available_t {
     /// This port does not support jack detection.
     Unknown = 0,
     /// This port is not available, likely because the jack is not plugged in.
-    No = 1,
+    No      = 1,
     /// This port is available, likely because the jack is plugged in.
-    Yes = 2,
+    Yes     = 2,
 }
 
 pub const PA_PORT_AVAILABLE_UNKNOWN: pa_port_available_t = pa_port_available_t::Unknown;
@@ -177,29 +177,29 @@ pub const PA_PORT_AVAILABLE_YES:     pa_port_available_t = pa_port_available_t::
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
 pub enum pa_device_port_type_t {
-    Unknown = 0,
-    Aux = 1,
-    Speaker = 2,
+    Unknown    = 0,
+    Aux        = 1,
+    Speaker    = 2,
     Headphones = 3,
-    Line = 4,
-    Mic = 5,
-    Headset = 6,
-    Handset = 7,
-    Earpiece = 8,
-    SPDIF = 9,
-    HDMI = 10,
-    TV = 11,
-    Radio = 12,
-    Video = 13,
-    USB = 14,
-    Bluetooth = 15,
-    Portable = 16,
-    Handsfree = 17,
-    Car = 18,
-    HiFi = 19,
-    Phone = 20,
-    Network = 21,
-    Analog = 22,
+    Line       = 4,
+    Mic        = 5,
+    Headset    = 6,
+    Handset    = 7,
+    Earpiece   = 8,
+    SPDIF      = 9,
+    HDMI       = 10,
+    TV         = 11,
+    Radio      = 12,
+    Video      = 13,
+    USB        = 14,
+    Bluetooth  = 15,
+    Portable   = 16,
+    Handsfree  = 17,
+    Car        = 18,
+    HiFi       = 19,
+    Phone      = 20,
+    Network    = 21,
+    Analog     = 22,
 }
 
 pub const PA_DEVICE_PORT_TYPE_UNKNOWN:    pa_device_port_type_t = pa_device_port_type_t::Unknown;
