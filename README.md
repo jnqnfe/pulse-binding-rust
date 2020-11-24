@@ -1,6 +1,9 @@
 Overview
 ========
 
+[<img alt="travis.com" src="https://img.shields.io/travis/com/jnqnfe/pulse-binding-rust?style=for-the-badge" height="24">](https://travis-ci.com/jnqnfe/pulse-binding-rust)
+<img alt="license" src="https://img.shields.io/crates/l/libpulse-binding.svg?style=for-the-badge" height="24">
+
 This repository contains *sys* and *binding* libraries (crates) for connecting to PulseAudio (PA)
 from the Rust programming language.
 

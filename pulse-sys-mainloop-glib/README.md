@@ -1,6 +1,12 @@
 libpulse_mainloop_glib_sys
 ==========================
 
+[<img alt="travis.com" src="https://img.shields.io/travis/com/jnqnfe/pulse-binding-rust?style=for-the-badge" height="24">](https://travis-ci.com/jnqnfe/pulse-binding-rust)
+[<img alt="crates.io" src="https://img.shields.io/crates/v/libpulse-mainloop-glib-sys?style=for-the-badge" height="24">](https://crates.io/crates/libpulse-mainloop-glib-sys)
+[<img alt="docs.rs" src="https://img.shields.io/crates/v/libpulse-mainloop-glib-sys?color=5479ab&label=docs.rs&style=for-the-badge" height="24">](https://docs.rs/libpulse-mainloop-glib-sys)
+<img alt="min-rust-version" src="https://img.shields.io/static/v1?label=RUST&message=1.40%2B&color=informational&style=for-the-badge" height="24">
+<img alt="license" src="https://img.shields.io/crates/l/libpulse-mainloop-glib-sys.svg?style=for-the-badge" height="24">
+
 A Rust language linking library for the PulseAudio libpulse-mainloop-glib library. See also the
 higher-level `libpulse_glib_binding` crate.
 
