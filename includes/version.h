@@ -33,7 +33,7 @@ PA_C_DECL_BEGIN
 /** Return the version of the header files. Keep in mind that this is
 a macro and not a function, so it is impossible to get the pointer of
 it. */
-#define pa_get_headers_version() ("12.0.0")
+#define pa_get_headers_version() ("14.0.0")
 
 /** Return the version of the library the current application is
  * linked to. */
@@ -47,10 +47,10 @@ const char* pa_get_library_version(void);
 
 /** The current protocol version. Version 8 relates to Polypaudio
  * 0.8/PulseAudio 0.9. */
-#define PA_PROTOCOL_VERSION 32
+#define PA_PROTOCOL_VERSION 34
 
 /** The major version of PA. \since 0.9.15 */
-#define PA_MAJOR 12
+#define PA_MAJOR 14
 
 /** The minor version of PA. \since 0.9.15 */
 #define PA_MINOR 0
