@@ -209,9 +209,10 @@ use libc::pollfd;
 #[cfg(windows)]
 use winapi::um::winsock2::WSAPOLLFD as pollfd;
 use crate::def;
-use crate::error::PAErr;
+use crate::error::{Code as ErrCode, PAErr};
 use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi, Mainloop as MainloopTrait};
 use crate::mainloop::signal::MainloopSignals;
+use crate::time::MicroSeconds;
 
 pub use capi::pa_mainloop as MainloopInternal;
 
@@ -319,11 +320,24 @@ impl Mainloop {
     ///
     /// Returns `Err` on error or exit request.
     ///
-    /// `timeout` specifies a maximum timeout for the subsequent poll, or `None` for blocking
-    /// behaviour. Only positive values should be provided, negative values will have the same
-    /// effect as `None`. The timeout is specified in microseconds.
-    pub fn prepare(&mut self, timeout: Option<i32>) -> Result<(), PAErr> {
-        let t = timeout.unwrap_or(-1);
+    /// `timeout` specifies a maximum timeout for the subsequent poll. `None` requests blocking
+    /// behaviour.
+    ///
+    /// Note, should the microseconds timeout value provided be too large to pass to the underlying
+    /// C API (larger than `std::i32::MAX`), then the `PAErr` form of the `Code::TooLarge` error
+    /// will be returned (within `Result::Err`).
+    pub fn prepare(&mut self, timeout: Option<MicroSeconds>) -> Result<(), PAErr> {
+        let t: i32 = match timeout {
+            // A negative value represents a request for 'blocking' behaviour in the C API
+            None => -1,
+            // This is just in case we ever changed `MicroSeconds` to hold unsigned values
+            #[allow(unused_comparisons)]
+            Some(MicroSeconds(i)) if i < 0 => { unreachable!(); },
+            // Check value is no larger than i32::MAX considering API takes an i32
+            Some(MicroSeconds(i)) if i <= std::i32::MAX as u64 => i as i32,
+            // If larger, we must error
+            _ => { return Err((ErrCode::TooLarge).into()); },
+        };
         match unsafe { capi::pa_mainloop_prepare((*self._inner).ptr, t) } {
             0 => Ok(()),
             e => Err(PAErr(e)),

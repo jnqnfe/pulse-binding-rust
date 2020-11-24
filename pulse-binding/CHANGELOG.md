@@ -1,6 +1,8 @@
 # [unreleased]
 
  * Added PA v14 support (API additions)
+ * Mainloop (standard): Changed the `prepare()` method to take an `Option<MicroSeconds>` instead of
+   `Option<i32>`.
 
 # 2.16.3 (November 21st, 2020)
 
