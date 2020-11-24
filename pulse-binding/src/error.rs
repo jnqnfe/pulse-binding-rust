@@ -26,6 +26,7 @@ pub struct PAErr(pub ErrorInt);
 /// These represent errors returned by many of the underlying PulseAudio C functions.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
 pub enum Code {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */
@@ -73,7 +74,7 @@ pub enum Code {
     /// The caller forked without calling execve() and tried to reuse the context.
     Forked,
     /// An IO error happened.
-    Io,
+    IO,
     /// Device or resource busy.
     Busy,
 }
@@ -151,7 +152,7 @@ impl From<PAErr> for Code {
             x if x == Code::Obsolete             as ErrorInt => Code::Obsolete,
             x if x == Code::NotImplemented       as ErrorInt => Code::NotImplemented,
             x if x == Code::Forked               as ErrorInt => Code::Forked,
-            x if x == Code::Io                   as ErrorInt => Code::Io,
+            x if x == Code::IO                   as ErrorInt => Code::IO,
             x if x == Code::Busy                 as ErrorInt => Code::Busy,
             _                                                => Code::Unknown,
         }

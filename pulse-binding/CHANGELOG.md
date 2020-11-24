@@ -3,6 +3,7 @@
  * Added PA v14 support (API additions)
  * Mainloop (standard): Changed the `prepare()` method to take an `Option<MicroSeconds>` instead of
    `Option<i32>`.
+ * Renamed the error `Code::Io` enum variant to `Code::IO`.
 
 # 2.16.3 (November 21st, 2020)
 
