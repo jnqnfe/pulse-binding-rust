@@ -1,3 +1,7 @@
+# 1.15.0 (November 25th, 2020)
+
+ * Updated dependencies
+
 # 1.14.0 (November 24th, 2020)
 
  * Updated dependencies

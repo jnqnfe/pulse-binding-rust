@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-mainloop-glib-sys"
-version = "1.14.0"
+version = "1.15.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
@@ -16,7 +16,7 @@ exclude = ["README.md"]
 edition = "2018"
 
 [dependencies]
-libpulse-sys = { path = "../pulse-sys", version = "1.14", default-features = false }
+libpulse-sys = { path = "../pulse-sys", version = "1.15", default-features = false }
 glib-sys = { version = "0", default-features = false }
 
 [build-dependencies]

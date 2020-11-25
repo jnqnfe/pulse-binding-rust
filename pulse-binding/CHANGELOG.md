@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.18.0 (November 25th, 2020)
 
  * Marked `format::Encoding` as `#[non_exhaustive]`
  * Replaced the `From<PAErr> for Code` impl with `TryFrom<PAErr> for Code`, since the conversion is
@@ -9,6 +9,7 @@
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
  * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause
    a deliberate panic rather than silent undefined behaviour, for better stability.
+ * Some test additions
 
 # 2.17.0 (November 24th, 2020)
 
