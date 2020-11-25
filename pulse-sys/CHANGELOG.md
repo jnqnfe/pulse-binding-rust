@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.14.1 (November 25th, 2020)
 
  * Fixed missing rename of `pa_error_code_t::Io` to `pa_error_code_t::IO` to match change in binding
 
