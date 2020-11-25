@@ -18,6 +18,7 @@ use crate::sample::{pa_sample_spec, pa_sample_format_t};
 use crate::{proplist::pa_proplist, channelmap::pa_channel_map};
 
 #[repr(C)]
+#[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]

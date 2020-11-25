@@ -1,5 +1,6 @@
 # [unreleased]
 
+ * Marked `format::Encoding` as `#[non_exhaustive]`
  * Implemented `std::fmt::Display` for `error::Code`
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
  * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause

@@ -1,5 +1,6 @@
 # [unreleased]
 
+ * Marked `pa_encoding_t` as `#[non_exhaustive]`
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on enums
 
 # 1.14.1 (November 25th, 2020)

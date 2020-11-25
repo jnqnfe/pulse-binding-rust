@@ -33,6 +33,7 @@ pub use capi::pa_prop_type_t as PropType;
 
 /// Represents the type of encoding used in a stream or accepted by a sink.
 #[repr(C)]
+#[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
