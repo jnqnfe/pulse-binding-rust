@@ -86,6 +86,19 @@ fn code_compare_capi(){
     assert_eq!(std::mem::align_of::<Code>(), std::mem::align_of::<capi::pa_error_code_t>());
 }
 
+impl From<Code> for capi::pa_error_code_t {
+    #[inline]
+    fn from(c: Code) -> Self {
+        unsafe { std::mem::transmute(c) }
+    }
+}
+impl From<capi::pa_error_code_t> for Code {
+    #[inline]
+    fn from(c: capi::pa_error_code_t) -> Self {
+        unsafe { std::mem::transmute(c) }
+    }
+}
+
 impl PAErr {
     /// Converts an integer error value, as returned by many PA C API functions, to a human readable
     /// string.
