@@ -24,6 +24,7 @@ pub type pa_free_cb_t = Option<extern "C" fn(p: *mut c_void)>;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_device_type_t {
     Sink,
     Source,
@@ -88,6 +89,7 @@ pub mod sink_flags {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_sink_state_t {
     Invalid   = -1,
     Running   = 0,
@@ -134,6 +136,7 @@ pub mod source_flags {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_source_state_t {
     Invalid   = -1,
     Running   = 0,
@@ -159,6 +162,7 @@ pub fn pa_source_is_running(state: pa_source_state_t) -> bool {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_port_available_t {
     /// This port does not support jack detection.
     Unknown = 0,
@@ -175,6 +179,7 @@ pub const PA_PORT_AVAILABLE_YES:     pa_port_available_t = pa_port_available_t::
 /// Port type
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum pa_device_port_type_t {
     Unknown    = 0,

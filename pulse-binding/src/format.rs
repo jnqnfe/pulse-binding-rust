@@ -34,6 +34,7 @@ pub use capi::pa_prop_type_t as PropType;
 /// Represents the type of encoding used in a stream or accepted by a sink.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum Encoding {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate

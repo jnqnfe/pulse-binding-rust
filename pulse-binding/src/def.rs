@@ -342,6 +342,7 @@ pub mod sink_flags {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum SinkState {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */
@@ -447,6 +448,7 @@ pub mod source_flags {
 /// Source state.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum SourceState {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */

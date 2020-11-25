@@ -20,6 +20,7 @@ use std::os::raw::c_void;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_operation_state_t {
     /// The operation is still running.
     Running,

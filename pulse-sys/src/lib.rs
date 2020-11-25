@@ -28,6 +28,8 @@
 #![allow(non_camel_case_types, non_snake_case)]
 
 extern crate libc;
+#[macro_use]
+extern crate num_derive;
 
 pub mod channelmap;
 pub mod context;

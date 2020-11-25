@@ -296,6 +296,7 @@ pub const PA_PROP_FORMAT_CHANNEL_MAP: &str = "format.channel_map";
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_update_mode_t {
     /// Replace the entire property list with the new one. Don’t keep any of the old data around.
     Set,

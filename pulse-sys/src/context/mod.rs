@@ -41,6 +41,7 @@ use crate::sample::{pa_usec_t, pa_sample_spec};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_context_state_t {
     Unconnected,
     Connecting,

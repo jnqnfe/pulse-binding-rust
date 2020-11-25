@@ -23,6 +23,7 @@ use std::os::raw::c_char;
 /// return `-3`. (This is identical to the enum provided in the PA C API).
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum pa_error_code_t {
     /// No error.

@@ -129,6 +129,7 @@ type ExtSubscribeCb = MultiUseCallback<dyn FnMut(), extern "C" fn(*mut ContextIn
 /// The state of a connection context.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum State {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */

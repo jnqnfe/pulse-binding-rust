@@ -19,6 +19,7 @@ use crate::{proplist::pa_proplist, channelmap::pa_channel_map};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum pa_encoding_t {
     Any,
@@ -74,6 +75,7 @@ pub const PA_FORMAT_INFO_SNPRINT_MAX: usize = 256;
 /// Represents the type of value of a property.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_prop_type_t {
     Int,
     IntRange,

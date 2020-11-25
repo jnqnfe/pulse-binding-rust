@@ -60,6 +60,7 @@ pub const POSITION_MASK_ALL: PositionMask = 0xffffffffffffffffu64;
 /// equivalent C enum are not provided here, since Rust does not allow aliases.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum Position {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */

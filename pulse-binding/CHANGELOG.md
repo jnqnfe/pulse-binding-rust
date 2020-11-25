@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
+
 # 2.17.0 (November 24th, 2020)
 
  * Added PA v14 support (API additions)

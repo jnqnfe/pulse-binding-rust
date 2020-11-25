@@ -25,6 +25,7 @@ pub const fn pa_channel_position_mask(pos: pa_channel_position_t) -> pa_channel_
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_channel_position_t {
     Invalid = -1,
     Mono = 0,
@@ -156,6 +157,7 @@ impl Default for pa_channel_position_t {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_channel_map_def_t {
     /// The mapping from RFC3551, which is based on AIFF-C.
     AIFF,

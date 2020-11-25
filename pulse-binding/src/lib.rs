@@ -117,6 +117,8 @@
 
 extern crate libc;
 extern crate libpulse_sys as capi;
+#[macro_use]
+extern crate num_derive;
 
 pub mod callbacks;
 pub mod channelmap;

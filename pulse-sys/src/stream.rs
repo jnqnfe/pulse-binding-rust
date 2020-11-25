@@ -25,6 +25,7 @@ use crate::{volume::pa_cvolume, operation::pa_operation};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_stream_state_t {
     Unconnected,
     Creating,
@@ -48,6 +49,7 @@ pub fn pa_stream_is_good(state: pa_stream_state_t) -> bool {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_stream_direction_t {
     Invalid,
     Playback,
@@ -93,6 +95,7 @@ pub mod flags {
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_seek_mode_t {
     /// Seek relatively to the write index.
     Relative = 0,

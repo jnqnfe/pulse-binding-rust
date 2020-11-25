@@ -24,6 +24,7 @@ pub const PA_RATE_MAX: u32 = 48000 * 8;
 /// Sample format.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum pa_sample_format_t {
     U8,

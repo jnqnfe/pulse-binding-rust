@@ -89,6 +89,7 @@ pub mod subscription_masks {
 /// Facility component of an event.
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum Facility {
     Sink         = 0,
     Source       = 1,
@@ -107,6 +108,7 @@ pub enum Facility {
 /// Operation component of an event.
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 pub enum Operation {
     /// A new object was created
     New     = 0,

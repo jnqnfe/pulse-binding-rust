@@ -26,6 +26,7 @@ pub struct PAErr(pub ErrorInt);
 /// These represent errors returned by many of the underlying PulseAudio C functions.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum Code {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate

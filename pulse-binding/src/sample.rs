@@ -77,6 +77,7 @@ pub use capi::PA_RATE_MAX as RATE_MAX;
 /// Sample format
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum Format {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
