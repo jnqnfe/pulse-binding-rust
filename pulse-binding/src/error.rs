@@ -14,6 +14,7 @@
 //! Error management.
 
 use std::ffi::CStr;
+use num_traits::FromPrimitive;
 
 type ErrorInt = i32;
 
@@ -166,40 +167,11 @@ impl From<Code> for PAErr {
     }
 }
 impl From<PAErr> for Code {
+    #[inline]
     fn from(e: PAErr) -> Self {
         // Error codes are negative, `Code` enum variants are positive
-        // Note, avoid transmute - likely different sizes!
         let abs = -(e.0);
-        match abs {
-            x if x == Code::Ok                   as ErrorInt => Code::Ok,
-            x if x == Code::Access               as ErrorInt => Code::Access,
-            x if x == Code::Command              as ErrorInt => Code::Command,
-            x if x == Code::Invalid              as ErrorInt => Code::Invalid,
-            x if x == Code::Exist                as ErrorInt => Code::Exist,
-            x if x == Code::NoEntity             as ErrorInt => Code::NoEntity,
-            x if x == Code::ConnectionRefused    as ErrorInt => Code::ConnectionRefused,
-            x if x == Code::Protocol             as ErrorInt => Code::Protocol,
-            x if x == Code::Timeout              as ErrorInt => Code::Timeout,
-            x if x == Code::AuthKey              as ErrorInt => Code::AuthKey,
-            x if x == Code::Internal             as ErrorInt => Code::Internal,
-            x if x == Code::ConnectionTerminated as ErrorInt => Code::ConnectionTerminated,
-            x if x == Code::Killed               as ErrorInt => Code::Killed,
-            x if x == Code::InvalidServer        as ErrorInt => Code::InvalidServer,
-            x if x == Code::ModInitFailed        as ErrorInt => Code::ModInitFailed,
-            x if x == Code::BadState             as ErrorInt => Code::BadState,
-            x if x == Code::NoData               as ErrorInt => Code::NoData,
-            x if x == Code::Version              as ErrorInt => Code::Version,
-            x if x == Code::TooLarge             as ErrorInt => Code::TooLarge,
-            x if x == Code::NotSupported         as ErrorInt => Code::NotSupported,
-            x if x == Code::Unknown              as ErrorInt => Code::Unknown,
-            x if x == Code::NoExtension          as ErrorInt => Code::NoExtension,
-            x if x == Code::Obsolete             as ErrorInt => Code::Obsolete,
-            x if x == Code::NotImplemented       as ErrorInt => Code::NotImplemented,
-            x if x == Code::Forked               as ErrorInt => Code::Forked,
-            x if x == Code::IO                   as ErrorInt => Code::IO,
-            x if x == Code::Busy                 as ErrorInt => Code::Busy,
-            _                                                => Code::Unknown,
-        }
+        Code::from_i32(abs).unwrap_or(Code::Unknown)
     }
 }
 
