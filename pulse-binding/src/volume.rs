@@ -120,7 +120,7 @@ pub struct ChannelVolumes {
     values: [Volume; sample::CHANNELS_MAX],
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn set_compare_capi(){
     assert_eq!(std::mem::size_of::<ChannelVolumes>(), std::mem::size_of::<capi::pa_cvolume>());

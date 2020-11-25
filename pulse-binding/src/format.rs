@@ -67,7 +67,7 @@ pub enum Encoding {
     Invalid = -1,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn enc_compare_capi(){
     assert_eq!(std::mem::size_of::<Encoding>(), std::mem::size_of::<capi::pa_encoding_t>());

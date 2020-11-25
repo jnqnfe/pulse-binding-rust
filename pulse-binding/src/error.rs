@@ -79,7 +79,7 @@ pub enum Code {
     Busy,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn code_compare_capi(){
     assert_eq!(std::mem::size_of::<Code>(), std::mem::size_of::<capi::pa_error_code_t>());

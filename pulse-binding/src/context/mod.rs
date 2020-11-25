@@ -148,7 +148,7 @@ pub enum State {
     Terminated,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn state_compare_capi(){
     assert_eq!(std::mem::size_of::<State>(), std::mem::size_of::<capi::pa_context_state_t>());

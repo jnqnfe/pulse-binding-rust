@@ -112,7 +112,7 @@ pub enum Format {
     Invalid = -1,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn format_compare_capi(){
     assert_eq!(std::mem::size_of::<Format>(), std::mem::size_of::<capi::pa_sample_format_t>());
@@ -213,7 +213,7 @@ pub struct Spec {
     pub channels: u8,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn spec_compare_capi(){
     assert_eq!(std::mem::size_of::<Spec>(), std::mem::size_of::<capi::pa_sample_spec>());

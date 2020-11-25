@@ -359,7 +359,7 @@ pub enum SinkState {
     Suspended = 2,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn sink_state_compare_capi(){
     assert_eq!(std::mem::size_of::<SinkState>(), std::mem::size_of::<capi::pa_sink_state_t>());
@@ -457,7 +457,7 @@ pub enum SourceState {
     Suspended = 2,
 }
 
-/// Test size is equal to `sys` equivalent (duplicated here for different documentation)
+/// Test size is equal to `sys` equivalent
 #[test]
 fn source_state_compare_capi(){
     assert_eq!(std::mem::size_of::<SourceState>(), std::mem::size_of::<capi::pa_source_state_t>());
