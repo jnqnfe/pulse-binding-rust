@@ -79,11 +79,41 @@ pub enum Code {
     Busy,
 }
 
-/// Test size is equal to `sys` equivalent
+/// Check is equal to `sys` equivalent
 #[test]
 fn code_compare_capi(){
     assert_eq!(std::mem::size_of::<Code>(), std::mem::size_of::<capi::pa_error_code_t>());
     assert_eq!(std::mem::align_of::<Code>(), std::mem::align_of::<capi::pa_error_code_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(Code::Ok,                   Code::from(capi::pa_error_code_t::Ok));
+    assert_eq!(Code::Access,               Code::from(capi::pa_error_code_t::Access));
+    assert_eq!(Code::Command,              Code::from(capi::pa_error_code_t::Command));
+    assert_eq!(Code::Invalid,              Code::from(capi::pa_error_code_t::Invalid));
+    assert_eq!(Code::Exist,                Code::from(capi::pa_error_code_t::Exist));
+    assert_eq!(Code::NoEntity,             Code::from(capi::pa_error_code_t::NoEntity));
+    assert_eq!(Code::ConnectionRefused,    Code::from(capi::pa_error_code_t::ConnectionRefused));
+    assert_eq!(Code::Protocol,             Code::from(capi::pa_error_code_t::Protocol));
+    assert_eq!(Code::Timeout,              Code::from(capi::pa_error_code_t::Timeout));
+    assert_eq!(Code::AuthKey,              Code::from(capi::pa_error_code_t::AuthKey));
+    assert_eq!(Code::Internal,             Code::from(capi::pa_error_code_t::Internal));
+    assert_eq!(Code::ConnectionTerminated, Code::from(capi::pa_error_code_t::ConnectionTerminated));
+    assert_eq!(Code::Killed,               Code::from(capi::pa_error_code_t::Killed));
+    assert_eq!(Code::InvalidServer,        Code::from(capi::pa_error_code_t::InvalidServer));
+    assert_eq!(Code::ModInitFailed,        Code::from(capi::pa_error_code_t::ModInitFailed));
+    assert_eq!(Code::BadState,             Code::from(capi::pa_error_code_t::BadState));
+    assert_eq!(Code::NoData,               Code::from(capi::pa_error_code_t::NoData));
+    assert_eq!(Code::Version,              Code::from(capi::pa_error_code_t::Version));
+    assert_eq!(Code::TooLarge,             Code::from(capi::pa_error_code_t::TooLarge));
+    assert_eq!(Code::NotSupported,         Code::from(capi::pa_error_code_t::NotSupported));
+    assert_eq!(Code::Unknown,              Code::from(capi::pa_error_code_t::Unknown));
+    assert_eq!(Code::NoExtension,          Code::from(capi::pa_error_code_t::NoExtension));
+    assert_eq!(Code::Obsolete,             Code::from(capi::pa_error_code_t::Obsolete));
+    assert_eq!(Code::NotImplemented,       Code::from(capi::pa_error_code_t::NotImplemented));
+    assert_eq!(Code::Forked,               Code::from(capi::pa_error_code_t::Forked));
+    assert_eq!(Code::IO,                   Code::from(capi::pa_error_code_t::IO));
+    assert_eq!(Code::Busy,                 Code::from(capi::pa_error_code_t::Busy));
 }
 
 impl From<Code> for capi::pa_error_code_t {

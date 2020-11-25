@@ -153,6 +153,16 @@ pub enum State {
 fn state_compare_capi(){
     assert_eq!(std::mem::size_of::<State>(), std::mem::size_of::<capi::pa_context_state_t>());
     assert_eq!(std::mem::align_of::<State>(), std::mem::align_of::<capi::pa_context_state_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(State::Unconnected, State::from(capi::pa_context_state_t::Unconnected));
+    assert_eq!(State::Connecting,  State::from(capi::pa_context_state_t::Connecting));
+    assert_eq!(State::Authorizing, State::from(capi::pa_context_state_t::Authorizing));
+    assert_eq!(State::SettingName, State::from(capi::pa_context_state_t::SettingName));
+    assert_eq!(State::Ready,       State::from(capi::pa_context_state_t::Ready));
+    assert_eq!(State::Failed,      State::from(capi::pa_context_state_t::Failed));
+    assert_eq!(State::Terminated,  State::from(capi::pa_context_state_t::Terminated));
 }
 
 impl From<State> for capi::pa_context_state_t {

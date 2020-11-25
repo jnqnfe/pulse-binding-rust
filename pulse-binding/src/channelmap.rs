@@ -158,11 +158,66 @@ impl Default for Position {
     }
 }
 
-/// Test size is equal to `sys` equivalent
+/// Check is equal to `sys` equivalent
 #[test]
 fn pos_compare_capi(){
     assert_eq!(std::mem::size_of::<Position>(), std::mem::size_of::<capi::pa_channel_position_t>());
     assert_eq!(std::mem::align_of::<Position>(), std::mem::align_of::<capi::pa_channel_position_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(Position::Invalid,            Position::from(capi::pa_channel_position_t::Invalid));
+    assert_eq!(Position::Mono,               Position::from(capi::pa_channel_position_t::Mono));
+    assert_eq!(Position::FrontLeft,          Position::from(capi::pa_channel_position_t::FrontLeft));
+    assert_eq!(Position::FrontRight,         Position::from(capi::pa_channel_position_t::FrontRight));
+    assert_eq!(Position::FrontCenter,        Position::from(capi::pa_channel_position_t::FrontCenter));
+    assert_eq!(Position::RearCenter,         Position::from(capi::pa_channel_position_t::RearCenter));
+    assert_eq!(Position::RearLeft,           Position::from(capi::pa_channel_position_t::RearLeft));
+    assert_eq!(Position::RearRight,          Position::from(capi::pa_channel_position_t::RearRight));
+    assert_eq!(Position::Lfe,                Position::from(capi::pa_channel_position_t::Lfe));
+    assert_eq!(Position::FrontLeftOfCenter,  Position::from(capi::pa_channel_position_t::FrontLeftOfCenter));
+    assert_eq!(Position::FrontRightOfCenter, Position::from(capi::pa_channel_position_t::FrontRightOfCenter));
+    assert_eq!(Position::SideLeft,           Position::from(capi::pa_channel_position_t::SideLeft));
+    assert_eq!(Position::SideRight,          Position::from(capi::pa_channel_position_t::SideRight));
+    assert_eq!(Position::Aux0,               Position::from(capi::pa_channel_position_t::Aux0));
+    assert_eq!(Position::Aux1,               Position::from(capi::pa_channel_position_t::Aux1));
+    assert_eq!(Position::Aux2,               Position::from(capi::pa_channel_position_t::Aux2));
+    assert_eq!(Position::Aux3,               Position::from(capi::pa_channel_position_t::Aux3));
+    assert_eq!(Position::Aux4,               Position::from(capi::pa_channel_position_t::Aux4));
+    assert_eq!(Position::Aux5,               Position::from(capi::pa_channel_position_t::Aux5));
+    assert_eq!(Position::Aux6,               Position::from(capi::pa_channel_position_t::Aux6));
+    assert_eq!(Position::Aux7,               Position::from(capi::pa_channel_position_t::Aux7));
+    assert_eq!(Position::Aux8,               Position::from(capi::pa_channel_position_t::Aux8));
+    assert_eq!(Position::Aux9,               Position::from(capi::pa_channel_position_t::Aux9));
+    assert_eq!(Position::Aux10,              Position::from(capi::pa_channel_position_t::Aux10));
+    assert_eq!(Position::Aux11,              Position::from(capi::pa_channel_position_t::Aux11));
+    assert_eq!(Position::Aux12,              Position::from(capi::pa_channel_position_t::Aux12));
+    assert_eq!(Position::Aux13,              Position::from(capi::pa_channel_position_t::Aux13));
+    assert_eq!(Position::Aux14,              Position::from(capi::pa_channel_position_t::Aux14));
+    assert_eq!(Position::Aux15,              Position::from(capi::pa_channel_position_t::Aux15));
+    assert_eq!(Position::Aux16,              Position::from(capi::pa_channel_position_t::Aux16));
+    assert_eq!(Position::Aux17,              Position::from(capi::pa_channel_position_t::Aux17));
+    assert_eq!(Position::Aux18,              Position::from(capi::pa_channel_position_t::Aux18));
+    assert_eq!(Position::Aux19,              Position::from(capi::pa_channel_position_t::Aux19));
+    assert_eq!(Position::Aux20,              Position::from(capi::pa_channel_position_t::Aux20));
+    assert_eq!(Position::Aux21,              Position::from(capi::pa_channel_position_t::Aux21));
+    assert_eq!(Position::Aux22,              Position::from(capi::pa_channel_position_t::Aux22));
+    assert_eq!(Position::Aux23,              Position::from(capi::pa_channel_position_t::Aux23));
+    assert_eq!(Position::Aux24,              Position::from(capi::pa_channel_position_t::Aux24));
+    assert_eq!(Position::Aux25,              Position::from(capi::pa_channel_position_t::Aux25));
+    assert_eq!(Position::Aux26,              Position::from(capi::pa_channel_position_t::Aux26));
+    assert_eq!(Position::Aux27,              Position::from(capi::pa_channel_position_t::Aux27));
+    assert_eq!(Position::Aux28,              Position::from(capi::pa_channel_position_t::Aux28));
+    assert_eq!(Position::Aux29,              Position::from(capi::pa_channel_position_t::Aux29));
+    assert_eq!(Position::Aux30,              Position::from(capi::pa_channel_position_t::Aux30));
+    assert_eq!(Position::Aux31,              Position::from(capi::pa_channel_position_t::Aux31));
+    assert_eq!(Position::TopCenter,          Position::from(capi::pa_channel_position_t::TopCenter));
+    assert_eq!(Position::TopFrontLeft,       Position::from(capi::pa_channel_position_t::TopFrontLeft));
+    assert_eq!(Position::TopFrontRight,      Position::from(capi::pa_channel_position_t::TopFrontRight));
+    assert_eq!(Position::TopFrontCenter,     Position::from(capi::pa_channel_position_t::TopFrontCenter));
+    assert_eq!(Position::TopRearLeft,        Position::from(capi::pa_channel_position_t::TopRearLeft));
+    assert_eq!(Position::TopRearRight,       Position::from(capi::pa_channel_position_t::TopRearRight));
+    assert_eq!(Position::TopRearCenter,      Position::from(capi::pa_channel_position_t::TopRearCenter));
 }
 
 impl From<Position> for capi::pa_channel_position_t {

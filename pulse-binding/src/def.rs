@@ -359,11 +359,18 @@ pub enum SinkState {
     Suspended = 2,
 }
 
-/// Test size is equal to `sys` equivalent
+/// Check is equal to `sys` equivalent
 #[test]
 fn sink_state_compare_capi(){
     assert_eq!(std::mem::size_of::<SinkState>(), std::mem::size_of::<capi::pa_sink_state_t>());
     assert_eq!(std::mem::align_of::<SinkState>(), std::mem::align_of::<capi::pa_sink_state_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(SinkState::Invalid,   SinkState::from(capi::pa_sink_state_t::Invalid));
+    assert_eq!(SinkState::Running,   SinkState::from(capi::pa_sink_state_t::Running));
+    assert_eq!(SinkState::Idle,      SinkState::from(capi::pa_sink_state_t::Idle));
+    assert_eq!(SinkState::Suspended, SinkState::from(capi::pa_sink_state_t::Suspended));
 }
 
 impl From<SinkState> for capi::pa_sink_state_t {
@@ -457,11 +464,18 @@ pub enum SourceState {
     Suspended = 2,
 }
 
-/// Test size is equal to `sys` equivalent
+/// Check is equal to `sys` equivalent
 #[test]
 fn source_state_compare_capi(){
     assert_eq!(std::mem::size_of::<SourceState>(), std::mem::size_of::<capi::pa_source_state_t>());
     assert_eq!(std::mem::align_of::<SourceState>(), std::mem::align_of::<capi::pa_source_state_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(SourceState::Invalid,   SourceState::from(capi::pa_source_state_t::Invalid));
+    assert_eq!(SourceState::Running,   SourceState::from(capi::pa_source_state_t::Running));
+    assert_eq!(SourceState::Idle,      SourceState::from(capi::pa_source_state_t::Idle));
+    assert_eq!(SourceState::Suspended, SourceState::from(capi::pa_source_state_t::Suspended));
 }
 
 impl From<SourceState> for capi::pa_source_state_t {

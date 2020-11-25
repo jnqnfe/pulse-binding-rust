@@ -112,11 +112,28 @@ pub enum Format {
     Invalid = -1,
 }
 
-/// Test size is equal to `sys` equivalent
+/// Check is equal to `sys` equivalent
 #[test]
 fn format_compare_capi(){
     assert_eq!(std::mem::size_of::<Format>(), std::mem::size_of::<capi::pa_sample_format_t>());
     assert_eq!(std::mem::align_of::<Format>(), std::mem::align_of::<capi::pa_sample_format_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(Format::U8,       Format::from(capi::pa_sample_format_t::U8));
+    assert_eq!(Format::ALaw,     Format::from(capi::pa_sample_format_t::ALaw));
+    assert_eq!(Format::ULaw,     Format::from(capi::pa_sample_format_t::ULaw));
+    assert_eq!(Format::S16le,    Format::from(capi::pa_sample_format_t::S16le));
+    assert_eq!(Format::S16be,    Format::from(capi::pa_sample_format_t::S16be));
+    assert_eq!(Format::F32le,    Format::from(capi::pa_sample_format_t::F32le));
+    assert_eq!(Format::F32be,    Format::from(capi::pa_sample_format_t::F32be));
+    assert_eq!(Format::S32le,    Format::from(capi::pa_sample_format_t::S32le));
+    assert_eq!(Format::S32be,    Format::from(capi::pa_sample_format_t::S32be));
+    assert_eq!(Format::S24le,    Format::from(capi::pa_sample_format_t::S24le));
+    assert_eq!(Format::S24be,    Format::from(capi::pa_sample_format_t::S24be));
+    assert_eq!(Format::S24_32le, Format::from(capi::pa_sample_format_t::S24_32le));
+    assert_eq!(Format::S24_32be, Format::from(capi::pa_sample_format_t::S24_32be));
+    assert_eq!(Format::Invalid,  Format::from(capi::pa_sample_format_t::Invalid));
 }
 
 impl From<Format> for capi::pa_sample_format_t {

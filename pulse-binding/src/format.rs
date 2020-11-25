@@ -67,11 +67,26 @@ pub enum Encoding {
     Invalid = -1,
 }
 
-/// Test size is equal to `sys` equivalent
+/// Check is equal to `sys` equivalent
 #[test]
 fn enc_compare_capi(){
     assert_eq!(std::mem::size_of::<Encoding>(), std::mem::size_of::<capi::pa_encoding_t>());
     assert_eq!(std::mem::align_of::<Encoding>(), std::mem::align_of::<capi::pa_encoding_t>());
+
+    // Check order and value of variants match
+    // No point checking conversions in both directions since both are a transmute
+    assert_eq!(Encoding::Any,                Encoding::from(capi::pa_encoding_t::Any));
+    assert_eq!(Encoding::PCM,                Encoding::from(capi::pa_encoding_t::PCM));
+    assert_eq!(Encoding::AC3_IEC61937,       Encoding::from(capi::pa_encoding_t::AC3_IEC61937));
+    assert_eq!(Encoding::EAC3_IEC61937,      Encoding::from(capi::pa_encoding_t::EAC3_IEC61937));
+    assert_eq!(Encoding::MPEG_IEC61937,      Encoding::from(capi::pa_encoding_t::MPEG_IEC61937));
+    assert_eq!(Encoding::DTS_IEC61937,       Encoding::from(capi::pa_encoding_t::DTS_IEC61937));
+    assert_eq!(Encoding::MPEG2_AAC_IEC61937, Encoding::from(capi::pa_encoding_t::MPEG2_AAC_IEC61937));
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    assert_eq!(Encoding::TRUEHD_IEC61937,    Encoding::from(capi::pa_encoding_t::TRUEHD_IEC61937));
+    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    assert_eq!(Encoding::DTSHD_IEC61937,     Encoding::from(capi::pa_encoding_t::DTSHD_IEC61937));
+    assert_eq!(Encoding::Invalid,            Encoding::from(capi::pa_encoding_t::Invalid));
 }
 
 impl From<Encoding> for capi::pa_encoding_t {
