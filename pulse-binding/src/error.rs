@@ -153,6 +153,7 @@ impl std::fmt::Display for PAErr {
 
 impl Code {
     /// Converts a `Code` to a human readable string.
+    #[inline]
     pub fn to_string(self) -> Option<String> {
         PAErr::from(self).to_string()
     }
