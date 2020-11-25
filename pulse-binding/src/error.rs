@@ -201,3 +201,63 @@ impl From<PAErr> for Code {
         }
     }
 }
+
+/// Check `PAErr` <=> `Code` conversions
+#[test]
+fn check_code_paerr_conversions() {
+    assert_eq!(Code::Ok,                   Code::from(PAErr(0)));
+    assert_eq!(Code::Access,               Code::from(PAErr(-1)));
+    assert_eq!(Code::Command,              Code::from(PAErr(-2)));
+    assert_eq!(Code::Invalid,              Code::from(PAErr(-3)));
+    assert_eq!(Code::Exist,                Code::from(PAErr(-4)));
+    assert_eq!(Code::NoEntity,             Code::from(PAErr(-5)));
+    assert_eq!(Code::ConnectionRefused,    Code::from(PAErr(-6)));
+    assert_eq!(Code::Protocol,             Code::from(PAErr(-7)));
+    assert_eq!(Code::Timeout,              Code::from(PAErr(-8)));
+    assert_eq!(Code::AuthKey,              Code::from(PAErr(-9)));
+    assert_eq!(Code::Internal,             Code::from(PAErr(-10)));
+    assert_eq!(Code::ConnectionTerminated, Code::from(PAErr(-11)));
+    assert_eq!(Code::Killed,               Code::from(PAErr(-12)));
+    assert_eq!(Code::InvalidServer,        Code::from(PAErr(-13)));
+    assert_eq!(Code::ModInitFailed,        Code::from(PAErr(-14)));
+    assert_eq!(Code::BadState,             Code::from(PAErr(-15)));
+    assert_eq!(Code::NoData,               Code::from(PAErr(-16)));
+    assert_eq!(Code::Version,              Code::from(PAErr(-17)));
+    assert_eq!(Code::TooLarge,             Code::from(PAErr(-18)));
+    assert_eq!(Code::NotSupported,         Code::from(PAErr(-19)));
+    assert_eq!(Code::Unknown,              Code::from(PAErr(-20)));
+    assert_eq!(Code::NoExtension,          Code::from(PAErr(-21)));
+    assert_eq!(Code::Obsolete,             Code::from(PAErr(-22)));
+    assert_eq!(Code::NotImplemented,       Code::from(PAErr(-23)));
+    assert_eq!(Code::Forked,               Code::from(PAErr(-24)));
+    assert_eq!(Code::IO,                   Code::from(PAErr(-25)));
+    assert_eq!(Code::Busy,                 Code::from(PAErr(-26)));
+
+    assert_eq!(PAErr::from(Code::Ok),                   PAErr(0));
+    assert_eq!(PAErr::from(Code::Access),               PAErr(-1));
+    assert_eq!(PAErr::from(Code::Command),              PAErr(-2));
+    assert_eq!(PAErr::from(Code::Invalid),              PAErr(-3));
+    assert_eq!(PAErr::from(Code::Exist),                PAErr(-4));
+    assert_eq!(PAErr::from(Code::NoEntity),             PAErr(-5));
+    assert_eq!(PAErr::from(Code::ConnectionRefused),    PAErr(-6));
+    assert_eq!(PAErr::from(Code::Protocol),             PAErr(-7));
+    assert_eq!(PAErr::from(Code::Timeout),              PAErr(-8));
+    assert_eq!(PAErr::from(Code::AuthKey),              PAErr(-9));
+    assert_eq!(PAErr::from(Code::Internal),             PAErr(-10));
+    assert_eq!(PAErr::from(Code::ConnectionTerminated), PAErr(-11));
+    assert_eq!(PAErr::from(Code::Killed),               PAErr(-12));
+    assert_eq!(PAErr::from(Code::InvalidServer),        PAErr(-13));
+    assert_eq!(PAErr::from(Code::ModInitFailed),        PAErr(-14));
+    assert_eq!(PAErr::from(Code::BadState),             PAErr(-15));
+    assert_eq!(PAErr::from(Code::NoData),               PAErr(-16));
+    assert_eq!(PAErr::from(Code::Version),              PAErr(-17));
+    assert_eq!(PAErr::from(Code::TooLarge),             PAErr(-18));
+    assert_eq!(PAErr::from(Code::NotSupported),         PAErr(-19));
+    assert_eq!(PAErr::from(Code::Unknown),              PAErr(-20));
+    assert_eq!(PAErr::from(Code::NoExtension),          PAErr(-21));
+    assert_eq!(PAErr::from(Code::Obsolete),             PAErr(-22));
+    assert_eq!(PAErr::from(Code::NotImplemented),       PAErr(-23));
+    assert_eq!(PAErr::from(Code::Forked),               PAErr(-24));
+    assert_eq!(PAErr::from(Code::IO),                   PAErr(-25));
+    assert_eq!(PAErr::from(Code::Busy),                 PAErr(-26));
+}
