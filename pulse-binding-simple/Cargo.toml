@@ -1,6 +1,6 @@
 [package]
 name = "libpulse-simple-binding"
-version = "2.18.0"
+version = "2.18.1"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
