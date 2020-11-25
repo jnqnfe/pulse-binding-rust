@@ -23,6 +23,7 @@ use std::os::raw::c_char;
 /// return `-3`. (This is identical to the enum provided in the PA C API).
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
 pub enum pa_error_code_t {
     /// No error.
     Ok = 0,
@@ -68,7 +69,7 @@ pub enum pa_error_code_t {
     /// The caller forked without calling execve() and tried to reuse the context.
     Forked,
     /// An IO error happened.
-    Io,
+    IO,
     /// Device or resource busy.
     Busy,
 }
@@ -100,7 +101,7 @@ pub const PA_ERR_NOEXTENSION:          pa_error_code_t = pa_error_code_t::NoExte
 pub const PA_ERR_OBSOLETE:             pa_error_code_t = pa_error_code_t::Obsolete;
 pub const PA_ERR_NOTIMPLEMENTED:       pa_error_code_t = pa_error_code_t::NotImplemented;
 pub const PA_ERR_FORKED:               pa_error_code_t = pa_error_code_t::Forked;
-pub const PA_ERR_IO:                   pa_error_code_t = pa_error_code_t::Io;
+pub const PA_ERR_IO:                   pa_error_code_t = pa_error_code_t::IO;
 pub const PA_ERR_BUSY:                 pa_error_code_t = pa_error_code_t::Busy;
 
 #[link(name="pulse")]

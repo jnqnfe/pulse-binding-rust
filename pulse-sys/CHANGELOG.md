@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Fixed missing rename of `pa_error_code_t::Io` to `pa_error_code_t::IO` to match change in binding
+
 # 1.14.0 (November 24th, 2020)
 
  * Added PA v14 support (API additions)
