@@ -114,7 +114,7 @@ pub enum Format {
 
 /// Check is equal to `sys` equivalent
 #[test]
-fn format_compare_capi(){
+fn format_compare_capi() {
     assert_eq!(std::mem::size_of::<Format>(), std::mem::size_of::<capi::pa_sample_format_t>());
     assert_eq!(std::mem::align_of::<Format>(), std::mem::align_of::<capi::pa_sample_format_t>());
 
@@ -232,7 +232,7 @@ pub struct Spec {
 
 /// Test size is equal to `sys` equivalent
 #[test]
-fn spec_compare_capi(){
+fn spec_compare_capi() {
     assert_eq!(std::mem::size_of::<Spec>(), std::mem::size_of::<capi::pa_sample_spec>());
     assert_eq!(std::mem::align_of::<Spec>(), std::mem::align_of::<capi::pa_sample_spec>());
 }

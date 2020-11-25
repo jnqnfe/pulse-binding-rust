@@ -69,7 +69,7 @@ pub enum Encoding {
 
 /// Check is equal to `sys` equivalent
 #[test]
-fn enc_compare_capi(){
+fn enc_compare_capi() {
     assert_eq!(std::mem::size_of::<Encoding>(), std::mem::size_of::<capi::pa_encoding_t>());
     assert_eq!(std::mem::align_of::<Encoding>(), std::mem::align_of::<capi::pa_encoding_t>());
 
@@ -134,7 +134,7 @@ pub(crate) struct InfoInternal {
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
 #[test]
-fn info_compare_capi(){
+fn info_compare_capi() {
     assert_eq!(std::mem::size_of::<InfoInternal>(), std::mem::size_of::<capi::pa_format_info>());
     assert_eq!(std::mem::align_of::<InfoInternal>(), std::mem::align_of::<capi::pa_format_info>());
 }

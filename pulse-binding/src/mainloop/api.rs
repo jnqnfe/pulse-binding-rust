@@ -367,7 +367,7 @@ pub struct MainloopApi {
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
 #[test]
-fn api_compare_capi(){
+fn api_compare_capi() {
     assert_eq!(std::mem::size_of::<ApiInternal>(), std::mem::size_of::<capi::pa_mainloop_api>());
     assert_eq!(std::mem::align_of::<ApiInternal>(), std::mem::align_of::<capi::pa_mainloop_api>());
 }

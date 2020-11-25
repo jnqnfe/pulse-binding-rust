@@ -114,7 +114,7 @@ pub struct BufferAttr {
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
 #[test]
-fn bufferattr_compare_capi(){
+fn bufferattr_compare_capi() {
     assert_eq!(std::mem::size_of::<BufferAttr>(), std::mem::size_of::<capi::pa_buffer_attr>());
     assert_eq!(std::mem::align_of::<BufferAttr>(), std::mem::align_of::<capi::pa_buffer_attr>());
 }
@@ -243,7 +243,7 @@ pub struct TimingInfo {
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
 #[test]
-fn timinginfo_compare_capi(){
+fn timinginfo_compare_capi() {
     assert_eq!(std::mem::size_of::<TimingInfo>(), std::mem::size_of::<capi::pa_timing_info>());
     assert_eq!(std::mem::align_of::<TimingInfo>(), std::mem::align_of::<capi::pa_timing_info>());
 }
@@ -283,7 +283,7 @@ pub struct SpawnApi {
 
 /// Test size is equal to `sys` equivalent (duplicated here for different documentation)
 #[test]
-fn spawnapi_compare_capi(){
+fn spawnapi_compare_capi() {
     assert_eq!(std::mem::size_of::<SpawnApi>(), std::mem::size_of::<capi::pa_spawn_api>());
     assert_eq!(std::mem::align_of::<SpawnApi>(), std::mem::align_of::<capi::pa_spawn_api>());
 }
@@ -361,7 +361,7 @@ pub enum SinkState {
 
 /// Check is equal to `sys` equivalent
 #[test]
-fn sink_state_compare_capi(){
+fn sink_state_compare_capi() {
     assert_eq!(std::mem::size_of::<SinkState>(), std::mem::size_of::<capi::pa_sink_state_t>());
     assert_eq!(std::mem::align_of::<SinkState>(), std::mem::align_of::<capi::pa_sink_state_t>());
 
@@ -466,7 +466,7 @@ pub enum SourceState {
 
 /// Check is equal to `sys` equivalent
 #[test]
-fn source_state_compare_capi(){
+fn source_state_compare_capi() {
     assert_eq!(std::mem::size_of::<SourceState>(), std::mem::size_of::<capi::pa_source_state_t>());
     assert_eq!(std::mem::align_of::<SourceState>(), std::mem::align_of::<capi::pa_source_state_t>());
 

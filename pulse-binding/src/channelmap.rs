@@ -160,7 +160,7 @@ impl Default for Position {
 
 /// Check is equal to `sys` equivalent
 #[test]
-fn pos_compare_capi(){
+fn pos_compare_capi() {
     assert_eq!(std::mem::size_of::<Position>(), std::mem::size_of::<capi::pa_channel_position_t>());
     assert_eq!(std::mem::align_of::<Position>(), std::mem::align_of::<capi::pa_channel_position_t>());
 
@@ -260,7 +260,7 @@ impl BorrowMut<[Position]> for Map {
 
 /// Test size is equal to `sys` equivalent
 #[test]
-fn map_compare_capi(){
+fn map_compare_capi() {
     assert_eq!(std::mem::size_of::<Map>(), std::mem::size_of::<capi::pa_channel_map>());
     assert_eq!(std::mem::align_of::<Map>(), std::mem::align_of::<capi::pa_channel_map>());
 }
