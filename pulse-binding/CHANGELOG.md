@@ -1,6 +1,8 @@
 # [unreleased]
 
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
+ * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause
+   a deliberate panic rather than silent undefined behaviour, for better stability.
 
 # 2.17.0 (November 24th, 2020)
 

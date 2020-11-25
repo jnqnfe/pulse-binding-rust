@@ -219,11 +219,11 @@
 //! [`Introspector::stat`]: struct.Introspector.html#method.stat
 //! [`Introspector::unload_module`]: struct.Introspector.html#method.unload_module
 
-use std::mem;
 use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::ptr::null_mut;
+use num_traits::FromPrimitive;
 use capi::pa_sink_port_info as SinkPortInfoInternal;
 use capi::pa_sink_info as SinkInfoInternal;
 use capi::pa_source_port_info as SourcePortInfoInternal;
@@ -348,14 +348,14 @@ impl<'a> SinkPortInfo<'a> {
                     true => None,
                 },
                 priority: src.priority,
-                available: mem::transmute(src.available),
+                available: def::PortAvailable::from_i32(src.available).unwrap(),
                 #[cfg(any(feature = "pa_v14", feature = "dox"))]
                 availability_group: match src.availability_group.is_null() {
                     false => Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
                     true => None,
                 },
                 #[cfg(any(feature = "pa_v14", feature = "dox"))]
-                r#type: mem::transmute(src.r#type),
+                r#type: DevicePortType::from_u32(src.r#type).unwrap(),
             }
         }
     }
@@ -763,14 +763,14 @@ impl<'a> SourcePortInfo<'a> {
                     true => None,
                 },
                 priority: src.priority,
-                available: mem::transmute(src.available),
+                available: def::PortAvailable::from_i32(src.available).unwrap(),
                 #[cfg(any(feature = "pa_v14", feature = "dox"))]
                 availability_group: match src.availability_group.is_null() {
                     false=> Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
                     true => None,
                 },
                 #[cfg(any(feature = "pa_v14", feature = "dox"))]
-                r#type: mem::transmute(src.r#type),
+                r#type: DevicePortType::from_u32(src.r#type).unwrap(),
             }
         }
     }
@@ -1664,7 +1664,7 @@ impl<'a> CardPortInfo<'a> {
                     true => None,
                 },
                 priority: src.priority,
-                available: mem::transmute(src.available),
+                available: def::PortAvailable::from_i32(src.available).unwrap(),
                 direction: src.direction,
                 proplist: Proplist::from_raw_weak(src.proplist),
                 latency_offset: src.latency_offset,
@@ -1675,7 +1675,7 @@ impl<'a> CardPortInfo<'a> {
                     true => None,
                 },
                 #[cfg(any(feature = "pa_v14", feature = "dox"))]
-                r#type: mem::transmute(src.r#type),
+                r#type: DevicePortType::from_u32(src.r#type).unwrap(),
             }
         }
     }
