@@ -2,7 +2,7 @@
 name = "libpulse-simple-sys"
 version = "1.15.0"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
-license = "MIT/Apache-2.0"
+license = "MIT OR Apache-2.0"
 readme = "README.md"
 description = """
 A Rust language linking library for the PulseAudio libpulse-simple library.

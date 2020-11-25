@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Fixed deprecated license attribute syntax
+
 # 1.15.0 (November 25th, 2020)
 
  * Marked `pa_encoding_t` as `#[non_exhaustive]`

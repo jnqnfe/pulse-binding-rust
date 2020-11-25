@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Fixed deprecated license attribute syntax
+
 # 2.18.0 (November 25th, 2020)
 
  * Marked `format::Encoding` as `#[non_exhaustive]`
