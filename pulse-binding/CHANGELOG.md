@@ -1,6 +1,10 @@
 # [unreleased]
 
  * Marked `format::Encoding` as `#[non_exhaustive]`
+ * Replaced the `From<PAErr> for Code` impl with `TryFrom<PAErr> for Code`, since the conversion is
+   fallible and now that `TryFrom` has been stable for a while (since 1.40). Unfortunately it was
+   not possible to leave the `From` version in place with a deprecation notice due to conflicts that
+   result. The solution was also re-implemented based upon `FromPrimative`.
  * Implemented `std::fmt::Display` for `error::Code`
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
  * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause
