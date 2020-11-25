@@ -16,13 +16,11 @@
 use std::ffi::CStr;
 use num_traits::FromPrimitive;
 
-type ErrorInt = i32;
-
 /// A wrapper around integer errors returned by PulseAudio. Can be converted to a `Code` variant for
 /// comparison purposes if desired.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub struct PAErr(pub ErrorInt);
+pub struct PAErr(pub i32);
 
 /// These represent errors returned by many of the underlying PulseAudio C functions.
 #[repr(C)]
@@ -163,7 +161,7 @@ impl From<Code> for PAErr {
     #[inline]
     fn from(c: Code) -> Self {
         // Error codes are negative, `Code` enum variants are positive
-        PAErr(-(c as ErrorInt))
+        PAErr(-(c as i32))
     }
 }
 impl From<PAErr> for Code {
