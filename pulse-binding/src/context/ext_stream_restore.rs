@@ -51,8 +51,8 @@ impl<'a> Info<'a> {
                     false => Some(CStr::from_ptr(src.name).to_string_lossy()),
                     true => None,
                 },
-                channel_map: mem::transmute(src.channel_map),
-                volume: mem::transmute(src.volume),
+                channel_map: src.channel_map.into(),
+                volume: src.volume.into(),
                 device: match src.name.is_null() {
                     false => Some(CStr::from_ptr(src.device).to_string_lossy()),
                     true => None,
