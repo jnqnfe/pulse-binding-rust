@@ -1,5 +1,6 @@
 # [unreleased]
 
+ * Implemented `std::fmt::Display` for `error::Code`
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
  * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause
    a deliberate panic rather than silent undefined behaviour, for better stability.

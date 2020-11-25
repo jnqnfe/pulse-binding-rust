@@ -157,6 +157,15 @@ impl Code {
     }
 }
 
+impl std::fmt::Display for Code {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match (*self).to_string() {
+            Some(s) => write!(f, "{}", s),
+            None => write!(f, ""),
+        }
+    }
+}
+
 impl From<Code> for PAErr {
     #[inline]
     fn from(c: Code) -> Self {
