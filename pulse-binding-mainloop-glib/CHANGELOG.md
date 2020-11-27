@@ -155,7 +155,7 @@ Note, version number 2.2.1 skipped, bumping number into line with the main bindi
 
 # 1.2 (June 1st, 2018)
 
- * Now returning `get_api` pointer as ref, as done with standard and threaded mainloops.
+ * Now returning `get_api()` pointer as ref, as done with standard and threaded mainloops.
  * Updated `libpulse-binding` version dependency (1.1 → 1.2).
 
 # 1.1 (May 27th, 2018)

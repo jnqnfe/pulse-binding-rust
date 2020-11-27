@@ -109,10 +109,10 @@ Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate chan
  * Improved the `version` mod:
     - Constants now vary depending upon backwards compatibility flags, correctly indicating the
       newest supported PA version.
-    - Added the `Compatibility` enum and `get_compatibility` function.
+    - Added the `Compatibility` enum and `get_compatibility()` function.
     - Renamed `LINK_TARGET_VERSION` to `TARGET_VERSION_STRING`.
     - Introduced `TARGET_VERSION` and deprecated `PA_MAJOR`, `PA_MINOR` and `PA_MICRO`.
-    - Deprecated `get_headers_version`.
+    - Deprecated `get_headers_version()`.
  * Clarified PA version compatibility in `version` mod.
  * Clarified `pa_encoding_from_string` feature purpose.
 

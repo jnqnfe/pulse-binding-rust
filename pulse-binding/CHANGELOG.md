@@ -64,7 +64,7 @@
 
 # 2.14.0 (October 28th, 2019)
 
- * Reverted "Changed the `mainloop` param of `Context::rttime_new` from trait object to generic
+ * Reverted "Changed the `mainloop` param of `Context::rttime_new()` from trait object to generic
    (`dyn` to`impl`)" from v2.7. Failed to test sufficiently. This introduces an E0632 error in a
    test app and I was unsuccessful in finding a compilable workaround.
 
@@ -146,7 +146,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Added `Stream::write_copy()` which is just a simplified interface for asking PA to make an
    internal copy of the to-be-written data (same as providing `None` in the `free_cb` param of
    `Stream::write()`.
- * Changed the `mainloop` param of `Context::rttime_new` from trait object to generic (`dyn` to
+ * Changed the `mainloop` param of `Context::rttime_new()` from trait object to generic (`dyn` to
    `impl`).
  * Deprecated `ChannelMap::is_equal_to()`, `ChannelVolumes::equal_to()`,
    `ChannelVolumes::channels_equal_to()`, `Spec::equal_to()` and `Proplist::equal_to()` methods in
@@ -164,7 +164,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
 
 # 2.6.0 (March 10th, 2019)
 
- * Implemented use of `std::panic::catch_unwind` in callbacks.
+ * Implemented use of `std::panic::catch_unwind()` in callbacks.
 
 # 2.5.0 (December 22nd, 2018)
 
@@ -199,13 +199,13 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
 
 # 2.4.0 (November 28th, 2018)
 
- * Channelmap/Map: Changed the `new_from_string` method return value to use a `Result` wrapper.
+ * Channelmap/Map: Changed the `new_from_string()` method return value to use a `Result` wrapper.
    Previously failure was just ignored, expecting strings provided to always be valid, as obtained
-   from the `print` and `to_name` methods, but let's be more cautious.
+   from the `print()` and `to_name()` methods, but let's be more cautious.
  * Updated out-of-date return info for a large number of functions, particularly introspection
    ones, which had not been updated following the removal of the `Option` wrapper back in v2.0.
    Thanks to @0xpr03 on github for noticing a discrepancy.
- * Restored the `Option` wrapper to the `Context::drain` return value. It was incorrectly removed
+ * Restored the `Option` wrapper to the `Context::drain()` return value. It was incorrectly removed
    from this function at the same time as legitimately being removed from many others.
  * Changed the `Drop` implementation on `Stream` to no longer unwrap the `Result` returned by the
    `disconnect()` attempt it makes. This should fix the problem encountered by @futpib on github,
@@ -216,10 +216,10 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Improved the `version` mod:
     - Constants now vary depending upon backwards compatibility flags, correctly indicating the
       newest supported PA version.
-    - Added the `Compatibility` enum and `get_compatibility` function.
+    - Added the `Compatibility` enum and `get_compatibility()` function.
     - Renamed `BINDING_TARGET_VERSION` to `TARGET_VERSION_STRING`.
     - Introduced `TARGET_VERSION` and deprecated `MAJOR`, `MINOR` and `MICRO`.
-    - Deprecated `get_headers_version`.
+    - Deprecated `get_headers_version()`.
  * Clarified PA version compatibility in `version` mod.
  * Clarified `pa_encoding_from_string` feature purpose.
  * Updated `libpulse-sys` version dependency (1.3 → 1.4).
@@ -262,12 +262,12 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Renamed the `timeval` mod to `time`.
  * Time: Introduced `UnixTs` and `MonotonicTs` timestamp types, and put them to use with functions
    handling time events.
- * Time: Replaced `rtclock::now` with `MonotonicTs::now`.
+ * Time: Replaced `rtclock::now()` with `MonotonicTs::now()`.
  * Mainloop: Events now take closures for callbacks, like the rest of the API.
  * Operation: Fixed possible memory leak with cancellation.
  * Context: Now takes a ref to the mainloop instead of the mainloop’s API in creation methods.
- * Mainloop/api: Moved the `mainloop_api_once` method to the `Mainloop` trait from the mainloop API
-   structure, and renamed it to `once_event`.
+ * Mainloop/api: Moved the `mainloop_api_once()` method to the `Mainloop` trait from the mainloop
+   API structure, and renamed it to `once_event()`.
  * Mainloop/signals: Converted to a trait and implemented on mainloops, rather than being
    implemented as methods implemented on the mainloop API structure.
  * Mainloop API objects now correctly treated as immutable. The PA devs have informed me that
@@ -276,42 +276,42 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
    have been removed.
  * Mainloop/api: Added method for creating time events using monotonic time values, as an alternate
    to the similar method available on the `Context` object.
- * Events/timer: Added `restart_rt` method, taking monotonic time.
- * Context: Removed `rttime_restart` method, made obsolete by the new `restart_rt` method on the
+ * Events/timer: Added `restart_rt()` method, taking monotonic time.
+ * Context: Removed `rttime_restart()` method, made obsolete by the new `restart_rt()` method on the
    event itself.
- * Stream: Removed the `get_context` method.
+ * Stream: Removed the `get_context()` method.
    This method returned a ‘weak’ wrapper object, where ‘weak’ means that it deliberately will not
    decrement the ref count of the underlying C object on drop. This was exactly what was wanted
    back in v1.x, however in v2.0 we introduced closure based callbacks, and the `Context` object
    (wrapper) was extended to hold saved multi-use callbacks. This causes a problem. If you use this
-   `get_context` method to get a weak ref, then use it to change a multi-use callback, the new
+   `get_context()` method to get a weak ref, then use it to change a multi-use callback, the new
    callback gets saved into the ‘weak’ object, and then you need both that and the original context
    object wrapper to both exist for the lifetime that you want the new callback to remain in use.
    Not ideal, and not obvious. To fix it would require that `Stream` creation methods take the
    `Context` with an `Rc` wrapper so it can hold onto a cloned `Rc` ref, instead of taking a
-   reference, and then returning a cloned `Rc` from `get_context`. The more simple option was to
+   reference, and then returning a cloned `Rc` from `get_context()`. The more simple option was to
    just remove this method, as I have done.
- * Events: Removed the `set_destroy_cb` event methods, which became obsolete with the switch to
+ * Events: Removed the `set_destroy_cb()` event methods, which became obsolete with the switch to
    closure based callbacks.
- * Events/deferred: Split the `enable` method into separate `enable` and `disable` methods.
+ * Events/deferred: Split the `enable()` method into separate `enable()` and `disable()` methods.
  * Events/timer: Fixed api pointer type in callback types. Was using C API (sys) type instead of
    binding type, unlike other event callbacks.
- * Timeval: Added convenience `new` and `new_zero` methods.
- * Timeval: Added math operation implementations, and removed the `add` and `sub` methods in favour
-   of them. Also removed the `set` method since you can convert and assign from `MicroSeconds`
-   simply with `From` and `into()`.
+ * Timeval: Added convenience `new()` and `new_zero()` methods.
+ * Timeval: Added math operation implementations, and removed the `add()` and `sub()` methods in
+   favour of them. Also removed the `set()` method since you can convert and assign from
+   `MicroSeconds` simply with `From` and `into()`.
  * Time: Enabled conversions between `Duration` and `MicroSeconds`, and between `Duration` and
    `Timeval`.
  * Time: Added math ops to `MicroSeconds` and `Timeval` for adding/subtracting `Duration`.
- * Timeval: Removed the `get_time_of_day` method, preferring use of the new timestamp types.
- * Stream: Changed the `get_device_name` method to return a `Cow<str>` instead of a `CStr`.
+ * Timeval: Removed the `get_time_of_day()` method, preferring use of the new timestamp types.
+ * Stream: Changed the `get_device_name()` method to return a `Cow<str>` instead of a `CStr`.
  * Avoided creating owned copies of static strings in a few places, returning `Cow<str>` instead.
-   This includes `channelmap::Position::to_string`, `channelmap::Map::to_name`,
-   `format::Encoding::to_string` and `sample::Format::to_string`.
- * Default-enabled inclusion of the `format::Encoding::from_string` method, for which the underlying
-   function symbol was missing from PA's symbol file and thus not available in the client library
-   before v12.
- * Format: Fixed `Encoding::from_string`, which would not compile due to a return type mismatch.
+   This includes `channelmap::Position::to_string()`, `channelmap::Map::to_name()`,
+   `format::Encoding::to_string()` and `sample::Format::to_string()`.
+ * Default-enabled inclusion of the `format::Encoding::from_string()` method, for which the
+   underlying function symbol was missing from PA's symbol file and thus not available in the client
+   library before v12.
+ * Format: Fixed `Encoding::from_string()`, which would not compile due to a return type mismatch.
    (As mentioned above, the underlying symbol was missing before PA v12, leaving this previously
    untested, and it unfortunately turned out to have been broken).
  * Simplified callback proxy / setup code (internal change only).
@@ -357,11 +357,11 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
    having to do an unsafe raw pointer dereference. Also, with respect to the property list, if the
    existing convenience methods are insufficient and direct access is needed, this is also now far
    cleaner; not only is the unsafe raw pointer dereference avoided, but now you are given access to
-   a clean `Proplist` wrapper (see `get_properties` and `get_properties_mut`).
- * Assert added to block use of threaded mainloop `lock` method from within the event loop thread
+   a clean `Proplist` wrapper (see `get_properties()` and `get_properties_mut()`).
+ * Assert added to block use of threaded mainloop `lock()` method from within the event loop thread
    (i.e. within most instances of callback execution).
- * Stream: Renamed `proplist_remove` to `remove_proplist`.
- * Stream: Common `set_event_callback` callback event names moved to submodule.
+ * Stream: Renamed `proplist_remove()` to `remove_proplist()`.
+ * Stream: Common `set_event_callback()` callback event names moved to submodule.
  * Introspection: Removed unnecessary converters.
    The `From` trait was implemented for introspection objects in both directions between the binding
    and the sys instances. While this is necessary for the sys to binding direction, the other really
@@ -377,21 +377,21 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
 
 **Note: This includes a security fix!**
 
- * Stream: Fixed use-after-frees with `get_format_info` and `get_context`. These should have used
-   `from_raw_weak` instead of `from_raw` to avoid incorrectly freeing the underlying C object,
-   leaving a dangling pointer.
+ * Stream: Fixed use-after-frees with `get_format_info()` and `get_context()`. These should have
+   used `from_raw_weak()` instead of `from_raw()` to avoid incorrectly freeing the underlying C
+   object, leaving a dangling pointer.
 
 # 1.2 (June 1st, 2018)
 
  * Fixed lifetime issues with a handful of stream methods.
- * Fixed lifetime issues with `get_api` mainloop method.
- * mainloop/standard: Fixed `run` method’s return data. Incorrectly was returning function call
+ * Fixed lifetime issues with `get_api()` mainloop method.
+ * mainloop/standard: Fixed `run()` method’s return data. Incorrectly was returning function call
    result, while claiming in the documentation that this was the quit retval, which wasn’t returned
    at all.
  * Tidied up error code handling:
     - Added `PAErr` wrapper for the `i32` error type, for cleaner interfaces.
-    - Moved the `strerror` function to be a `PAErr` method.
-    - Renamed the `strerror` method of `PAErr` and `Code` to `to_string`.
+    - Moved the `strerror()` function to be a `PAErr` method.
+    - Renamed the `strerror()` method of `PAErr` and `Code` to `to_string()`.
     - Converted the error `CStr` to `String` for users; no need to make users do it.
     - Implemented `From` for converting between `PAErr` and `Code` error types.
  * Simplified volume handling:
@@ -401,12 +401,12 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
       conversion functions. This is now used in linear related conversions, which thus no longer
       incorrectly portray such values to be dB scale.
     - Renamed `DECIBEL_MININFTY` to `DECIBEL_MINUS_INFINITY`.
-    - Renamed `CVolume`’s `inc` and `dec` methods to `increase` and `decrease` respectively for
-      clarity (they are not increment/decrement).
+    - Renamed `CVolume`’s `inc()` and `dec()` methods to `increase()` and `decrease()` respectively
+      for clarity (they are not increment/decrement).
  * Stream:
-    - The buffer given by `begin_write` is now converted to a slice for you, rather than burdening
+    - The buffer given by `begin_write()` is now converted to a slice for you, rather than burdening
       the caller.
-    - The return type of `begin_write` has been further simplified, ditching the custom
+    - The return type of `begin_write()` has been further simplified, ditching the custom
       `BufferResult` object.
     - Minor doc fixes.
  * Derived more common traits for a handful of structs/enums.
@@ -422,20 +422,20 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
    to avoid unnecessary conversion, but users most likely would prefer `Strings`s, and there should
    definitely not be a problem with “lossy” utf8 conversion in these cases.
- * Stream: Now returning unsigned from `get_underflow_index`.
+ * Stream: Now returning unsigned from `get_underflow_index()`.
  * Hid string printing length constants, only used internally.
- * Rewrote string printing functions to use a `Vec` as the string buffer instead of `libc::malloc`,
-   thus more simple, and removed the `Option` result wrapper.
+ * Rewrote string printing functions to use a `Vec` as the string buffer instead of
+   `libc::malloc()`, thus more simple, and removed the `Option` result wrapper.
  * Changed several `sample::Format` related functions to methods.
 
 # 1.1 (May 27th, 2018)
 
- * Privatised the `from_raw` method of various objects, having become aware of the more granular
-   `pub(crate)` type scope limiting syntax. Note, `from_raw_weak` methods designed for use in
+ * Privatised the `from_raw()` method of various objects, having become aware of the more granular
+   `pub(crate)` type scope limiting syntax. Note, `from_raw_weak()` methods designed for use in
    callbacks are still available.
  * Also privatised inner pointer attributes of structs in a few places on the same basis.
- * Privatised the `utils::unwrap_optional_callback` function.
- * Privatised timer event's `get_ptr` method.
+ * Privatised the `utils::unwrap_optional_callback()` function.
+ * Privatised timer event's `get_ptr()` method.
  * Various functions have been changed to take immutable references for certain params, reflecting
    the change in version 1.1 of the `libpulse-sys` crate.
  * Promoted `self` reference to mutable for various methods across context, mainloops, streams,
@@ -452,11 +452,11 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
     - Fixed infinite loop bug #2: The state tracking variable used for the underlying C function
       cannot be hidden within the iterate function, it causes an infinite loop whereby the function
       always just returns the first entry wrapped in `Some`. I don’t know what I was thinking.
-    - Implemented proper iterator semantics. The `iterate` method was renamed `iter` and now returns
-      an actual Rust `Iterator` object, which makes iterating much more simple and tidy.
- * CVolume: Made `self` for `is_[muted|norm]` immutable.
+    - Implemented proper iterator semantics. The `iterate()` method was renamed `iter()` and now
+      returns an actual Rust `Iterator` object, which makes iterating much more simple and tidy.
+ * CVolume: Made `self` for `is_muted()` and `is_norm()` immutable.
  * Stream: Fixed unwanted double option wrapping of callback fn ptr with write methods.
- * Stream: Combined `write_ext_free` `free_cb_data` param with `free_cb` as tuple, as done
+ * Stream: Combined `write_ext_free()` `free_cb_data` param with `free_cb` as tuple, as done
    elsewhere.
 
 Note, version number 1.0.4 skipped (it was used for non-crate project changes).
