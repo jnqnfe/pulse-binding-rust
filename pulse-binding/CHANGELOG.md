@@ -420,7 +420,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
       instead of `mainloop::events::timer`.
  * Added and put to use wrapper for ‘quit return values’.
  * Changed a handful of methods to return `String` rather than `CStr`. The original intention was
-   to avoid unnecessary conversion, but users most likely would prefer `Strings`s, and there should
+   to avoid unnecessary conversion, but users most likely would prefer `String`s, and there should
    definitely not be a problem with “lossy” utf8 conversion in these cases.
  * Stream: Now returning unsigned from `get_underflow_index()`.
  * Hid string printing length constants, only used internally.
