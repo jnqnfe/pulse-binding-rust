@@ -31,8 +31,7 @@
 
 # 2.13.0 (September 17th, 2019)
 
- * Changed the license model from LGPL to dual MIT and Apache-2.0.
-   See <https://github.com/jnqnfe/pulse-binding-rust/issues/26> for details.
+ * Changed the license model from LGPL to dual MIT and Apache-2.0. See [here][issue26] for details.
  * Updated `libpulse-binding` version dependency (2.12 → 2.13).
  * Updated `libpulse-mainloop-glib-sys` version dependency (1.10 → 1.11).
 
@@ -176,3 +175,5 @@ Note, version number 2.2.1 skipped, bumping number into line with the main bindi
 # 1.0 (January 24th, 2018)
 
  * Original release.
+
+[issue26]: https://github.com/jnqnfe/pulse-binding-rust/issues/26

@@ -47,8 +47,7 @@
 
 # 1.11.0 (September 17th, 2019)
 
- * Changed the license model from LGPL to dual MIT and Apache-2.0.
-   See <https://github.com/jnqnfe/pulse-binding-rust/issues/26> for details.
+ * Changed the license model from LGPL to dual MIT and Apache-2.0. See [here][issue26] for details.
 
 # 1.10.0 (September 15th, 2019)
 
@@ -91,8 +90,8 @@ Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate chan
 # 1.6.0 (August 12th, 2019)
 
  * Replaced use of empty enums for opaque types with a struct based alternative. According to the
-   Rust nomicon ([here](https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs))
-   the use of the empty enum trick is apparently undefined behaviour.
+   Rust nomicon ([here][nomicon-ros]) the use of the empty enum trick is apparently undefined
+   behaviour.
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
    `latest_pa_compatibility`.
 
@@ -186,3 +185,6 @@ Note, some version numbers skipped, bumping number into line with the other crat
 This was the original version available on crates.io, built by a different author in a different
 code repository. Version 1.0 above represents the first published version from the replacement
 codebase. (To be clear, version 0.0.0 cannot be found in the current repository).
+
+[issue26]: https://github.com/jnqnfe/pulse-binding-rust/issues/26
+[nomicon-ros]: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs

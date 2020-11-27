@@ -70,8 +70,7 @@
 
 # 2.13.0 (September 17th, 2019)
 
- * Changed the license model from LGPL to dual MIT and Apache-2.0.
-   See <https://github.com/jnqnfe/pulse-binding-rust/issues/26> for details.
+ * Changed the license model from LGPL to dual MIT and Apache-2.0. See [here][issue26] for details.
  * Updated `libpulse-sys` version dependency (1.10 → 1.11).
 
 # 2.12.0 (September 15th, 2019)
@@ -208,8 +207,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Restored the `Option` wrapper to the `Context::drain()` return value. It was incorrectly removed
    from this function at the same time as legitimately being removed from many others.
  * Changed the `Drop` implementation on `Stream` to no longer unwrap the `Result` returned by the
-   `disconnect()` attempt it makes. This should fix the problem encountered by @futpib on github,
-   reported here: https://github.com/jnqnfe/pulse-binding-rust/issues/11
+   `disconnect()` attempt it makes. This should fix [this problem][issue11] encountered by @futpib
+   on github.
 
 # 2.3.0 (November 4th, 2018)
 
@@ -479,3 +478,6 @@ Note, version number 1.0.4 skipped (it was used for non-crate project changes).
 # 1.0 (January 24th, 2018)
 
  * Original release.
+
+[issue11]: https://github.com/jnqnfe/pulse-binding-rust/issues/11
+[issue26]: https://github.com/jnqnfe/pulse-binding-rust/issues/26
