@@ -1,19 +1,20 @@
 # 1.15.1 (November 25th, 2020)
 
- * Fixed deprecated license attribute syntax
+ * Fixed deprecated license attribute syntax.
 
 # 1.15.0 (November 25th, 2020)
 
- * Marked `pa_encoding_t` as `#[non_exhaustive]`
- * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on enums
+ * Marked `pa_encoding_t` as `#[non_exhaustive]`.
+ * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on enums.
 
 # 1.14.1 (November 25th, 2020)
 
- * Fixed missing rename of `pa_error_code_t::Io` to `pa_error_code_t::IO` to match change in binding
+ * Fixed missing rename of `pa_error_code_t::Io` to `pa_error_code_t::IO` to match change in
+   binding.
 
 # 1.14.0 (November 24th, 2020)
 
- * Added PA v14 support (API additions)
+ * Added PA v14 support (API additions).
 
 # 1.13.3 (November 21st, 2020)
 
@@ -21,23 +22,23 @@
 
 # 1.13.2 (September 9th, 2020)
 
- * Bumped `pa_latest_common` feature to target PA v13
+ * Bumped `pa_latest_common` feature to target PA v13.
 
 # 1.13.1 (June 2nd, 2020)
 
- * Fixed output of build script warning when pkg-config is missing (thanks to @cole-h on github!)
+ * Fixed output of build script warning when pkg-config is missing (thanks to @cole-h on github!).
 
 # 1.13.0 (April 18th, 2020)
 
- * Removed deprecated Cargo features
+ * Removed deprecated Cargo features.
 
 # 1.12.1 (December 29th, 2019)
 
- * Improved the non-pkg-config fallback for lib linking
+ * Improved the non-pkg-config fallback for lib linking.
 
 # 1.12.0 (December 29th, 2019)
 
- * Now using pkg-config in build script for more than just Linux
+ * Now using pkg-config in build script for more than just Linux.
 
 # 1.11.1 (December 27th, 2019)
 
@@ -51,41 +52,41 @@
 
 # 1.10.0 (September 15th, 2019)
 
- * Implemented PA v13 enhancements
- * Added PA v13 compatibility control feature
+ * Implemented PA v13 enhancements.
+ * Added PA v13 compatibility control feature.
 
 # 1.9.1 (August 19th, 2019)
 
- * Fixed broken doc.rs documentation generation
+ * Fixed broken doc.rs documentation generation.
 
 # 1.9.0 (August 19th, 2019)
 
- * Extended support to even older versions of PA, specifically up to and including v4
- * Improved the build script
- * Version: Revised `Compatibility` variants to make more sense
- * Simplified feature flags, old ones left as temorary aliases, to be removed later
+ * Extended support to even older versions of PA, specifically up to and including v4.
+ * Improved the build script.
+ * Version: Revised `Compatibility` variants to make more sense.
+ * Simplified feature flags, old ones left as temorary aliases, to be removed later.
  * Added a `dox` feature flag, for use with `cargo doc`.
    It enables the very latest PA version compatibility, while bypassing the pkg-config check, thus
    is useful for generating documentation that includes information on features from versions of PA
    that may be newer than the version you have installed.
- * Version: improved documentation further
+ * Version: improved documentation further.
 
 # 1.8.1 (August 17th, 2019)
 
- * Version: Improved mod documentation
+ * Version: Improved mod documentation.
 
 # 1.8.0 (August 15th, 2019)
 
- * Updated `use` conventions to that of Rust 1.30/1.31
- * Specified edition in toml file
+ * Updated `use` conventions to that of Rust 1.30/1.31.
+ * Specified edition in toml file.
  * Made the following `const` functions:
-    - `version::get_compatibility()`
-    - `channelmap::pa_channel_position_mask()`
-    - `volume::pa_volume_is_valid()`
-    - `context::subscribe::pa_subscription_match_flags()`
- * Version: purged deprecated items
+    - `version::get_compatibility()`.
+    - `channelmap::pa_channel_position_mask()`.
+    - `volume::pa_volume_is_valid()`.
+    - `context::subscribe::pa_subscription_match_flags()`.
+ * Version: purged deprecated items.
 
-Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate changes
+Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate changes.
 
 # 1.6.0 (August 12th, 2019)
 
@@ -108,27 +109,27 @@ Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate chan
  * Improved the `version` mod:
     - Constants now vary depending upon backwards compatibility flags, correctly indicating the
       newest supported PA version.
-    - Added the `Compatibility` enum and `get_compatibility` function
-    - Renamed `LINK_TARGET_VERSION` to `TARGET_VERSION_STRING`
-    - Introduced `TARGET_VERSION` and deprecated `PA_MAJOR`, `PA_MINOR` and `PA_MICRO`
-    - Deprecated `get_headers_version`
- * Clarified PA version compatibility in `version` mod
- * Clarified `pa_encoding_from_string` feature purpose
+    - Added the `Compatibility` enum and `get_compatibility` function.
+    - Renamed `LINK_TARGET_VERSION` to `TARGET_VERSION_STRING`.
+    - Introduced `TARGET_VERSION` and deprecated `PA_MAJOR`, `PA_MINOR` and `PA_MICRO`.
+    - Deprecated `get_headers_version`.
+ * Clarified PA version compatibility in `version` mod.
+ * Clarified `pa_encoding_from_string` feature purpose.
 
 # 1.3.4 (October 8th, 2018)
 
- * Fixed broken attempt to include license file in bundled package
+ * Fixed broken attempt to include license file in bundled package.
 
 # 1.3.3 (October 8th, 2018)
 
- * Added dedicated changelog, split off from the old single project overview one
- * Included copy of license file in bundled package and excluded the `.gitignore` file
+ * Added dedicated changelog, split off from the old single project overview one.
+ * Included copy of license file in bundled package and excluded the `.gitignore` file.
 
-Note, version number 1.3.2 skipped, bumping number into line with the other crates
+Note, version number 1.3.2 skipped, bumping number into line with the other crates.
 
 # 1.3.1 (September 3rd, 2018)
 
- * Added homepage and repo links, thanks to @berkus on github for the patch
+ * Added homepage and repo links, thanks to @berkus on github for the patch.
 
 # 1.3 (July 17th, 2018)
 
@@ -139,7 +140,7 @@ Note, version number 1.3.2 skipped, bumping number into line with the other crat
 
 # 1.2.1 (June 26th, 2018)
 
- * Updated declared PA version compatibility (11.0 → 12.0)
+ * Updated declared PA version compatibility (11.0 → 12.0).
 
 # 1.2 (June 16th, 2018)
 
@@ -151,7 +152,7 @@ Note, version number 1.3.2 skipped, bumping number into line with the other crat
    project. Discussion with PA devs indicates that this change will be accepted, so pre-emtively
    pushing the change here in our representation of the API; logically they should be immutable, and
    we do not need to propagate this unfortunate artefact).
- * Introspect & subscribe: Purged autoload API (deprecated in PA since 2009)
+ * Introspect & subscribe: Purged autoload API (deprecated in PA since 2009).
 
 # 1.1 (May 27th, 2018)
 
@@ -163,19 +164,19 @@ Note, version number 1.3.2 skipped, bumping number into line with the other crat
 
 # 1.0.5 (May 27th, 2018)
 
- * Minor, non-functional consistency fix only
+ * Minor, non-functional consistency fix only.
 
-Note, some version numbers skipped, bumping number into line with the other crates
+Note, some version numbers skipped, bumping number into line with the other crates.
 
 # 1.0.2 (February 9th, 2018)
 
- * Added travis badge
+ * Added travis badge.
 
 # 1.0.1 (February 2nd, 2018)
 
- * Fixed toml file license string `LGPL-2.1` → `LGPL-2.1+`
- * Fixed toml file missing author email address
+ * Fixed toml file license string `LGPL-2.1` → `LGPL-2.1+`.
+ * Fixed toml file missing author email address.
 
 # 1.0 (January 24th, 2018)
 
- * Original release
+ * Original release.
