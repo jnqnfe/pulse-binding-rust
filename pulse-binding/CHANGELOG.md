@@ -391,7 +391,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
     - Moved the `strerror` function to be a `PAErr` method
     - Renamed the `strerror` method of `PAErr` and `Code` to `to_string`
     - Converted the error `CStr` to `String` for users; no need to make users do it
-    - Added `PAErr` ↔ `Code` `From` impls
+    - Implemented `From` for converting between `PAErr` and `Code` error types
  * Simplified volume handling:
     - `Volume` and `VolumeDB` are now wrappers rather than type aliases
     - Added the `VolumeLinear` wrapper. I had mistakenly taken floating point volumes to all be dB
