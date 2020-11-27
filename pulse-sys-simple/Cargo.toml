@@ -53,6 +53,3 @@ dox = ["libpulse-sys/dox"]
 features = ["dox"]
 all-features = false
 no-default-features = true
-
-[badges]
-travis-ci = { repository = "jnqnfe/pulse-binding-rust" }
