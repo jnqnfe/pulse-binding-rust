@@ -202,9 +202,9 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Channelmap/Map: Changed the `new_from_string()` method return value to use a `Result` wrapper.
    Previously failure was just ignored, expecting strings provided to always be valid, as obtained
    from the `print()` and `to_name()` methods, but let's be more cautious.
- * Updated out-of-date return info for a large number of functions, particularly introspection
-   ones, which had not been updated following the removal of the `Option` wrapper back in v2.0.
-   Thanks to @0xpr03 on github for noticing a discrepancy.
+ * Updated out-of-date documentation of return types for a large number of functions, particularly
+   introspection ones, which had not been updated following the removal of the `Option` wrapper back
+   in v2.0. Thanks to @0xpr03 on github for noticing a discrepancy.
  * Restored the `Option` wrapper to the `Context::drain()` return value. It was incorrectly removed
    from this function at the same time as legitimately being removed from many others.
  * Changed the `Drop` implementation on `Stream` to no longer unwrap the `Result` returned by the
