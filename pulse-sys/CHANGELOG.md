@@ -179,4 +179,10 @@ Note, some version numbers skipped, bumping number into line with the other crat
 
 # 1.0 (January 24th, 2018)
 
- * Original release.
+ * Original release. (By the new crate owner with the replacement codebase).
+
+# 0.0.0 (January 11th, 2016)
+
+This was the original version available on crates.io, built by a different author in a different
+code repository. Version 1.0 above represents the first published version from the replacement
+codebase. (To be clear, version 0.0.0 cannot be found in the current repository).
