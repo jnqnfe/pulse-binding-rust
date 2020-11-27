@@ -80,7 +80,7 @@
       methods to `format::Info`.
     - Added `util::make_thread_realtime()`.
     - Added `Encoding::TRUEHD_IEC61937` and `Encoding::DTSHD_IEC61937`.
-   A wrapper for `pa_threaded_mainloop_once_unlocked` has not been added at this time.
+    - A wrapper for `pa_threaded_mainloop_once_unlocked` has not been added at this time.
  * Changed the `ss` param of `Context::get_tile_size()` to add an `Option` wrapper.
    The C API function allows a null pointer to be used for this param, which was not a use case
    allowed in the binding, for no particular reason. This enables it.
