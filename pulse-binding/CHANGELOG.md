@@ -389,7 +389,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Tidied up error code handling:
     - Added `PAErr` wrapper for the `i32` error type, for cleaner interfaces
     - Moved the `strerror` function to be a `PAErr` method
-    - Renamed the `sterror` method of `PAErr` and `Code` to `to_string`
+    - Renamed the `strerror` method of `PAErr` and `Code` to `to_string`
     - Converted the error `CStr` to `String` for users; no need to make users do it
     - Added `PAErr` ↔ `Code` `From` impls
  * Simplified volume handling:
