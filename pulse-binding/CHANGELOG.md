@@ -456,7 +456,7 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
       returns an actual Rust `Iterator` object, which makes iterating much more simple and tidy.
  * CVolume: Made `self` for `is_muted()` and `is_norm()` immutable.
  * Stream: Fixed unwanted double option wrapping of callback fn ptr with write methods.
- * Stream: Combined `write_ext_free()` `free_cb_data` param with `free_cb` as tuple, as done
+ * Stream: Combined `write_ext_free()`’s `free_cb_data` param with `free_cb` as tuple, as done
    elsewhere.
 
 Note, version number 1.0.4 skipped (it was used for non-crate project changes).
