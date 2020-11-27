@@ -14,7 +14,7 @@
  * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause
    a deliberate panic rather than silent undefined behaviour, for better stability.
  * Some test additions.
- * Updated dependencies.
+ * Updated `libpulse-sys` version dependency (1.14 → 1.15).
 
 # 2.17.0 (November 24th, 2020)
 
@@ -22,7 +22,7 @@
  * Mainloop (standard): Changed the `prepare()` method to take an `Option<MicroSeconds>` instead of
    `Option<i32>`.
  * Renamed the error `Code::Io` enum variant to `Code::IO`.
- * Updated dependencies.
+ * Updated `libpulse-sys` version dependency (1.13 → 1.14).
 
 # 2.16.3 (November 21st, 2020)
 

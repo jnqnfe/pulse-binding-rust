@@ -4,11 +4,11 @@
 
 # 1.15.0 (November 25th, 2020)
 
- * Updated dependencies.
+ * Updated `libpulse-sys` version dependency (1.14 → 1.15).
 
 # 1.14.0 (November 24th, 2020)
 
- * Updated dependencies.
+ * Updated `libpulse-sys` version dependency (1.13 → 1.14).
 
 # 1.13.2 (September 9th, 2020)
 

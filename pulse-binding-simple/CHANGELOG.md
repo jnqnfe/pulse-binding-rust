@@ -4,11 +4,15 @@
 
 # 2.18.0 (November 25th, 2020)
 
- * Updated dependencies.
+ * Updated `libpulse-binding` version dependency (2.17 → 2.18).
+ * Updated `libpulse-sys` version dependency (1.14 → 1.15).
+ * Updated `libpulse-simple-sys` version dependency (1.14 → 1.15).
 
 # 2.17.0 (November 24th, 2020)
 
- * Updated dependencies.
+ * Updated `libpulse-binding` version dependency (2.16 → 2.17).
+ * Updated `libpulse-sys` version dependency (1.13 → 1.14).
+ * Updated `libpulse-simple-sys` version dependency (1.13 → 1.14).
 
 # 2.16.2 (November 21st, 2020)
 

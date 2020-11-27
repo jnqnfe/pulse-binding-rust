@@ -4,11 +4,13 @@
 
 # 2.18.0 (November 25th, 2020)
 
- * Updated dependencies.
+ * Updated `libpulse-binding` version dependency (2.17 → 2.18).
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.14 → 1.15).
 
 # 2.17.0 (November 24th, 2020)
 
- * Updated dependencies.
+ * Updated `libpulse-binding` version dependency (2.16 → 2.17).
+ * Updated `libpulse-mainloop-glib-sys` version dependency (1.13 → 1.14).
 
 # 2.16.1 (September 9th, 2020)
 
