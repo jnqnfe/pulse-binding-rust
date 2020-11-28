@@ -28,3 +28,18 @@ flag (listed within this crates’ toml file) to disable functionality for versi
 client library that are too new for you. (This compatibility layer targets the entire PA client C
 API, and you will naturally encounter problems where mismatching version support with the version
 of PA on your systems). See the overall project `COMPATIBILITY.md` file for further details.
+
+## License
+
+Licensed under either of
+
+ * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+ * [MIT license](http://opensource.org/licenses/MIT)
+
+at your option.
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the
+work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
+additional terms or conditions.
