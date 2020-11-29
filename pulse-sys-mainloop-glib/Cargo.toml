@@ -18,7 +18,11 @@ libpulse-sys = { path = "../pulse-sys", version = "1.16", default-features = fal
 glib-sys = { version = "0", default-features = false }
 
 [build-dependencies]
-pkg-config = "0.3"
+system-deps = "1.3"
+
+[package.metadata.system-deps.libpulse_mainloop_glib]
+name = "libpulse-mainloop-glib"
+version = "4.0"
 
 [features]
 default = ["pa_v8"]
