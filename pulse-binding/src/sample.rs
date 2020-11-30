@@ -163,66 +163,68 @@ impl Default for Format {
     }
 }
 
-pub use self::ei_formats::*;
+// The following are endian-independant format references.
 
-/// Endian-independent format identifiers.
+/// A shortcut for [`SAMPLE_FLOAT32NE`](constant.SAMPLE_FLOAT32NE.html).
+pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
+
+/// Signed 16 Bit PCM, native endian.
+pub const SAMPLE_S16NE:     Format = self::ei_formats::SAMPLE_S16NE;
+/// 32 Bit IEEE floating point, native endian.
+pub const SAMPLE_FLOAT32NE: Format = self::ei_formats::SAMPLE_FLOAT32NE;
+/// Signed 32 Bit PCM, native endian.
+pub const SAMPLE_S32NE:     Format = self::ei_formats::SAMPLE_S32NE;
+/// Signed 24 Bit PCM packed, native endian.
+pub const SAMPLE_S24NE:     Format = self::ei_formats::SAMPLE_S24NE;
+/// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
+pub const SAMPLE_S24_32NE:  Format = self::ei_formats::SAMPLE_S24_32NE;
+
+/// Signed 16 Bit PCM reverse endian.
+pub const SAMPLE_S16RE:     Format = self::ei_formats::SAMPLE_S16RE;
+/// 32 Bit IEEE floating point, reverse endian.
+pub const SAMPLE_FLOAT32RE: Format = self::ei_formats::SAMPLE_FLOAT32RE;
+/// Signed 32 Bit PCM, reverse endian.
+pub const SAMPLE_S32RE:     Format = self::ei_formats::SAMPLE_S32RE;
+/// Signed 24 Bit PCM, packed reverse endian.
+pub const SAMPLE_S24RE:     Format = self::ei_formats::SAMPLE_S24RE;
+/// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
+pub const SAMPLE_S24_32RE:  Format = self::ei_formats::SAMPLE_S24_32RE;
+
+/// Endian-independent format identifiers, for big-endian systems.
 #[cfg(target_endian = "big")]
 mod ei_formats {
     use super::Format;
 
-    /// Signed 16 Bit PCM, native endian.
     pub const SAMPLE_S16NE:     Format = Format::S16be;
-    /// 32 Bit IEEE floating point, native endian.
     pub const SAMPLE_FLOAT32NE: Format = Format::F32be;
-    /// Signed 32 Bit PCM, native endian.
     pub const SAMPLE_S32NE:     Format = Format::S32be;
-    /// Signed 24 Bit PCM packed, native endian.
     pub const SAMPLE_S24NE:     Format = Format::S24be;
-    /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
     pub const SAMPLE_S24_32NE:  Format = Format::S24_32be;
 
-    /// Signed 16 Bit PCM reverse endian.
     pub const SAMPLE_S16RE:     Format = Format::S16le;
-    /// 32 Bit IEEE floating point, reverse endian.
     pub const SAMPLE_FLOAT32RE: Format = Format::F32le;
-    /// Signed 32 Bit PCM, reverse endian.
     pub const SAMPLE_S32RE:     Format = Format::S32le;
-    /// Signed 24 Bit PCM, packed reverse endian.
     pub const SAMPLE_S24RE:     Format = Format::S24le;
-    /// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
     pub const SAMPLE_S24_32RE:  Format = Format::S24_32le;
 }
 
-/// Endian-independent format identifiers
+/// Endian-independent format identifiers, for little-endian systems.
 #[cfg(target_endian = "little")]
 mod ei_formats {
     use super::Format;
 
-    /// Signed 16 Bit PCM, native endian.
     pub const SAMPLE_S16NE:     Format = Format::S16le;
-    /// 32 Bit IEEE floating point, native endian.
     pub const SAMPLE_FLOAT32NE: Format = Format::F32le;
-    /// Signed 32 Bit PCM, native endian.
     pub const SAMPLE_S32NE:     Format = Format::S32le;
-    /// Signed 24 Bit PCM packed, native endian.
     pub const SAMPLE_S24NE:     Format = Format::S24le;
-    /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
     pub const SAMPLE_S24_32NE:  Format = Format::S24_32le;
 
-    /// Signed 16 Bit PCM, reverse endian.
     pub const SAMPLE_S16RE:     Format = Format::S16be;
-    /// 32 Bit IEEE floating point, reverse endian.
     pub const SAMPLE_FLOAT32RE: Format = Format::F32be;
-    /// Signed 32 Bit PCM, reverse endian.
     pub const SAMPLE_S32RE:     Format = Format::S32be;
-    /// Signed 24 Bit PCM, packed reverse endian.
     pub const SAMPLE_S24RE:     Format = Format::S24be;
-    /// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
     pub const SAMPLE_S24_32RE:  Format = Format::S24_32be;
 }
-
-/// A shortcut for [`SAMPLE_FLOAT32NE`](ei_formats/constant.SAMPLE_FLOAT32NE.html).
-pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
 
 /// A sample format and attribute specification.
 #[repr(C)]
