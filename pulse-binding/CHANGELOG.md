@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Fixed failure to update `pa_latest` feature in v2.17 to point to `pa_v14` instead of `pa_v13`.
+
 # 2.19.0 (December 8th, 2020)
 
  * Fixed broken conversions between `Duration` and other time duration types (`MicroSeconds` and

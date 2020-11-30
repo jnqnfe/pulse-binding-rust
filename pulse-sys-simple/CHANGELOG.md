@@ -4,6 +4,7 @@
    been the intention as I recall, and as stated in the documentation. This for instance means that
    the docs.rs service will no longer be performing an unintentional pkg-config check when
    generating documentation.
+ * Fixed failure to update `pa_latest` feature in v1.14 to point to `pa_v14` instead of `pa_v13`.
 
 # 1.15.1 (November 25th, 2020)
 

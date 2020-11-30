@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Fixed failure to update `pa_latest` feature in v2.17 to point to `pa_v14` instead of `pa_v13`.
+
 # 2.18.1 (November 25th, 2020)
 
  * Fixed deprecated license attribute syntax.
