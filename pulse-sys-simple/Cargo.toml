@@ -19,10 +19,6 @@ libpulse-sys = { path = "../pulse-sys", version = "1.16", default-features = fal
 [build-dependencies]
 system-deps = "2.0"
 
-[package.metadata.system-deps.libpulse_simple]
-name = "libpulse-simple"
-version = "4.0"
-
 [features]
 default = ["pa_v8"]
 
@@ -34,6 +30,10 @@ pa_v12 = ["pa_v8",  "libpulse-sys/pa_v12"]
 pa_v8  = ["pa_v6",  "libpulse-sys/pa_v8"]
 pa_v6  = ["pa_v5",  "libpulse-sys/pa_v6"]
 pa_v5  = [          "libpulse-sys/pa_v5"]
+
+[package.metadata.system-deps.libpulse_simple]
+name = "libpulse-simple"
+version = "4.0"
 
 [package.metadata.docs.rs]
 all-features = false

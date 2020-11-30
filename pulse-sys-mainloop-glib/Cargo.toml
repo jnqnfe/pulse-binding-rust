@@ -20,10 +20,6 @@ glib-sys = { version = "0", default-features = false }
 [build-dependencies]
 system-deps = "2.0"
 
-[package.metadata.system-deps.libpulse_mainloop_glib]
-name = "libpulse-mainloop-glib"
-version = "4.0"
-
 [features]
 default = ["pa_v8"]
 
@@ -35,6 +31,10 @@ pa_v12 = ["pa_v8",  "libpulse-sys/pa_v12"]
 pa_v8  = ["pa_v6",  "libpulse-sys/pa_v8"]
 pa_v6  = ["pa_v5",  "libpulse-sys/pa_v6"]
 pa_v5  = [          "libpulse-sys/pa_v5"]
+
+[package.metadata.system-deps.libpulse_mainloop_glib]
+name = "libpulse-mainloop-glib"
+version = "4.0"
 
 [package.metadata.docs.rs]
 all-features = false
