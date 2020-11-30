@@ -23,7 +23,7 @@
 //! # Usage
 //!
 //! The introspection routines are exposed as methods on an [`Introspector`] object held by the
-//! [`Context`] object, and can be accessed via the [`Context`] object’s [`introspect`] method.
+//! [`Context`] object, and can be accessed via the [`Context`] object’s [`introspect()`] method.
 //!
 //! # Querying
 //!
@@ -47,22 +47,25 @@
 //! # Server Information
 //!
 //! The server can be queried about its name, the environment it’s running on and the currently
-//! active global defaults. Calling [`Introspector::get_server_info`] provides access to a
+//! active global defaults. Calling [`Introspector::get_server_info()`] provides access to a
 //! [`ServerInfo`] structure containing all of these.
 //!
 //! # Memory Usage
 //!
-//! Statistics about memory usage can be fetched using [`Introspector::stat`], giving a [`StatInfo`]
-//! structure.
+//! Statistics about memory usage can be fetched using [`Introspector::stat()`], giving a
+//! [`StatInfo`] structure.
 //!
 //! # Sinks and Sources
 //!
 //! The server can have an arbitrary number of sinks and sources. Each sink and source have both an
 //! index and a name associated with it. As such, there are three ways to get access to them:
 //!
-//! * By index: [`Introspector::get_sink_info_by_index`], [`Introspector::get_source_info_by_index`]
-//! * By name:  [`Introspector::get_sink_info_by_name`], [`Introspector::get_source_info_by_name`]
-//! * All:      [`Introspector::get_sink_info_list`], [`Introspector::get_source_info_list`]
+//! * By index: [`Introspector::get_sink_info_by_index()`],
+//!             [`Introspector::get_source_info_by_index()`]
+//! * By name:  [`Introspector::get_sink_info_by_name()`],
+//!             [`Introspector::get_source_info_by_name()`]
+//! * All:      [`Introspector::get_sink_info_list()`],
+//!             [`Introspector::get_source_info_list()`]
 //!
 //! All three methods use the same callback and will provide a [`SinkInfo`] or [`SourceInfo`]
 //! structure.
@@ -75,9 +78,10 @@
 //! Sink inputs and source outputs only have an index to identify them. As such, there are only two
 //! ways to get information about them:
 //!
-//! * By index: [`Introspector::get_sink_input_info`], [`Introspector::get_source_output_info`]
-//! * All:      [`Introspector::get_sink_input_info_list`],
-//!             [`Introspector::get_source_output_info_list`]
+//! * By index: [`Introspector::get_sink_input_info()`],
+//!             [`Introspector::get_source_output_info()`]
+//! * All:      [`Introspector::get_sink_input_info_list()`],
+//!             [`Introspector::get_source_output_info_list()`]
 //!
 //! The structure returned is the [`SinkInputInfo`] or [`SourceOutputInfo`] structure.
 //!
@@ -86,22 +90,22 @@
 //! The list of cached samples can be retrieved from the server. Three methods exist for querying
 //! the sample cache list:
 //!
-//! * By index: [`Introspector::get_sample_info_by_index`]
-//! * By name:  [`Introspector::get_sample_info_by_name`]
-//! * All:      [`Introspector::get_sample_info_list`]
+//! * By index: [`Introspector::get_sample_info_by_index()`]
+//! * By name:  [`Introspector::get_sample_info_by_name()`]
+//! * All:      [`Introspector::get_sample_info_list()`]
 //!
 //! Note that this only retrieves information about the sample, not the sample data itself.
 //!
 //! # Driver Modules
 //!
 //! PulseAudio driver modules are identified by index and are retrieved using either
-//! [`Introspector::get_module_info`] or [`Introspector::get_module_info_list`]. The information
+//! [`Introspector::get_module_info()`] or [`Introspector::get_module_info_list()`]. The information
 //! structure is called [`ModuleInfo`].
 //!
 //! # Clients
 //!
 //! PulseAudio clients are also identified by index and are retrieved using either
-//! [`Introspector::get_client_info`] or [`Introspector::get_client_info_list`]. The information
+//! [`Introspector::get_client_info()`] or [`Introspector::get_client_info_list()`]. The information
 //! structure is called [`ClientInfo`].
 //!
 //! # Control
@@ -116,27 +120,29 @@
 //! the audio. Identically to how sinks and sources can be queried, there are two ways of
 //! identifying them:
 //!
-//! * By index: [`Introspector::set_sink_volume_by_index`],
-//!             [`Introspector::set_source_volume_by_index`]
-//! * By name:  [`Introspector::set_sink_volume_by_name`],
-//!             [`Introspector::set_source_volume_by_name`]
+//! * By index: [`Introspector::set_sink_volume_by_index()`],
+//!             [`Introspector::set_source_volume_by_index()`]
+//! * By name:  [`Introspector::set_sink_volume_by_name()`],
+//!             [`Introspector::set_source_volume_by_name()`]
 //!
 //! It is also possible to mute a sink or source:
 //!
-//! * By index: [`Introspector::set_sink_mute_by_index`], [`Introspector::set_source_mute_by_index`]
-//! * By name:  [`Introspector::set_sink_mute_by_name`], [`Introspector::set_source_mute_by_name`]
+//! * By index: [`Introspector::set_sink_mute_by_index()`],
+//!             [`Introspector::set_source_mute_by_index()`]
+//! * By name:  [`Introspector::set_sink_mute_by_name()`],
+//!             [`Introspector::set_source_mute_by_name()`]
 //!
 //! # Sink Inputs and Source Outputs
 //!
 //! If an application desires to modify the volume of just a single stream (commonly one of its own
 //! streams), this can be done by setting the volume of its associated sink input or source output,
-//! using [`Introspector::set_sink_input_volume`] or [`Introspector::set_source_output_volume`].
+//! using [`Introspector::set_sink_input_volume()`] or [`Introspector::set_source_output_volume()`].
 //!
 //! It is also possible to remove sink inputs and source outputs, terminating the streams associated
 //! with them:
 //!
-//! * Sink input: [`Introspector::kill_sink_input`]
-//! * Source output: [`Introspector::kill_source_output`]
+//! * Sink input: [`Introspector::kill_sink_input()`]
+//! * Source output: [`Introspector::kill_source_output()`]
 //!
 //! It is strongly recommended that all volume changes are done as a direct result of user input.
 //! With automated requests, such as those resulting from misguided attempts of crossfading,
@@ -163,13 +169,13 @@
 //!
 //! # Modules
 //!
-//! Server modules can be remotely loaded and unloaded using [`Introspector::load_module`] and
-//! [`Introspector::unload_module`].
+//! Server modules can be remotely loaded and unloaded using [`Introspector::load_module()`] and
+//! [`Introspector::unload_module()`].
 //!
 //! # Clients
 //!
 //! The only operation supported on clients is the possibility of kicking them off the server using
-//! [`Introspector::kill_client`].
+//! [`Introspector::kill_client()`].
 //!
 //! [`Context`]: ../struct.Context.html
 //! [`ListResult`]: ../../callbacks/enum.ListResult.html
@@ -183,41 +189,41 @@
 //! [`SourceOutputInfo`]: struct.SourceOutputInfo.html
 //! [`StatInfo`]: struct.StatInfo.html
 //! [`subscribe`]: ../subscribe/index.html
-//! [`introspect`]: ../struct.Context.html#method.introspect
-//! [`Introspector::get_client_info_list`]: struct.Introspector.html#method.get_client_info_list
-//! [`Introspector::get_client_info`]: struct.Introspector.html#method.get_client_info
-//! [`Introspector::get_module_info_list`]: struct.Introspector.html#method.get_module_info_list
-//! [`Introspector::get_module_info`]: struct.Introspector.html#method.get_module_info
-//! [`Introspector::get_sample_info_by_index`]: struct.Introspector.html#method.get_sample_info_by_index
-//! [`Introspector::get_sample_info_by_name`]: struct.Introspector.html#method.get_sample_info_by_name
-//! [`Introspector::get_sample_info_list`]: struct.Introspector.html#method.get_sample_info_list
-//! [`Introspector::get_server_info`]: struct.Introspector.html#method.get_server_info
-//! [`Introspector::get_sink_info_by_index`]: struct.Introspector.html#method.get_sink_info_by_index
-//! [`Introspector::get_sink_info_by_name`]: struct.Introspector.html#method.get_sink_info_by_name
-//! [`Introspector::get_sink_info_list`]: struct.Introspector.html#method.get_sink_info_list
-//! [`Introspector::get_sink_input_info_list`]: struct.Introspector.html#method.get_sink_input_info_list
-//! [`Introspector::get_sink_input_info`]: struct.Introspector.html#method.get_sink_input_info
-//! [`Introspector::get_source_info_by_index`]: struct.Introspector.html#method.get_source_info_by_index
-//! [`Introspector::get_source_info_by_name`]: struct.Introspector.html#method.get_source_info_by_name
-//! [`Introspector::get_source_info_list`]: struct.Introspector.html#method.get_source_info_list
-//! [`Introspector::get_source_output_info_list`]: struct.Introspector.html#method.get_source_output_info_list
-//! [`Introspector::get_source_output_info`]: struct.Introspector.html#method.get_source_output_info
-//! [`Introspector::kill_client`]: struct.Introspector.html#method.kill_client
-//! [`Introspector::kill_sink_input`]: struct.Introspector.html#method.kill_sink_input
-//! [`Introspector::kill_source_output`]: struct.Introspector.html#method.kill_source_output
-//! [`Introspector::load_module`]: struct.Introspector.html#method.load_module
-//! [`Introspector::set_sink_input_volume`]: struct.Introspector.html#method.set_sink_input_volume
-//! [`Introspector::set_sink_mute_by_index`]: struct.Introspector.html#method.set_sink_mute_by_index
-//! [`Introspector::set_sink_mute_by_name`]: struct.Introspector.html#method.set_sink_mute_by_name
-//! [`Introspector::set_sink_volume_by_index`]: struct.Introspector.html#method.set_sink_volume_by_index
-//! [`Introspector::set_sink_volume_by_name`]: struct.Introspector.html#method.set_sink_volume_by_name
-//! [`Introspector::set_source_mute_by_index`]: struct.Introspector.html#method.set_source_mute_by_index
-//! [`Introspector::set_source_mute_by_name`]: struct.Introspector.html#method.set_source_mute_by_name
-//! [`Introspector::set_source_output_volume`]: struct.Introspector.html#method.set_source_output_volume
-//! [`Introspector::set_source_volume_by_index`]: struct.Introspector.html#method.set_source_volume_by_index
-//! [`Introspector::set_source_volume_by_name`]: struct.Introspector.html#method.set_source_volume_by_name
-//! [`Introspector::stat`]: struct.Introspector.html#method.stat
-//! [`Introspector::unload_module`]: struct.Introspector.html#method.unload_module
+//! [`introspect()`]: ../struct.Context.html#method.introspect
+//! [`Introspector::get_client_info_list()`]: struct.Introspector.html#method.get_client_info_list
+//! [`Introspector::get_client_info()`]: struct.Introspector.html#method.get_client_info
+//! [`Introspector::get_module_info_list()`]: struct.Introspector.html#method.get_module_info_list
+//! [`Introspector::get_module_info()`]: struct.Introspector.html#method.get_module_info
+//! [`Introspector::get_sample_info_by_index()`]: struct.Introspector.html#method.get_sample_info_by_index
+//! [`Introspector::get_sample_info_by_name()`]: struct.Introspector.html#method.get_sample_info_by_name
+//! [`Introspector::get_sample_info_list()`]: struct.Introspector.html#method.get_sample_info_list
+//! [`Introspector::get_server_info()`]: struct.Introspector.html#method.get_server_info
+//! [`Introspector::get_sink_info_by_index()`]: struct.Introspector.html#method.get_sink_info_by_index
+//! [`Introspector::get_sink_info_by_name()`]: struct.Introspector.html#method.get_sink_info_by_name
+//! [`Introspector::get_sink_info_list()`]: struct.Introspector.html#method.get_sink_info_list
+//! [`Introspector::get_sink_input_info_list()`]: struct.Introspector.html#method.get_sink_input_info_list
+//! [`Introspector::get_sink_input_info()`]: struct.Introspector.html#method.get_sink_input_info
+//! [`Introspector::get_source_info_by_index()`]: struct.Introspector.html#method.get_source_info_by_index
+//! [`Introspector::get_source_info_by_name()`]: struct.Introspector.html#method.get_source_info_by_name
+//! [`Introspector::get_source_info_list()`]: struct.Introspector.html#method.get_source_info_list
+//! [`Introspector::get_source_output_info_list()`]: struct.Introspector.html#method.get_source_output_info_list
+//! [`Introspector::get_source_output_info()`]: struct.Introspector.html#method.get_source_output_info
+//! [`Introspector::kill_client()`]: struct.Introspector.html#method.kill_client
+//! [`Introspector::kill_sink_input()`]: struct.Introspector.html#method.kill_sink_input
+//! [`Introspector::kill_source_output()`]: struct.Introspector.html#method.kill_source_output
+//! [`Introspector::load_module()`]: struct.Introspector.html#method.load_module
+//! [`Introspector::set_sink_input_volume()`]: struct.Introspector.html#method.set_sink_input_volume
+//! [`Introspector::set_sink_mute_by_index()`]: struct.Introspector.html#method.set_sink_mute_by_index
+//! [`Introspector::set_sink_mute_by_name()`]: struct.Introspector.html#method.set_sink_mute_by_name
+//! [`Introspector::set_sink_volume_by_index()`]: struct.Introspector.html#method.set_sink_volume_by_index
+//! [`Introspector::set_sink_volume_by_name()`]: struct.Introspector.html#method.set_sink_volume_by_name
+//! [`Introspector::set_source_mute_by_index()`]: struct.Introspector.html#method.set_source_mute_by_index
+//! [`Introspector::set_source_mute_by_name()`]: struct.Introspector.html#method.set_source_mute_by_name
+//! [`Introspector::set_source_output_volume()`]: struct.Introspector.html#method.set_source_output_volume
+//! [`Introspector::set_source_volume_by_index()`]: struct.Introspector.html#method.set_source_volume_by_index
+//! [`Introspector::set_source_volume_by_name()`]: struct.Introspector.html#method.set_source_volume_by_name
+//! [`Introspector::stat()`]: struct.Introspector.html#method.stat
+//! [`Introspector::unload_module()`]: struct.Introspector.html#method.unload_module
 
 use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
@@ -1954,7 +1960,8 @@ pub struct SinkInputInfo<'a> {
     pub proplist: Proplist,
     /// Stream corked.
     pub corked: bool,
-    /// Stream has volume. If not set, then the meaning of this struct’s volume member is unspecified.
+    /// Stream has volume. If not set, then the meaning of this struct’s volume member is
+    /// unspecified.
     pub has_volume: bool,
     /// The volume can be set. If not set, the volume can still change even though clients can’t
     /// control the volume.

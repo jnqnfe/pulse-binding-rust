@@ -55,17 +55,18 @@
 //! The PulseAudio library contains a number of convenience functions to do calculations on sample
 //! formats:
 //!
-//! * [`Spec::bytes_per_second`]: The number of bytes one second of audio will take given a sample
+//! * [`Spec::bytes_per_second()`]: The number of bytes one second of audio will take given a sample
 //!   format.
-//! * [`Spec::frame_size`]: The size, in bytes, of one frame (i.e. one set of samples, one for each
-//!   channel).
-//! * [`Spec::sample_size`]: The size, in bytes, of one sample.
-//! * [`Spec::bytes_to_usec`]: Calculate the time it would take to play a buffer of a certain size.
+//! * [`Spec::frame_size()`]: The size, in bytes, of one frame (i.e. one set of samples, one for
+//!   each channel).
+//! * [`Spec::sample_size()`]: The size, in bytes, of one sample.
+//! * [`Spec::bytes_to_usec()`]: Calculate the time it would take to play a buffer of a certain
+//!   size.
 //!
-//! [`Spec::bytes_per_second`]: struct.Spec.html#method.bytes_per_second
-//! [`Spec::frame_size`]: struct.Spec.html#method.frame_size
-//! [`Spec::sample_size`]: struct.Spec.html#method.sample_size
-//! [`Spec::bytes_to_usec`]: struct.Spec.html#method.bytes_to_usec
+//! [`Spec::bytes_per_second()`]: struct.Spec.html#method.bytes_per_second
+//! [`Spec::frame_size()`]: struct.Spec.html#method.frame_size
+//! [`Spec::sample_size()`]: struct.Spec.html#method.sample_size
+//! [`Spec::bytes_to_usec()`]: struct.Spec.html#method.bytes_to_usec
 
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
@@ -284,7 +285,7 @@ impl Spec {
 
     /// Initializes the specified sample spec.
     ///
-    /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
+    /// The sample spec will have a defined state but [`is_valid()`](#method.is_valid) will fail for
     /// it.
     #[inline]
     pub fn init(&mut self) {
@@ -383,7 +384,7 @@ pub fn bytes_print(bytes: u32) -> String {
 }
 
 impl Format {
-    /// Similar to [`Spec::sample_size`](struct.Spec.html#method.sample_size) but take a sample
+    /// Similar to [`Spec::sample_size()`](struct.Spec.html#method.sample_size) but take a sample
     /// format instead of full sample spec.
     #[inline]
     pub fn size(&self) -> usize {
@@ -399,7 +400,7 @@ impl Format {
         }
     }
 
-    /// Parses a sample format text. Inverse of [`to_string`](#method.to_string).
+    /// Parses a sample format text. Inverse of [`to_string()`](#method.to_string).
     pub fn parse(format: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

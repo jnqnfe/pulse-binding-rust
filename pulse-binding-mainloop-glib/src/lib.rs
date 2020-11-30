@@ -28,8 +28,8 @@
 //! # Introduction
 //!
 //! The GLIB main loop bindings are extremely easy to use. All that is required is to create a
-//! Mainloop object using [`Mainloop::new`]. When the main loop abstraction is needed, it is
-//! provided by [`Mainloop::get_api`].
+//! Mainloop object using [`Mainloop::new()`]. When the main loop abstraction is needed, it is
+//! provided by [`Mainloop::get_api()`].
 //!
 //! # Usage
 //!
@@ -44,8 +44,8 @@
 //! See the documentation in `libpulse_binding` for further information regarding actual usage of
 //! libpulse mainloops.
 //!
-//! [`Mainloop::new`]: struct.Mainloop.html#method.new
-//! [`Mainloop::get_api`]: struct.Mainloop.html#method.get_api
+//! [`Mainloop::new()`]: struct.Mainloop.html#method.new
+//! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

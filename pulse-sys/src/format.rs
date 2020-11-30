@@ -66,7 +66,7 @@ pub struct pa_format_info {
     pub plist: *mut pa_proplist,
 }
 
-/// The maximum length of strings returned by [`pa_format_info_snprint`](fn.pa_format_info_snprint.html).
+/// The maximum length of strings returned by [`pa_format_info_snprint()`](fn.pa_format_info_snprint.html).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might

@@ -27,10 +27,11 @@
 //! # Creating
 //!
 //! To access a stream, a [`Stream`](struct.Stream.html) object must be created using
-//! [`Stream::new`] or [`Stream::new_extended`]. `new` is for PCM streams only, while `new_extended`
-//! can be used for both PCM and compressed audio streams. At this point the application must
-//! specify what stream format(s) it supports. See [`sample`](../sample/index.html) and
-//! [`channelmap`](../channelmap/index.html) for more information on the stream format parameters.
+//! [`Stream::new()`] or [`Stream::new_extended()`]. `new` is for PCM streams only, while
+//! `new_extended` can be used for both PCM and compressed audio streams. At this point the
+//! application must specify what stream format(s) it supports. See [`sample`](../sample/index.html)
+//! and [`channelmap`](../channelmap/index.html) for more information on the stream format
+//! parameters.
 //!
 //! **FIXME**: Those references only talk about PCM parameters, we should also have an overview
 //! page for how the [`format::Info`](../format/struct.Info.html) based stream format configuration
@@ -40,13 +41,13 @@
 //! stream, a server-side object must be created and associated with the local object. Depending on
 //! which type of stream is desired, a different function is needed:
 //!
-//! * Playback stream: [`Stream::connect_playback`]
-//! * Record stream: [`Stream::connect_record`]
-//! * Upload stream: [`Stream::connect_upload`] \(see [`context::scache`])
+//! * Playback stream: [`Stream::connect_playback()`]
+//! * Record stream: [`Stream::connect_record()`]
+//! * Upload stream: [`Stream::connect_upload()`] \(see [`context::scache`])
 //!
 //! Similar to how connections are done in contexts, connecting a stream will not generate an
 //! [`operation::Operation`] object. Also like contexts, the application should register a state
-//! change callback, using [`Stream::set_state_callback`], and wait for the stream to enter an
+//! change callback, using [`Stream::set_state_callback()`], and wait for the stream to enter an
 //! active state.
 //!
 //! Note: there is a user-controllable slider in mixer applications such as pavucontrol
@@ -68,7 +69,7 @@
 //!
 //! If [`flags::ADJUST_LATENCY`] is set, then the `tlength`/`fragsize` parameters of this structure
 //! will be interpreted slightly differently than otherwise when passed to
-//! [`Stream::connect_record`] and [`Stream::connect_playback`]: the overall latency that is
+//! [`Stream::connect_record()`] and [`Stream::connect_playback()`]: the overall latency that is
 //! comprised of both the server side playback buffer length, the hardware playback buffer length
 //! and additional latencies will be adjusted in a way that it matches `tlength` resp. `fragsize`.
 //! Set [`flags::ADJUST_LATENCY`] if you want to control the overall playback latency for your
@@ -77,8 +78,8 @@
 //! possible. However if the underlying hardware cannot change the hardware buffer length or only in
 //! a limited range, the actually resulting latency might be different from what the client
 //! requested. Thus, for synchronization clients always need to check the actual measured latency
-//! via [`Stream::get_latency`] or a similar call, and not make any assumptions about the latency
-//! available. The function [`Stream::get_buffer_attr`] will always return the actual size of the
+//! via [`Stream::get_latency()`] or a similar call, and not make any assumptions about the latency
+//! available. The function [`Stream::get_buffer_attr()`] will always return the actual size of the
 //! server-side per-stream buffer in `tlength`/`fragsize`, regardless whether
 //! [`flags::ADJUST_LATENCY`] is set or not.
 //!
@@ -87,7 +88,7 @@
 //! index is increased monotonically, while the write index may be freely controlled by the
 //! application. Subtracting the read index from the write index will give you the current fill
 //! level of the buffer. The read/write indexes are 64bit values and measured in bytes, they will
-//! never wrap. The current read/write index may be queried using [`Stream::get_timing_info`]
+//! never wrap. The current read/write index may be queried using [`Stream::get_timing_info()`]
 //! \(see below for more information). In case of a buffer underrun the read index is equal or
 //! larger than the write index. Unless the `prebuf` value is `0`, PulseAudio will temporarily pause
 //! playback in such a case, and wait until the buffer is filled up to `prebuf` bytes again. If
@@ -100,37 +101,37 @@
 //! Once the stream is up, data can start flowing between the client and the server. Two different
 //! access models can be used to transfer the data:
 //!
-//! * Asynchronous: The application registers a callback using [`Stream::set_write_callback`] and
-//!   [`Stream::set_read_callback`] to receive notifications that data can either be written or
+//! * Asynchronous: The application registers a callback using [`Stream::set_write_callback()`] and
+//!   [`Stream::set_read_callback()`] to receive notifications that data can either be written or
 //!   read.
-//! * Polled: Query the library for available data/space using [`Stream::writable_size`] and
-//!   [`Stream::readable_size`] and transfer data as needed. The sizes are stored locally, in the
+//! * Polled: Query the library for available data/space using [`Stream::writable_size()`] and
+//!   [`Stream::readable_size()`] and transfer data as needed. The sizes are stored locally, in the
 //!   client end, so there is no delay when reading them.
 //!
 //! It is also possible to mix the two models freely.
 //!
-//! Once there is data/space available, it can be transferred using either [`Stream::write`] for
-//! playback, or [`Stream::peek`] / [`Stream::discard`] for record. Make sure you do not overflow
-//! the playback buffers as data will be dropped.
+//! Once there is data/space available, it can be transferred using either [`Stream::write()`] for
+//! playback, or [`Stream::peek()`] / [`Stream::discard()`] for record. Make sure you do not
+//! overflow the playback buffers as data will be dropped.
 //!
 //! # Buffer Control
 //!
 //! The transfer buffers can be controlled through a number of operations:
 //!
-//! * [`Stream::cork`]: Stop the playback or recording.
-//! * [`Stream::uncork`]: Start the playback or recording.
-//! * [`Stream::trigger`]: Start playback immediately and do not wait for the buffer to fill up to
+//! * [`Stream::cork()`]: Stop the playback or recording.
+//! * [`Stream::uncork()`]: Start the playback or recording.
+//! * [`Stream::trigger()`]: Start playback immediately and do not wait for the buffer to fill up to
 //!   the set trigger level.
-//! * [`Stream::prebuf`]: Re-enable the playback trigger level.
-//! * [`Stream::drain`]: Wait for the playback buffer to go empty. Will return an
+//! * [`Stream::prebuf()`]: Re-enable the playback trigger level.
+//! * [`Stream::drain()`]: Wait for the playback buffer to go empty. Will return an
 //!   [`operation::Operation`] object that will indicate when the buffer is completely drained.
-//! * [`Stream::flush`]: Drop all data from the playback or record buffer. Do not wait for it to
+//! * [`Stream::flush()`]: Drop all data from the playback or record buffer. Do not wait for it to
 //!   finish playing.
 //!
 //! # Seeking in the Playback Buffer
 //!
 //! A client application may freely seek in the playback buffer. To accomplish that the
-//! [`Stream::write`] function takes a seek mode and an offset argument. The seek mode is one of:
+//! [`Stream::write()`] function takes a seek mode and an offset argument. The seek mode is one of:
 //!
 //! * [`SeekMode::Relative`]: seek relative to the current write index.
 //! * [`SeekMode::Absolute`]: seek relative to the beginning of the playback buffer, (i.e. the first
@@ -142,7 +143,7 @@
 //! If an application just wants to append some data to the output buffer, [`SeekMode::Relative`]
 //! and an offset of `0` should be used.
 //!
-//! After a call to [`Stream::write`] the write index will be left at the position right after the
+//! After a call to [`Stream::write()`] the write index will be left at the position right after the
 //! last byte of the written data.
 //!
 //! # Latency
@@ -150,55 +151,57 @@
 //! A major problem with networked audio is the increased latency caused by the network. To remedy
 //! this, PulseAudio supports an advanced system of monitoring the current latency.
 //!
-//! To get the raw data needed to calculate latencies, call [`Stream::get_timing_info`]. This will
+//! To get the raw data needed to calculate latencies, call [`Stream::get_timing_info()`]. This will
 //! give you a [`def::TimingInfo`] structure that contains everything that is known about the server
 //! side buffer transport delays and the backend active in the server. (Besides other things it
 //! contains the write and read index values mentioned above.)
 //!
-//! This structure is updated every time a [`Stream::update_timing_info`] operation is executed.
+//! This structure is updated every time a [`Stream::update_timing_info()`] operation is executed.
 //! (i.e. before the first call to this function the timing information structure is not available!)
 //! Since it is a lot of work to keep this structure up-to-date manually, PulseAudio can do that
 //! automatically for you: if [`flags::AUTO_TIMING_UPDATE`] is passed when connecting the stream
 //! PulseAudio will automatically update the structure every 100ms and every time a function is
-//! called that might invalidate the previously known timing data (such as [`Stream::write`] or
-//! [`Stream::flush`]). Please note however, that there always is a short time window when the data
-//! in the timing information structure is out-of-date. PulseAudio tries to mark these situations by
-//! setting the `write_index_corrupt` and `read_index_corrupt` fields accordingly.
+//! called that might invalidate the previously known timing data (such as [`Stream::write()`] or
+//! [`Stream::flush()`]). Please note however, that there always is a short time window when the
+//! data in the timing information structure is out-of-date. PulseAudio tries to mark these
+//! situations by setting the `write_index_corrupt` and `read_index_corrupt` fields accordingly.
 //!
 //! The raw timing data in the [`def::TimingInfo`] structure is usually hard to deal with. Therefore
-//! a simpler interface is available: you can call [`Stream::get_time`] or [`Stream::get_latency`].
-//! The former will return the current playback time of the hardware since the stream has been
-//! started. The latter returns the overall time a sample that you write now takes to be played by
-//! the hardware. These two functions base their calculations on the same data that is returned by
-//! [`Stream::get_timing_info`]. Hence the same rules for keeping the timing data up-to-date apply
-//! here. In case the write or read index is corrupted, these two functions will fail.
+//! a simpler interface is available: you can call [`Stream::get_time()`] or
+//! [`Stream::get_latency()`]. The former will return the current playback time of the hardware
+//! since the stream has been started. The latter returns the overall time a sample that you write
+//! now takes to be played by the hardware. These two functions base their calculations on the same
+//! data that is returned by [`Stream::get_timing_info()`]. Hence the same rules for keeping the
+//! timing data up-to-date apply here. In case the write or read index is corrupted, these two
+//! functions will fail.
 //!
 //! Since updating the timing info structure usually requires a full network round trip and some
 //! applications monitor the timing very often PulseAudio offers a timing interpolation system. If
-//! [`flags::INTERPOLATE_TIMING`] is passed when connecting the stream, [`Stream::get_time`] and
-//! [`Stream::get_latency`] will try to interpolate the current playback time/latency by estimating
-//! the number of samples that have been played back by the hardware since the last regular timing
-//! update. It is especially useful to combine this option with [`flags::AUTO_TIMING_UPDATE`], which
-//! will enable you to monitor the current playback time/latency very precisely and very frequently
-//! without requiring a network round trip every time.
+//! [`flags::INTERPOLATE_TIMING`] is passed when connecting the stream, [`Stream::get_time()`] and
+//! [`Stream::get_latency()`] will try to interpolate the current playback time/latency by
+//! estimating the number of samples that have been played back by the hardware since the last
+//! regular timing update. It is especially useful to combine this option with
+//! [`flags::AUTO_TIMING_UPDATE`], which will enable you to monitor the current playback
+//! time/latency very precisely and very frequently without requiring a network round trip every
+//! time.
 //!
 //! # Overflow and underflow
 //!
 //! Even with the best precautions, buffers will sometime over - or underflow. To handle this
 //! gracefully, the application can be notified when this happens. Callbacks are registered using
-//! [`Stream::set_overflow_callback`] and [`Stream::set_underflow_callback`].
+//! [`Stream::set_overflow_callback()`] and [`Stream::set_underflow_callback()`].
 //!
 //! # Synchronizing Multiple Playback Streams
 //!
 //! PulseAudio allows applications to fully synchronize multiple playback streams that are connected
 //! to the same output device. That means the streams will always be played back sample-by-sample
-//! synchronously. If stream operations like [`Stream::cork`] are issued on one of the synchronized
-//! streams, they are simultaneously issued on the others.
+//! synchronously. If stream operations like [`Stream::cork()`] are issued on one of the
+//! synchronized streams, they are simultaneously issued on the others.
 //!
 //! To synchronize a stream to another, just pass the “master” stream as the last argument to
-//! [`Stream::connect_playback`]. To make sure that the freshly created stream doesn’t start
+//! [`Stream::connect_playback()`]. To make sure that the freshly created stream doesn’t start
 //! playback right-away, make sure to pass [`flags::START_CORKED`] and, after all streams have been
-//! created, uncork them all with a single call to [`Stream::uncork`] for the master stream.
+//! created, uncork them all with a single call to [`Stream::uncork()`] for the master stream.
 //!
 //! To make sure that a particular stream doesn’t stop to play when a server side buffer underrun
 //! happens on it while the other synchronized streams continue playing and hence deviate, you need
@@ -206,9 +209,9 @@
 //!
 //! # Disconnecting
 //!
-//! When a stream has served is purpose it must be disconnected with [`Stream::disconnect`]. If you
-//! only unreference it, then it will live on and eat resources both locally and on the server until
-//! you disconnect the context. This is done automatically upon drop of the stream object.
+//! When a stream has served is purpose it must be disconnected with [`Stream::disconnect()`]. If
+//! you only unreference it, then it will live on and eat resources both locally and on the server
+//! until you disconnect the context. This is done automatically upon drop of the stream object.
 //!
 //! [`context::scache`]: ../context/scache/index.html
 //! [`def::BufferAttr`]: ../def/struct.BufferAttr.html
@@ -222,33 +225,33 @@
 //! [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
 //! [`SeekMode::RelativeEnd`]: enum.SeekMode.html#RelativeEnd.v
 //! [`SeekMode::RelativeOnRead`]: enum.SeekMode.html#RelativeOnRead.v
-//! [`Stream::connect_playback`]: struct.Stream.html#method.connect_playback
-//! [`Stream::connect_record`]: struct.Stream.html#method.connect_record
-//! [`Stream::connect_upload`]: struct.Stream.html#method.connect_upload
-//! [`Stream::cork`]: struct.Stream.html#method.cork
-//! [`Stream::discard`]: struct.Stream.html#method.discard
-//! [`Stream::disconnect`]: struct.Stream.html#method.disconnect
-//! [`Stream::drain`]: struct.Stream.html#method.drain
-//! [`Stream::flush`]: struct.Stream.html#method.flush
-//! [`Stream::get_buffer_attr`]: struct.Stream.html#method.get_buffer_attr
-//! [`Stream::get_latency`]: struct.Stream.html#method.get_latency
-//! [`Stream::get_time`]: struct.Stream.html#method.get_time
-//! [`Stream::get_timing_info`]: struct.Stream.html#method.get_timing_info
-//! [`Stream::new`]: struct.Stream.html#method.new
-//! [`Stream::new_extended`]: struct.Stream.html#method.new_extended
-//! [`Stream::peek`]: struct.Stream.html#method.peek
-//! [`Stream::prebuf`]: struct.Stream.html#method.prebuf
-//! [`Stream::readable_size`]: struct.Stream.html#method.readable_size
-//! [`Stream::set_overflow_callback`]: struct.Stream.html#method.set_overflow_callback
-//! [`Stream::set_read_callback`]: struct.Stream.html#method.set_read_callback
-//! [`Stream::set_state_callback`]: struct.Stream.html#method.set_state_callback
-//! [`Stream::set_underflow_callback`]: struct.Stream.html#method.set_underflow_callback
-//! [`Stream::set_write_callback`]: struct.Stream.html#method.set_write_callback
-//! [`Stream::trigger`]: struct.Stream.html#method.trigger
-//! [`Stream::uncork`]: struct.Stream.html#method.uncork
-//! [`Stream::update_timing_info`]: struct.Stream.html#method.update_timing_info
-//! [`Stream::writable_size`]: struct.Stream.html#method.writable_size
-//! [`Stream::write`]: struct.Stream.html#method.write
+//! [`Stream::connect_playback()`]: struct.Stream.html#method.connect_playback
+//! [`Stream::connect_record()`]: struct.Stream.html#method.connect_record
+//! [`Stream::connect_upload()`]: struct.Stream.html#method.connect_upload
+//! [`Stream::cork()`]: struct.Stream.html#method.cork
+//! [`Stream::discard()`]: struct.Stream.html#method.discard
+//! [`Stream::disconnect()`]: struct.Stream.html#method.disconnect
+//! [`Stream::drain()`]: struct.Stream.html#method.drain
+//! [`Stream::flush()`]: struct.Stream.html#method.flush
+//! [`Stream::get_buffer_attr()`]: struct.Stream.html#method.get_buffer_attr
+//! [`Stream::get_latency()`]: struct.Stream.html#method.get_latency
+//! [`Stream::get_time()`]: struct.Stream.html#method.get_time
+//! [`Stream::get_timing_info()`]: struct.Stream.html#method.get_timing_info
+//! [`Stream::new()`]: struct.Stream.html#method.new
+//! [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
+//! [`Stream::peek()`]: struct.Stream.html#method.peek
+//! [`Stream::prebuf()`]: struct.Stream.html#method.prebuf
+//! [`Stream::readable_size()`]: struct.Stream.html#method.readable_size
+//! [`Stream::set_overflow_callback()`]: struct.Stream.html#method.set_overflow_callback
+//! [`Stream::set_read_callback()`]: struct.Stream.html#method.set_read_callback
+//! [`Stream::set_state_callback()`]: struct.Stream.html#method.set_state_callback
+//! [`Stream::set_underflow_callback()`]: struct.Stream.html#method.set_underflow_callback
+//! [`Stream::set_write_callback()`]: struct.Stream.html#method.set_write_callback
+//! [`Stream::trigger()`]: struct.Stream.html#method.trigger
+//! [`Stream::uncork()`]: struct.Stream.html#method.uncork
+//! [`Stream::update_timing_info()`]: struct.Stream.html#method.update_timing_info
+//! [`Stream::writable_size()`]: struct.Stream.html#method.writable_size
+//! [`Stream::write()`]: struct.Stream.html#method.write
 
 use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
@@ -370,39 +373,40 @@ pub mod flags {
     /// Flag to pass when no specific options are needed.
     pub const NOFLAGS: FlagSet = capi::PA_STREAM_NOFLAGS;
 
-    /// Create the stream corked, requiring an explicit [`Stream::uncork`] call to uncork it.
+    /// Create the stream corked, requiring an explicit [`Stream::uncork()`] call to uncork it.
     ///
-    /// [`Stream::uncork`]: ../struct.Stream.html#method.uncork
+    /// [`Stream::uncork()`]: ../struct.Stream.html#method.uncork
     pub const START_CORKED: FlagSet = capi::PA_STREAM_START_CORKED;
 
-    /// Interpolate the latency for this stream. When enabled, [`Stream::get_latency`] and
-    /// [`Stream::get_time`] will try to estimate the current record/playback time based on the
+    /// Interpolate the latency for this stream. When enabled, [`Stream::get_latency()`] and
+    /// [`Stream::get_time()`] will try to estimate the current record/playback time based on the
     /// local time that passed since the last timing info update. Using this option has the
     /// advantage of not requiring a whole round trip when the current playback/recording time is
     /// needed. Consider using this option when requesting latency information frequently. This is
     /// especially useful on long latency network connections. It makes a lot of sense to combine
     /// this option with [`AUTO_TIMING_UPDATE`](constant.AUTO_TIMING_UPDATE.html).
     ///
-    /// [`Stream::get_latency`]: ../struct.Stream.html#method.get_latency
-    /// [`Stream::get_time`]: ../struct.Stream.html#method.get_time
+    /// [`Stream::get_latency()`]: ../struct.Stream.html#method.get_latency
+    /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
     pub const INTERPOLATE_TIMING: FlagSet = capi::PA_STREAM_INTERPOLATE_TIMING;
 
     /// Don’t force the time to increase monotonically. If this option is enabled,
-    /// [`Stream::get_time`] will not necessarily return always monotonically increasing time
+    /// [`Stream::get_time()`] will not necessarily return always monotonically increasing time
     /// values on each call. This may confuse applications which cannot deal with time going
     /// ‘backwards’, but has the advantage that bad transport latency estimations that caused the
     /// time to jump ahead can be corrected quickly, without the need to wait.
     ///
-    /// [`Stream::get_time`]: ../struct.Stream.html#method.get_time
+    /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
     pub const NOT_MONOTONIC: FlagSet = capi::PA_STREAM_NOT_MONOTONIC;
 
     /// If set timing update requests are issued periodically automatically. Combined with
     /// [`INTERPOLATE_TIMING`] you will be able to query the current time and latency with
-    /// [`Stream::get_time`] and [`Stream::get_latency`] at all times without a packet round trip.
+    /// [`Stream::get_time()`] and [`Stream::get_latency()`] at all times without a packet round
+    /// trip.
     ///
     /// [`INTERPOLATE_TIMING`]: constant.INTERPOLATE_TIMING.html
-    /// [`Stream::get_time`]: ../struct.Stream.html#method.get_time
-    /// [`Stream::get_latency`]: ../struct.Stream.html#method.get_latency
+    /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
+    /// [`Stream::get_latency()`]: ../struct.Stream.html#method.get_latency
     pub const AUTO_TIMING_UPDATE: FlagSet = capi::PA_STREAM_AUTO_TIMING_UPDATE;
 
     /// Don’t remap channels by their name, instead map them simply by their index. Implies
@@ -416,55 +420,55 @@ pub mod flags {
     /// Use the sample format of the sink/device this stream is being connected to, and possibly
     /// ignore the format the sample spec contains -- but you still have to pass a valid value in it
     /// as a hint to PulseAudio what would suit your stream best. If this is used you should query
-    /// the used sample format after creating the stream by using [`Stream::get_sample_spec`]. Also,
-    /// if you specified manual buffer metrics it is recommended to update them with
-    /// [`Stream::set_buffer_attr`] to compensate for the changed frame sizes.
+    /// the used sample format after creating the stream by using [`Stream::get_sample_spec()`].
+    /// Also, if you specified manual buffer metrics it is recommended to update them with
+    /// [`Stream::set_buffer_attr()`] to compensate for the changed frame sizes.
     ///
-    /// When creating streams with [`Stream::new_extended`], this flag has no effect. If you specify
-    /// a format with PCM encoding, and you want the server to choose the sample format, then you
-    /// should leave the sample format unspecified in the [`format::Info`] object. This also means
-    /// that you can’t use [`format::Info::new_from_sample_spec`], because that function always sets
-    /// the sample format.
+    /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
+    /// specify a format with PCM encoding, and you want the server to choose the sample format,
+    /// then you should leave the sample format unspecified in the [`format::Info`] object. This
+    /// also means that you can’t use [`format::Info::new_from_sample_spec()`], because that
+    /// function always sets the sample format.
     ///
-    /// [`Stream::get_sample_spec`]: ../struct.Stream.html#method.get_sample_spec
-    /// [`Stream::set_buffer_attr`]: ../struct.Stream.html#method.set_buffer_attr
-    /// [`Stream::new_extended`]: ../struct.Stream.html#method.new_extended
+    /// [`Stream::get_sample_spec()`]: ../struct.Stream.html#method.get_sample_spec
+    /// [`Stream::set_buffer_attr()`]: ../struct.Stream.html#method.set_buffer_attr
+    /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
     /// [`format::Info`]: ../../format/struct.Info.html
-    /// [`format::Info::new_from_sample_spec`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`format::Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_FORMAT: FlagSet = capi::PA_STREAM_FIX_FORMAT;
 
     /// Use the sample rate of the sink, and possibly ignore the rate the sample spec contains.
     /// Usage similar to [`FIX_FORMAT`].
     ///
-    /// When creating streams with [`Stream::new_extended`], this flag has no effect. If you specify
-    /// a format with PCM encoding, and you want the server to choose the sample rate, then you
-    /// should leave the rate unspecified in the [`format::Info`] object. This also means that you
-    /// can’t use [`format::Info::new_from_sample_spec`], because that function always sets the
-    /// sample rate.
+    /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
+    /// specify a format with PCM encoding, and you want the server to choose the sample rate, then
+    /// you should leave the rate unspecified in the [`format::Info`] object. This also means that
+    /// you can’t use [`format::Info::new_from_sample_spec()`], because that function always sets
+    /// the sample rate.
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
-    /// [`Stream::new_extended`]: ../struct.Stream.html#method.new_extended
+    /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
     /// [`format::Info`]: ../../format/struct.Info.html
-    /// [`format::Info::new_from_sample_spec`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`format::Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_RATE: FlagSet = capi::PA_STREAM_FIX_RATE;
 
     /// Use the number of channels and the channel map of the sink, and possibly ignore the number
     /// of channels and the map the sample spec and the passed channel map contains. Usage similar
     /// to [`FIX_FORMAT`].
     ///
-    /// When creating streams with [`Stream::new_extended`], this flag has no effect. If you specify
-    /// a format with PCM encoding, and you want the server to choose the channel count and/or
-    /// channel map, then you should leave the channels and/or the channel map unspecified in the
-    /// [`format::Info`] object. This also means that you can’t use
-    /// [`format::Info::new_from_sample_spec`], because that function always sets the channel
+    /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
+    /// specify a format with PCM encoding, and you want the server to choose the channel count
+    /// and/or channel map, then you should leave the channels and/or the channel map unspecified in
+    /// the [`format::Info`] object. This also means that you can’t use
+    /// [`format::Info::new_from_sample_spec()`], because that function always sets the channel
     /// count (but if you only want to leave the channel map unspecified, then
-    /// [`format::Info::new_from_sample_spec`] works, because the channel map parameter is
+    /// [`format::Info::new_from_sample_spec()`] works, because the channel map parameter is
     /// optional).
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
-    /// [`Stream::new_extended`]: ../struct.Stream.html#method.new_extended
+    /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
     /// [`format::Info`]: ../../format/struct.Info.html
-    /// [`format::Info::new_from_sample_spec`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`format::Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_CHANNELS: FlagSet = capi::PA_STREAM_FIX_CHANNELS;
 
     /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
@@ -473,9 +477,9 @@ pub mod flags {
     pub const DONT_MOVE: FlagSet = capi::PA_STREAM_DONT_MOVE;
 
     /// Allow dynamic changing of the sampling rate during playback with
-    /// [`Stream::update_sample_rate`].
+    /// [`Stream::update_sample_rate()`].
     ///
-    /// [`Stream::update_sample_rate`]: ../struct.Stream.html#method.update_sample_rate
+    /// [`Stream::update_sample_rate()`]: ../struct.Stream.html#method.update_sample_rate
     pub const VARIABLE_RATE: FlagSet = capi::PA_STREAM_VARIABLE_RATE;
 
     /// Find peaks instead of resampling.
@@ -533,9 +537,9 @@ pub mod flags {
     pub const PASSTHROUGH: FlagSet = capi::PA_STREAM_PASSTHROUGH;
 }
 
-/// Common event names supplied to the [`set_event_callback`] callback.
+/// Common event names supplied to the [`set_event_callback()`] callback.
 ///
-/// [`set_event_callback`]: ../struct.Stream.html#method.set_event_callback
+/// [`set_event_callback()`]: ../struct.Stream.html#method.set_event_callback
 pub mod event_names {
     use capi;
 
@@ -551,7 +555,7 @@ pub mod event_names {
     pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
 }
 
-/// Result type for the [`Stream::peek`](struct.Stream.html#method.peek) method. See documentation
+/// Result type for the [`Stream::peek()`](struct.Stream.html#method.peek) method. See documentation
 /// of the method itself for more information.
 #[derive(Debug)]
 pub enum PeekResult<'a> {
@@ -563,7 +567,7 @@ pub enum PeekResult<'a> {
     Data(&'a [u8]),
 }
 
-/// Result type for [`Stream::get_latency`](struct.Stream.html#method.get_latency).
+/// Result type for [`Stream::get_latency()`](struct.Stream.html#method.get_latency).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Latency {
     None,
@@ -574,7 +578,7 @@ pub enum Latency {
 impl Stream {
     /// Creates a new, unconnected stream with the specified name and sample type.
     ///
-    /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
+    /// It is recommended to use [`new_with_proplist()`](#method.new_with_proplist) instead and
     /// specify some initial properties.
     ///
     /// # Params
@@ -671,12 +675,12 @@ impl Stream {
     /// Gets the sink input resp. source output index this stream is identified in the server with.
     ///
     /// This is useful with the introspection functions such as
-    /// [`context::introspect::Introspector::get_sink_input_info`] or
-    /// [`context::introspect::Introspector::get_source_output_info`].
+    /// [`context::introspect::Introspector::get_sink_input_info()`] or
+    /// [`context::introspect::Introspector::get_source_output_info()`].
     ///
-    /// [`context::introspect::Introspector::get_sink_input_info`]:
+    /// [`context::introspect::Introspector::get_sink_input_info()`]:
     /// ../context/introspect/struct.Introspector.html#method.get_sink_input_info
-    /// [`context::introspect::Introspector::get_source_output_info`]:
+    /// [`context::introspect::Introspector::get_source_output_info()`]:
     /// ../context/introspect/struct.Introspector.html#method.get_source_output_info
     pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_index(self.ptr) } {
@@ -688,15 +692,15 @@ impl Stream {
     /// Gets the index of the sink or source this stream is connected to in the server.
     ///
     /// This is useful with the introspection functions such as
-    /// [`context::introspect::Introspector::get_sink_info_by_index`] or
-    /// [`context::introspect::Introspector::get_source_info_by_index`].
+    /// [`context::introspect::Introspector::get_sink_info_by_index()`] or
+    /// [`context::introspect::Introspector::get_source_info_by_index()`].
     ///
     /// Please note that streams may be moved between sinks/sources and thus it is recommended to
-    /// use [`set_moved_callback`](#method.set_moved_callback) to be notified about this.
+    /// use [`set_moved_callback()`](#method.set_moved_callback) to be notified about this.
     ///
-    /// [`context::introspect::Introspector::get_sink_info_by_index`]:
+    /// [`context::introspect::Introspector::get_sink_info_by_index()`]:
     /// ../context/introspect/struct.Introspector.html#method.get_sink_info_by_index
-    /// [`context::introspect::Introspector::get_source_info_by_index`]:
+    /// [`context::introspect::Introspector::get_source_info_by_index()`]:
     /// ../context/introspect/struct.Introspector.html#method.get_source_info_by_index
     pub fn get_device_index(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_device_index(self.ptr) } {
@@ -708,15 +712,15 @@ impl Stream {
     /// Gets the name of the sink or source this stream is connected to in the server.
     ///
     /// This is useful with the introspection functions such as
-    /// [`context::introspect::Introspector::get_sink_info_by_name`] or
-    /// [`context::introspect::Introspector::get_source_info_by_name`].
+    /// [`context::introspect::Introspector::get_sink_info_by_name()`] or
+    /// [`context::introspect::Introspector::get_source_info_by_name()`].
     ///
     /// Please note that streams may be moved between sinks/sources and thus it is recommended to
-    /// use [`set_moved_callback`](#method.set_moved_callback) to be notified about this.
+    /// use [`set_moved_callback()`](#method.set_moved_callback) to be notified about this.
     ///
-    /// [`context::introspect::Introspector::get_sink_info_by_name`]:
+    /// [`context::introspect::Introspector::get_sink_info_by_name()`]:
     /// ../context/struct.Context.html#method.get_sink_info_by_name
-    /// [`context::introspect::Introspector::get_source_info_by_name`]:
+    /// [`context::introspect::Introspector::get_source_info_by_name()`]:
     /// ../context/struct.Context.html#method.get_source_info_by_name
     pub fn get_device_name(&self) -> Option<Cow<'static, str>> {
         let ptr: *const c_char = unsafe { capi::pa_stream_get_device_name(self.ptr) };
@@ -760,9 +764,9 @@ impl Stream {
     /// to the sink’s current volume or treated as an absolute device volume. Since PA 0.9.20 it is
     /// an absolute volume when the sink is in flat volume mode, and relative otherwise, thus making
     /// sure the volume passed here has always the same semantics as the volume passed to
-    /// [`context::introspect::Introspector::set_sink_input_volume`]. It is possible to figure out
+    /// [`context::introspect::Introspector::set_sink_input_volume()`]. It is possible to figure out
     /// whether flat volume mode is in effect for a given sink by calling
-    /// [`context::introspect::Introspector::get_sink_info_by_name`].
+    /// [`context::introspect::Introspector::get_sink_info_by_name()`].
     ///
     /// Since PA 5.0, it’s possible to specify a single-channel volume even if the stream has
     /// multiple channels. In that case the same volume is applied to all channels.
@@ -778,9 +782,9 @@ impl Stream {
     ///
     /// [`flags::START_MUTED`]: flags/constant.START_MUTED.html
     /// [`flags::START_UNMUTED`]: flags/constant.START_UNMUTED.html
-    /// [`context::introspect::Introspector::set_sink_input_volume`]:
+    /// [`context::introspect::Introspector::set_sink_input_volume()`]:
     /// ../context/struct.Context.html#method.set_sink_input_volume
-    /// [`context::introspect::Introspector::get_sink_info_by_name`]:
+    /// [`context::introspect::Introspector::get_sink_info_by_name()`]:
     /// ../context/struct.Context.html#method.get_sink_info_by_name
     pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&def::BufferAttr>,
         flags: FlagSet, volume: Option<&ChannelVolumes>, sync_stream: Option<&mut Self>)
@@ -845,7 +849,7 @@ impl Stream {
 
     /// Finishes the sample upload, the stream name will become the sample name.
     ///
-    /// You cancel a sample upload by issuing [`disconnect`](#method.disconnect).
+    /// You cancel a sample upload by issuing [`disconnect()`](#method.disconnect).
     pub fn finish_upload(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_finish_upload(self.ptr) } {
             0 => Ok(()),
@@ -864,9 +868,9 @@ impl Stream {
     /// Prepares writing data to the server (for playback streams).
     ///
     /// This function may be used to optimize the number of memory copies when doing playback
-    /// (“zero-copy”). It is recommended to call this function before each call to [`write`]. It is
-    /// used to obtain a chunk of PA internally allocated memory, into which you can directly write
-    /// your data before calling [`write`] to actually execute the write.
+    /// (“zero-copy”). It is recommended to call this function before each call to [`write()`]. It
+    /// is used to obtain a chunk of PA internally allocated memory, into which you can directly
+    /// write your data before calling [`write()`] to actually execute the write.
     ///
     /// This function should be called with `nbytes` set to the number of bytes you want to write,
     /// or `None`, in which case the size will be chosen automatically (which is recommended).
@@ -876,25 +880,26 @@ impl Stream {
     /// successful, but the pointer returned was `NULL`, otherwise the buffer will be returned as
     /// `Ok(Some(_))`.
     ///
-    /// After placing your data in the memory area returned, call [`write`] with a sub-slice of it,
-    /// to actually execute the write. **Note**, the buffer may only be used once, i.e. if you were
-    /// thinking of getting a large buffer, placing a large chunk of data into it, then perform
+    /// After placing your data in the memory area returned, call [`write()`] with a sub-slice of
+    /// it, to actually execute the write. **Note**, the buffer may only be used once, i.e. if you
+    /// were thinking of getting a large buffer, placing a large chunk of data into it, then perform
     /// multiple small writes from it, you **cannot** do this. Any attempt at accessing the memory
-    /// returned after the following [`write`] or [`cancel_write`] is invalid.
+    /// returned after the following [`write()`] or [`cancel_write()`] is invalid.
     ///
-    /// If you want to cancel a previously called [`begin_write`] without calling [`write`] use
-    /// [`cancel_write`].
+    /// If you want to cancel a previously called [`begin_write()`] without calling [`write()`] use
+    /// [`cancel_write()`].
     ///
     /// The memory should **not** be explicitly freed by the caller.
     ///
-    /// An invocation of [`write`] should “quickly” follow a [`begin_write`]. It is not recommended
-    /// letting an unbounded amount of time pass after calling [`begin_write`] and before calling
-    /// [`write`]. Calling [`begin_write`] twice without calling [`write`] or [`cancel_write`] in
-    /// between will return exactly the same `data` pointer and `nbytes` values.
+    /// An invocation of [`write()`] should “quickly” follow a [`begin_write()`]. It is not
+    /// recommended letting an unbounded amount of time pass after calling [`begin_write()`] and
+    /// before calling [`write()`]. Calling [`begin_write()`] twice without calling [`write()`] or
+    /// [`cancel_write()`] in between will return exactly the same `data` pointer and `nbytes`
+    /// values.
     ///
-    /// [`begin_write`]: #method.begin_write
-    /// [`cancel_write`]: #method.cancel_write
-    /// [`write`]: #method.write
+    /// [`begin_write()`]: #method.begin_write
+    /// [`cancel_write()`]: #method.cancel_write
+    /// [`write()`]: #method.write
     pub fn begin_write<'a>(&mut self, nbytes: Option<usize>)
         -> Result<Option<&'a mut [u8]>, PAErr>
     {
@@ -918,16 +923,16 @@ impl Stream {
         }
     }
 
-    /// Reverses the effect of [`begin_write`] dropping any data that has already been placed in the
-    /// memory area returned by [`begin_write`].
+    /// Reverses the effect of [`begin_write()`] dropping any data that has already been placed in
+    /// the memory area returned by [`begin_write()`].
     ///
-    /// Only valid to call after a call to [`begin_write`] has been made, and neither
-    /// [`cancel_write`] nor [`write`] have been called yet. Accessing the memory previously
-    /// returned by [`begin_write`] after calling this function is invalid.
+    /// Only valid to call after a call to [`begin_write()`] has been made, and neither
+    /// [`cancel_write()`] nor [`write()`] have been called yet. Accessing the memory previously
+    /// returned by [`begin_write()`] after calling this function is invalid.
     ///
-    /// [`begin_write`]: #method.begin_write
-    /// [`cancel_write`]: #method.cancel_write
-    /// [`write`]: #method.write
+    /// [`begin_write()`]: #method.begin_write
+    /// [`cancel_write()`]: #method.cancel_write
+    /// [`write()`]: #method.write
     pub fn cancel_write(&mut self) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_cancel_write(self.ptr) } {
             0 => Ok(()),
@@ -946,11 +951,11 @@ impl Stream {
     /// respectively. After a successful write call the write index will be at the position after
     /// where this chunk of data has been written to.
     ///
-    /// As an optimization for avoiding needless memory copies you may call [`begin_write`] before
+    /// As an optimization for avoiding needless memory copies you may call [`begin_write()`] before
     /// this call and then place your audio data directly in the memory area returned by that call.
-    /// Then, pass a pointer to that memory area to [`write`]. After the invocation of [`write`] the
-    /// memory area may no longer be accessed. Any further explicit freeing of the memory area is
-    /// not necessary. It is OK to write to the memory area returned by [`begin_write`] only
+    /// Then, pass a pointer to that memory area to [`write()`]. After the invocation of [`write()`]
+    /// the memory area may no longer be accessed. Any further explicit freeing of the memory area
+    /// is not necessary. It is OK to write to the memory area returned by [`begin_write()`] only
     /// partially with this call, skipping bytes both at the end and at the beginning of the
     /// reserved memory area.
     ///
@@ -965,8 +970,8 @@ impl Stream {
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
-    /// [`begin_write`]: #method.begin_write
-    /// [`write`]: #method.write
+    /// [`begin_write()`]: #method.begin_write
+    /// [`write()`]: #method.write
     pub fn write(&mut self, data: &[u8], free_cb: Option<def::FreeCb>, offset: i64,
         seek: SeekMode) -> Result<(), PAErr>
     {
@@ -984,8 +989,8 @@ impl Stream {
 
     /// Writes some data to the server (for playback streams).
     ///
-    /// This function does exactly the same as [`write`] as though `None` had been specified for the
-    /// `free_cb` param. I.e. an internal copy will be made of the provided data.
+    /// This function does exactly the same as [`write()`] as though `None` had been specified for
+    /// the `free_cb` param. I.e. an internal copy will be made of the provided data.
     ///
     /// # Params
     ///
@@ -996,7 +1001,7 @@ impl Stream {
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
-    /// [`write`]: #method.write
+    /// [`write()`]: #method.write
     #[inline(always)]
     pub fn write_copy(&mut self, data: &[u8], offset: i64, seek: SeekMode) -> Result<(), PAErr> {
         self.write(data, None, offset, seek)
@@ -1004,9 +1009,9 @@ impl Stream {
 
     /// Writes some data to the server (for playback streams).
     ///
-    /// This function does exactly the same as [`write`] with the only difference being that a void
-    /// pointer is provided along with the `free_cb` callback pointer, and this void pointer will be
-    /// passed to the callback instead of the `data` pointer.
+    /// This function does exactly the same as [`write()`] with the only difference being that a
+    /// void pointer is provided along with the `free_cb` callback pointer, and this void pointer
+    /// will be passed to the callback instead of the `data` pointer.
     ///
     /// # Params
     ///
@@ -1020,7 +1025,7 @@ impl Stream {
     /// Available since PA version 6.
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
-    /// [`write`]: #method.write
+    /// [`write()`]: #method.write
     #[cfg(any(feature = "pa_v6", feature = "dox"))]
     pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(def::FreeCb, *mut c_void)>,
         offset: i64, seek: SeekMode) -> Result<(), PAErr>
@@ -1056,15 +1061,15 @@ impl Stream {
     ///    variant will be returned. If there is a hole, the [`Hole`] variant will be returned,
     ///    containing the length of the hole in bytes.
     ///
-    /// Use [`discard`] to actually remove the data from the buffer and move the read index
-    /// forward. [`discard`] should not be called if the buffer is empty, but it should be called if
-    /// there is a hole.
+    /// Use [`discard()`] to actually remove the data from the buffer and move the read index
+    /// forward. [`discard()`] should not be called if the buffer is empty, but it should be called
+    /// if there is a hole.
     ///
     /// [`PeekResult`]: enum.PeekResult.html
     /// [`Empty`]: enum.PeekResult.html#Empty.v
     /// [`Hole`]: enum.PeekResult.html#Hole.v
     /// [`Data`]: enum.PeekResult.html#Data.v
-    /// [`discard`]: #method.discard
+    /// [`discard()`]: #method.discard
     pub fn peek<'a>(&mut self) -> Result<PeekResult<'a>, PAErr> {
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
@@ -1086,7 +1091,7 @@ impl Stream {
 
     /// Removes the current fragment on record streams.
     ///
-    /// It is invalid to do this without first calling [`peek`](#method.peek).
+    /// It is invalid to do this without first calling [`peek()`](#method.peek).
     ///
     /// Note: The original C function name used the term `drop`; We instead use `discard` here to
     /// avoid conflict with the Rust `Drop` trait!
@@ -1140,16 +1145,16 @@ impl Stream {
 
     /// Requests a timing info structure update for a stream.
     ///
-    /// Use [`get_timing_info`] to get access to the raw timing data, or [`get_time`] or
-    /// [`get_latency`] to get cleaned up values.
+    /// Use [`get_timing_info()`] to get access to the raw timing data, or [`get_time()`] or
+    /// [`get_latency()`] to get cleaned up values.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`get_timing_info`]: #method.get_timing_info
-    /// [`get_time`]: #method.get_time
-    /// [`get_latency`]: #method.get_latency
+    /// [`get_timing_info()`]: #method.get_timing_info
+    /// [`get_time()`]: #method.get_time
+    /// [`get_latency()`]: #method.get_latency
     pub fn update_timing_info(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1247,10 +1252,10 @@ impl Stream {
     /// Sets the callback function that is called whenever the stream is moved to a different
     /// sink/source.
     ///
-    /// Use [`get_device_name`] or [`get_device_index`] to query the new sink/source.
+    /// Use [`get_device_name()`] or [`get_device_index()`] to query the new sink/source.
     ///
-    /// [`get_device_name`]: #method.get_device_name
-    /// [`get_device_index`]: #method.get_device_index
+    /// [`get_device_name()`]: #method.get_device_name
+    /// [`get_device_index()`]: #method.get_device_index
     pub fn set_moved_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.moved;
         *saved = NotifyCb::new(callback);
@@ -1261,12 +1266,12 @@ impl Stream {
     /// Sets the callback function that is called whenever the sink/source this stream is connected
     /// to is suspended or resumed.
     ///
-    /// Use [`is_suspended`] to query the new suspend status. Please note that the suspend status
+    /// Use [`is_suspended()`] to query the new suspend status. Please note that the suspend status
     /// might also change when the stream is moved between devices. Thus if you call this function
-    /// you very likely want to call [`set_moved_callback`] too.
+    /// you very likely want to call [`set_moved_callback()`] too.
     ///
-    /// [`is_suspended`]: #method.is_suspended
-    /// [`set_moved_callback`]: #method.set_moved_callback
+    /// [`is_suspended()`]: #method.is_suspended
+    /// [`set_moved_callback()`]: #method.set_moved_callback
     pub fn set_suspended_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.suspended;
         *saved = NotifyCb::new(callback);
@@ -1294,10 +1299,10 @@ impl Stream {
     /// change.
     ///
     /// Please note that the buffer attributes can change when moving a stream to a different
-    /// sink/source too, hence if you use this callback you should use [`set_moved_callback`] as
+    /// sink/source too, hence if you use this callback you should use [`set_moved_callback()`] as
     /// well.
     ///
-    /// [`set_moved_callback`]: #method.set_moved_callback
+    /// [`set_moved_callback()`]: #method.set_moved_callback
     pub fn set_buffer_attr_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.buffer_attr;
         *saved = NotifyCb::new(callback);
@@ -1311,7 +1316,7 @@ impl Stream {
     ///
     /// The pause operation is executed as quickly as possible. If a cork is very quickly followed
     /// by an uncork, this might not actually have any effect on the stream that is output. You can
-    /// use [`is_corked`] to find out whether the stream is currently paused or not. Normally a
+    /// use [`is_corked()`] to find out whether the stream is currently paused or not. Normally a
     /// stream will be created in uncorked state. If you pass [`flags::START_CORKED`] as a flag when
     /// connecting the stream, it will be created in corked state.
     ///
@@ -1319,7 +1324,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`is_corked`]: #method.is_corked
+    /// [`is_corked()`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn cork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
@@ -1337,7 +1342,7 @@ impl Stream {
     ///
     /// The un-pause operation is executed as quickly as possible. If an uncork is very quickly
     /// followed by a cork, this might not actually have any effect on the stream that is output.
-    /// You can use [`is_corked`] to find out whether the stream is currently paused or not.
+    /// You can use [`is_corked()`] to find out whether the stream is currently paused or not.
     /// Normally a stream will be created in uncorked state. If you pass [`flags::START_CORKED`] as
     /// a flag when connecting the stream, it will be created in corked state.
     ///
@@ -1345,7 +1350,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`is_corked`]: #method.is_corked
+    /// [`is_corked()`]: #method.is_corked
     /// [`flags::START_CORKED`]: flags/constant.START_CORKED.html
     pub fn uncork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
@@ -1360,7 +1365,7 @@ impl Stream {
     /// Flushes the playback or record buffer of this stream.
     ///
     /// This discards any audio data in the buffer. Most of the time you’re better off using the
-    /// parameter `seek` of [`write`](#method.write) instead of this function.
+    /// parameter `seek` of [`write()`](#method.write) instead of this function.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1437,9 +1442,9 @@ impl Stream {
 
     /// Gets the current playback/recording time.
     ///
-    /// This is based on the data in the timing info structure returned by [`get_timing_info`]. The
-    /// returned time is in the sound card clock domain, which usually runs at a slightly different
-    /// rate than the system clock.
+    /// This is based on the data in the timing info structure returned by [`get_timing_info()`].
+    /// The returned time is in the sound card clock domain, which usually runs at a slightly
+    /// different rate than the system clock.
     ///
     /// This function will usually only return new data if a timing info update has been received.
     /// Only if timing interpolation has been requested ([`flags::INTERPOLATE_TIMING`]) the data
@@ -1455,15 +1460,15 @@ impl Stream {
     /// The time interpolator activated by [`flags::INTERPOLATE_TIMING`] favours ‘smooth’ time
     /// graphs over accurate ones to improve the smoothness of UI operations that are tied to the
     /// audio clock. If accuracy is more important to you, you might need to estimate your timing
-    /// based on the data from [`get_timing_info`] yourself or not work with interpolated timing at
-    /// all and instead always query the server side for the most up to date timing with
-    /// [`update_timing_info`].
+    /// based on the data from [`get_timing_info()`] yourself or not work with interpolated timing
+    /// at all and instead always query the server side for the most up to date timing with
+    /// [`update_timing_info()`].
     ///
     /// If no timing information has been received yet this call will return `Ok(None)`. For more
-    /// details see [`get_timing_info`].
+    /// details see [`get_timing_info()`].
     ///
-    /// [`get_timing_info`]: #method.get_timing_info
-    /// [`update_timing_info`]: #method.update_timing_info
+    /// [`get_timing_info()`]: #method.get_timing_info
+    /// [`update_timing_info()`]: #method.update_timing_info
     /// [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
     /// [`flags::NOT_MONOTONIC`]: flags/constant.NOT_MONOTONIC.html
     pub fn get_time(&self) -> Result<Option<MicroSeconds>, PAErr> {
@@ -1477,8 +1482,8 @@ impl Stream {
 
     /// Determines the total stream latency.
     ///
-    /// This function is based on [`get_time`]. The returned time is in the sound card clock domain,
-    /// which usually runs at a slightly different rate than the system clock.
+    /// This function is based on [`get_time()`]. The returned time is in the sound card clock
+    /// domain, which usually runs at a slightly different rate than the system clock.
     ///
     /// In case the stream is a monitoring stream the result can be negative, i.e. the captured
     /// samples are not yet played, in which case `Ok(Latency::Negative(usecs))` will be returned
@@ -1486,10 +1491,10 @@ impl Stream {
     ///
     /// If no timing information has been received yet, this call will return `Ok(Latency::None)`.
     ///
-    /// For more details see [`get_timing_info`] and [`get_time`].
+    /// For more details see [`get_timing_info()`] and [`get_time()`].
     ///
-    /// [`get_time`]: #method.get_time
-    /// [`get_timing_info`]: #method.get_timing_info
+    /// [`get_time()`]: #method.get_time
+    /// [`get_timing_info()`]: #method.get_timing_info
     pub fn get_latency(&self) -> Result<Latency, PAErr> {
         let mut r_usecs = MicroSeconds(0);
         let mut negative: i32 = 0;
@@ -1507,17 +1512,17 @@ impl Stream {
     ///
     /// The returned pointer refers to an internal read-only instance of the timing structure. The
     /// user should make a copy of this structure if wanting to modify it. An in-place update to
-    /// this data structure may be requested using [`update_timing_info`].
+    /// this data structure may be requested using [`update_timing_info()`].
     ///
-    /// If no timing information has been received before (i.e. by requesting [`update_timing_info`]
-    /// or by using [`flags::AUTO_TIMING_UPDATE`]), this function will return `None` (as it will
-    /// also if an error occurs).
+    /// If no timing information has been received before (i.e. by requesting
+    /// [`update_timing_info()`] or by using [`flags::AUTO_TIMING_UPDATE`]), this function will
+    /// return `None` (as it will also if an error occurs).
     ///
     /// Please note that the `write_index` member field (and only this field) is updated on each
-    /// [`write`] call, not just when a timing update has been received.
+    /// [`write()`] call, not just when a timing update has been received.
     ///
-    /// [`update_timing_info`]: #method.update_timing_info
-    /// [`write`]: #method.write
+    /// [`update_timing_info()`]: #method.update_timing_info
+    /// [`write()`]: #method.write
     /// [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
     pub fn get_timing_info<'a>(&mut self) -> Option<&'a def::TimingInfo> {
         unsafe {
@@ -1555,12 +1560,12 @@ impl Stream {
     ///
     /// Only valid after the stream has been connected successfully. This will return the actual
     /// configured buffering metrics, which may differ from what was requested during
-    /// [`connect_record`] or [`connect_playback`]. This call will always return the actual
+    /// [`connect_record()`] or [`connect_playback()`]. This call will always return the actual
     /// per-stream server-side buffer metrics, regardless whether [`flags::ADJUST_LATENCY`] is set
     /// or not.
     ///
-    /// [`connect_record`]: #method.connect_record
-    /// [`connect_playback`]: #method.connect_playback
+    /// [`connect_record()`]: #method.connect_record
+    /// [`connect_playback()`]: #method.connect_playback
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
     pub fn get_buffer_attr<'a>(&mut self) -> Option<&'a def::BufferAttr> {
         unsafe {
@@ -1572,15 +1577,15 @@ impl Stream {
     /// Changes the buffer metrics of the stream during playback.
     ///
     /// The server might have chosen different buffer metrics then requested. The selected metrics
-    /// may be queried with [`get_buffer_attr`] as soon as the callback is called. Only valid after
-    /// the stream has been connected successfully. Please be aware of the slightly different
+    /// may be queried with [`get_buffer_attr()`] as soon as the callback is called. Only valid
+    /// after the stream has been connected successfully. Please be aware of the slightly different
     /// semantics of the call depending whether [`flags::ADJUST_LATENCY`] is set or not.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`get_buffer_attr`]: #method.get_buffer_attr
+    /// [`get_buffer_attr()`]: #method.get_buffer_attr
     /// [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
     pub fn set_buffer_attr<F>(&mut self, attr: &def::BufferAttr, callback: F)
         -> Operation<dyn FnMut(bool)>
@@ -1595,14 +1600,15 @@ impl Stream {
 
     /// Changes the stream sampling rate during playback.
     ///
-    /// You need to pass [`flags::VARIABLE_RATE`] in the flags parameter of [`connect_playback`] if
-    /// you plan to use this function. Only valid after the stream has been connected successfully.
+    /// You need to pass [`flags::VARIABLE_RATE`] in the flags parameter of [`connect_playback()`]
+    /// if you plan to use this function. Only valid after the stream has been connected
+    /// successfully.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`connect_playback`]: #method.connect_playback
+    /// [`connect_playback()`]: #method.connect_playback
     /// [`flags::VARIABLE_RATE`]: flags/constant.VARIABLE_RATE.html
     pub fn update_sample_rate<F>(&mut self, rate: u32, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -1617,14 +1623,14 @@ impl Stream {
     /// Updates the property list of the sink input/source output of this stream, adding new entries.
     ///
     /// Please note that it is highly recommended to set as many properties initially via
-    /// [`new_with_proplist`] as possible instead a posteriori with this function, since that
+    /// [`new_with_proplist()`] as possible instead a posteriori with this function, since that
     /// information may be used to route this stream to the right device.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`new_with_proplist`]: #method.new_with_proplist
+    /// [`new_with_proplist()`]: #method.new_with_proplist
     pub fn update_proplist<F>(&mut self, mode: proplist::UpdateMode, proplist: &mut Proplist,
         callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
@@ -1671,7 +1677,8 @@ impl Stream {
     /// For record streams connected to a monitor source: monitors only a very specific sink input
     /// of the sink.
     ///
-    /// This function needs to be called before [`connect_record`](#method.connect_record) is called.
+    /// This function needs to be called before [`connect_record()`](#method.connect_record) is
+    /// called.
     pub fn set_monitor_stream(&mut self, sink_input_index: u32) -> Result<(), PAErr> {
         match unsafe { capi::pa_stream_set_monitor_stream(self.ptr, sink_input_index) } {
             0 => Ok(()),
@@ -1680,7 +1687,7 @@ impl Stream {
     }
 
     /// Gets the sink input index previously set with
-    /// [`set_monitor_stream`](#method.set_monitor_stream).
+    /// [`set_monitor_stream()`](#method.set_monitor_stream).
     pub fn get_monitor_stream(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_monitor_stream(self.ptr) } {
             def::INVALID_INDEX => None,

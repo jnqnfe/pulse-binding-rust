@@ -126,7 +126,7 @@ impl DeviceRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Sets the subscription callback that is called when [`subscribe`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe()`](#method.subscribe) was
     /// called.
     ///
     /// The callback must accept two parameters, firstly a [`def::Device`] variant, and secondly an

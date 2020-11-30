@@ -64,7 +64,7 @@
 //! occurs asynchronously, requiring careful use of the mainloop’s `lock` method. When writing
 //! callbacks with the [`Threaded`] mainloop, users must beware the potential that in a few cases
 //! the callback may be executed in two different scenarios, and with different threads. Note that
-//! the threaded mainloop has an [`in_thread`] method for determining whether or not the thread it
+//! the threaded mainloop has an [`in_thread()`] method for determining whether or not the thread it
 //! it is executed from is the special event loop thread.
 //!
 //! ## Queued Events and Changing Callbacks
@@ -78,19 +78,20 @@
 //!
 //! Normally when holding multiple references to objects across threads in Rust you would use an
 //! `Arc` wrapper. However, with the [`Threaded`] mainloop, you may be able to get away with using
-//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use its `lock`
-//! method to synchronise access to objects, and so you know that at any one moment either your
-//! thread (when you take the lock) **or** the event loop thread hold the lock, never both, and thus
-//! only one thread is ever working with objects at any one time, and since Rust actually has no
-//! idea that more than one thread is involved (hidden in the C library’s implementation), you can
-//! safely get away with using `Rc`.
+//! just an `Rc` wrapper. Remember that with the [`Threaded`] mainloop you **must** use its
+//! [`lock()`] method to synchronise access to objects, and so you know that at any one moment
+//! either your thread (when you take the lock) **or** the event loop thread hold the lock, never
+//! both, and thus only one thread is ever working with objects at any one time, and since Rust
+//! actually has no idea that more than one thread is involved (hidden in the C library’s
+//! implementation), you can safely get away with using `Rc`.
 //!
 //! [`Standard`]: standard/index.html
 //! [`Threaded`]: threaded/index.html
 //! [`mainloop::signal`]: signal/index.html
 //! [`mainloop::api::MainloopApi`]: api/struct.MainloopApi.html
 //! [standard mainloop documentation]: standard/index.html
-//! [`in_thread`]: threaded/struct.Mainloop.html#method.in_thread
+//! [`lock()`]: threaded/struct.Mainloop.html#method.lock
+//! [`in_thread()`]: threaded/struct.Mainloop.html#method.in_thread
 
 pub mod api;
 pub mod events;

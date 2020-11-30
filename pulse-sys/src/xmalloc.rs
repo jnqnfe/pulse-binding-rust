@@ -22,14 +22,14 @@ pub unsafe fn pa_xnew(n: usize, k: usize) -> *mut c_void {
     pa_xmalloc(n*k)
 }
 
-/// Same as [`pa_xnew`](fn.pa_xnew.html) but sets the memory to zero.
+/// Same as [`pa_xnew()`](fn.pa_xnew.html) but sets the memory to zero.
 #[inline(always)]
 pub unsafe fn pa_xnew0(n: usize, k: usize) -> *mut c_void {
     assert!(n < (std::i32::MAX as usize / k));
     pa_xmalloc0(n*k)
 }
 
-/// Same as [`pa_xnew`](fn.pa_xnew.html) but duplicates the specified data.
+/// Same as [`pa_xnew()`](fn.pa_xnew.html) but duplicates the specified data.
 #[inline(always)]
 pub unsafe fn pa_xnewdup(p: *const c_void, n: usize, k: usize) -> *mut c_void {
     assert!(n < (std::i32::MAX as usize / k));
@@ -52,13 +52,13 @@ extern "C" {
     /// Same as [`pa_xmalloc`](fn.pa_xmalloc.html) , but initializes allocated memory to 0.
     pub fn pa_xmalloc0(l: usize) -> *mut c_void;
 
-    ///  The combination of [`pa_xmalloc`](fn.pa_xmalloc.html) and `realloc()`.
+    ///  The combination of [`pa_xmalloc()`](fn.pa_xmalloc.html) and `realloc()`.
     pub fn pa_xrealloc(ptr: *mut c_void, size: usize) -> *mut c_void;
 
     /// Frees allocated memory.
     pub fn pa_xfree(p: *mut c_void);
 
-    /// Duplicates the specified string, allocating memory with [`pa_xmalloc`](fn.pa_xmalloc.html).
+    /// Duplicates the specified string, allocating memory with [`pa_xmalloc()`](fn.pa_xmalloc.html).
     pub fn pa_xstrdup(s: *const c_char) -> *mut c_char;
 
     /// Duplicates the specified string, but truncate after `l` characters.

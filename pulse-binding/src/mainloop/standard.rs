@@ -24,8 +24,8 @@
 //!
 //! # Usage
 //!
-//! A [`Mainloop`] is created using [`Mainloop::new`]. To get access to the main loop abstraction,
-//! [`Mainloop::get_api`] is used.
+//! A [`Mainloop`] is created using [`Mainloop::new()`]. To get access to the main loop abstraction,
+//! [`Mainloop::get_api()`] is used.
 //!
 //! Destruction of the [`Mainloop`] object is done automatically when the object falls out of scope.
 //! (Rust’s `Drop` trait has been implemented and takes care of it).
@@ -41,7 +41,8 @@
 //! * Dispatch - Dispatch any events that have fired.
 //!
 //! When using the main loop, the application can either execute each iteration, one at a time,
-//! using [`Mainloop::iterate`], or let the library iterate automatically using [`Mainloop::run`].
+//! using [`Mainloop::iterate()`], or let the library iterate automatically using
+//! [`Mainloop::run()`].
 //!
 //! # Threads
 //!
@@ -196,10 +197,10 @@
 //!
 //! [`mainloop::api`]: ../api/index.html
 //! [`Mainloop`]: struct.Mainloop.html
-//! [`Mainloop::new`]: struct.Mainloop.html#method.new
-//! [`Mainloop::get_api`]: struct.Mainloop.html#method.get_api
-//! [`Mainloop::iterate`]: struct.Mainloop.html#method.iterate
-//! [`Mainloop::run`]: struct.Mainloop.html#method.run
+//! [`Mainloop::new()`]: struct.Mainloop.html#method.new
+//! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
+//! [`Mainloop::iterate()`]: struct.Mainloop.html#method.iterate
+//! [`Mainloop::run()`]: struct.Mainloop.html#method.run
 
 use std::os::raw::{c_ulong, c_void};
 use std::rc::Rc;
@@ -222,7 +223,7 @@ impl MainloopInternalType for MainloopInternal {}
 pub type PollFn = extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32,
     userdata: *mut c_void) -> i32;
 
-/// Return type for [`Mainloop::iterate`](struct.Mainloop.html#method.iterate).
+/// Return type for [`Mainloop::iterate()`](struct.Mainloop.html#method.iterate).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum IterateResult {
     /// Success, with number of sources dispatched.
@@ -362,7 +363,7 @@ impl Mainloop {
         }
     }
 
-    /// Gets the return value as specified with the main loop’s [`quit`](#method.quit) routine.
+    /// Gets the return value as specified with the main loop’s [`quit()`](#method.quit) routine.
     #[inline]
     pub fn get_retval(&self) -> def::Retval {
         def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).ptr) })
@@ -370,8 +371,8 @@ impl Mainloop {
 
     /// Runs a single iteration of the main loop.
     ///
-    /// This is a convenience function for [`prepare`](#method.prepare), [`poll`](#method.poll)
-    /// and [`dispatch`](#method.dispatch).
+    /// This is a convenience function for [`prepare()`](#method.prepare), [`poll()`](#method.poll)
+    /// and [`dispatch()`](#method.dispatch).
     ///
     /// If `block` is `true`, block for events if none are queued.
     ///
@@ -391,7 +392,7 @@ impl Mainloop {
     }
 
     /// Runs unlimited iterations of the main loop object until the main loop’s
-    /// [`quit`](#method.quit) routine is called.
+    /// [`quit()`](#method.quit) routine is called.
     ///
     /// On success, returns `Ok` containing quit’s return value. On error returns `Err` containing a
     /// tuple of the error value and quit’s return value.

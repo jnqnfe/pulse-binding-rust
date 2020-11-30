@@ -123,11 +123,11 @@ pub mod properties {
     pub const DEVICE_INTENDED_ROLES: &str = capi::PA_PROP_DEVICE_INTENDED_ROLES;
 
     /// For PCM formats: the sample format used as returned by
-    /// [`Format::to_string`](../../sample/enum.Format.html#method.to_string).
+    /// [`Format::to_string()`](../../sample/enum.Format.html#method.to_string).
     pub const FORMAT_SAMPLE_FORMAT: &str = capi::PA_PROP_FORMAT_SAMPLE_FORMAT;
 
     /// For PCM formats: the channel map of the stream as returned by
-    /// [`channelmap::Map::print`](../../channelmap/struct.Map.html#method.print).
+    /// [`channelmap::Map::print()`](../../channelmap/struct.Map.html#method.print).
     pub const FORMAT_CHANNEL_MAP: &str = capi::PA_PROP_FORMAT_CHANNEL_MAP;
 }
 
@@ -154,7 +154,7 @@ impl std::fmt::Debug for Proplist {
 }
 
 /// Proplist iterator, used for iterating over the list’s keys. Returned by the
-/// [`iter`](struct.Proplist.html#method.iter) method.
+/// [`iter()`](struct.Proplist.html#method.iter) method.
 ///
 /// Note, lifetime `'a` is used to tie an instance of this struct to the associated `Proplist`, and
 /// thus prevent a use-after-free issue that would otherwise occur should the `Proplist` be
@@ -273,7 +273,7 @@ impl Proplist {
     /// Appends a new string entry to the property list, possibly overwriting an already existing
     /// entry with the same key.
     ///
-    /// This is similar to [`set_strs`](#method.set_str), however here the provided key and value
+    /// This is similar to [`set_strs()`](#method.set_str), however here the provided key and value
     /// are combined into a single string, separated by an `=`. An internal copy is made of the
     /// provided string.
     pub fn set_pl(&mut self, pair: &str) -> Result<(), ()> {
@@ -357,7 +357,7 @@ impl Proplist {
         }
     }
 
-    /// Similar to [`unset`](#method.unset) but takes an array of keys to remove.
+    /// Similar to [`unset()`](#method.unset) but takes an array of keys to remove.
     ///
     /// Returns `None` on failure, otherwise the number of entries actually removed (which might
     /// even be 0, if there were no matching entries to remove).
@@ -410,7 +410,7 @@ impl Proplist {
 
     /// Formats the property list nicely as a human readable string.
     ///
-    /// This works very much like [`to_string_sep`](#method.to_string_sep) and uses a newline as
+    /// This works very much like [`to_string_sep()`](#method.to_string_sep) and uses a newline as
     /// separator and appends one final one.
     pub fn to_string(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_proplist_to_string(self.0.ptr) };

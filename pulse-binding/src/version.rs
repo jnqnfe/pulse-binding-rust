@@ -26,7 +26,7 @@
 //!
 //! # Runtime check
 //!
-//! The [`get_library_version`] function obtains at runtime the version of the actual PA client
+//! The [`get_library_version()`] function obtains at runtime the version of the actual PA client
 //! library in use.
 //!
 //! # Dynamic constants
@@ -51,7 +51,7 @@
 //! of support offered. If you have v8 compatibility enabled but not v12, then the version number
 //! indicated will be v11.
 //!
-//! [`get_library_version`]: fn.get_library_version.html
+//! [`get_library_version()`]: fn.get_library_version.html
 
 use capi;
 use std::ffi::CStr;

@@ -190,7 +190,7 @@ impl StreamRestore {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Sets the subscription callback that is called when [`subscribe`](#method.subscribe) was
+    /// Sets the subscription callback that is called when [`subscribe()`](#method.subscribe) was
     /// called.
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
         where F: FnMut() + 'static

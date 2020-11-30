@@ -38,8 +38,8 @@ pub fn pa_volume_ui_max() -> pa_volume_t {
 pub const PA_VOLUME_INVALID: pa_volume_t = std::u32::MAX;
 
 /// This floor value is used as minus infinity when using
-/// [`pa_sw_volume_to_dB`](fn.pa_sw_volume_to_dB.html) /
-/// [`pa_sw_volume_from_dB`](fn.pa_sw_volume_from_dB.html).
+/// [`pa_sw_volume_to_dB()`](fn.pa_sw_volume_to_dB.html) /
+/// [`pa_sw_volume_from_dB()`](fn.pa_sw_volume_from_dB.html).
 pub const PA_DECIBEL_MININFTY: f64 = -std::f64::INFINITY;
 
 #[repr(C)]
@@ -49,21 +49,21 @@ pub struct pa_cvolume {
     pub values: [pa_volume_t; crate::sample::PA_CHANNELS_MAX as usize],
 }
 
-/// The maximum length of strings returned by [`pa_cvolume_snprint`](fn.pa_cvolume_snprint.htm).
+/// The maximum length of strings returned by [`pa_cvolume_snprint()`](fn.pa_cvolume_snprint.htm).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 pub const PA_CVOLUME_SNPRINT_MAX: usize = 320;
 
-/// The maximum length of strings returned by [`pa_sw_cvolume_snprint_dB`](fn.pa_sw_cvolume_snprint_dB.html).
+/// The maximum length of strings returned by [`pa_sw_cvolume_snprint_dB()`](fn.pa_sw_cvolume_snprint_dB.html).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 pub const PA_SW_CVOLUME_SNPRINT_DB_MAX: usize = 448;
 
-/// The maximum length of strings returned by [`pa_cvolume_snprint_verbose`](fn.pa_cvolume_snprint_verbose.html).
+/// The maximum length of strings returned by [`pa_cvolume_snprint_verbose()`](fn.pa_cvolume_snprint_verbose.html).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
@@ -71,21 +71,21 @@ pub const PA_SW_CVOLUME_SNPRINT_DB_MAX: usize = 448;
 #[cfg(any(feature = "pa_v5", feature = "dox"))]
 pub const PA_CVOLUME_SNPRINT_VERBOSE_MAX: usize = 1984;
 
-/// The maximum length of strings returned by [`pa_volume_snprint`](fn.pa_volume_snprint.html).
+/// The maximum length of strings returned by [`pa_volume_snprint()`](fn.pa_volume_snprint.html).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 pub const PA_VOLUME_SNPRINT_MAX: usize = 10;
 
-/// The maximum length of strings returned by [`pa_sw_volume_snprint_dB`](fn.pa_sw_volume_snprint_dB.html).
+/// The maximum length of strings returned by [`pa_sw_volume_snprint_dB()`](fn.pa_sw_volume_snprint_dB.html).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 pub const PA_SW_VOLUME_SNPRINT_DB_MAX: usize = 11;
 
-/// The maximum length of strings returned by [`pa_volume_snprint_verbose`](fn.pa_volume_snprint_verbose.html).
+/// The maximum length of strings returned by [`pa_volume_snprint_verbose()`](fn.pa_volume_snprint_verbose.html).
 ///
 /// Please note that this value can change with any release without warning and without being
 /// considered API or ABI breakage. You should not use this definition anywhere where it might

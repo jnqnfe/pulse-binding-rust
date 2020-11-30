@@ -75,17 +75,17 @@ pub struct BufferAttr {
     ///
     /// Initialize to `0` to enable manual start/stop control of the stream. This means that
     /// playback will not stop on underrun and playback will not start automatically, instead
-    /// [`stream::Stream::cork`] needs to be called explicitly. If you set this value to `0` you
+    /// [`stream::Stream::cork()`] needs to be called explicitly. If you set this value to `0` you
     /// should also set [`stream::flags::START_CORKED`]. Should underrun occur, the read index of
     /// the output buffer overtakes the write index, and hence the fill level of the buffer is
     /// negative.
     ///
-    /// Start of playback can be forced using [`stream::Stream::trigger`] even though the prebuffer
-    /// size hasn’t been reached. If a buffer underrun occurs, this prebuffering will be again
-    /// enabled.
+    /// Start of playback can be forced using [`stream::Stream::trigger()`] even though the
+    /// prebuffer size hasn’t been reached. If a buffer underrun occurs, this prebuffering will be
+    /// again enabled.
     ///
-    /// [`stream::Stream::cork`]: ../stream/struct.Stream.html#method.cork
-    /// [`stream::Stream::trigger`]: ../stream/struct.Stream.html#method.trigger
+    /// [`stream::Stream::cork()`]: ../stream/struct.Stream.html#method.cork
+    /// [`stream::Stream::trigger()`]: ../stream/struct.Stream.html#method.trigger
     /// [`stream::flags::START_CORKED`]: ../stream/flags/constant.START_CORKED.html
     pub prebuf: u32,
 
@@ -134,9 +134,9 @@ impl AsRef<BufferAttr> for capi::pa_buffer_attr {
 
 /// A structure for all kinds of timing information of a stream.
 ///
-/// See [`stream::Stream::update_timing_info`] and [`stream::Stream::get_timing_info`].
+/// See [`stream::Stream::update_timing_info()`] and [`stream::Stream::get_timing_info()`].
 ///
-/// The total output latency a sample that is written with [`stream::Stream::write`] takes to be
+/// The total output latency a sample that is written with [`stream::Stream::write()`] takes to be
 /// played may be estimated by:
 ///
 /// ``
@@ -144,11 +144,11 @@ impl AsRef<BufferAttr> for capi::pa_buffer_attr {
 /// ``
 ///
 /// (Where `buffer_usec` is defined as the result of passing ``write_index - read_index`` to
-/// [`sample::Spec::bytes_to_usec`]). The output buffer which `buffer_usec` relates to may be
-/// manipulated freely (with [`stream::Stream::write`]’s `seek` argument, [`stream::Stream::flush`]
-/// and friends), the buffers `sink_usec` and `source_usec` relate to are first-in first-out (FIFO)
-/// buffers which cannot be flushed or manipulated in any way. The total input latency a sample that
-/// is recorded takes to be delivered to the application is:
+/// [`sample::Spec::bytes_to_usec()`]). The output buffer which `buffer_usec` relates to may be
+/// manipulated freely (with [`stream::Stream::write()`]’s `seek` argument,
+/// [`stream::Stream::flush()`] and friends), the buffers `sink_usec` and `source_usec` relate to
+/// are first-in first-out (FIFO) buffers which cannot be flushed or manipulated in any way. The
+/// total input latency a sample that is recorded takes to be delivered to the application is:
 ///
 /// ``
 /// source_usec + buffer_usec + transport_usec - sink_usec
@@ -156,7 +156,7 @@ impl AsRef<BufferAttr> for capi::pa_buffer_attr {
 ///
 /// (Take care of sign issues!). When connected to a monitor source `sink_usec` contains the latency
 /// of the owning sink. The two latency estimations described here are implemented in
-/// [`stream::Stream::get_latency`].
+/// [`stream::Stream::get_latency()`].
 ///
 /// All time values are in the sound card clock domain, unless noted otherwise. The sound card clock
 /// usually runs at a slightly different rate than the system clock.
@@ -164,12 +164,12 @@ impl AsRef<BufferAttr> for capi::pa_buffer_attr {
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 ///
-/// [`sample::Spec::bytes_to_usec`]: ../sample/struct.Spec.html#method.bytes_to_usec
-/// [`stream::Stream::update_timing_info`]: ../stream/struct.Stream.html#method.update_timing_info
-/// [`stream::Stream::get_timing_info`]: ../stream/struct.Stream.html#method.get_timing_info
-/// [`stream::Stream::write`]: ../stream/struct.Stream.html#method.write
-/// [`stream::Stream::flush`]: ../stream/struct.Stream.html#method.flush
-/// [`stream::Stream::get_latency`]: ../stream/struct.Stream.html#method.get_latency
+/// [`sample::Spec::bytes_to_usec()`]: ../sample/struct.Spec.html#method.bytes_to_usec
+/// [`stream::Stream::update_timing_info()`]: ../stream/struct.Stream.html#method.update_timing_info
+/// [`stream::Stream::get_timing_info()`]: ../stream/struct.Stream.html#method.get_timing_info
+/// [`stream::Stream::write()`]: ../stream/struct.Stream.html#method.write
+/// [`stream::Stream::flush()`]: ../stream/struct.Stream.html#method.flush
+/// [`stream::Stream::get_latency()`]: ../stream/struct.Stream.html#method.get_latency
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct TimingInfo {
@@ -258,11 +258,11 @@ impl AsRef<TimingInfo> for capi::pa_timing_info {
 /// A structure for the spawn API.
 ///
 /// This may be used to integrate auto spawned daemons into your application. For more information
-/// see [`context::Context::connect`]. When spawning a new child process the `waitpid()` is used on
-/// the child’s PID. The spawn routine will not block or ignore SIGCHLD signals, since this cannot
-/// be done in a thread compatible way. You might have to do this in prefork/postfork.
+/// see [`context::Context::connect()`]. When spawning a new child process the `waitpid()` is used
+/// on the child’s PID. The spawn routine will not block or ignore SIGCHLD signals, since this
+/// cannot be done in a thread compatible way. You might have to do this in prefork/postfork.
 ///
-/// [`context::Context::connect`]: ../context/struct.Context.html#method.connect
+/// [`context::Context::connect()`]: ../context/struct.Context.html#method.connect
 #[repr(C)]
 #[derive(Debug)]
 pub struct SpawnApi {

@@ -81,18 +81,18 @@
 //! # Transferring data
 //!
 //! Once the connection is established to the server, data can start flowing. Using the connection
-//! is very similar to the normal read() and write() system calls using [`read`] and [`write`]
+//! is very similar to the normal read() and write() system calls using [`read()`] and [`write()`]
 //! methods of the [`Simple`] object. Note that these operations always block.
 //!
 //! # Buffer control
 //!
-//! * [`Simple::get_latency`]: Will return the total latency of the playback or record pipeline,
+//! * [`Simple::get_latency()`]: Will return the total latency of the playback or record pipeline,
 //!   respectively.
-//! * [`Simple::flush`]: Will throw away all data currently in buffers.
+//! * [`Simple::flush()`]: Will throw away all data currently in buffers.
 //!
 //! If a playback stream is used then the following operation is available:
 //!
-//! * [`Simple::drain`]: Will wait for all sent data to finish playing.
+//! * [`Simple::drain()`]: Will wait for all sent data to finish playing.
 //!
 //! # Cleanup
 //!
@@ -100,11 +100,11 @@
 //! is done automatically once the object is dropped.
 //!
 //! [`Simple`]: struct.Simple.html
-//! [`read`]: struct.Simple.html#method.read
-//! [`write`]: struct.Simple.html#method.write
-//! [`Simple::get_latency`]: struct.Simple.html#method.get_latency
-//! [`Simple::flush`]: struct.Simple.html#method.flush
-//! [`Simple::drain`]: struct.Simple.html#method.drain
+//! [`read()`]: struct.Simple.html#method.read
+//! [`write()`]: struct.Simple.html#method.write
+//! [`Simple::get_latency()`]: struct.Simple.html#method.get_latency
+//! [`Simple::flush()`]: struct.Simple.html#method.flush
+//! [`Simple::drain()`]: struct.Simple.html#method.drain
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

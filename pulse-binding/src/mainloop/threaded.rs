@@ -26,14 +26,14 @@
 //!
 //! # Creation
 //!
-//! A [`Mainloop`] object is created using [`Mainloop::new`]. This will only allocate the required
+//! A [`Mainloop`] object is created using [`Mainloop::new()`]. This will only allocate the required
 //! structures though, so to use it the thread must also be started. This is done through
-//! [`Mainloop::start`], after which you can start using the main loop.
+//! [`Mainloop::start()`], after which you can start using the main loop.
 //!
 //! # Destruction
 //!
 //! When the PulseAudio connection has been terminated, the thread must be stopped and the
-//! resources freed. Stopping the thread is done using [`Mainloop::stop`], which must be called
+//! resources freed. Stopping the thread is done using [`Mainloop::stop()`], which must be called
 //! without the lock (see below) held. When that function returns, the thread is stopped and the
 //! [`Mainloop`] object can be destroyed.
 //!
@@ -44,10 +44,10 @@
 //!
 //! Since the PulseAudio API doesn’t allow concurrent accesses to objects, a locking scheme must be
 //! used to guarantee safe usage. The threaded main loop API provides such a scheme through the
-//! functions [`Mainloop::lock`] and [`Mainloop::unlock`].
+//! functions [`Mainloop::lock()`] and [`Mainloop::unlock()`].
 //!
 //! The lock is recursive, so it’s safe to use it multiple times from the same thread. Just make
-//! sure you call [`Mainloop::unlock`] the same number of times you called [`Mainloop::lock`].
+//! sure you call [`Mainloop::unlock()`] the same number of times you called [`Mainloop::lock()`].
 //!
 //! The lock needs to be held whenever you call any PulseAudio function that uses an object
 //! associated with this main loop. Those objects include the mainloop, context, stream and
@@ -121,20 +121,20 @@
 //! }
 //! ```
 //!
-//! The function `drain_stream` will wait for the callback to be called using [`Mainloop::wait`].
+//! The function `drain_stream` will wait for the callback to be called using [`Mainloop::wait()`].
 //!
 //! If your application is multi-threaded, then this waiting must be done inside a while loop. The
-//! reason for this is that multiple threads might be using [`Mainloop::wait`] at the same time.
+//! reason for this is that multiple threads might be using [`Mainloop::wait()`] at the same time.
 //! Each thread must therefore verify that it was its callback that was invoked. Also the underlying
-//! OS synchronization primitives are usually not free of spurious wake-ups, so a [`Mainloop::wait`]
-//! must be called within a loop even if you have only one thread waiting.
+//! OS synchronization primitives are usually not free of spurious wake-ups, so a
+//! [`Mainloop::wait()`] must be called within a loop even if you have only one thread waiting.
 //!
 //! The callback `my_drain_callback` indicates to the main function that it has been called using
-//! [`Mainloop::signal`].
+//! [`Mainloop::signal()`].
 //!
-//! As you can see, [`Mainloop::wait`] may only be called with the lock held. The same thing is true
-//! for [`Mainloop::signal`], but as the lock is held before the callback is invoked, you do not
-//! have to deal with that.
+//! As you can see, [`Mainloop::wait()`] may only be called with the lock held. The same thing is
+//! true for [`Mainloop::signal()`], but as the lock is held before the callback is invoked, you do
+//! not have to deal with that.
 //!
 //! The functions will not dead lock because the wait function will release the lock before waiting
 //! and then regrab it once it has been signalled. For those of you familiar with threads, the
@@ -203,14 +203,14 @@
 //! `success`, but for larger data structures this can be wasteful.
 //!
 //! The difference here compared to the basic callback is the value `true` passed to
-//! [`Mainloop::signal`] and the call to [`Mainloop::accept`]. What will happen is that
-//! [`Mainloop::signal`] will signal the main function and then wait. The main function is then free
-//! to use the data in the callback until [`Mainloop::accept`] is called, which will allow the
-//! callback to continue.
+//! [`Mainloop::signal()`] and the call to [`Mainloop::accept()`]. What will happen is that
+//! [`Mainloop::signal()`] will signal the main function and then wait. The main function is then
+//! free to use the data in the callback until [`Mainloop::accept()`] is called, which will allow
+//! the callback to continue.
 //!
-//! Note that [`Mainloop::accept`] must be called some time between exiting the while loop and
+//! Note that [`Mainloop::accept()`] must be called some time between exiting the while loop and
 //! unlocking the main loop! Failure to do so will result in a race condition. I.e. it is not okay
-//! to release the lock and regrab it before calling [`Mainloop::accept`].
+//! to release the lock and regrab it before calling [`Mainloop::accept()`].
 //!
 //! ## Asynchronous callbacks
 //!
@@ -389,14 +389,14 @@
 //!
 //! [`mainloop::standard`]: ../standard/index.html
 //! [`Mainloop`]: struct.Mainloop.html
-//! [`Mainloop::new`]: struct.Mainloop.html#method.new
-//! [`Mainloop::start`]: struct.Mainloop.html#method.start
-//! [`Mainloop::stop`]: struct.Mainloop.html#method.stop
-//! [`Mainloop::lock`]: struct.Mainloop.html#method.lock
-//! [`Mainloop::unlock`]: struct.Mainloop.html#method.unlock
-//! [`Mainloop::wait`]: struct.Mainloop.html#method.wait
-//! [`Mainloop::signal`]: struct.Mainloop.html#method.signal
-//! [`Mainloop::accept`]: struct.Mainloop.html#method.accept
+//! [`Mainloop::new()`]: struct.Mainloop.html#method.new
+//! [`Mainloop::start()`]: struct.Mainloop.html#method.start
+//! [`Mainloop::stop()`]: struct.Mainloop.html#method.stop
+//! [`Mainloop::lock()`]: struct.Mainloop.html#method.lock
+//! [`Mainloop::unlock()`]: struct.Mainloop.html#method.unlock
+//! [`Mainloop::wait()`]: struct.Mainloop.html#method.wait
+//! [`Mainloop::signal()`]: struct.Mainloop.html#method.signal
+//! [`Mainloop::accept()`]: struct.Mainloop.html#method.accept
 
 use std::rc::Rc;
 #[cfg(any(feature = "pa_v5", feature = "dox"))]
@@ -445,7 +445,7 @@ impl MainloopInner<MainloopInternal> {
 impl Mainloop {
     /// Allocates a new threaded main loop object.
     ///
-    /// You have to call [`start`](#method.start) before the event loop thread starts running.
+    /// You have to call [`start()`](#method.start) before the event loop thread starts running.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_threaded_mainloop_new() };
         if ptr.is_null() {
@@ -495,7 +495,7 @@ impl Mainloop {
         unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
     }
 
-    /// Unlocks the event loop object, inverse of [`lock`](#method.lock).
+    /// Unlocks the event loop object, inverse of [`lock()`](#method.lock).
     #[inline]
     pub fn unlock(&mut self) {
         unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
@@ -505,31 +505,31 @@ impl Mainloop {
     ///
     /// You can use this to pass data from the event loop thread to the main thread in a
     /// synchronized fashion. This function may not be called inside the event loop thread. Prior to
-    /// this call the event loop object needs to be locked using [`lock`](#method.lock). While
+    /// this call the event loop object needs to be locked using [`lock()`](#method.lock). While
     /// waiting the lock will be released. Immediately before returning it will be acquired again.
-    /// This function may spuriously wake up even without [`signal`](#method.signal) being called.
+    /// This function may spuriously wake up even without [`signal()`](#method.signal) being called.
     /// You need to make sure to handle that!
     #[inline]
     pub fn wait(&mut self) {
         unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
     }
 
-    /// Signals all threads waiting for a signalling event in [`wait`](#method.wait).
+    /// Signals all threads waiting for a signalling event in [`wait()`](#method.wait).
     ///
     /// If `wait_for_accept` is `true`, do not return before the signal was accepted by an
-    /// [`accept`](#method.accept) call. While waiting for that condition the event loop object is
+    /// [`accept()`](#method.accept) call. While waiting for that condition the event loop object is
     /// unlocked.
     #[inline]
     pub fn signal(&mut self, wait_for_accept: bool) {
         unsafe { capi::pa_threaded_mainloop_signal((*self._inner).ptr, wait_for_accept as i32); }
     }
 
-    /// Accepts a signal from the event thread issued with [`signal`].
+    /// Accepts a signal from the event thread issued with [`signal()`].
     ///
-    /// This call should only be used in conjunction with [`signal`] with `wait_for_accept` as
+    /// This call should only be used in conjunction with [`signal()`] with `wait_for_accept` as
     /// `true`.
     ///
-    /// [`signal`]: #method.signal
+    /// [`signal()`]: #method.signal
     #[inline]
     pub fn accept(&mut self) {
         unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }

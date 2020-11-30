@@ -24,22 +24,22 @@
 //! A channel map consists of an array of [`Position`] values, one for each channel. This array is
 //! stored together with a channel count in a [`Map`] structure.
 //!
-//! Before filling the structure, the application must initialise it using [`Map::init`]. There are
-//! also a number of convenience functions for standard channel mappings:
+//! Before filling the structure, the application must initialise it using [`Map::init()`]. There
+//! are also a number of convenience functions for standard channel mappings:
 //!
-//! * [`Map::init_mono`]: Create a channel map with only mono audio.
-//! * [`Map::init_stereo`]: Create a standard stereo mapping.
-//! * [`Map::init_auto`]: Create a standard channel map for a specific number of channels.
-//! * [`Map::init_extend`]: Similar to [`Map::init_auto`] but synthesize a channel map if no
+//! * [`Map::init_mono()`]: Create a channel map with only mono audio.
+//! * [`Map::init_stereo()`]: Create a standard stereo mapping.
+//! * [`Map::init_auto()`]: Create a standard channel map for a specific number of channels.
+//! * [`Map::init_extend()`]: Similar to [`Map::init_auto()`] but synthesize a channel map if no
 //!   predefined one is known for the specified number of channels.
 //!
 //! [`Position`]: enum.Position.html
 //! [`Map`]: struct.Map.html
-//! [`Map::init`]: struct.Map.html#method.init
-//! [`Map::init_mono`]: struct.Map.html#method.init_mono
-//! [`Map::init_stereo`]: struct.Map.html#method.init_stereo
-//! [`Map::init_auto`]: struct.Map.html#method.init_auto
-//! [`Map::init_extend`]: struct.Map.html#method.init_extend
+//! [`Map::init()`]: struct.Map.html#method.init
+//! [`Map::init_mono()`]: struct.Map.html#method.init_mono
+//! [`Map::init_stereo()`]: struct.Map.html#method.init_stereo
+//! [`Map::init_auto()`]: struct.Map.html#method.init_auto
+//! [`Map::init_extend()`]: struct.Map.html#method.init_extend
 
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::{CStr, CString};
@@ -335,7 +335,7 @@ impl Position {
         }
     }
 
-    /// Creates a new instance from a string representation, as given by [`to_string`](#method.to_string).
+    /// Creates a new instance from a string representation, as given by [`to_string()`](#method.to_string).
     pub fn from_string(s: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -350,8 +350,8 @@ impl Map {
 
     /// Parses a channel position list or well-known mapping name into a channel map structure.
     ///
-    /// This turns the output of [`print`](#method.print) and [`to_name`](#method.to_name) back into
-    /// a `Map`.
+    /// This turns the output of [`print()`](#method.print) and [`to_name()`](#method.to_name) back
+    /// into a `Map`.
     pub fn new_from_string(s: &str) -> Result<Self, ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -367,7 +367,7 @@ impl Map {
 
     /// Initializes the specified channel map and returns a pointer to it.
     ///
-    /// The map will have a defined state but [`is_valid`](#method.is_valid) will fail for it.
+    /// The map will have a defined state but [`is_valid()`](#method.is_valid) will fail for it.
     #[inline]
     pub fn init(&mut self) -> &mut Self {
         unsafe { capi::pa_channel_map_init(self.as_mut()) };
@@ -403,8 +403,8 @@ impl Map {
         Some(self)
     }
 
-    /// Similar to [`init_auto`](#method.init_auto) but instead of failing if no default mapping is
-    /// known with the specified parameters it will synthesize a mapping based on a known mapping
+    /// Similar to [`init_auto()`](#method.init_auto) but instead of failing if no default mapping
+    /// is known with the specified parameters it will synthesize a mapping based on a known mapping
     /// with fewer channels and fill up the rest with AUX0...AUX31 channels.
     pub fn init_extend(&mut self, channels: u8, def: MapDef) -> &mut Self {
         debug_assert!(channels <= Self::CHANNELS_MAX);
@@ -500,7 +500,7 @@ impl Map {
 
     /// Tries to find a well-known channel mapping name for this channel mapping, i.e. “stereo”,
     /// “surround-71” and so on. This name can be parsed with
-    /// [`new_from_string`](#method.new_from_string).
+    /// [`new_from_string()`](#method.new_from_string).
     pub fn to_name(&self) -> Option<Cow<'static, str>> {
         let ptr = unsafe { capi::pa_channel_map_to_name(self.as_ref()) };
         match ptr.is_null() {
@@ -509,8 +509,8 @@ impl Map {
         }
     }
 
-    /// Similar to [`to_name`](#method.to_name), but returning prettier, human readable text labels,
-    /// i.e. “Stereo”, “Surround 7.1” and so on.
+    /// Similar to [`to_name()`](#method.to_name), but returning prettier, human readable text
+    /// labels, i.e. “Stereo”, “Surround 7.1” and so on.
     pub fn to_pretty_name(&self) -> Option<String> {
         let ptr = unsafe { capi::pa_channel_map_to_pretty_name(self.as_ref()) };
         match ptr.is_null() {

@@ -30,8 +30,8 @@
 //! application is given an [`operation::Operation`] object for each asynchronous operation.
 //!
 //! There are only two actions (besides reference counting) that can be performed on an
-//! [`operation::Operation`]: querying its state with [`operation::Operation::get_state`] and
-//! aborting it with [`operation::Operation::cancel`].
+//! [`operation::Operation`]: querying its state with [`operation::Operation::get_state()`] and
+//! aborting it with [`operation::Operation::cancel()`].
 //!
 //! An [`operation::Operation`] object is reference counted, so an application must make sure to
 //! unreference it, even if it has no intention of using it. This however is taken care of
@@ -40,18 +40,18 @@
 //! # Connecting
 //!
 //! A context must be connected to a server before any operation can be issued. Calling
-//! [`Context::connect`] will initiate the connection procedure. Unlike most asynchronous
+//! [`Context::connect()`] will initiate the connection procedure. Unlike most asynchronous
 //! operations, connecting does not result in an [`operation::Operation`] object. Instead, the
-//! application should register a callback using [`Context::set_state_callback`].
+//! application should register a callback using [`Context::set_state_callback()`].
 //!
 //! # Disconnecting
 //!
 //! When the sound support is no longer needed, the connection needs to be closed using
-//! [`Context::disconnect`]. This is an immediate function that works synchronously.
+//! [`Context::disconnect()`]. This is an immediate function that works synchronously.
 //!
 //! Since the context object has references to other objects it must be disconnected after use or
 //! there is a high risk of memory leaks. If the connection has terminated by itself, then there is
-//! no need to explicitly disconnect the context using [`Context::disconnect`].
+//! no need to explicitly disconnect the context using [`Context::disconnect()`].
 //!
 //! # Functions
 //!
@@ -62,14 +62,14 @@
 //! * [`context::introspect`]
 //! * [`context::subscribe`]
 //!
-//! [`Context::connect`]: struct.Context.html#method.connect
-//! [`Context::disconnect`]: struct.Context.html#method.disconnect
-//! [`Context::set_state_callback`]: struct.Context.html#method.set_state_callback
+//! [`Context::connect()`]: struct.Context.html#method.connect
+//! [`Context::disconnect()`]: struct.Context.html#method.disconnect
+//! [`Context::set_state_callback()`]: struct.Context.html#method.set_state_callback
 //! [`context::introspect`]: ../context/introspect/index.html
 //! [`context::scache`]: ../context/scache/index.html
 //! [`context::subscribe`]: ../context/subscribe/index.html
-//! [`operation::Operation::cancel`]: ../operation/struct.Operation.html#method.cancel
-//! [`operation::Operation::get_state`]: ../operation/struct.Operation.html#method.get_state
+//! [`operation::Operation::cancel()`]: ../operation/struct.Operation.html#method.cancel
+//! [`operation::Operation::get_state()`]: ../operation/struct.Operation.html#method.get_state
 //! [`operation::Operation`]: ../operation/struct.Operation.html
 //! [`stream`]: ../stream/index.html
 
@@ -200,7 +200,7 @@ pub mod flags {
     /// Disable autospawning of the PulseAudio daemon if required.
     pub const NOAUTOSPAWN: FlagSet = capi::PA_CONTEXT_NOAUTOSPAWN;
     /// Don’t fail if the daemon is not available when
-    /// [`Context::connect`](../struct.Context.html#method.connect) is called, instead enter
+    /// [`Context::connect()`](../struct.Context.html#method.connect) is called, instead enter
     /// [`State::Connecting`](../enum.State.html#Connecting.v) state and wait for the daemon to
     /// appear.
     pub const NOFAIL:      FlagSet = capi::PA_CONTEXT_NOFAIL;
@@ -209,7 +209,7 @@ pub mod flags {
 impl Context {
     /// Instantiates a new connection context with an abstract mainloop API and an application name.
     ///
-    /// It is recommended to use [`new_with_proplist`](#method.new_with_proplist) instead and
+    /// It is recommended to use [`new_with_proplist()`](#method.new_with_proplist) instead and
     /// specify some initial properties.
     pub fn new(mainloop: &impl Mainloop, name: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -286,8 +286,8 @@ impl Context {
     /// Connects the context to the specified server.
     ///
     /// If server is `None`, connect to the default server. This routine may but will not always
-    /// return synchronously on error. Use [`set_state_callback`](#method.set_state_callback) to be
-    /// notified when the connection is established. If `flags` doesn’t have
+    /// return synchronously on error. Use [`set_state_callback()`](#method.set_state_callback) to
+    /// be notified when the connection is established. If `flags` doesn’t have
     /// [`flags::NOAUTOSPAWN`](flags/constant.NOAUTOSPAWN.html) set and no specific server is
     /// specified or accessible, a new daemon is spawned. If `api` is not `None`, the functions
     /// specified in the structure are used when forking a new child process.
@@ -453,8 +453,8 @@ impl Context {
     /// Updates the property list of the client, adding new entries.
     ///
     /// Please note that it is highly recommended to set as many properties initially via
-    /// [`new_with_proplist`](#method.new_with_proplist) as possible instead a posteriori with this
-    /// function, since that information may then be used to route streams of the client to the
+    /// [`new_with_proplist()`](#method.new_with_proplist) as possible instead a posteriori with
+    /// this function, since that information may then be used to route streams of the client to the
     /// right device.
     ///
     /// Panics if the underlying C function returns a null pointer.
@@ -500,11 +500,11 @@ impl Context {
     /// Gets the client index this context is identified in the server with.
     ///
     /// This is useful for usage with the introspection functions, such as
-    /// [`introspect::Introspector::get_client_info`].
+    /// [`introspect::Introspector::get_client_info()`].
     ///
     /// Returns `None` on error.
     ///
-    /// [`introspect::Introspector::get_client_info`]: introspect/struct.Introspector.html#method.get_client_info
+    /// [`introspect::Introspector::get_client_info()`]: introspect/struct.Introspector.html#method.get_client_info
     pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_context_get_index(self.ptr) } {
             def::INVALID_INDEX => None,

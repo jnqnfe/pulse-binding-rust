@@ -19,12 +19,12 @@
 //! changes. The set of facilities and operations for which notifications are generated are
 //! enumerated in [`Facility`] and [`Operation`].
 //!
-//! The application sets the notification mask using [`context::Context::subscribe`] and the
+//! The application sets the notification mask using [`context::Context::subscribe()`] and the
 //! callback function that will be called whenever a notification occurs using
-//! [`context::Context::set_subscribe_callback`].
+//! [`context::Context::set_subscribe_callback()`].
 //!
-//! The mask provided to [`context::Context::subscribe`] can be created by binary ORing a set of
-//! values, either produced with [`Facility::to_interest_mask`], or more simply with the provided
+//! The mask provided to [`context::Context::subscribe()`] can be created by binary ORing a set of
+//! values, either produced with [`Facility::to_interest_mask()`], or more simply with the provided
 //! constants in the [`subscription_masks`] submodule.
 //!
 //! The callback will be called with event type information representing the event that caused the
@@ -49,9 +49,9 @@
 //!
 //! [`Facility`]: enum.Facility.html
 //! [`Operation`]: enum.Operation.html
-//! [`Facility::to_interest_mask`]: enum.Facility.html#method.to_interest_mask
-//! [`context::Context::subscribe`]: ../struct.Context.html#method.subscribe
-//! [`context::Context::set_subscribe_callback`]: ../struct.Context.html#method.set_subscribe_callback
+//! [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
+//! [`context::Context::subscribe()`]: ../struct.Context.html#method.subscribe
+//! [`context::Context::set_subscribe_callback()`]: ../struct.Context.html#method.set_subscribe_callback
 //! [`subscription_masks`]: subscription_masks/index.html
 
 use std::os::raw::c_void;
@@ -63,12 +63,12 @@ pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 pub use capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK as FACILITY_MASK;
 pub use capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK as OPERATION_MASK;
 
-/// A set of facility masks, passed to [`Context::subscribe`]. Convert a [`Facility`] to a mask with
-/// [`Facility::to_interest_mask`].
+/// A set of facility masks, passed to [`Context::subscribe()`]. Convert a [`Facility`] to a mask
+/// with [`Facility::to_interest_mask()`].
 ///
-/// [`Context::subscribe`]: ../struct.Context.html#method.subscribe
+/// [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
 /// [`Facility`]: enum.Facility.html
-/// [`Facility::to_interest_mask`]: enum.Facility.html#method.to_interest_mask
+/// [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
 pub type InterestMaskSet = capi::context::subscribe::pa_subscription_mask_t;
 
 /// A set of masks used for expressing which facilities you are interested in when subscribing.
@@ -175,7 +175,7 @@ impl Context {
     /// Enables event notification.
     ///
     /// The `mask` parameter is used to specify which facilities you are interested in being
-    /// modified about. Use [`set_subscribe_callback`](#method.set_subscribe_callback) to set the
+    /// modified about. Use [`set_subscribe_callback()`](#method.set_subscribe_callback) to set the
     /// actual callback that will be called when an event occurs.
     ///
     /// The callback must accept a `bool`, which indicates success.
@@ -195,7 +195,7 @@ impl Context {
     /// Sets the context specific call back function that is called whenever a subscribed-to event
     /// occurs.
     ///
-    /// Use [`subscribe`](#method.subscribe) to set the facilities you are interested in receiving
+    /// Use [`subscribe()`](#method.subscribe) to set the facilities you are interested in receiving
     /// notifications for, and thus to start receiving notifications with the callback set here.
     ///
     /// The callback must take three parameters. The first two are the facility and operation
