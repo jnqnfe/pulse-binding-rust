@@ -123,7 +123,7 @@ pub mod properties {
     pub const DEVICE_INTENDED_ROLES: &str = capi::PA_PROP_DEVICE_INTENDED_ROLES;
 
     /// For PCM formats: the sample format used as returned by
-    /// [`sample::format_to_string`](../../sample/fn.format_to_string.html).
+    /// [`Format::to_string`](../../sample/enum.Format.html#method.to_string).
     pub const FORMAT_SAMPLE_FORMAT: &str = capi::PA_PROP_FORMAT_SAMPLE_FORMAT;
 
     /// For PCM formats: the channel map of the stream as returned by
