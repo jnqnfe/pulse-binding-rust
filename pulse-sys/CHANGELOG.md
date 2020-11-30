@@ -1,3 +1,10 @@
+# [unreleased]
+
+ * Fixed failure to actually bypass the pkg-config check when `dox` feature is used, as had always
+   been the intention as I recall, and as stated in the documentation. This for instance means that
+   the docs.rs service will no longer be performing an unintentional pkg-config check when
+   generating documentation.
+
 # 1.15.3 (December 11th, 2020)
 
  * Fixed incorrect `PA_SOURCE_DYNAMIC_LATENCY` flag value. Was mistakenly `0x42` instead of `0x40`

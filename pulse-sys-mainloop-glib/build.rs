@@ -1,5 +1,10 @@
+#[cfg(not(feature = "dox"))]
 extern crate pkg_config;
 
+#[cfg(feature = "dox")]
+fn main() {}
+
+#[cfg(not(feature = "dox"))]
 fn main() {
     let lib_name = "libpulse-mainloop-glib";
     let fallback_name = {
