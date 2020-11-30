@@ -60,8 +60,13 @@ use crate::operation;
 use crate::callbacks::{box_closure_get_capi_ptr, MultiUseCallback};
 
 pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
-pub use capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK as FACILITY_MASK;
-pub use capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK as OPERATION_MASK;
+
+/// Mask to extract facility value from the event type passed to the user callback.
+#[deprecated(note="use the associated constant on `Facility` instead")]
+pub const FACILITY_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
+/// Mask to extract operation value from the event type passed to the user callback.
+#[deprecated(note="use the associated constant on `Operation` instead")]
+pub const OPERATION_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
 
 /// A set of facility masks, passed to [`Context::subscribe()`]. Convert a [`Facility`] to a mask
 /// with [`Facility::to_interest_mask()`].
@@ -122,6 +127,9 @@ pub enum Operation {
 }
 
 impl Facility {
+    /// Mask to extract facility value from the event type passed to the user callback.
+    pub const MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
+
     fn from_int(value: u32) -> Option<Facility> {
         match value {
             0 => Some(Facility::Sink),
@@ -146,6 +154,9 @@ impl Facility {
 }
 
 impl Operation {
+    /// Mask to extract operation value from the event type passed to the user callback.
+    pub const MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
+
     fn from_int(value: u32) -> Option<Operation> {
         match value {
             0 => Some(Operation::New),
@@ -159,13 +170,13 @@ impl Operation {
 /// Extracts facility from `EventType` value.
 #[inline]
 fn get_facility(value: EventType) -> Option<Facility> {
-    Facility::from_int((value & FACILITY_MASK) as u32)
+    Facility::from_int((value & Facility::MASK) as u32)
 }
 
 /// Extracts operation from `EventType` value.
 #[inline]
 fn get_operation(value: EventType) -> Option<Operation> {
-    Operation::from_int((value & OPERATION_MASK) as u32)
+    Operation::from_int((value & Operation::MASK) as u32)
 }
 
 pub(super) type Callback = MultiUseCallback<dyn FnMut(Option<Facility>, Option<Operation>, u32),
