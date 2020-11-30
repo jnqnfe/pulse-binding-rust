@@ -26,7 +26,7 @@ use std::os::raw::c_void;
 use std::rc::Rc;
 use libc::timeval;
 use crate::mainloop::api::{MainloopApi, MainloopInnerType};
-use crate::time::{UnixTs, MonotonicTs, Timeval, USEC_INVALID};
+use crate::time::{UnixTs, MonotonicTs, Timeval, MicroSeconds};
 use crate::callbacks::MultiUseCallback;
 
 pub use capi::pa_time_event as TimeEventInternal;
@@ -78,7 +78,7 @@ impl<T> TimeEvent<T>
     /// Restarts this timer event source (whether still running or already expired) with a new
     /// monotonic time.
     pub fn restart_rt(&mut self, t: MonotonicTs) {
-        assert_ne!(t.0, USEC_INVALID);
+        assert_ne!(t.0, MicroSeconds::INVALID);
         let mut tv = Timeval::new_zero();
         tv.set_rt(t.0, (*self.owner).supports_rtclock());
 
@@ -106,7 +106,7 @@ impl<T> TimeEventRef<T>
     /// Restarts this timer event source (whether still running or already expired) with a new
     /// monotonic time.
     pub fn restart_rt(&mut self, t: MonotonicTs) {
-        assert_ne!(t.0, USEC_INVALID);
+        assert_ne!(t.0, MicroSeconds::INVALID);
         let mut tv = Timeval::new_zero();
         tv.set_rt(t.0, (*self.owner).supports_rtclock());
 

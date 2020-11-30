@@ -21,7 +21,7 @@ use super::events;
 use super::events::io::{IoEvent, IoEventRef, IoEventInternal, IoEventFlagSet};
 use super::events::timer::{TimeEvent, TimeEventRef, TimeEventInternal};
 use super::events::deferred::{DeferEvent, DeferEventRef, DeferEventInternal};
-use crate::time::{UnixTs, MonotonicTs, Timeval, USEC_INVALID};
+use crate::time::{UnixTs, MonotonicTs, Timeval, MicroSeconds};
 use crate::callbacks::{get_su_capi_params, get_su_callback};
 
 pub(crate) use capi::pa_mainloop_api as ApiInternal;
@@ -190,7 +190,7 @@ pub trait Mainloop {
 
     /// Creates a new monotonic-based timer event.
     ///
-    /// Asserts that `t` is not `USEC_INVALID`.
+    /// Asserts that `t` is not `MicroSeconds::INVALID`.
     ///
     /// This is an alternative to the `new_timer_event` method, taking a monotonic based time value.
     ///
@@ -215,7 +215,7 @@ pub trait Mainloop {
         mut callback: Box<dyn FnMut(TimeEventRef<Self::MI>) + 'static>)
         -> Option<TimeEvent<Self::MI>>
     {
-        assert_ne!(t.0, USEC_INVALID);
+        assert_ne!(t.0, MicroSeconds::INVALID);
 
         let inner_for_wrapper = self.inner();
         let wrapper_cb = Box::new(move |ptr| {

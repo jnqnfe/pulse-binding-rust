@@ -16,7 +16,7 @@
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
-use super::{UnixTs, MonotonicTs, MicroSeconds, USEC_INVALID};
+use super::{UnixTs, MonotonicTs, MicroSeconds};
 
 #[cfg(not(windows))] pub(crate) type TvSecs = libc::time_t;
 #[cfg(not(windows))] pub(crate) type TvUsecs = libc::suseconds_t;
@@ -87,11 +87,11 @@ impl Timeval {
     /// bit is set in `Timeval`’s inner `tv_usec` attribute. If `false`, then instead the timestamp
     /// is converted to a Unix wallclock timestamp.
     ///
-    /// Asserts that `v` is not `USEC_INVALID`.
+    /// Asserts that `v` is not `MicroSeconds::INVALID`.
     pub(crate) fn set_rt(&mut self, v: MicroSeconds, rtclock: bool) -> &mut Self {
         /* This is a copy of PA’s internal `pa_timeval_rtstore()` function */
 
-        assert_ne!(v, USEC_INVALID);
+        assert_ne!(v, MicroSeconds::INVALID);
 
         *self = v.into();
 

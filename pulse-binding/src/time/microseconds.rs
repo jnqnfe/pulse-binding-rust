@@ -21,9 +21,15 @@ use std::time::Duration;
 pub struct MicroSeconds(pub u64);
 
 impl MicroSeconds {
+    /// `MicroSeconds` value representing an ‘invalid’ time.
+    pub const INVALID: Self = Self(capi::PA_USEC_INVALID);
+
+    /// Largest valid time value in (largest integer value is reserved for representing ‘invalid’).
+    pub const MAX: Self = Self(capi::PA_USEC_MAX);
+
     #[inline]
     pub fn is_valid(&self) -> bool {
-        *self != super::USEC_INVALID
+        *self != Self::INVALID
     }
 
     #[inline]

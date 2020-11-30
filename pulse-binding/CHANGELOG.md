@@ -14,6 +14,8 @@
     - Added `volume::Volume::{NORMAL, MUTED, MAX, INVALID}` replacements.
     - Deprecated `volume::DECIBEL_MINUS_INFINITY`.
     - Added `volume::VolumeDB::MINUS_INFINITY` replacement.
+    - Deprecated `time::{USEC_INVALID, USEC_MAX}`.
+    - Added `time::MicroSeconds::{INVALID, MAX}` replacements.
  * Fixed failure to update `pa_latest` feature in v2.17 to point to `pa_v14` instead of `pa_v13`.
 
 # 2.19.0 (December 8th, 2020)
