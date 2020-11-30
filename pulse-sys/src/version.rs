@@ -45,8 +45,6 @@
 //! compatibility features to control the inclusion of those additions on top of the minimum level
 //! of support offered. If you have v8 compatibility enabled but not v12, then the version number
 //! indicated will be v11.
-//!
-//! [`get_compatibility`]: fn.get_compatibility.html
 
 use std::os::raw::c_char;
 

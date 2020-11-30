@@ -52,7 +52,6 @@
 //! indicated will be v11.
 //!
 //! [`get_library_version`]: fn.get_library_version.html
-//! [`get_compatibility`]: fn.get_compatibility.html
 
 use capi;
 use std::ffi::CStr;

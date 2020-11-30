@@ -996,7 +996,6 @@ impl Stream {
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
-    /// [`begin_write`]: #method.begin_write
     /// [`write`]: #method.write
     #[inline(always)]
     pub fn write_copy(&mut self, data: &[u8], offset: i64, seek: SeekMode) -> Result<(), PAErr> {
