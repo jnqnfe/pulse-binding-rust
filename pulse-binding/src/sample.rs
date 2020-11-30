@@ -71,8 +71,13 @@ use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use crate::time::MicroSeconds;
 
-pub use capi::PA_CHANNELS_MAX as CHANNELS_MAX;
-pub use capi::PA_RATE_MAX as RATE_MAX;
+/// Maximum number of allowed channels.
+#[deprecated(note="use associated constants on structs instead")]
+pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+
+/// Maximum allowed sample rate.
+#[deprecated(note="use the associated constant on `Spec` instead")]
+pub const RATE_MAX: u32 = capi::PA_RATE_MAX;
 
 /// Sample format
 #[repr(C)]
@@ -272,6 +277,11 @@ impl PartialEq for Spec {
 }
 
 impl Spec {
+    /// Maximum number of allowed channels.
+    pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+    /// Maximum allowed sample rate.
+    pub const RATE_MAX: u32 = capi::PA_RATE_MAX;
+
     /// Initializes the specified sample spec.
     ///
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for

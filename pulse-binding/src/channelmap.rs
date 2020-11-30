@@ -244,7 +244,7 @@ pub struct Map {
     /// Number of channels mapped.
     channels: u8,
     /// Channel labels.
-    map: [Position; sample::CHANNELS_MAX],
+    map: [Position; Self::CHANNELS_MAX],
 }
 
 impl Borrow<[Position]> for Map {
@@ -296,7 +296,7 @@ impl Default for Map {
     fn default() -> Self {
         Self {
             channels: 0,
-            map: [Position::Invalid; sample::CHANNELS_MAX],
+            map: [Position::Invalid; Self::CHANNELS_MAX],
         }
     }
 }
@@ -345,6 +345,9 @@ impl Position {
 }
 
 impl Map {
+    /// Maximum number of allowed channels.
+    pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+
     /// Parses a channel position list or well-known mapping name into a channel map structure.
     ///
     /// This turns the output of [`print`](#method.print) and [`to_name`](#method.to_name) back into
@@ -391,7 +394,7 @@ impl Map {
     /// This call will fail (return `None`) if there is no default channel map known for this
     /// specific number of channels and mapping.
     pub fn init_auto(&mut self, channels: u32, def: MapDef) -> Option<&mut Self> {
-        debug_assert!(channels as usize <= sample::CHANNELS_MAX);
+        debug_assert!(channels as usize <= Self::CHANNELS_MAX);
         unsafe {
             if capi::pa_channel_map_init_auto(self.as_mut(), channels, def).is_null() {
                 return None;
@@ -404,7 +407,7 @@ impl Map {
     /// known with the specified parameters it will synthesize a mapping based on a known mapping
     /// with fewer channels and fill up the rest with AUX0...AUX31 channels.
     pub fn init_extend(&mut self, channels: u32, def: MapDef) -> &mut Self {
-        debug_assert!(channels as usize <= sample::CHANNELS_MAX);
+        debug_assert!(channels as usize <= Self::CHANNELS_MAX);
         unsafe { capi::pa_channel_map_init_extend(self.as_mut(), channels, def) };
         self
     }
@@ -423,16 +426,16 @@ impl Map {
 
     /// Sets the number of active channels.
     ///
-    /// Positions for up to [`sample::CHANNELS_MAX`] channels can be held. This sets the portion of
+    /// Positions for up to [`Self::CHANNELS_MAX`] channels can be held. This sets the portion of
     /// the internal array considered “active” and thus available for reading/writing (i.e. when
     /// borrowing `self` as a slice).
     ///
-    /// **Panics** if the number of channels specified is greater than [`sample::CHANNELS_MAX`].
+    /// **Panics** if the number of channels specified is greater than [`Self::CHANNELS_MAX`].
     ///
-    /// [`sample::CHANNELS_MAX`]: ../sample/constant.CHANNELS_MAX.html
+    /// [`Self::CHANNELS_MAX`]: struct.Map.html#associatedconstant.CHANNELS_MAX
     #[inline]
     pub fn set_len(&mut self, channels: u8) {
-        assert!(channels as usize <= sample::CHANNELS_MAX);
+        assert!(channels as usize <= Self::CHANNELS_MAX);
         self.channels = channels;
     }
 

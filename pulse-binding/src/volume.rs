@@ -117,7 +117,7 @@ pub struct ChannelVolumes {
     /// Number of channels.
     channels: u8,
     /// Per-channel volume.
-    values: [Volume; sample::CHANNELS_MAX],
+    values: [Volume; Self::CHANNELS_MAX],
 }
 
 /// Test size is equal to `sys` equivalent
@@ -350,6 +350,9 @@ impl std::fmt::Display for Volume {
 }
 
 impl ChannelVolumes {
+    /// Maximum number of allowed channels.
+    pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+
     /// Initializes the specified volume and return a pointer to it.
     ///
     /// The sample spec will have a defined state but [`is_valid`](#method.is_valid) will fail for
@@ -374,16 +377,16 @@ impl ChannelVolumes {
 
     /// Sets the number of active channels.
     ///
-    /// Volumes for up to [`sample::CHANNELS_MAX`] channels can be held. This sets the portion of
+    /// Volumes for up to [`Self::CHANNELS_MAX`] channels can be held. This sets the portion of
     /// the internal array considered “active” and thus available for reading/writing (i.e. when
     /// borrowing `self` as a slice).
     ///
-    /// **Panics** if the number of channels specified is greater than [`sample::CHANNELS_MAX`].
+    /// **Panics** if the number of channels specified is greater than [`Self::CHANNELS_MAX`].
     ///
-    /// [`sample::CHANNELS_MAX`]: ../sample/constant.CHANNELS_MAX.html
+    /// [`Self::CHANNELS_MAX`]: struct.ChannelVolumes.html#associatedconstant.CHANNELS_MAX
     #[inline]
     pub fn set_len(&mut self, channels: u8) {
-        assert!(channels as usize <= sample::CHANNELS_MAX);
+        assert!(channels as usize <= Self::CHANNELS_MAX);
         self.channels = channels;
     }
 
