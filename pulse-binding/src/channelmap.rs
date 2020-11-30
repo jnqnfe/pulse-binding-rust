@@ -244,7 +244,7 @@ pub struct Map {
     /// Number of channels mapped.
     channels: u8,
     /// Channel labels.
-    map: [Position; Self::CHANNELS_MAX],
+    map: [Position; Self::CHANNELS_MAX as usize],
 }
 
 impl Borrow<[Position]> for Map {
@@ -296,7 +296,7 @@ impl Default for Map {
     fn default() -> Self {
         Self {
             channels: 0,
-            map: [Position::Invalid; Self::CHANNELS_MAX],
+            map: [Position::Invalid; Self::CHANNELS_MAX as usize],
         }
     }
 }
@@ -346,7 +346,7 @@ impl Position {
 
 impl Map {
     /// Maximum number of allowed channels.
-    pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+    pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
 
     /// Parses a channel position list or well-known mapping name into a channel map structure.
     ///
@@ -394,7 +394,7 @@ impl Map {
     /// This call will fail (return `None`) if there is no default channel map known for this
     /// specific number of channels and mapping.
     pub fn init_auto(&mut self, channels: u32, def: MapDef) -> Option<&mut Self> {
-        debug_assert!(channels as usize <= Self::CHANNELS_MAX);
+        debug_assert!(channels <= Self::CHANNELS_MAX as u32);
         unsafe {
             if capi::pa_channel_map_init_auto(self.as_mut(), channels, def).is_null() {
                 return None;
@@ -407,7 +407,7 @@ impl Map {
     /// known with the specified parameters it will synthesize a mapping based on a known mapping
     /// with fewer channels and fill up the rest with AUX0...AUX31 channels.
     pub fn init_extend(&mut self, channels: u32, def: MapDef) -> &mut Self {
-        debug_assert!(channels as usize <= Self::CHANNELS_MAX);
+        debug_assert!(channels <= Self::CHANNELS_MAX as u32);
         unsafe { capi::pa_channel_map_init_extend(self.as_mut(), channels, def) };
         self
     }
@@ -435,7 +435,7 @@ impl Map {
     /// [`Self::CHANNELS_MAX`]: struct.Map.html#associatedconstant.CHANNELS_MAX
     #[inline]
     pub fn set_len(&mut self, channels: u8) {
-        assert!(channels as usize <= Self::CHANNELS_MAX);
+        assert!(channels <= Self::CHANNELS_MAX);
         self.channels = channels;
     }
 

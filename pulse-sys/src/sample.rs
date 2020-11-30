@@ -16,7 +16,7 @@
 use std::os::raw::c_char;
 
 /// Maximum number of allowed channels.
-pub const PA_CHANNELS_MAX: usize = 32;
+pub const PA_CHANNELS_MAX: u8 = 32;
 
 /// Maximum allowed sample rate.
 pub const PA_RATE_MAX: u32 = 48000 * 8;

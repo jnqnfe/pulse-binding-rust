@@ -73,7 +73,7 @@ use crate::time::MicroSeconds;
 
 /// Maximum number of allowed channels.
 #[deprecated(note="use associated constants on structs instead")]
-pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
 
 /// Maximum allowed sample rate.
 #[deprecated(note="use the associated constant on `Spec` instead")]
@@ -278,7 +278,7 @@ impl PartialEq for Spec {
 
 impl Spec {
     /// Maximum number of allowed channels.
-    pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+    pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
     /// Maximum allowed sample rate.
     pub const RATE_MAX: u32 = capi::PA_RATE_MAX;
 

@@ -117,7 +117,7 @@ pub struct ChannelVolumes {
     /// Number of channels.
     channels: u8,
     /// Per-channel volume.
-    values: [Volume; Self::CHANNELS_MAX],
+    values: [Volume; Self::CHANNELS_MAX as usize],
 }
 
 /// Test size is equal to `sys` equivalent
@@ -351,7 +351,7 @@ impl std::fmt::Display for Volume {
 
 impl ChannelVolumes {
     /// Maximum number of allowed channels.
-    pub const CHANNELS_MAX: usize = capi::PA_CHANNELS_MAX;
+    pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
 
     /// Initializes the specified volume and return a pointer to it.
     ///
@@ -386,7 +386,7 @@ impl ChannelVolumes {
     /// [`Self::CHANNELS_MAX`]: struct.ChannelVolumes.html#associatedconstant.CHANNELS_MAX
     #[inline]
     pub fn set_len(&mut self, channels: u8) {
-        assert!(channels as usize <= Self::CHANNELS_MAX);
+        assert!(channels <= Self::CHANNELS_MAX);
         self.channels = channels;
     }
 

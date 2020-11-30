@@ -46,7 +46,7 @@ pub const PA_DECIBEL_MININFTY: f64 = -std::f64::INFINITY;
 #[derive(Copy, Clone, Default)]
 pub struct pa_cvolume {
     pub channels: u8,
-    pub values: [pa_volume_t; crate::sample::PA_CHANNELS_MAX],
+    pub values: [pa_volume_t; crate::sample::PA_CHANNELS_MAX as usize],
 }
 
 /// The maximum length of strings returned by [`pa_cvolume_snprint`](fn.pa_cvolume_snprint.htm).

@@ -194,7 +194,7 @@ impl Default for pa_channel_map_def_t {
 #[derive(Default, Debug, Copy, Clone)]
 pub struct pa_channel_map {
     pub channels: u8,
-    pub map: [pa_channel_position_t; crate::sample::PA_CHANNELS_MAX],
+    pub map: [pa_channel_position_t; crate::sample::PA_CHANNELS_MAX as usize],
 }
 
 pub const PA_CHANNEL_MAP_SNPRINT_MAX: usize = 336;
