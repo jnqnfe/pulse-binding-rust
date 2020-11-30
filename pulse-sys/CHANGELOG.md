@@ -1,11 +1,13 @@
 # [unreleased]
 
+ * Made some changes to cargo features:
+    - Removed the `pa_latest` and `pa_latest_common` cargo features.
+    - Changed the default version feature level to `pa_v8`.
  * Changed `PA_CHANNELS_MAX` from `usize` to `u8`.
  * Fixed failure to actually bypass the pkg-config check when `dox` feature is used, as had always
    been the intention as I recall, and as stated in the documentation. This for instance means that
    the docs.rs service will no longer be performing an unintentional pkg-config check when
    generating documentation.
- * Fixed failure to update `pa_latest` feature in v1.14 to point to `pa_v14` instead of `pa_v13`.
 
 # 1.15.3 (December 11th, 2020)
 

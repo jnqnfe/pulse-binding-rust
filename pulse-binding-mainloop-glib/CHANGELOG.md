@@ -1,6 +1,8 @@
 # [unreleased]
 
- * Fixed failure to update `pa_latest` feature in v2.17 to point to `pa_v14` instead of `pa_v13`.
+ * Made some changes to cargo features:
+    - Removed the `pa_latest` and `pa_latest_common` cargo features.
+    - Changed the default version feature level to `pa_v8`.
 
 # 2.18.1 (November 25th, 2020)
 

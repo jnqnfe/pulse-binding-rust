@@ -32,13 +32,6 @@ libraries; the flags automatically enable other flags as appropriate. For instan
 v13.0 support, this will automatically enable PA v12.x support, on top of the base PA v8.0-11.x
 support. (No API changes occurred from v8.0 until v12.0).
 
-Alongside PA version specific feature flags, two useful aliases are also provided:
- - The `pa_latest` feature enables everything, targetting the very latest supported version.
- - The `pa_latest_common` feature enables everything except only new features from a very new
-   release, as just discussed.
-
-By default, `pa_latest_common` is enabled.
-
 ### Examples:
 
 Specifically enabling PA v12+ compatibility:
