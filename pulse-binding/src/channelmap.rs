@@ -393,10 +393,10 @@ impl Map {
     ///
     /// This call will fail (return `None`) if there is no default channel map known for this
     /// specific number of channels and mapping.
-    pub fn init_auto(&mut self, channels: u32, def: MapDef) -> Option<&mut Self> {
-        debug_assert!(channels <= Self::CHANNELS_MAX as u32);
+    pub fn init_auto(&mut self, channels: u8, def: MapDef) -> Option<&mut Self> {
+        debug_assert!(channels <= Self::CHANNELS_MAX);
         unsafe {
-            if capi::pa_channel_map_init_auto(self.as_mut(), channels, def).is_null() {
+            if capi::pa_channel_map_init_auto(self.as_mut(), channels as u32, def).is_null() {
                 return None;
             }
         }
@@ -406,9 +406,9 @@ impl Map {
     /// Similar to [`init_auto`](#method.init_auto) but instead of failing if no default mapping is
     /// known with the specified parameters it will synthesize a mapping based on a known mapping
     /// with fewer channels and fill up the rest with AUX0...AUX31 channels.
-    pub fn init_extend(&mut self, channels: u32, def: MapDef) -> &mut Self {
-        debug_assert!(channels <= Self::CHANNELS_MAX as u32);
-        unsafe { capi::pa_channel_map_init_extend(self.as_mut(), channels, def) };
+    pub fn init_extend(&mut self, channels: u8, def: MapDef) -> &mut Self {
+        debug_assert!(channels <= Self::CHANNELS_MAX);
+        unsafe { capi::pa_channel_map_init_extend(self.as_mut(), channels as u32, def) };
         self
     }
 

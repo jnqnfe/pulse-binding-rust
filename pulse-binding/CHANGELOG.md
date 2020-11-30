@@ -3,6 +3,8 @@
  * Moved the following functions from the `sample` mod to methods of `sample::Spec`:
    `format_is_valid()`, `rate_is_valid()` and `channels_are_valid()`, having noticed that they
    clearly relate to the attributes of that type and so should have been there all along.
+ * Shrunk the type of the `channels` param of `channelmap::Map` methods `init_auto()` and
+   `init_extend()` from `u32` to `u8`.
  * Shrunk the `sample::CHANNELS_MAX` type from `usize` to `u8`.
  * Made use of the associated constants feature provided in Rust 1.20 (long overdue):
     - Deprecated `sample::{CHANNELS_MAX, RATE_MAX}`.

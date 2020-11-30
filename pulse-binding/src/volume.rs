@@ -404,20 +404,20 @@ impl ChannelVolumes {
 
     /// Sets the volume of the specified number of channels to the supplied volume.
     #[inline]
-    pub fn set(&mut self, channels: u32, v: Volume) -> &Self {
-        unsafe { capi::pa_cvolume_set(self.as_mut(), channels, v.0) };
+    pub fn set(&mut self, channels: u8, v: Volume) -> &Self {
+        unsafe { capi::pa_cvolume_set(self.as_mut(), channels as u32, v.0) };
         self
     }
 
     /// Sets the volume of the first n channels to [`VOLUME_NORM`](constant.VOLUME_NORM.html).
     #[inline]
-    pub fn reset(&mut self, channels: u32) -> &Self {
+    pub fn reset(&mut self, channels: u8) -> &Self {
         self.set(channels, VOLUME_NORM)
     }
 
     /// Sets the volume of the first n channels to [`VOLUME_MUTED`](constant.VOLUME_MUTED.html).
     #[inline]
-    pub fn mute(&mut self, channels: u32) -> &Self {
+    pub fn mute(&mut self, channels: u8) -> &Self {
         self.set(channels, VOLUME_MUTED)
     }
 
