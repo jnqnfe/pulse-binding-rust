@@ -281,10 +281,39 @@ impl Spec {
         unsafe { capi::pa_sample_spec_init(self.as_mut()); }
     }
 
-    /// Checks if the sample type specification is valid.
+    /// Checks if the whole sample type specification is valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { capi::pa_sample_spec_valid(self.as_ref()) != 0 }
+    }
+
+    /// Checks only if the format attribute is valid.
+    ///
+    /// Or in other words that the client library running on the end user system accepts it.
+    ///
+    /// Available since PA version 5.
+    #[inline]
+    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    pub fn format_is_valid(&self) -> bool {
+        unsafe { capi::pa_sample_format_valid(self.format as u32) != 0 }
+    }
+
+    /// Checks only if the rate is within the supported range.
+    ///
+    /// Available since PA version 5.
+    #[inline]
+    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    pub fn rate_is_valid(&self) -> bool {
+        unsafe { capi::pa_sample_rate_valid(self.rate) != 0 }
+    }
+
+    /// Checks only if the channel count is within the supported range.
+    ///
+    /// Available since PA version 5.
+    #[inline]
+    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    pub fn channels_are_valid(&self) -> bool {
+        unsafe { capi::pa_channels_valid(self.channels) != 0 }
     }
 
     /// Gets the amount of bytes that constitute playback of one second of audio, with the specified
@@ -331,37 +360,6 @@ impl Spec {
             CStr::from_ptr(tmp.as_mut_ptr()).to_string_lossy().into_owned()
         }
     }
-}
-
-/// Checks if the given integer is a valid sample format.
-///
-/// With pure Rust code, this would be enforced natively through use of the
-/// [`Format`](enum.Format.html) enum, but this function may remain useful for miscellaneous int
-/// values from less reliable sources.
-///
-/// Available since PA version 5.
-#[inline]
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
-pub fn format_is_valid(format: u32) -> bool {
-    unsafe { capi::pa_sample_format_valid(format) != 0 }
-}
-
-/// Checks if the rate is within the supported range.
-///
-/// Available since PA version 5.
-#[inline]
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
-pub fn rate_is_valid(rate: u32) -> bool {
-    unsafe { capi::pa_sample_rate_valid(rate) != 0 }
-}
-
-/// Checks if the channel count is within the supported range.
-///
-/// Available since PA version 5.
-#[inline]
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
-pub fn channels_are_valid(channels: u8) -> bool {
-    unsafe { capi::pa_channels_valid(channels) != 0 }
 }
 
 /// Pretty print a byte size value (i.e. “2.5 MiB”).

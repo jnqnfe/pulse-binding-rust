@@ -1,5 +1,8 @@
 # [unreleased]
 
+ * Moved the following functions from the `sample` mod to methods of `sample::Spec`:
+   `format_is_valid()`, `rate_is_valid()` and `channels_are_valid()`, having noticed that they
+   clearly relate to the attributes of that type and so should have been there all along.
  * Fixed failure to update `pa_latest` feature in v2.17 to point to `pa_v14` instead of `pa_v13`.
 
 # 2.19.0 (December 8th, 2020)
