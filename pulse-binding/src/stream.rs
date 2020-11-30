@@ -551,7 +551,7 @@ pub mod event_names {
     pub const EVENT_FORMAT_LOST: &str = capi::PA_STREAM_EVENT_FORMAT_LOST;
 }
 
-/// Result type for the [`Stream::Peek`](struct.Stream.html#method.peek) method. See documentation
+/// Result type for the [`Stream::peek`](struct.Stream.html#method.peek) method. See documentation
 /// of the method itself for more information.
 #[derive(Debug)]
 pub enum PeekResult<'a> {
