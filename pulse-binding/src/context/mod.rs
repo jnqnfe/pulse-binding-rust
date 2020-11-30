@@ -27,22 +27,22 @@
 //!
 //! All operations on the context are performed asynchronously. I.e. the client will not wait for
 //! the server to complete the request. To keep track of all these in-flight operations, the
-//! application is given an [`operation::Operation`] object for each asynchronous operation.
+//! application is given an [`Operation`] object for each asynchronous operation.
 //!
 //! There are only two actions (besides reference counting) that can be performed on an
-//! [`operation::Operation`]: querying its state with [`operation::Operation::get_state()`] and
-//! aborting it with [`operation::Operation::cancel()`].
+//! [`Operation`]: querying its state with [`Operation::get_state()`] and aborting it with
+//! [`Operation::cancel()`].
 //!
-//! An [`operation::Operation`] object is reference counted, so an application must make sure to
-//! unreference it, even if it has no intention of using it. This however is taken care of
-//! automatically in this Rust binding via the implementation of the `Drop` trait on the object.
+//! An [`Operation`] object is reference counted, so an application must make sure to unreference
+//! it, even if it has no intention of using it. This however is taken care of automatically in this
+//! Rust binding via the implementation of the `Drop` trait on the object.
 //!
 //! # Connecting
 //!
 //! A context must be connected to a server before any operation can be issued. Calling
 //! [`Context::connect()`] will initiate the connection procedure. Unlike most asynchronous
-//! operations, connecting does not result in an [`operation::Operation`] object. Instead, the
-//! application should register a callback using [`Context::set_state_callback()`].
+//! operations, connecting does not result in an [`Operation`] object. Instead, the application
+//! should register a callback using [`Context::set_state_callback()`].
 //!
 //! # Disconnecting
 //!
@@ -68,9 +68,9 @@
 //! [`context::introspect`]: ../context/introspect/index.html
 //! [`context::scache`]: ../context/scache/index.html
 //! [`context::subscribe`]: ../context/subscribe/index.html
-//! [`operation::Operation::cancel()`]: ../operation/struct.Operation.html#method.cancel
-//! [`operation::Operation::get_state()`]: ../operation/struct.Operation.html#method.get_state
-//! [`operation::Operation`]: ../operation/struct.Operation.html
+//! [`Operation::cancel()`]: ../operation/struct.Operation.html#method.cancel
+//! [`Operation::get_state()`]: ../operation/struct.Operation.html#method.get_state
+//! [`Operation`]: ../operation/struct.Operation.html
 //! [`stream`]: ../stream/index.html
 
 pub mod ext_device_manager;
@@ -500,11 +500,11 @@ impl Context {
     /// Gets the client index this context is identified in the server with.
     ///
     /// This is useful for usage with the introspection functions, such as
-    /// [`introspect::Introspector::get_client_info()`].
+    /// [`Introspector::get_client_info()`].
     ///
     /// Returns `None` on error.
     ///
-    /// [`introspect::Introspector::get_client_info()`]: introspect/struct.Introspector.html#method.get_client_info
+    /// [`Introspector::get_client_info()`]: introspect/struct.Introspector.html#method.get_client_info
     pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_context_get_index(self.ptr) } {
             def::INVALID_INDEX => None,
@@ -520,7 +520,7 @@ impl Context {
     /// it. The association is done to ensure the event does not outlive the mainloop.
     ///
     /// If pointer returned by underlying C function is `NULL`, `None` will be returned, otherwise a
-    /// [`mainloop::events::timer::TimeEvent`] object will be returned.
+    /// [`TimeEvent`] object will be returned.
     ///
     /// Example event set to fire in five seconds time:
     ///
@@ -535,7 +535,7 @@ impl Context {
     /// event(s) to fire, as its `Drop` implementation destroys the event source. I.e. if you create
     /// a new event, but then immediately drop the object returned here, no event will fire!
     ///
-    /// [`mainloop::events::timer::TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
+    /// [`TimeEvent`]: ../mainloop/events/timer/struct.TimeEvent.html
     pub fn rttime_new<T, F>(&self, mainloop: &dyn Mainloop<MI=T::MI>, time: MonotonicTs,
         mut callback: F) -> Option<TimeEvent<T::MI>>
         where T: Mainloop + 'static,

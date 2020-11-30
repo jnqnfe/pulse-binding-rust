@@ -127,7 +127,7 @@ pub mod properties {
     pub const FORMAT_SAMPLE_FORMAT: &str = capi::PA_PROP_FORMAT_SAMPLE_FORMAT;
 
     /// For PCM formats: the channel map of the stream as returned by
-    /// [`channelmap::Map::print()`](../../channelmap/struct.Map.html#method.print).
+    /// [`Map::print()`](../../channelmap/struct.Map.html#method.print).
     pub const FORMAT_CHANNEL_MAP: &str = capi::PA_PROP_FORMAT_CHANNEL_MAP;
 }
 

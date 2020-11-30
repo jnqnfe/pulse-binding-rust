@@ -198,7 +198,7 @@ impl Info {
         }
     }
 
-    /// Utility function to take a [`sample::Spec`] and generate the corresponding `Info`.
+    /// Utility function to take a [`Spec`] and generate the corresponding `Info`.
     ///
     /// Note that if you want the server to choose some of the stream parameters, for example the
     /// sample rate, so that they match the device parameters, then you shouldn’t use this function.
@@ -209,7 +209,7 @@ impl Info {
     ///
     /// Returns `None` on failure.
     ///
-    /// [`sample::Spec`]: ../sample/struct.Spec.html
+    /// [`Spec`]: ../sample/struct.Spec.html
     pub fn new_from_sample_spec(ss: &sample::Spec, map: Option<&channelmap::Map>)
         -> Option<Self>
     {
@@ -285,16 +285,15 @@ impl Info {
         }
     }
 
-    /// Utility function to generate a [`sample::Spec`] and [`channelmap::Map`] corresponding to a
-    /// given `Info`.
+    /// Utility function to generate a [`Spec`] and [`Map`] corresponding to a given `Info`.
     ///
     /// The conversion for PCM formats is straight-forward. For non-PCM formats, if there is a fixed
     /// size-time conversion (i.e. all IEC61937-encapsulated formats), a “fake” sample spec whose
     /// size-time conversion corresponds to this format is provided and the channel map argument is
     /// ignored. For formats with variable size-time conversion, this function will fail.
     ///
-    /// [`sample::Spec`]: ../sample/struct.Spec.html
-    /// [`channelmap::Map`]: ../channelmap/struct.Map.html
+    /// [`Spec`]: ../sample/struct.Spec.html
+    /// [`Map`]: ../channelmap/struct.Map.html
     pub fn to_sample_spec(&self, ss: &mut sample::Spec, map: &mut channelmap::Map)
         -> Result<(), PAErr>
     {

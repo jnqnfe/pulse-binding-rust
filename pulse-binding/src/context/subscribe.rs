@@ -19,12 +19,12 @@
 //! changes. The set of facilities and operations for which notifications are generated are
 //! enumerated in [`Facility`] and [`Operation`].
 //!
-//! The application sets the notification mask using [`context::Context::subscribe()`] and the
-//! callback function that will be called whenever a notification occurs using
-//! [`context::Context::set_subscribe_callback()`].
+//! The application sets the notification mask using [`Context::subscribe()`] and the callback
+//! function that will be called whenever a notification occurs using
+//! [`Context::set_subscribe_callback()`].
 //!
-//! The mask provided to [`context::Context::subscribe()`] can be created by binary ORing a set of
-//! values, either produced with [`Facility::to_interest_mask()`], or more simply with the provided
+//! The mask provided to [`Context::subscribe()`] can be created by binary ORing a set of values,
+//! either produced with [`Facility::to_interest_mask()`], or more simply with the provided
 //! constants in the [`subscription_masks`] submodule.
 //!
 //! The callback will be called with event type information representing the event that caused the
@@ -50,8 +50,8 @@
 //! [`Facility`]: enum.Facility.html
 //! [`Operation`]: enum.Operation.html
 //! [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
-//! [`context::Context::subscribe()`]: ../struct.Context.html#method.subscribe
-//! [`context::Context::set_subscribe_callback()`]: ../struct.Context.html#method.set_subscribe_callback
+//! [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
+//! [`Context::set_subscribe_callback()`]: ../struct.Context.html#method.set_subscribe_callback
 //! [`subscription_masks`]: subscription_masks/index.html
 
 use std::os::raw::c_void;

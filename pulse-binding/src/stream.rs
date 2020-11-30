@@ -34,8 +34,8 @@
 //! parameters.
 //!
 //! **FIXME**: Those references only talk about PCM parameters, we should also have an overview
-//! page for how the [`format::Info`](../format/struct.Info.html) based stream format configuration
-//! works. [Bug filed](https://bugs.freedesktop.org/show_bug.cgi?id=72265).
+//! page for how the [`Info`](../format/struct.Info.html) based stream format configuration works.
+//! [Bug filed](https://bugs.freedesktop.org/show_bug.cgi?id=72265).
 //!
 //! This first step will only create a client-side object, representing the stream. To use the
 //! stream, a server-side object must be created and associated with the local object. Depending on
@@ -46,9 +46,9 @@
 //! * Upload stream: [`Stream::connect_upload()`] \(see [`context::scache`])
 //!
 //! Similar to how connections are done in contexts, connecting a stream will not generate an
-//! [`operation::Operation`] object. Also like contexts, the application should register a state
-//! change callback, using [`Stream::set_state_callback()`], and wait for the stream to enter an
-//! active state.
+//! [`Operation`] object. Also like contexts, the application should register a state change
+//! callback, using [`Stream::set_state_callback()`], and wait for the stream to enter an active
+//! state.
 //!
 //! Note: there is a user-controllable slider in mixer applications such as pavucontrol
 //! corresponding to each of the created streams. Multiple (especially identically named) volume
@@ -65,7 +65,7 @@
 //! overflows/underruns.
 //!
 //! The buffer metrics may be controlled by the application. They are described with a
-//! [`def::BufferAttr`] structure.
+//! [`BufferAttr`] structure.
 //!
 //! If [`flags::ADJUST_LATENCY`] is set, then the `tlength`/`fragsize` parameters of this structure
 //! will be interpreted slightly differently than otherwise when passed to
@@ -124,7 +124,7 @@
 //!   the set trigger level.
 //! * [`Stream::prebuf()`]: Re-enable the playback trigger level.
 //! * [`Stream::drain()`]: Wait for the playback buffer to go empty. Will return an
-//!   [`operation::Operation`] object that will indicate when the buffer is completely drained.
+//!   [`Operation`] object that will indicate when the buffer is completely drained.
 //! * [`Stream::flush()`]: Drop all data from the playback or record buffer. Do not wait for it to
 //!   finish playing.
 //!
@@ -152,9 +152,9 @@
 //! this, PulseAudio supports an advanced system of monitoring the current latency.
 //!
 //! To get the raw data needed to calculate latencies, call [`Stream::get_timing_info()`]. This will
-//! give you a [`def::TimingInfo`] structure that contains everything that is known about the server
-//! side buffer transport delays and the backend active in the server. (Besides other things it
-//! contains the write and read index values mentioned above.)
+//! give you a [`TimingInfo`] structure that contains everything that is known about the server side
+//! buffer transport delays and the backend active in the server. (Besides other things it contains
+//! the write and read index values mentioned above.)
 //!
 //! This structure is updated every time a [`Stream::update_timing_info()`] operation is executed.
 //! (i.e. before the first call to this function the timing information structure is not available!)
@@ -166,8 +166,8 @@
 //! data in the timing information structure is out-of-date. PulseAudio tries to mark these
 //! situations by setting the `write_index_corrupt` and `read_index_corrupt` fields accordingly.
 //!
-//! The raw timing data in the [`def::TimingInfo`] structure is usually hard to deal with. Therefore
-//! a simpler interface is available: you can call [`Stream::get_time()`] or
+//! The raw timing data in the [`TimingInfo`] structure is usually hard to deal with. Therefore a
+//! simpler interface is available: you can call [`Stream::get_time()`] or
 //! [`Stream::get_latency()`]. The former will return the current playback time of the hardware
 //! since the stream has been started. The latter returns the overall time a sample that you write
 //! now takes to be played by the hardware. These two functions base their calculations on the same
@@ -205,7 +205,7 @@
 //!
 //! To make sure that a particular stream doesn’t stop to play when a server side buffer underrun
 //! happens on it while the other synchronized streams continue playing and hence deviate, you need
-//! to pass a [`def::BufferAttr`] with `prebuf` set to `0` when connecting.
+//! to pass a [`BufferAttr`] with `prebuf` set to `0` when connecting.
 //!
 //! # Disconnecting
 //!
@@ -214,13 +214,13 @@
 //! until you disconnect the context. This is done automatically upon drop of the stream object.
 //!
 //! [`context::scache`]: ../context/scache/index.html
-//! [`def::BufferAttr`]: ../def/struct.BufferAttr.html
-//! [`def::TimingInfo`]: ../def/struct.TimingInfo.html
+//! [`BufferAttr`]: ../def/struct.BufferAttr.html
+//! [`TimingInfo`]: ../def/struct.TimingInfo.html
 //! [`flags::ADJUST_LATENCY`]: flags/constant.ADJUST_LATENCY.html
 //! [`flags::AUTO_TIMING_UPDATE`]: flags/constant.AUTO_TIMING_UPDATE.html
 //! [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
 //! [`flags::START_CORKED`]: flags/constant.START_CORKED.html
-//! [`operation::Operation`]: ../operation/struct.Operation.html
+//! [`Operation`]: ../operation/struct.Operation.html
 //! [`SeekMode::Absolute`]: enum.SeekMode.html#Absolute.v
 //! [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
 //! [`SeekMode::RelativeEnd`]: enum.SeekMode.html#RelativeEnd.v
@@ -426,15 +426,15 @@ pub mod flags {
     ///
     /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
     /// specify a format with PCM encoding, and you want the server to choose the sample format,
-    /// then you should leave the sample format unspecified in the [`format::Info`] object. This
-    /// also means that you can’t use [`format::Info::new_from_sample_spec()`], because that
-    /// function always sets the sample format.
+    /// then you should leave the sample format unspecified in the [`Info`] object. This also means
+    /// that you can’t use [`Info::new_from_sample_spec()`], because that function always sets the
+    /// sample format.
     ///
     /// [`Stream::get_sample_spec()`]: ../struct.Stream.html#method.get_sample_spec
     /// [`Stream::set_buffer_attr()`]: ../struct.Stream.html#method.set_buffer_attr
     /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
-    /// [`format::Info`]: ../../format/struct.Info.html
-    /// [`format::Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`Info`]: ../../format/struct.Info.html
+    /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_FORMAT: FlagSet = capi::PA_STREAM_FIX_FORMAT;
 
     /// Use the sample rate of the sink, and possibly ignore the rate the sample spec contains.
@@ -442,14 +442,13 @@ pub mod flags {
     ///
     /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
     /// specify a format with PCM encoding, and you want the server to choose the sample rate, then
-    /// you should leave the rate unspecified in the [`format::Info`] object. This also means that
-    /// you can’t use [`format::Info::new_from_sample_spec()`], because that function always sets
-    /// the sample rate.
+    /// you should leave the rate unspecified in the [`Info`] object. This also means that you can’t
+    /// use [`Info::new_from_sample_spec()`], because that function always sets the sample rate.
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
     /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
-    /// [`format::Info`]: ../../format/struct.Info.html
-    /// [`format::Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`Info`]: ../../format/struct.Info.html
+    /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_RATE: FlagSet = capi::PA_STREAM_FIX_RATE;
 
     /// Use the number of channels and the channel map of the sink, and possibly ignore the number
@@ -459,16 +458,15 @@ pub mod flags {
     /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
     /// specify a format with PCM encoding, and you want the server to choose the channel count
     /// and/or channel map, then you should leave the channels and/or the channel map unspecified in
-    /// the [`format::Info`] object. This also means that you can’t use
-    /// [`format::Info::new_from_sample_spec()`], because that function always sets the channel
-    /// count (but if you only want to leave the channel map unspecified, then
-    /// [`format::Info::new_from_sample_spec()`] works, because the channel map parameter is
-    /// optional).
+    /// the [`Info`] object. This also means that you can’t use [`Info::new_from_sample_spec()`],
+    /// because that function always sets the channel count (but if you only want to leave the
+    /// channel map unspecified, then [`Info::new_from_sample_spec()`] works, because the channel
+    /// map parameter is optional).
     ///
     /// [`FIX_FORMAT`]: constant.FIX_FORMAT.html
     /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
-    /// [`format::Info`]: ../../format/struct.Info.html
-    /// [`format::Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
+    /// [`Info`]: ../../format/struct.Info.html
+    /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
     pub const FIX_CHANNELS: FlagSet = capi::PA_STREAM_FIX_CHANNELS;
 
     /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
@@ -492,10 +490,10 @@ pub mod flags {
     pub const START_MUTED: FlagSet = capi::PA_STREAM_START_MUTED;
 
     /// Try to adjust the latency of the sink/source based on the requested buffer metrics and
-    /// adjust buffer metrics accordingly. Also see [`def::BufferAttr`]. This option may not be
+    /// adjust buffer metrics accordingly. Also see [`BufferAttr`]. This option may not be
     /// specified at the same time as [`EARLY_REQUESTS`](constant.EARLY_REQUESTS.html).
     ///
-    /// [`def::BufferAttr`]: ../../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: ../../def/struct.BufferAttr.html
     pub const ADJUST_LATENCY: FlagSet = capi::PA_STREAM_ADJUST_LATENCY;
 
     /// Enable compatibility mode for legacy clients that rely on a “classic” hardware device
@@ -506,10 +504,10 @@ pub mod flags {
     /// situations where compatibility with a fragment-based playback model needs to be kept and the
     /// client applications cannot deal with data requests that are delayed to the latest moment
     /// possible. (Usually these are programs that use usleep() or a similar call in their playback
-    /// loops instead of sleeping on the device itself.) Also see [`def::BufferAttr`]. This option
-    /// may not be specified at the same time as [`ADJUST_LATENCY`](constant.ADJUST_LATENCY.html).
+    /// loops instead of sleeping on the device itself.) Also see [`BufferAttr`]. This option may
+    /// not be specified at the same time as [`ADJUST_LATENCY`](constant.ADJUST_LATENCY.html).
     ///
-    /// [`def::BufferAttr`]: ../../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: ../../def/struct.BufferAttr.html
     pub const EARLY_REQUESTS: FlagSet = capi::PA_STREAM_EARLY_REQUESTS;
 
     /// If set this stream won’t be taken into account when it is checked whether the device this
@@ -645,8 +643,7 @@ impl Stream {
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        // Create array of format::InfoInternal pointers from provided array of format::Info
-        // pointers.
+        // Create array of format::InfoInternal pointers from provided array of `Info` pointers.
         let mut info_ptrs: Vec<*const capi::pa_format_info> = Vec::with_capacity(formats.len());
         for format in formats {
             info_ptrs.push(format.ptr as *const capi::pa_format_info);
@@ -675,13 +672,10 @@ impl Stream {
     /// Gets the sink input resp. source output index this stream is identified in the server with.
     ///
     /// This is useful with the introspection functions such as
-    /// [`context::introspect::Introspector::get_sink_input_info()`] or
-    /// [`context::introspect::Introspector::get_source_output_info()`].
+    /// [`Introspector::get_sink_input_info()`] or [`Introspector::get_source_output_info()`].
     ///
-    /// [`context::introspect::Introspector::get_sink_input_info()`]:
-    /// ../context/introspect/struct.Introspector.html#method.get_sink_input_info
-    /// [`context::introspect::Introspector::get_source_output_info()`]:
-    /// ../context/introspect/struct.Introspector.html#method.get_source_output_info
+    /// [`Introspector::get_sink_input_info()`]: ../context/introspect/struct.Introspector.html#method.get_sink_input_info
+    /// [`Introspector::get_source_output_info()`]: ../context/introspect/struct.Introspector.html#method.get_source_output_info
     pub fn get_index(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_index(self.ptr) } {
             def::INVALID_INDEX => None,
@@ -692,16 +686,13 @@ impl Stream {
     /// Gets the index of the sink or source this stream is connected to in the server.
     ///
     /// This is useful with the introspection functions such as
-    /// [`context::introspect::Introspector::get_sink_info_by_index()`] or
-    /// [`context::introspect::Introspector::get_source_info_by_index()`].
+    /// [`Introspector::get_sink_info_by_index()`] or [`Introspector::get_source_info_by_index()`].
     ///
     /// Please note that streams may be moved between sinks/sources and thus it is recommended to
     /// use [`set_moved_callback()`](#method.set_moved_callback) to be notified about this.
     ///
-    /// [`context::introspect::Introspector::get_sink_info_by_index()`]:
-    /// ../context/introspect/struct.Introspector.html#method.get_sink_info_by_index
-    /// [`context::introspect::Introspector::get_source_info_by_index()`]:
-    /// ../context/introspect/struct.Introspector.html#method.get_source_info_by_index
+    /// [`Introspector::get_sink_info_by_index()`]: ../context/introspect/struct.Introspector.html#method.get_sink_info_by_index
+    /// [`Introspector::get_source_info_by_index()`]: ../context/introspect/struct.Introspector.html#method.get_source_info_by_index
     pub fn get_device_index(&self) -> Option<u32> {
         match unsafe { capi::pa_stream_get_device_index(self.ptr) } {
             def::INVALID_INDEX => None,
@@ -712,16 +703,13 @@ impl Stream {
     /// Gets the name of the sink or source this stream is connected to in the server.
     ///
     /// This is useful with the introspection functions such as
-    /// [`context::introspect::Introspector::get_sink_info_by_name()`] or
-    /// [`context::introspect::Introspector::get_source_info_by_name()`].
+    /// [`Introspector::get_sink_info_by_name()`] or [`Introspector::get_source_info_by_name()`].
     ///
     /// Please note that streams may be moved between sinks/sources and thus it is recommended to
     /// use [`set_moved_callback()`](#method.set_moved_callback) to be notified about this.
     ///
-    /// [`context::introspect::Introspector::get_sink_info_by_name()`]:
-    /// ../context/struct.Context.html#method.get_sink_info_by_name
-    /// [`context::introspect::Introspector::get_source_info_by_name()`]:
-    /// ../context/struct.Context.html#method.get_source_info_by_name
+    /// [`Introspector::get_sink_info_by_name()`]: ../context/struct.Context.html#method.get_sink_info_by_name
+    /// [`Introspector::get_source_info_by_name()`]: ../context/struct.Context.html#method.get_source_info_by_name
     pub fn get_device_name(&self) -> Option<Cow<'static, str>> {
         let ptr: *const c_char = unsafe { capi::pa_stream_get_device_name(self.ptr) };
         match ptr.is_null() {
@@ -764,9 +752,8 @@ impl Stream {
     /// to the sink’s current volume or treated as an absolute device volume. Since PA 0.9.20 it is
     /// an absolute volume when the sink is in flat volume mode, and relative otherwise, thus making
     /// sure the volume passed here has always the same semantics as the volume passed to
-    /// [`context::introspect::Introspector::set_sink_input_volume()`]. It is possible to figure out
-    /// whether flat volume mode is in effect for a given sink by calling
-    /// [`context::introspect::Introspector::get_sink_info_by_name()`].
+    /// [`Introspector::set_sink_input_volume()`]. It is possible to figure out whether flat volume
+    /// mode is in effect for a given sink by calling [`Introspector::get_sink_info_by_name()`].
     ///
     /// Since PA 5.0, it’s possible to specify a single-channel volume even if the stream has
     /// multiple channels. In that case the same volume is applied to all channels.
@@ -782,10 +769,8 @@ impl Stream {
     ///
     /// [`flags::START_MUTED`]: flags/constant.START_MUTED.html
     /// [`flags::START_UNMUTED`]: flags/constant.START_UNMUTED.html
-    /// [`context::introspect::Introspector::set_sink_input_volume()`]:
-    /// ../context/struct.Context.html#method.set_sink_input_volume
-    /// [`context::introspect::Introspector::get_sink_info_by_name()`]:
-    /// ../context/struct.Context.html#method.get_sink_info_by_name
+    /// [`Introspector::set_sink_input_volume()`]: ../context/struct.Context.html#method.set_sink_input_volume
+    /// [`Introspector::get_sink_info_by_name()`]: ../context/struct.Context.html#method.get_sink_info_by_name
     pub fn connect_playback(&mut self, dev: Option<&str>, attr: Option<&def::BufferAttr>,
         flags: FlagSet, volume: Option<&ChannelVolumes>, sync_stream: Option<&mut Self>)
         -> Result<(), PAErr>
@@ -1380,7 +1365,7 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Re-enables prebuffering if specified in the [`def::BufferAttr`] structure.
+    /// Re-enables prebuffering if specified in the [`BufferAttr`] structure.
     ///
     /// Available for playback streams only.
     ///
@@ -1388,7 +1373,7 @@ impl Stream {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`def::BufferAttr`]: ../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: ../def/struct.BufferAttr.html
     pub fn prebuf(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
@@ -1401,14 +1386,14 @@ impl Stream {
 
     /// Requests immediate start of playback on this stream.
     ///
-    /// This disables prebuffering temporarily if specified in the [`def::BufferAttr`] structure.
+    /// This disables prebuffering temporarily if specified in the [`BufferAttr`] structure.
     /// Available for playback streams only.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`def::BufferAttr`]: ../def/struct.BufferAttr.html
+    /// [`BufferAttr`]: ../def/struct.BufferAttr.html
     pub fn trigger(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {

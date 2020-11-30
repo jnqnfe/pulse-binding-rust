@@ -129,10 +129,10 @@ impl DeviceRestore {
     /// Sets the subscription callback that is called when [`subscribe()`](#method.subscribe) was
     /// called.
     ///
-    /// The callback must accept two parameters, firstly a [`def::Device`] variant, and secondly an
+    /// The callback must accept two parameters, firstly a [`Device`] variant, and secondly an
     /// integer index.
     ///
-    /// [`def::Device`]: ../../def/enum.Device.html
+    /// [`Device`]: ../../def/enum.Device.html
     pub fn set_subscribe_cb<F>(&mut self, callback: F)
         where F: FnMut(def::Device, u32) + 'static
     {

@@ -22,16 +22,14 @@
 //! # Creation
 //!
 //! To create a sample, the normal stream API is used (see [`stream`]). The function
-//! [`stream::Stream::connect_upload()`] will make sure the stream is stored as a sample on the
-//! server.
+//! [`Stream::connect_upload()`] will make sure the stream is stored as a sample on the server.
 //!
-//! To complete the upload, [`stream::Stream::finish_upload()`] is called and the sample will
-//! receive the same name as the stream. If the upload should be aborted, simply call
-//! [`stream::Stream::disconnect()`].
+//! To complete the upload, [`Stream::finish_upload()`] is called and the sample will receive the
+//! same name as the stream. If the upload should be aborted, simply call [`Stream::disconnect()`].
 //!
 //! # Playing samples
 //!
-//! To play back a sample, simply call [`context::Context::play_sample()`]:
+//! To play back a sample, simply call [`Context::play_sample()`]:
 //!
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
@@ -51,14 +49,14 @@
 //! # Removing samples
 //!
 //! When a sample is no longer needed, it should be removed on the server to save resources. The
-//! sample is deleted using [`context::Context::remove_sample()`].
+//! sample is deleted using [`Context::remove_sample()`].
 //!
 //! [`stream`]: ../../stream/index.html
-//! [`stream::Stream::connect_upload()`]: ../../stream/struct.Stream.html#method.connect_upload
-//! [`stream::Stream::finish_upload()`]: ../../stream/struct.Stream.html#method.finish_upload
-//! [`stream::Stream::disconnect()`]: ../../stream/struct.Stream.html#method.disconnect
-//! [`context::Context::play_sample()`]: ../struct.Context.html#method.play_sample
-//! [`context::Context::remove_sample()`]: ../struct.Context.html#method.remove_sample
+//! [`Stream::connect_upload()`]: ../../stream/struct.Stream.html#method.connect_upload
+//! [`Stream::finish_upload()`]: ../../stream/struct.Stream.html#method.finish_upload
+//! [`Stream::disconnect()`]: ../../stream/struct.Stream.html#method.disconnect
+//! [`Context::play_sample()`]: ../struct.Context.html#method.play_sample
+//! [`Context::remove_sample()`]: ../struct.Context.html#method.remove_sample
 
 use std::os::raw::{c_char, c_void};
 use std::ffi::CString;

@@ -23,7 +23,7 @@
 //! # Usage
 //!
 //! The introspection routines are exposed as methods on an [`Introspector`] object held by the
-//! [`Context`] object, and can be accessed via the [`Context`] object’s [`introspect()`] method.
+//! [`Context`] object, and can be accessed via the [`Context::introspect()`] method.
 //!
 //! # Querying
 //!
@@ -165,7 +165,7 @@
 //!
 //! If an application changes any volume, it should also listen to changes of the same volume
 //! originating from outside the application (e.g., from the system mixer application) and update
-//! its user interface accordingly. Use [`subscribe()`] to get such notifications.
+//! its user interface accordingly. Use [`Context::subscribe()`] to get such notifications.
 //!
 //! # Modules
 //!
@@ -188,8 +188,8 @@
 //! [`SourceInfo`]: struct.SourceInfo.html
 //! [`SourceOutputInfo`]: struct.SourceOutputInfo.html
 //! [`StatInfo`]: struct.StatInfo.html
-//! [`subscribe()`]: ../struct.Context.html#method.subscribe
-//! [`introspect()`]: ../struct.Context.html#method.introspect
+//! [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
+//! [`Context::introspect()`]: ../struct.Context.html#method.introspect
 //! [`Introspector::get_client_info_list()`]: struct.Introspector.html#method.get_client_info_list
 //! [`Introspector::get_client_info()`]: struct.Introspector.html#method.get_client_info
 //! [`Introspector::get_module_info_list()`]: struct.Introspector.html#method.get_module_info_list
