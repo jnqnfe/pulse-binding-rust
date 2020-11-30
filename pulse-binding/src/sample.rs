@@ -170,35 +170,35 @@ impl Default for Format {
 #[deprecated(note="use the `FLOAT32NE` associated constant on `Format` instead")]
 pub const SAMPLE_FLOAT32: Format = SAMPLE_FLOAT32NE;
 
-/// Signed 16 Bit PCM, native endian.
+/// Signed 16-bit PCM, native endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S16NE:     Format = self::ei_formats::SAMPLE_S16NE;
-/// 32 Bit IEEE floating point, native endian.
+/// 32-bit IEEE floating point, native endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_FLOAT32NE: Format = self::ei_formats::SAMPLE_FLOAT32NE;
-/// Signed 32 Bit PCM, native endian.
+/// Signed 32-bit PCM, native endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S32NE:     Format = self::ei_formats::SAMPLE_S32NE;
-/// Signed 24 Bit PCM packed, native endian.
+/// Signed 24-bit PCM packed, native endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S24NE:     Format = self::ei_formats::SAMPLE_S24NE;
-/// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
+/// Signed 24-bit PCM in LSB of 32-bit words, native endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S24_32NE:  Format = self::ei_formats::SAMPLE_S24_32NE;
 
-/// Signed 16 Bit PCM reverse endian.
+/// Signed 16-bit PCM reverse endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S16RE:     Format = self::ei_formats::SAMPLE_S16RE;
-/// 32 Bit IEEE floating point, reverse endian.
+/// 32-bit IEEE floating point, reverse endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_FLOAT32RE: Format = self::ei_formats::SAMPLE_FLOAT32RE;
-/// Signed 32 Bit PCM, reverse endian.
+/// Signed 32-bit PCM, reverse endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S32RE:     Format = self::ei_formats::SAMPLE_S32RE;
-/// Signed 24 Bit PCM, packed reverse endian.
+/// Signed 24-bit PCM, packed reverse endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S24RE:     Format = self::ei_formats::SAMPLE_S24RE;
-/// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
+/// Signed 24-bit PCM, in LSB of 32-bit words, reverse endian.
 #[deprecated(note="use the associated constant on `Format` instead")]
 pub const SAMPLE_S24_32RE:  Format = self::ei_formats::SAMPLE_S24_32RE;
 
@@ -398,26 +398,26 @@ pub fn bytes_print(bytes: u32) -> String {
 }
 
 impl Format {
-    /// Signed 16 Bit PCM, native endian.
+    /// Signed 16-bit PCM, native endian.
     pub const S16NE:     Self = self::ei_formats::SAMPLE_S16NE;
-    /// 32 Bit IEEE floating point, native endian.
+    /// 32-bit IEEE floating point, native endian.
     pub const FLOAT32NE: Self = self::ei_formats::SAMPLE_FLOAT32NE;
-    /// Signed 32 Bit PCM, native endian.
+    /// Signed 32-bit PCM, native endian.
     pub const S32NE:     Self = self::ei_formats::SAMPLE_S32NE;
-    /// Signed 24 Bit PCM packed, native endian.
+    /// Signed 24-bit PCM packed, native endian.
     pub const S24NE:     Self = self::ei_formats::SAMPLE_S24NE;
-    /// Signed 24 Bit PCM in LSB of 32 Bit words, native endian.
+    /// Signed 24-bit PCM in LSB of 32-bit words, native endian.
     pub const S24_32NE:  Self = self::ei_formats::SAMPLE_S24_32NE;
 
-    /// Signed 16 Bit PCM reverse endian.
+    /// Signed 16-bit PCM reverse endian.
     pub const S16RE:     Self = self::ei_formats::SAMPLE_S16RE;
-    /// 32 Bit IEEE floating point, reverse endian.
+    /// 32-bit IEEE floating point, reverse endian.
     pub const FLOAT32RE: Self = self::ei_formats::SAMPLE_FLOAT32RE;
-    /// Signed 32 Bit PCM, reverse endian.
+    /// Signed 32-bit PCM, reverse endian.
     pub const S32RE:     Self = self::ei_formats::SAMPLE_S32RE;
-    /// Signed 24 Bit PCM, packed reverse endian.
+    /// Signed 24-bit PCM, packed reverse endian.
     pub const S24RE:     Self = self::ei_formats::SAMPLE_S24RE;
-    /// Signed 24 Bit PCM, in LSB of 32 Bit words, reverse endian.
+    /// Signed 24-bit PCM, in LSB of 32-bit words, reverse endian.
     pub const S24_32RE:  Self = self::ei_formats::SAMPLE_S24_32RE;
 
     /// Similar to [`Spec::sample_size()`](struct.Spec.html#method.sample_size) but take a sample
