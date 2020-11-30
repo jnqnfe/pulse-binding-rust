@@ -99,13 +99,13 @@ impl Context {
     /// * `name`: Name of the sample to play.
     /// * `dev`: Sink to play this sample on, or `None` for default.
     /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
-    ///   [`volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
-    ///   side which is a good idea.
+    ///   [`Volume::INVALID`] which will leave the decision about the volume to the server side
+    ///   which is a good idea.
     /// * `callback`: Optional success callback. It must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
+    /// [`Volume::INVALID`]: ../volume/struct.Volume.html#associatedconstant.INVALID
     pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: Volume,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
@@ -137,8 +137,8 @@ impl Context {
     /// * `name`: Name of the sample to play.
     /// * `dev`: Sink to play this sample on, or `None` for default.
     /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
-    ///   [`volume::VOLUME_INVALID`] which will leave the decision about the volume to the server
-    ///   side which is a good idea.
+    ///   [`Volume::INVALID`] which will leave the decision about the volume to the server side
+    ///   which is a good idea.
     /// * `proplist`: Property list for this sound. The property list of the cached entry will have
     ///   this merged into it.
     /// * `callback`: Optional success callback. It must accept an `u32` index value wrapper in a
@@ -147,7 +147,7 @@ impl Context {
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
-    /// [`volume::VOLUME_INVALID`]: ../volume/constant.VOLUME_INVALID.html
+    /// [`Volume::INVALID`]: ../volume/struct.Volume.html#associatedconstant.INVALID
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>, volume: Volume,
         proplist: &Proplist, callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)
         -> Operation<dyn FnMut(Result<u32, ()>)>

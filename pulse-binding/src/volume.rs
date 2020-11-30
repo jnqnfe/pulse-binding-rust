@@ -52,7 +52,7 @@
 //! and source volumes, unless the sink or source in question has the
 //! [`def::sink_flags::DECIBEL_VOLUME`] or [`def::source_flags::DECIBEL_VOLUME`] flag set. The
 //! conversion functions are rarely needed anyway, most of the time it’s sufficient to treat all
-//! volumes as opaque with a range from [`VOLUME_MUTED`] \(0%) to [`VOLUME_NORM`] \(100%).
+//! volumes as opaque with a range from [`Volume::MUTED`] \(0%) to [`Volume::NORMAL`] \(100%).
 //!
 //! [`Volume`]: struct.Volume.html
 //! [`VolumeDB`]: struct.VolumeDB.html
@@ -62,8 +62,8 @@
 //! ../context/introspect/struct.Introspector.html#method.get_sink_info_by_name
 //! [`Volume::multiply`]: struct.Volume.html#method.multiply
 //! [`ChannelVolumes::sw_multiply`]: struct.ChannelVolumes.html#method.sw_multiply
-//! [`VOLUME_MUTED`]: constant.VOLUME_MUTED.html
-//! [`VOLUME_NORM`]: constant.VOLUME_NORM.html
+//! [`Volume::MUTED`]: struct.Volume.html#associatedconstant.MUTED
+//! [`Volume::NORMAL`]: struct.Volume.html#associatedconstant.NORMAL
 //! [`def::sink_flags::DECIBEL_VOLUME`]: ../def/sink_flags/constant.DECIBEL_VOLUME.html
 //! [`def::source_flags::DECIBEL_VOLUME`]: ../def/source_flags/constant.DECIBEL_VOLUME.html
 
@@ -74,15 +74,20 @@ use std::ptr::null;
 use crate::sample;
 use crate::channelmap::{Map, Position, PositionMask, POSITION_MASK_ALL};
 
+#[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_NORM:    Volume = Volume(capi::PA_VOLUME_NORM);
+#[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_MUTED:   Volume = Volume(capi::PA_VOLUME_MUTED);
+#[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_MAX:     Volume = Volume(capi::PA_VOLUME_MAX);
+#[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 
 /// Minus Infinity.
 ///
 /// This floor value is used / can be used, when using converting between integer software volume
 /// and decibel (dB, floating point) software volume.
+#[deprecated(note="use the associated constant on `VolumeDB` instead")]
 pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY);
 
 /// Software volume expressed as an integer.
@@ -90,7 +95,7 @@ pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY)
 pub struct Volume(pub capi::pa_volume_t);
 
 impl Default for Volume {
-    fn default() -> Self { VOLUME_NORM }
+    fn default() -> Self { Self::NORMAL }
 }
 
 /// Software volume expressed in decibels (dBs).
@@ -195,8 +200,11 @@ impl From<Volume> for VolumeDB {
 
 /// Converts a linear factor to a volume.
 ///
-/// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
+/// `0.0` and less is muted while `1.0` is [`Volume::NORMAL`].
+///
 /// This is only valid for software volumes!
+///
+/// [`Volume::NORMAL`]: struct.Volume.html#associatedconstant.NORMAL
 impl From<VolumeLinear> for Volume {
     #[inline]
     fn from(v: VolumeLinear) -> Self {
@@ -215,9 +223,11 @@ impl From<Volume> for VolumeLinear {
 
 /// Converts a linear factor to a decibel value (amplitude, not power).
 ///
-/// `0.0` and less is muted while `1.0` is [`VOLUME_NORM`](constant.VOLUME_NORM.html).
+/// `0.0` and less is muted while `1.0` is [`Volume::NORMAL`].
 ///
 /// This is only valid for software volumes!
+///
+/// [`Volume::NORMAL`]: struct.Volume.html#associatedconstant.NORMAL
 impl From<VolumeLinear> for VolumeDB {
     #[inline]
     fn from(v: VolumeLinear) -> Self {
@@ -247,19 +257,28 @@ impl VolumeLinear {
 }
 
 impl Volume {
+    /// A “normal” volume level.
+    pub const NORMAL:  Self = Self(capi::PA_VOLUME_NORM);
+    /// A muted volume level.
+    pub const MUTED:   Self = Self(capi::PA_VOLUME_MUTED);
+    /// A maximum volume level.
+    pub const MAX:     Self = Self(capi::PA_VOLUME_MAX);
+    /// An invalid volume level.
+    pub const INVALID: Self = Self(capi::PA_VOLUME_INVALID);
+
     #[inline]
     pub fn is_muted(&self) -> bool {
-        *self == VOLUME_MUTED
+        *self == Self::MUTED
     }
 
     #[inline]
     pub fn is_normal(&self) -> bool {
-        *self == VOLUME_NORM
+        *self == Self::NORMAL
     }
 
     #[inline]
     pub fn is_max(&self) -> bool {
-        *self == VOLUME_MAX
+        *self == Self::MAX
     }
 
     /// Get the recommended maximum volume to show in user facing UIs.
@@ -286,9 +305,11 @@ impl Volume {
 
     /// Multiplies two software volumes, returning the result.
     ///
-    /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of multiplication.
+    /// This uses [`Volume::NORMAL`] as neutral element of multiplication.
     ///
     /// This is only valid for software volumes!
+    ///
+    /// [`Volume::NORMAL`]: struct.Volume.html#associatedconstant.NORMAL
     #[inline]
     pub fn multiply(a: Self, b: Self) -> Self {
         Volume(unsafe { capi::pa_sw_volume_multiply(a.0, b.0) })
@@ -296,10 +317,12 @@ impl Volume {
 
     /// Divides two software volumes, returning the result.
     ///
-    /// This uses [`VOLUME_NORM`](constant.VOLUME_NORM.html) as neutral element of division. If a
-    /// division by zero is tried the result will be `0`.
+    /// This uses [`Volume::NORMAL`] as neutral element of division. If a division by zero is tried
+    /// the result will be `0`.
     ///
     /// This is only valid for software volumes!
+    ///
+    /// [`Volume::NORMAL`]: struct.Volume.html#associatedconstant.NORMAL
     #[inline]
     pub fn divide(a: Self, b: Self) -> Self {
         Volume(unsafe { capi::pa_sw_volume_divide(a.0, b.0) })
@@ -347,6 +370,14 @@ impl std::fmt::Display for Volume {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", &self.print())
     }
+}
+
+impl VolumeDB {
+    /// Minus Infinity.
+    ///
+    /// This floor value is used / can be used, when using converting between integer software
+    /// volume and decibel (dB, floating point) software volume.
+    pub const MINUS_INFINITY: Self = Self(capi::PA_DECIBEL_MININFTY);
 }
 
 impl ChannelVolumes {
@@ -409,28 +440,32 @@ impl ChannelVolumes {
         self
     }
 
-    /// Sets the volume of the first n channels to [`VOLUME_NORM`](constant.VOLUME_NORM.html).
+    /// Sets the volume of the first n channels to [`Volume::NORMAL`].
+    ///
+    /// [`Volume::NORMAL`]: struct.Volume.html#associatedconstant.NORMAL
     #[inline]
     pub fn reset(&mut self, channels: u8) -> &Self {
-        self.set(channels, VOLUME_NORM)
+        self.set(channels, Volume::NORMAL)
     }
 
-    /// Sets the volume of the first n channels to [`VOLUME_MUTED`](constant.VOLUME_MUTED.html).
+    /// Sets the volume of the first n channels to [`Volume::MUTED`].
+    ///
+    /// [`Volume::MUTED`]: struct.Volume.html#associatedconstant.MUTED
     #[inline]
     pub fn mute(&mut self, channels: u8) -> &Self {
-        self.set(channels, VOLUME_MUTED)
+        self.set(channels, Volume::MUTED)
     }
 
     /// Checks if all channels are muted.
     #[inline]
     pub fn is_muted(&self) -> bool {
-        self.eq(&VOLUME_MUTED)
+        self.eq(&Volume::MUTED)
     }
 
     /// Checks if all channels are at normal volume level.
     #[inline]
     pub fn is_norm(&self) -> bool {
-        self.eq(&VOLUME_NORM)
+        self.eq(&Volume::NORMAL)
     }
 
     /// Gets the average volume of all channels.
@@ -442,9 +477,11 @@ impl ChannelVolumes {
     /// Returns the average volume of all channels that are included in the specified channel map
     /// with the specified channel position mask.
     ///
-    /// If no channel is selected the returned value will be
-    /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
-    /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// If no channel is selected the returned value will be [`Volume::MUTED`]. If `mask` is `None`,
+    /// has the same effect as passing [`channelmap::POSITION_MASK_ALL`].
+    ///
+    /// [`Volume::MUTED`]: struct.Volume.html#associatedconstant.MUTED
+    /// [`channelmap::POSITION_MASK_ALL`]: ../channelmap/constant.POSITION_MASK_ALL.html
     #[inline]
     pub fn avg_mask(&self, cm: &Map, mask: Option<PositionMask>) -> Volume {
         let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);
@@ -460,9 +497,11 @@ impl ChannelVolumes {
     /// Gets the maximum volume of all channels that are included in the specified channel map
     /// with the specified channel position mask.
     ///
-    /// If no channel is selected the returned value will be
-    /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
-    /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// If no channel is selected the returned value will be [`Volume::MUTED`]. If `mask` is `None`,
+    /// has the same effect as passing [`channelmap::POSITION_MASK_ALL`].
+    ///
+    /// [`Volume::MUTED`]: struct.Volume.html#associatedconstant.MUTED
+    /// [`channelmap::POSITION_MASK_ALL`]: ../channelmap/constant.POSITION_MASK_ALL.html
     #[inline]
     pub fn max_mask(&self, cm: &Map, mask: Option<PositionMask>) -> Volume {
         let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);
@@ -478,9 +517,11 @@ impl ChannelVolumes {
     /// Gets the minimum volume of all channels that are included in the specified channel map
     /// with the specified channel position mask.
     ///
-    /// If no channel is selected the returned value will be
-    /// [`VOLUME_MUTED`](constant.VOLUME_MUTED.html). If `mask` is `None`, has the same effect as
-    /// passing [`channelmap::POSITION_MASK_ALL`](../channelmap/constant.POSITION_MASK_ALL.html).
+    /// If no channel is selected the returned value will be [`Volume::MUTED`]. If `mask` is `None`,
+    /// has the same effect as passing [`channelmap::POSITION_MASK_ALL`].
+    ///
+    /// [`Volume::MUTED`]: struct.Volume.html#associatedconstant.MUTED
+    /// [`channelmap::POSITION_MASK_ALL`]: ../channelmap/constant.POSITION_MASK_ALL.html
     #[inline]
     pub fn min_mask(&self, cm: &Map, mask: Option<PositionMask>) -> Volume {
         let mask_actual = mask.unwrap_or(POSITION_MASK_ALL);

@@ -10,6 +10,10 @@
     - Deprecated `sample::{CHANNELS_MAX, RATE_MAX}`.
     - Added `sample::Spec::{CHANNELS_MAX, RATE_MAX}` replacements.
     - Added `volume::ChannelVolumes::CHANNELS_MAX` replacement.
+    - Deprecated `volume::{VOLUME_NORM, VOLUME_MUTED, VOLUME_MAX, VOLUME_INVALID}`.
+    - Added `volume::Volume::{NORMAL, MUTED, MAX, INVALID}` replacements.
+    - Deprecated `volume::DECIBEL_MINUS_INFINITY`.
+    - Added `volume::VolumeDB::MINUS_INFINITY` replacement.
  * Fixed failure to update `pa_latest` feature in v2.17 to point to `pa_v14` instead of `pa_v13`.
 
 # 2.19.0 (December 8th, 2020)
