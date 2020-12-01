@@ -81,7 +81,7 @@ mod actual {
 }
 
 // Pre-v14
-#[cfg(all(not(feature = "pa_v14"), feature = "pa_v13"))]
+#[cfg(all(feature = "pa_v13", not(feature = "pa_v14")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V13Plus;
     pub const TARGET_VERSION_STRING: &str = "13.0.0";
@@ -90,7 +90,7 @@ mod actual {
 }
 
 // Pre-v13
-#[cfg(all(not(feature = "pa_v13"), feature = "pa_v12"))]
+#[cfg(all(feature = "pa_v12", not(feature = "pa_v13")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V12Plus;
     pub const TARGET_VERSION_STRING: &str = "12.0.0";
@@ -99,7 +99,7 @@ mod actual {
 }
 
 // Pre-v12
-#[cfg(all(not(feature = "pa_v12"), feature = "pa_v8"))]
+#[cfg(all(feature = "pa_v8", not(feature = "pa_v12")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V8Plus;
     pub const TARGET_VERSION_STRING: &str = "11.0.0";
@@ -108,7 +108,7 @@ mod actual {
 }
 
 // Pre-v8
-#[cfg(all(not(feature = "pa_v8"), feature = "pa_v6"))]
+#[cfg(all(feature = "pa_v6", not(feature = "pa_v8")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V6Plus;
     pub const TARGET_VERSION_STRING: &str = "7.0.0";
@@ -117,7 +117,7 @@ mod actual {
 }
 
 // Pre-v6
-#[cfg(all(not(feature = "pa_v6"), feature = "pa_v5"))]
+#[cfg(all(feature = "pa_v5", not(feature = "pa_v6")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V5Plus;
     pub const TARGET_VERSION_STRING: &str = "5.0.0";
@@ -126,7 +126,7 @@ mod actual {
 }
 
 // Pre-v5
-#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+#[cfg(all(not(feature = "dox"), not(feature = "pa_v5")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V4Plus;
     pub const TARGET_VERSION_STRING: &str = "4.0.0";

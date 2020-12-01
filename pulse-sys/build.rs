@@ -20,15 +20,15 @@ fn main() {
     let min_version = {
         #[cfg(feature = "pa_v14")]
         { "14.0" }
-        #[cfg(all(not(feature = "pa_v14"), feature = "pa_v13"))]
+        #[cfg(all(feature = "pa_v13", not(feature = "pa_v14")))]
         { "13.0" }
-        #[cfg(all(not(feature = "pa_v13"), feature = "pa_v12"))]
+        #[cfg(all(feature = "pa_v12", not(feature = "pa_v13")))]
         { "12.0" }
-        #[cfg(all(not(feature = "pa_v12"), feature = "pa_v8"))]
+        #[cfg(all(feature = "pa_v8", not(feature = "pa_v12")))]
         { "8.0" }
-        #[cfg(all(not(feature = "pa_v8"), feature = "pa_v6"))]
+        #[cfg(all(feature = "pa_v6", not(feature = "pa_v8")))]
         { "6.0" }
-        #[cfg(all(not(feature = "pa_v6"), feature = "pa_v5"))]
+        #[cfg(all(feature = "pa_v5", not(feature = "pa_v6")))]
         { "5.0" }
         #[cfg(not(feature = "pa_v5"))]
         { "4.0" }
