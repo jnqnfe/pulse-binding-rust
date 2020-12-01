@@ -72,7 +72,7 @@ pub enum Compatibility {
 }
 
 // Latest
-#[cfg(any(feature = "pa_v14", all(feature = "dox", not(feature = "pa_v5"))))]
+#[cfg(any(feature = "pa_v14", all(doc, not(feature = "pa_v5"))))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V14Plus;
     pub const TARGET_VERSION_STRING: &str = "14.0.0";
@@ -126,7 +126,7 @@ mod actual {
 }
 
 // Pre-v5
-#[cfg(all(not(feature = "dox"), not(feature = "pa_v5")))]
+#[cfg(all(not(doc), not(feature = "pa_v5")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V4Plus;
     pub const TARGET_VERSION_STRING: &str = "4.0.0";

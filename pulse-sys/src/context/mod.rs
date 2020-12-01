@@ -116,6 +116,6 @@ extern "C" {
     pub fn pa_context_rttime_new(c: *const pa_context, usec: pa_usec_t, cb: pa_time_event_cb_t, userdata: *mut c_void) -> *mut pa_time_event;
     pub fn pa_context_rttime_restart(c: *const pa_context, e: *mut pa_time_event, usec: pa_usec_t);
     pub fn pa_context_get_tile_size(c: *const pa_context, ss: *const pa_sample_spec) -> usize;
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub fn pa_context_load_cookie_from_file(c: *mut pa_context, cookie_file_path: *const c_char) -> i32;
 }

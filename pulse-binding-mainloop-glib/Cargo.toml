@@ -38,9 +38,7 @@ pa_v6 = ["pa_v5", "libpulse-binding/pa_v6", "libpulse-mainloop-glib-sys/pa_v6"]
 # Enables PA version 5 support
 pa_v5 = ["libpulse-binding/pa_v5", "libpulse-mainloop-glib-sys/pa_v5"]
 
-# Documentation generation
-# This is intended for use with generation of documentation only. It enables inclusion of the latest
-# supported PA version features, but without triggering the build script’s pkg-config check.
+# This skips the pkg-config check. It is meant for documentation generation purposes only.
 dox = ["libpulse-binding/dox", "libpulse-mainloop-glib-sys/dox"]
 
 [package.metadata.docs.rs]

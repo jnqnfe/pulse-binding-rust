@@ -399,7 +399,7 @@
 //! [`Mainloop::accept()`]: struct.Mainloop.html#method.accept
 
 use std::rc::Rc;
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v5"))]
 use std::ffi::CString;
 use std::ptr::null_mut;
 use crate::def;
@@ -567,7 +567,7 @@ impl Mainloop {
     /// Sets the name of the thread.
     ///
     /// Available since PA version 5.
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub fn set_name(&mut self, name: &str) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

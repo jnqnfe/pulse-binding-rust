@@ -57,12 +57,12 @@ pub enum Encoding {
     /// Dolby TrueHD data encapsulated in IEC 61937 header/padding.
     ///
     /// Available since PA version 13.
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     TRUEHD_IEC61937,
     /// DTS-HD Master Audio encapsulated in IEC 61937 header/padding.
     ///
     /// Available since PA version 13.
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     DTSHD_IEC61937,
 
     /// Represents an invalid encoding.
@@ -84,9 +84,9 @@ fn enc_compare_capi() {
     assert_eq!(Encoding::MPEG_IEC61937,      Encoding::from(capi::pa_encoding_t::MPEG_IEC61937));
     assert_eq!(Encoding::DTS_IEC61937,       Encoding::from(capi::pa_encoding_t::DTS_IEC61937));
     assert_eq!(Encoding::MPEG2_AAC_IEC61937, Encoding::from(capi::pa_encoding_t::MPEG2_AAC_IEC61937));
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     assert_eq!(Encoding::TRUEHD_IEC61937,    Encoding::from(capi::pa_encoding_t::TRUEHD_IEC61937));
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     assert_eq!(Encoding::DTSHD_IEC61937,     Encoding::from(capi::pa_encoding_t::DTSHD_IEC61937));
     assert_eq!(Encoding::Invalid,            Encoding::from(capi::pa_encoding_t::Invalid));
 }
@@ -162,7 +162,7 @@ impl Encoding {
     /// `Encoding`.
     ///
     /// Available since PA version 12.
-    #[cfg(any(feature = "pa_v12", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v12"))]
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -441,7 +441,7 @@ impl Info {
     /// Returns `Err` if the sample format property is not set at all, or is invalid.
     ///
     /// Available since PA version 13.
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     pub fn get_sample_format(&self) -> Result<crate::sample::Format, PAErr> {
         let mut sf: capi::pa_sample_format_t = capi::PA_SAMPLE_INVALID;
         match unsafe { capi::pa_format_info_get_sample_format(
@@ -457,7 +457,7 @@ impl Info {
     /// Returns `Err` if the sample rate property is not set at all, or is invalid.
     ///
     /// Available since PA version 13.
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     pub fn get_rate(&self) -> Result<u32, PAErr> {
         let mut rate: u32 = 0;
         match unsafe { capi::pa_format_info_get_rate(self.ptr as *const capi::pa_format_info,
@@ -473,7 +473,7 @@ impl Info {
     /// Returns `Err` if the channels property is not set at all, or is invalid.
     ///
     /// Available since PA version 13.
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     pub fn get_channel_count(&self) -> Result<u8, PAErr> {
         let mut channels: u8 = 0;
         match unsafe { capi::pa_format_info_get_channels(self.ptr as *const capi::pa_format_info,
@@ -490,7 +490,7 @@ impl Info {
     /// stored in within the property set fails to parse successfully.
     ///
     /// Available since PA version 13.
-    #[cfg(any(feature = "pa_v13", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v13"))]
     pub fn get_channel_map(&self) -> Result<crate::channelmap::Map, PAErr> {
         // Returning the entire struct written to here may be a little less efficient than taking a
         // pointer like the C API, but we avoid the possibility of leaving the user with an

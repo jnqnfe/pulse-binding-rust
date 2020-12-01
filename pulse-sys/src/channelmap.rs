@@ -217,7 +217,7 @@ extern "C" {
     pub fn pa_channel_map_superset(a: *const pa_channel_map, b: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_can_balance(map: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_can_fade(map: *const pa_channel_map) -> i32;
-    #[cfg(any(feature = "pa_v8", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v8"))]
     pub fn pa_channel_map_can_lfe_balance(map: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_to_name(map: *const pa_channel_map) -> *const c_char;
     pub fn pa_channel_map_to_pretty_name(map: *const pa_channel_map) -> *const c_char;

@@ -73,7 +73,7 @@ pub fn get_binary_name(l: usize) -> Option<String> {
 /// other UNIX variants as well). This is also implemented for macOS and Windows.
 ///
 /// Available since PA version 13.
-#[cfg(any(feature = "pa_v13", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v13"))]
 pub fn make_thread_realtime(rtprio: i32) -> Result<(), ()> {
     match unsafe { capi::pa_thread_make_realtime(rtprio) } {
         0 => Ok(()),

@@ -237,9 +237,9 @@ use capi::pa_source_info as SourceInfoInternal;
 use capi::pa_server_info as ServerInfoInternal;
 use capi::pa_module_info as ModuleInfoInternal;
 use capi::pa_client_info as ClientInfoInternal;
-#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+#[cfg(not(any(doc, feature = "pa_v5")))]
 use capi::pa_card_profile_info as CardProfileInfoInternal;
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v5"))]
 use capi::pa_card_profile_info2 as CardProfileInfo2Internal;
 use capi::pa_card_port_info as CardPortInfoInternal;
 use capi::pa_card_info as CardInfoInternal;
@@ -252,7 +252,7 @@ use crate::time::MicroSeconds;
 use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, get_su_capi_params, get_su_callback, ListInstanceCallback};
 use crate::volume::{ChannelVolumes, Volume};
 use crate::{operation::Operation, proplist::Proplist};
-#[cfg(any(feature = "pa_v14", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v14"))]
 use crate::def::DevicePortType;
 
 pub use capi::pa_stat_info as StatInfo;
@@ -332,10 +332,10 @@ pub struct SinkPortInfo<'a> {
     /// Since one group can include both input and output ports, the grouping should be done using
     /// `CardPortInfo` instead of `SinkPortInfo`, but this field is duplicated also in
     /// `SinkPortInfo` (and `SourcePortInfo`) in case someone finds that convenient.
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub availability_group: Option<Cow<'a, str>>,
     /// Port device type.
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub r#type: DevicePortType,
 }
 
@@ -355,12 +355,12 @@ impl<'a> SinkPortInfo<'a> {
                 },
                 priority: src.priority,
                 available: def::PortAvailable::from_i32(src.available).unwrap(),
-                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v14"))]
                 availability_group: match src.availability_group.is_null() {
                     false => Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
                     true => None,
                 },
-                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v14"))]
                 r#type: DevicePortType::from_u32(src.r#type).unwrap(),
             }
         }
@@ -747,10 +747,10 @@ pub struct SourcePortInfo<'a> {
     /// Since one group can include both input and output ports, the grouping should be done using
     /// `CardPortInfo` instead of `SourcePortInfo`, but this field is duplicated also in
     /// `SourcePortInfo` (and `SinkPortInfo`) in case someone finds that convenient.
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub availability_group: Option<Cow<'a, str>>,
     /// Port device type.
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub r#type: DevicePortType,
 }
 
@@ -770,12 +770,12 @@ impl<'a> SourcePortInfo<'a> {
                 },
                 priority: src.priority,
                 available: def::PortAvailable::from_i32(src.available).unwrap(),
-                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v14"))]
                 availability_group: match src.availability_group.is_null() {
                     false=> Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
                     true => None,
                 },
-                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v14"))]
                 r#type: DevicePortType::from_u32(src.r#type).unwrap(),
             }
         }
@@ -1494,7 +1494,7 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
 ///
 /// Replaced with `CardProfileInfo2` in PA version 5+.
 #[derive(Debug)]
-#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+#[cfg(not(any(doc, feature = "pa_v5")))]
 pub struct CardProfileInfo<'a> {
     /// Name of this profile.
     pub name: Option<Cow<'a, str>>,
@@ -1515,7 +1515,7 @@ pub struct CardProfileInfo<'a> {
 ///
 /// Available since PA version 5.
 #[derive(Debug)]
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v5"))]
 pub struct CardProfileInfo2<'a> {
     /// Name of this profile.
     pub name: Option<Cow<'a, str>>,
@@ -1534,7 +1534,7 @@ pub struct CardProfileInfo2<'a> {
     pub available: bool,
 }
 
-#[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+#[cfg(not(any(doc, feature = "pa_v5")))]
 impl<'a> CardProfileInfo<'a> {
     fn new_from_raw(p: *const CardProfileInfoInternal) -> Self {
         assert!(!p.is_null());
@@ -1557,7 +1557,7 @@ impl<'a> CardProfileInfo<'a> {
     }
 }
 
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v5"))]
 impl<'a> CardProfileInfo2<'a> {
     fn new_from_raw(p: *const CardProfileInfo2Internal) -> Self {
         assert!(!p.is_null());
@@ -1603,10 +1603,10 @@ pub struct CardPortInfo<'a> {
     /// active.
     pub latency_offset: i64,
     /// Set of available profiles.
-    #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+    #[cfg(not(any(doc, feature = "pa_v5")))]
     pub profiles: Vec<CardProfileInfo<'a>>,
     /// Set of available profiles.
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
     /// An indentifier for the group of ports that share their availability status with each other.
     ///
@@ -1625,10 +1625,10 @@ pub struct CardPortInfo<'a> {
     /// The group identifier must be treated as an opaque identifier. The string may look like an
     /// ALSA control name, but applications must not assume any such relationship. The group naming
     /// scheme can change without a warning.
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub availability_group: Option<Cow<'a, str>>,
     /// Port device type.
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub r#type: DevicePortType,
 }
 
@@ -1639,9 +1639,9 @@ impl<'a> CardPortInfo<'a> {
 
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
 
-        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+        #[cfg(not(any(doc, feature = "pa_v5")))]
         assert!(src.n_profiles == 0 || !src.profiles.is_null());
-        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+        #[cfg(not(any(doc, feature = "pa_v5")))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles.offset(i)) as *mut CardProfileInfoInternal };
             if !indexed_ptr.is_null() {
@@ -1649,9 +1649,9 @@ impl<'a> CardPortInfo<'a> {
             }
         }
 
-        #[cfg(any(feature = "pa_v5", feature = "dox"))]
+        #[cfg(any(doc, feature = "pa_v5"))]
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
-        #[cfg(any(feature = "pa_v5", feature = "dox"))]
+        #[cfg(any(doc, feature = "pa_v5"))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
@@ -1675,12 +1675,12 @@ impl<'a> CardPortInfo<'a> {
                 proplist: Proplist::from_raw_weak(src.proplist),
                 latency_offset: src.latency_offset,
                 profiles: profiles_vec,
-                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v14"))]
                 availability_group: match src.availability_group.is_null() {
                     false => Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
                     true => None,
                 },
-                #[cfg(any(feature = "pa_v14", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v14"))]
                 r#type: DevicePortType::from_u32(src.r#type).unwrap(),
             }
         }
@@ -1706,16 +1706,16 @@ pub struct CardInfo<'a> {
     /// Set of ports.
     pub ports: Vec<CardPortInfo<'a>>,
     /// Set of available profiles.
-    #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+    #[cfg(not(any(doc, feature = "pa_v5")))]
     pub profiles: Vec<CardProfileInfo<'a>>,
     /// Pointer to active profile in the set, or `None`.
-    #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+    #[cfg(not(any(doc, feature = "pa_v5")))]
     pub active_profile: Option<Box<CardProfileInfo<'a>>>,
     /// Set of available profiles.
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
     /// Pointer to active profile in the set, or `None`.
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub active_profile: Option<Box<CardProfileInfo2<'a>>>,
 }
 
@@ -1734,9 +1734,9 @@ impl<'a> CardInfo<'a> {
         }
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
 
-        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+        #[cfg(not(any(doc, feature = "pa_v5")))]
         assert!(src.n_profiles == 0 || !src.profiles.is_null());
-        #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+        #[cfg(not(any(doc, feature = "pa_v5")))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { src.profiles.offset(i) as *mut CardProfileInfoInternal };
             if !indexed_ptr.is_null() {
@@ -1744,9 +1744,9 @@ impl<'a> CardInfo<'a> {
             }
         }
 
-        #[cfg(any(feature = "pa_v5", feature = "dox"))]
+        #[cfg(any(doc, feature = "pa_v5"))]
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
-        #[cfg(any(feature = "pa_v5", feature = "dox"))]
+        #[cfg(any(doc, feature = "pa_v5"))]
         for i in 0..src.n_profiles as isize {
             let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
@@ -1772,12 +1772,12 @@ impl<'a> CardInfo<'a> {
                 proplist: Proplist::from_raw_weak(src.proplist),
                 ports: ports_vec,
                 profiles: profiles_vec,
-                #[cfg(all(not(feature = "pa_v5"), not(feature = "dox")))]
+                #[cfg(not(any(doc, feature = "pa_v5")))]
                 active_profile: match src.active_profile.is_null() {
                     true => None,
                     false => Some(Box::new(CardProfileInfo::new_from_raw(src.active_profile))),
                 },
-                #[cfg(any(feature = "pa_v5", feature = "dox"))]
+                #[cfg(any(doc, feature = "pa_v5"))]
                 active_profile: match src.active_profile2.is_null() {
                     true => None,
                     false => Some(Box::new(CardProfileInfo2::new_from_raw(src.active_profile2))),

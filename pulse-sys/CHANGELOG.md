@@ -9,6 +9,8 @@
    been the intention as I recall, and as stated in the documentation. This for instance means that
    the docs.rs service will no longer be performing an unintentional pkg-config check when
    generating documentation.
+ * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
+   documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
 
 # 1.15.3 (December 11th, 2020)
 

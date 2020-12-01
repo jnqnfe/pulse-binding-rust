@@ -27,9 +27,9 @@ pub struct pa_sink_port_info {
     pub description: *const c_char,
     pub priority: u32,
     pub available: i32,
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub availability_group: *const c_char,
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub r#type: u32,
 }
 
@@ -69,9 +69,9 @@ pub struct pa_source_port_info {
     pub description: *const c_char,
     pub priority: u32,
     pub available: i32,
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub availability_group: *const c_char,
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub r#type: u32,
 }
 
@@ -176,7 +176,7 @@ pub struct pa_card_profile_info {
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 #[repr(C)]
-#[cfg(any(feature = "pa_v5", feature = "dox"))]
+#[cfg(any(doc, feature = "pa_v5"))]
 pub struct pa_card_profile_info2 {
     /// Name of this profile.
     pub name: *const c_char,
@@ -209,11 +209,11 @@ pub struct pa_card_port_info {
     pub profiles: *mut *mut pa_card_profile_info,
     pub proplist: *mut pa_proplist,
     pub latency_offset: i64,
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub profiles2: *mut *mut pa_card_profile_info2,
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub availability_group: *const c_char,
-    #[cfg(any(feature = "pa_v14", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v14"))]
     pub r#type: u32,
 }
 
@@ -233,9 +233,9 @@ pub struct pa_card_info {
     pub proplist: *mut pa_proplist,
     pub n_ports: u32,
     pub ports: *mut *mut pa_card_port_info,
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub profiles2: *mut *mut pa_card_profile_info2,
-    #[cfg(any(feature = "pa_v5", feature = "dox"))]
+    #[cfg(any(doc, feature = "pa_v5"))]
     pub active_profile2: *mut pa_card_profile_info2,
 }
 
