@@ -7,7 +7,7 @@ readme = "README.md"
 description = """
 A Rust language binding for the PulseAudio libpulse-mainloop-glib library.
 """
-keywords = ["binding", "pulse", "pulseaudio", "pulse-mainloop-glib", "audio"]
+keywords = ["binding", "pulseaudio", "glib", "audio"]
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]

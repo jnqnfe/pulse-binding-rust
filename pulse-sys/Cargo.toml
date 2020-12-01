@@ -7,7 +7,7 @@ readme = "README.md"
 description = """
 A Rust language linking library for the PulseAudio libpulse library.
 """
-keywords = ["sys", "binding", "pulse", "pulseaudio", "audio"]
+keywords = ["ffi", "pulseaudio", "audio"]
 links = "pulse"
 build = "build.rs"
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
