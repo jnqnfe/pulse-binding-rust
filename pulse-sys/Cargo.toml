@@ -1,19 +1,17 @@
 [package]
+edition = "2018"
 name = "libpulse-sys"
 version = "1.15.3"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-description = """
-A Rust language linking library for the PulseAudio libpulse library.
-"""
+description = "A Rust language linking library for the PulseAudio libpulse library."
 keywords = ["ffi", "pulseaudio", "audio"]
-links = "pulse"
-build = "build.rs"
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
-edition = "2018"
+links = "pulse"
+build = "build.rs"
 
 [dependencies]
 libc = "0.2"
@@ -31,19 +29,12 @@ default = ["pa_v8"]
 
 # PA version compatibility selection
 # See the overall project `COMPATIBILITY.md` file for explanation.
-#
-# Enables PA version 14 support
 pa_v14 = ["pa_v13"]
-# Enables PA version 13 support
 pa_v13 = ["pa_v12"]
-# Enables PA version 12 support
 pa_v12 = ["pa_v8"]
-# Enables PA version 8 support
-pa_v8 = ["pa_v6"]
-# Enables PA version 6 support
-pa_v6 = ["pa_v5"]
-# Enables PA version 5 support
-pa_v5 = []
+pa_v8  = ["pa_v6"]
+pa_v6  = ["pa_v5"]
+pa_v5  = []
 
 # This skips the pkg-config check. It is meant for documentation generation purposes only.
 dox = []
