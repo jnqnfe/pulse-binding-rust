@@ -3,6 +3,7 @@
  * Made some changes to cargo features:
     - Removed the `pa_latest` and `pa_latest_common` cargo features.
     - Changed the default version feature level to `pa_v8`.
+ * MSRV bumped from 1.40 to 1.41.
  * Moved the following functions from the `sample` mod to methods of `sample::Spec`:
    `format_is_valid()`, `rate_is_valid()` and `channels_are_valid()`, having noticed that they
    clearly relate to the attributes of that type and so should have been there all along.

@@ -3,6 +3,7 @@
  * Made some changes to cargo features:
     - Removed the `pa_latest` and `pa_latest_common` cargo features.
     - Changed the default version feature level to `pa_v8`.
+ * MSRV bumped from 1.40 to 1.41.
 
 # 2.18.1 (November 25th, 2020)
 

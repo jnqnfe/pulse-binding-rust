@@ -3,6 +3,7 @@
  * Made some changes to cargo features:
     - Removed the `pa_latest` and `pa_latest_common` cargo features.
     - Changed the default version feature level to `pa_v8`.
+ * MSRV bumped from 1.40 to 1.41.
  * Fixed failure to actually bypass the pkg-config check when `dox` feature is used, as had always
    been the intention as I recall, and as stated in the documentation. This for instance means that
    the docs.rs service will no longer be performing an unintentional pkg-config check when
