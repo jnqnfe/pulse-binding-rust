@@ -7,7 +7,7 @@ libpulse-simple-sys
 [<img alt="min-rust-version" src="https://img.shields.io/static/v1?label=RUST&message=1.41%2B&color=informational&style=for-the-badge" height="24">](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 
 FFI bindings for the PulseAudio libpulse-simple system library. See also the higher-level
-`libpulse-simple-binding` crate.
+[`libpulse-simple-binding`](https://crates.io/crates/libpulse-simple-binding) crate.
 
 ## Usage
 
