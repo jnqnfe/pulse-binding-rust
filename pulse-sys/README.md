@@ -6,8 +6,8 @@ libpulse-sys
 [<img alt="docs.rs" src="https://img.shields.io/crates/v/libpulse-sys?color=5479ab&label=docs.rs&style=for-the-badge" height="24">](https://docs.rs/libpulse-sys)
 [<img alt="min-rust-version" src="https://img.shields.io/static/v1?label=RUST&message=1.41%2B&color=informational&style=for-the-badge" height="24">](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 
-A Rust language linking library for the PulseAudio libpulse library. See also the higher-level
-`libpulse_binding` crate.
+FFI bindings for the PulseAudio libpulse system library. See also the higher-level
+`libpulse-binding` crate.
 
 ## Usage
 
