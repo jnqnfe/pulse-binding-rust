@@ -9,17 +9,27 @@ Changes can be submitted as “pull requests” on the project [github repositor
 
 [github repository]: https://github.com/jnqnfe/pulse-binding-rust
 
-## Licensing
+## Copyright & Licensing
 
-Understand that the set of files that form this project are published under a specific licensing
-model, the purpose of which is to define the rights of use and to protect the project and its
-developers. When changes to this set of files are submitted, naturally and as is typical, it will be
-assumed that you accept your changes being licensed under that licensing model.
+Protecting the rights of users, developers, and contributors alike is important. As is typical for
+projects like this, the work produced by this project is protected by copyright law and is made
+available under specific licensing terms and conditions that define and protect the rights of all of
+the afore mentioned groups of individuals. The details of the current licensing model can be found
+in the project `README.md` file, should you wish to review what model exactly is in use.
 
-If the existing licensing is somehow insufficient and you wish for an alternate arrangement, you
-must make this very clear, and it would be wise to ask in advance before investing effort into a
-change which may be rejected on this basis.
+When considering contributing, you must understand that unless you explicitly state otherwise, any
+contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0
+license, shall be dual licensed as described in the project `README.md` file, without any additional
+terms or conditions.
 
-Implicit or explicit acceptance of changes being incorporated under the licensing model of the
-project does not imply consent for your changes to later be re-licensed under a different license
-at the sole discretion of the project owner(s).
+Please understand that when submitting a contribution, if you insist upon different licensing, this
+will likely make it impossible for your contribution to be accepted. You are encouraged to ask in
+advance if you are considering doing this.
+
+You should understand that you are the copyright holder of your contributions, although not all
+contributions (for instance typo fixes) meet the legal standard of being copyrightable work. For any
+contributions that do meet the standard of being something copyrightable, the licensing itself
+includes certain protections guarding your work from being re-licensed under different licensing
+without your consent.
+
+Note: Other projects may feel completely free to re-use and modify this text for their own purposes.
