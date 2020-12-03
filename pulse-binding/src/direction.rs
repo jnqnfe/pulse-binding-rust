@@ -31,6 +31,7 @@ pub mod flags {
 /// Available since PA version 6.
 #[inline]
 #[cfg(any(doc, feature = "pa_v6"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
 pub fn is_valid(f: FlagSet) -> bool {
     unsafe { capi::pa_direction_valid(f) != 0 }
 }
@@ -40,6 +41,7 @@ pub fn is_valid(f: FlagSet) -> bool {
 /// Available since PA version 6.
 #[inline]
 #[cfg(any(doc, feature = "pa_v6"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
 pub fn to_string(f: FlagSet) -> String {
     unsafe { CStr::from_ptr(capi::pa_direction_to_string(f)).to_string_lossy().into_owned() }
 }

@@ -355,6 +355,7 @@ impl Volume {
     ///
     /// Available since PA version 5.
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn print_verbose(&self, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_VOLUME_SNPRINT_VERBOSE_MAX;
         let mut tmp = Vec::with_capacity(PRINT_VERBOSE_MAX);
@@ -662,6 +663,7 @@ impl ChannelVolumes {
     /// [`Map::can_lfe_balance()`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
     #[cfg(any(doc, feature = "pa_v8"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]
     pub fn get_lfe_balance(&self, map: &Map) -> f32 {
         unsafe { capi::pa_cvolume_get_lfe_balance(self.as_ref(), map.as_ref()) }
     }
@@ -682,6 +684,7 @@ impl ChannelVolumes {
     /// [`Map::can_lfe_balance()`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
     #[cfg(any(doc, feature = "pa_v8"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]
     pub fn set_lfe_balance(&mut self, map: &Map, new_balance: f32) -> Option<&mut Self> {
         let ptr = unsafe { capi::pa_cvolume_set_lfe_balance(self.as_mut(), map.as_ref(),
             new_balance) };
@@ -823,6 +826,7 @@ impl ChannelVolumes {
     ///
     /// Available since PA version 5.
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn print_verbose(&self, map: Option<&Map>, print_db: bool) -> String {
         const PRINT_VERBOSE_MAX: usize = capi::PA_CVOLUME_SNPRINT_VERBOSE_MAX;
 

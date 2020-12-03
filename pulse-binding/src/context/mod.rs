@@ -594,6 +594,7 @@ impl Context {
     ///
     /// Available since PA version 5.
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

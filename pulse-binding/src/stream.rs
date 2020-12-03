@@ -1012,6 +1012,7 @@ impl Stream {
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`write()`]: #method.write
     #[cfg(any(doc, feature = "pa_v6"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
     pub fn write_ext_free(&mut self, data: &[u8], free_cb: Option<(def::FreeCb, *mut c_void)>,
         offset: i64, seek: SeekMode) -> Result<(), PAErr>
     {

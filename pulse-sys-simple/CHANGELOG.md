@@ -10,6 +10,8 @@
    generating documentation.
  * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
+ * Added support for feature tagging in documentation (requires nightly Rust version, so only
+   enabled if a certain config flag is used, as for the docs.rs copy).
 
 # 1.15.1 (November 25th, 2020)
 

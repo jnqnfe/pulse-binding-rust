@@ -333,9 +333,11 @@ pub struct SinkPortInfo<'a> {
     /// `CardPortInfo` instead of `SinkPortInfo`, but this field is duplicated also in
     /// `SinkPortInfo` (and `SourcePortInfo`) in case someone finds that convenient.
     #[cfg(any(doc, feature = "pa_v14"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
     pub availability_group: Option<Cow<'a, str>>,
     /// Port device type.
     #[cfg(any(doc, feature = "pa_v14"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
     pub r#type: DevicePortType,
 }
 
@@ -748,9 +750,11 @@ pub struct SourcePortInfo<'a> {
     /// `CardPortInfo` instead of `SourcePortInfo`, but this field is duplicated also in
     /// `SourcePortInfo` (and `SinkPortInfo`) in case someone finds that convenient.
     #[cfg(any(doc, feature = "pa_v14"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
     pub availability_group: Option<Cow<'a, str>>,
     /// Port device type.
     #[cfg(any(doc, feature = "pa_v14"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
     pub r#type: DevicePortType,
 }
 
@@ -1516,6 +1520,7 @@ pub struct CardProfileInfo<'a> {
 /// Available since PA version 5.
 #[derive(Debug)]
 #[cfg(any(doc, feature = "pa_v5"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
 pub struct CardProfileInfo2<'a> {
     /// Name of this profile.
     pub name: Option<Cow<'a, str>>,
@@ -1607,6 +1612,7 @@ pub struct CardPortInfo<'a> {
     pub profiles: Vec<CardProfileInfo<'a>>,
     /// Set of available profiles.
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
     /// An indentifier for the group of ports that share their availability status with each other.
     ///
@@ -1626,9 +1632,11 @@ pub struct CardPortInfo<'a> {
     /// ALSA control name, but applications must not assume any such relationship. The group naming
     /// scheme can change without a warning.
     #[cfg(any(doc, feature = "pa_v14"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
     pub availability_group: Option<Cow<'a, str>>,
     /// Port device type.
     #[cfg(any(doc, feature = "pa_v14"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
     pub r#type: DevicePortType,
 }
 
@@ -1713,9 +1721,11 @@ pub struct CardInfo<'a> {
     pub active_profile: Option<Box<CardProfileInfo<'a>>>,
     /// Set of available profiles.
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub profiles: Vec<CardProfileInfo2<'a>>,
     /// Pointer to active profile in the set, or `None`.
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub active_profile: Option<Box<CardProfileInfo2<'a>>>,
 }
 

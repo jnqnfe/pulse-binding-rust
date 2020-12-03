@@ -28,7 +28,9 @@ pub const PA_DIRECTION_INPUT:  pa_direction_t = 0x2;
 #[link(name="pulse")]
 extern "C" {
     #[cfg(any(doc, feature = "pa_v6"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
     pub fn pa_direction_valid(direction: pa_direction_t) -> i32;
     #[cfg(any(doc, feature = "pa_v6"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
     pub fn pa_direction_to_string(direction: pa_direction_t) -> *const c_char;
 }

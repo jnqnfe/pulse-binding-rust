@@ -218,6 +218,7 @@ extern "C" {
     pub fn pa_channel_map_can_balance(map: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_can_fade(map: *const pa_channel_map) -> i32;
     #[cfg(any(doc, feature = "pa_v8"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]
     pub fn pa_channel_map_can_lfe_balance(map: *const pa_channel_map) -> i32;
     pub fn pa_channel_map_to_name(map: *const pa_channel_map) -> *const c_char;
     pub fn pa_channel_map_to_pretty_name(map: *const pa_channel_map) -> *const c_char;

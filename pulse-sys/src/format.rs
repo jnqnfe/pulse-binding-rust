@@ -31,8 +31,10 @@ pub enum pa_encoding_t {
     DTS_IEC61937,
     MPEG2_AAC_IEC61937,
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     TRUEHD_IEC61937,
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     DTSHD_IEC61937,
 
     Invalid = -1,
@@ -48,8 +50,10 @@ pub const PA_ENCODING_MPEG_IEC61937:      pa_encoding_t = pa_encoding_t::MPEG_IE
 pub const PA_ENCODING_DTS_IEC61937:       pa_encoding_t = pa_encoding_t::DTS_IEC61937;
 pub const PA_ENCODING_MPEG2_AAC_IEC61937: pa_encoding_t = pa_encoding_t::MPEG2_AAC_IEC61937;
 #[cfg(any(doc, feature = "pa_v13"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
 pub const PA_ENCODING_TRUEHD_IEC61937:    pa_encoding_t = pa_encoding_t::TRUEHD_IEC61937;
 #[cfg(any(doc, feature = "pa_v13"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
 pub const PA_ENCODING_DTSHD_IEC61937:     pa_encoding_t = pa_encoding_t::DTSHD_IEC61937;
 pub const PA_ENCODING_INVALID:            pa_encoding_t = pa_encoding_t::Invalid;
 
@@ -104,6 +108,7 @@ impl Default for pa_prop_type_t {
 extern "C" {
     pub fn pa_encoding_to_string(e: pa_encoding_t) -> *const c_char;
     #[cfg(any(doc, feature = "pa_v12"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v12")))]
     pub fn pa_encoding_from_string(encoding: *const c_char) -> pa_encoding_t;
 
     pub fn pa_format_info_new() -> *mut pa_format_info;
@@ -124,12 +129,16 @@ extern "C" {
     pub fn pa_format_info_get_prop_string_array(f: *const pa_format_info, key: *const c_char, values: *mut *mut *mut c_char, n_values: *mut i32) -> i32;
     pub fn pa_format_info_free_string_array(values: *mut *mut c_char, n_values: i32);
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn pa_format_info_get_sample_format(f: *const pa_format_info, sf: *mut pa_sample_format_t) -> i32;
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn pa_format_info_get_rate(f: *const pa_format_info, rate: *mut u32) -> i32;
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn pa_format_info_get_channels(f: *const pa_format_info, channels: *mut u8) -> i32;
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn pa_format_info_get_channel_map(f: *const pa_format_info, map: *const pa_channel_map) -> i32;
     pub fn pa_format_info_set_prop_int(f: *mut pa_format_info, key: *const c_char, value: i32);
     pub fn pa_format_info_set_prop_int_array(f: *mut pa_format_info, key: *const c_char, values: *const i32, n_values: i32);

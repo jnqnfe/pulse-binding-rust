@@ -69,6 +69,7 @@ pub const PA_SW_CVOLUME_SNPRINT_DB_MAX: usize = 448;
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 #[cfg(any(doc, feature = "pa_v5"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
 pub const PA_CVOLUME_SNPRINT_VERBOSE_MAX: usize = 1984;
 
 /// The maximum length of strings returned by [`pa_volume_snprint()`](fn.pa_volume_snprint.html).
@@ -91,6 +92,7 @@ pub const PA_SW_VOLUME_SNPRINT_DB_MAX: usize = 11;
 /// considered API or ABI breakage. You should not use this definition anywhere where it might
 /// become part of an ABI.
 #[cfg(any(doc, feature = "pa_v5"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
 pub const PA_VOLUME_SNPRINT_VERBOSE_MAX: usize = 35;
 
 #[inline(always)]
@@ -128,11 +130,13 @@ extern "C" {
     pub fn pa_cvolume_snprint(s: *mut c_char, l: usize, c: *const pa_cvolume) -> *mut c_char;
     pub fn pa_sw_cvolume_snprint_dB(s: *mut c_char, l: usize, c: *const pa_cvolume) -> *mut c_char;
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn pa_cvolume_snprint_verbose(s: *mut c_char, l: usize, c: *const pa_cvolume, map: *const pa_channel_map, print_dB: i32) -> *mut c_char;
 
     pub fn pa_volume_snprint(s: *mut c_char, l: usize, v: pa_volume_t) -> *mut c_char;
     pub fn pa_sw_volume_snprint_dB(s: *mut c_char, l: usize, v: pa_volume_t) -> *mut c_char;
     #[cfg(any(doc, feature = "pa_v5"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn pa_volume_snprint_verbose(s: *mut c_char, l: usize, v: pa_volume_t, print_dB: i32) -> *mut c_char;
 
     pub fn pa_cvolume_avg(a: *const pa_cvolume) -> pa_volume_t;
@@ -163,8 +167,10 @@ extern "C" {
     pub fn pa_cvolume_get_fade(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
     pub fn pa_cvolume_set_fade(v: *mut pa_cvolume, map: *const pa_channel_map, new_fade: f32) -> *mut pa_cvolume;
     #[cfg(any(doc, feature = "pa_v8"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]
     pub fn pa_cvolume_get_lfe_balance(v: *const pa_cvolume, map: *const pa_channel_map) -> f32;
     #[cfg(any(doc, feature = "pa_v8"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]
     pub fn pa_cvolume_set_lfe_balance(v: *mut pa_cvolume, map: *const pa_channel_map, new_balance: f32) -> *mut pa_cvolume;
     pub fn pa_cvolume_scale(v: *mut pa_cvolume, max: pa_volume_t) -> *mut pa_cvolume;
     pub fn pa_cvolume_scale_mask(v: *mut pa_cvolume, max: pa_volume_t, cm: *const pa_channel_map, mask: pa_channel_position_mask_t) -> *mut pa_cvolume;

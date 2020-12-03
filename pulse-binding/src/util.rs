@@ -74,6 +74,7 @@ pub fn get_binary_name(l: usize) -> Option<String> {
 ///
 /// Available since PA version 13.
 #[cfg(any(doc, feature = "pa_v13"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
 pub fn make_thread_realtime(rtprio: i32) -> Result<(), ()> {
     match unsafe { capi::pa_thread_make_realtime(rtprio) } {
         0 => Ok(()),

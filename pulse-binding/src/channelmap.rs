@@ -494,6 +494,7 @@ impl Map {
     /// Available since PA version 8.
     #[inline]
     #[cfg(any(doc, feature = "pa_v8"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]
     pub fn can_lfe_balance(&self) -> bool {
         unsafe { capi::pa_channel_map_can_lfe_balance(self.as_ref()) != 0 }
     }

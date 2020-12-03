@@ -27,6 +27,8 @@
 
 #![allow(non_camel_case_types, non_snake_case)]
 
+#[cfg_attr(docsrs, feature(doc_cfg))]
+
 extern crate libpulse_sys as pulse;
 extern crate glib_sys as glib;
 

@@ -36,3 +36,4 @@ dox = ["libpulse-binding/dox", "libpulse-mainloop-glib-sys/dox"]
 features = ["dox"]
 all-features = false
 no-default-features = true
+rustdoc-args = ["--cfg", "docsrs"]

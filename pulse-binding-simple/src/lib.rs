@@ -109,6 +109,8 @@
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
 
+#[cfg_attr(docsrs, feature(doc_cfg))]
+
 extern crate libpulse_binding as pulse;
 extern crate libpulse_sys as pcapi;
 extern crate libpulse_simple_sys as capi;

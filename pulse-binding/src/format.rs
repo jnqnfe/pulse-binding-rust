@@ -58,11 +58,13 @@ pub enum Encoding {
     ///
     /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     TRUEHD_IEC61937,
     /// DTS-HD Master Audio encapsulated in IEC 61937 header/padding.
     ///
     /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     DTSHD_IEC61937,
 
     /// Represents an invalid encoding.
@@ -163,6 +165,7 @@ impl Encoding {
     ///
     /// Available since PA version 12.
     #[cfg(any(doc, feature = "pa_v12"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v12")))]
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -442,6 +445,7 @@ impl Info {
     ///
     /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_sample_format(&self) -> Result<crate::sample::Format, PAErr> {
         let mut sf: capi::pa_sample_format_t = capi::PA_SAMPLE_INVALID;
         match unsafe { capi::pa_format_info_get_sample_format(
@@ -458,6 +462,7 @@ impl Info {
     ///
     /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_rate(&self) -> Result<u32, PAErr> {
         let mut rate: u32 = 0;
         match unsafe { capi::pa_format_info_get_rate(self.ptr as *const capi::pa_format_info,
@@ -474,6 +479,7 @@ impl Info {
     ///
     /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_channel_count(&self) -> Result<u8, PAErr> {
         let mut channels: u8 = 0;
         match unsafe { capi::pa_format_info_get_channels(self.ptr as *const capi::pa_format_info,
@@ -491,6 +497,7 @@ impl Info {
     ///
     /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_channel_map(&self) -> Result<crate::channelmap::Map, PAErr> {
         // Returning the entire struct written to here may be a little less efficient than taking a
         // pointer like the C API, but we avoid the possibility of leaving the user with an
