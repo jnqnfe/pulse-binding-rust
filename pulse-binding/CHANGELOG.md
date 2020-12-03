@@ -24,6 +24,7 @@
     - Added `context::subscribe::{Facility::MASK, Operation::MASK}` replacements.
  * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
+ * Marked `version::Compatibility` as `#[non_exhaustive]`.
 
 # 2.19.0 (December 8th, 2020)
 

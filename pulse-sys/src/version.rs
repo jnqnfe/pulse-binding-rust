@@ -54,6 +54,7 @@ use std::os::raw::c_char;
 /// Cargo feature flags.
 ///
 /// Note that PA v4 is the oldest supported.
+#[non_exhaustive]
 pub enum Compatibility {
     /// Support for PA versions 4+ selected.
     V4Plus,
