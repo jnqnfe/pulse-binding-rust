@@ -1,5 +1,8 @@
 # [unreleased]
 
+ * Added the following functions to help check the version of the PA system library at runtime:
+   `version::get_library_version_numbers()`, `version::compare_with_library_version()` and
+   `version::library_version_is_too_old()`.
  * Tweaked version constants.
 
 # 2.21.0 (December 15th, 2020)

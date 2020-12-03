@@ -125,6 +125,11 @@ of PA than they were compiled for, and/or to make careful choices as to the use 
 and PA version 14.0 is very new, so unlikely that programs will select the version 14.0 feature flag
 for quite a while. So hopefully this should not be a practical problem).
 
+Some helper functions are provided in the `version` mod of the main binding crate to assist in
+checking at runtime the version of the available PA system library by processing the version string
+it makes available. You can use these to detect and prevent your program from loading with old PA
+versions to thus avoid the potential issues described here.
+
 ## A Note On Linking
 
 Note that since the nature of the crates are such that they have code that talks to most of the PA
