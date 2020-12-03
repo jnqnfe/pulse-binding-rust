@@ -565,8 +565,6 @@ impl Mainloop {
     }
 
     /// Sets the name of the thread.
-    ///
-    /// Available since PA version 5.
     #[cfg(any(doc, feature = "pa_v5"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn set_name(&mut self, name: &str) {

@@ -490,8 +490,6 @@ impl Map {
     /// Checks whether or not it makes sense to apply a volume “LFE balance” (i.e. “balance” between
     /// LFE and non-LFE channels) with this mapping, i.e. if there are LFE and non-LFE channels
     /// available.
-    ///
-    /// Available since PA version 8.
     #[inline]
     #[cfg(any(doc, feature = "pa_v8"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v8")))]

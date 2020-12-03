@@ -27,8 +27,6 @@ pub mod flags {
 }
 
 /// Checks whether direction is valid (either input, output or bidirectional).
-///
-/// Available since PA version 6.
 #[inline]
 #[cfg(any(doc, feature = "pa_v6"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
@@ -37,8 +35,6 @@ pub fn is_valid(f: FlagSet) -> bool {
 }
 
 /// Gets a textual representation of the direction.
-///
-/// Available since PA version 6.
 #[inline]
 #[cfg(any(doc, feature = "pa_v6"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]

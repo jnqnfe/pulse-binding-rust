@@ -352,8 +352,6 @@ impl Volume {
     ///
     /// The volume is printed in several formats: the raw volume value, percentage, and if
     /// `print_db` is true, also the dB value.
-    ///
-    /// Available since PA version 5.
     #[cfg(any(doc, feature = "pa_v5"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn print_verbose(&self, print_db: bool) -> String {
@@ -658,8 +656,6 @@ impl ChannelVolumes {
     /// balanced. If no value is applicable to this channel map the return value will always be
     /// `0.0`. See [`Map::can_lfe_balance()`].
     ///
-    /// Available since PA version 8.
-    ///
     /// [`Map::can_lfe_balance()`]: ../channelmap/struct.Map.html#method.can_lfe_balance
     #[inline]
     #[cfg(any(doc, feature = "pa_v8"))]
@@ -677,8 +673,6 @@ impl ChannelVolumes {
     /// [`Map::can_lfe_balance()`].
     ///
     /// Returns pointer to self, or `None` on error.
-    ///
-    /// Available since PA version 8.
     ///
     /// [`get_lfe_balance()`]: #method.get_lfe_balance
     /// [`Map::can_lfe_balance()`]: ../channelmap/struct.Map.html#method.can_lfe_balance
@@ -823,8 +817,6 @@ impl ChannelVolumes {
     /// The volume for each channel is printed in several formats: the raw volume value,
     /// percentage, and if `print_db` is non-zero, also the dB value. If `map` is provided, the
     /// channel names will be printed.
-    ///
-    /// Available since PA version 5.
     #[cfg(any(doc, feature = "pa_v5"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn print_verbose(&self, map: Option<&Map>, print_db: bool) -> String {

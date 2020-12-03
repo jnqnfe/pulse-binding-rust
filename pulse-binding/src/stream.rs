@@ -1007,8 +1007,6 @@ impl Stream {
     /// * `offset`: Offset for seeking. Must be `0` for upload streams.
     /// * `seek`: Seek mode, must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// Available since PA version 6.
-    ///
     /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
     /// [`write()`]: #method.write
     #[cfg(any(doc, feature = "pa_v6"))]

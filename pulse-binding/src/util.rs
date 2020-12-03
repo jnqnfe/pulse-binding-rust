@@ -71,8 +71,6 @@ pub fn get_binary_name(l: usize) -> Option<String> {
 ///
 /// On Linux, this uses RealTimeKit if available and POSIX APIs otherwise (the latter applies to
 /// other UNIX variants as well). This is also implemented for macOS and Windows.
-///
-/// Available since PA version 13.
 #[cfg(any(doc, feature = "pa_v13"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
 pub fn make_thread_realtime(rtprio: i32) -> Result<(), ()> {

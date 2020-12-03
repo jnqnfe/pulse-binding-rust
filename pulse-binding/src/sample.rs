@@ -315,8 +315,6 @@ impl Spec {
     /// Checks only if the format attribute is valid.
     ///
     /// Or in other words that the client library running on the end user system accepts it.
-    ///
-    /// Available since PA version 5.
     #[inline]
     #[cfg(any(doc, feature = "pa_v5"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
@@ -325,8 +323,6 @@ impl Spec {
     }
 
     /// Checks only if the rate is within the supported range.
-    ///
-    /// Available since PA version 5.
     #[inline]
     #[cfg(any(doc, feature = "pa_v5"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
@@ -335,8 +331,6 @@ impl Spec {
     }
 
     /// Checks only if the channel count is within the supported range.
-    ///
-    /// Available since PA version 5.
     #[inline]
     #[cfg(any(doc, feature = "pa_v5"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]

@@ -55,14 +55,10 @@ pub enum Encoding {
     /// MPEG-2 AAC data encapsulated in IEC 61937 header/padding.
     MPEG2_AAC_IEC61937,
     /// Dolby TrueHD data encapsulated in IEC 61937 header/padding.
-    ///
-    /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     TRUEHD_IEC61937,
     /// DTS-HD Master Audio encapsulated in IEC 61937 header/padding.
-    ///
-    /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     DTSHD_IEC61937,
@@ -162,8 +158,6 @@ impl Encoding {
 
     /// Converts a string of the form returned by [`to_string()`](#method.to_string) back to an
     /// `Encoding`.
-    ///
-    /// Available since PA version 12.
     #[cfg(any(doc, feature = "pa_v12"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v12")))]
     pub fn from_string(encoding: &str) -> Self {
@@ -442,8 +436,6 @@ impl Info {
     /// Gets the sample format stored in the format info.
     ///
     /// Returns `Err` if the sample format property is not set at all, or is invalid.
-    ///
-    /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_sample_format(&self) -> Result<crate::sample::Format, PAErr> {
@@ -459,8 +451,6 @@ impl Info {
     /// Gets the sample rate stored in the format info.
     ///
     /// Returns `Err` if the sample rate property is not set at all, or is invalid.
-    ///
-    /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_rate(&self) -> Result<u32, PAErr> {
@@ -476,8 +466,6 @@ impl Info {
     /// Gets the channel count stored in the format info.
     ///
     /// Returns `Err` if the channels property is not set at all, or is invalid.
-    ///
-    /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_channel_count(&self) -> Result<u8, PAErr> {
@@ -494,8 +482,6 @@ impl Info {
     ///
     /// Returns `Err` if the channel map property is not set at all, or if the string form it is
     /// stored in within the property set fails to parse successfully.
-    ///
-    /// Available since PA version 13.
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]
     pub fn get_channel_map(&self) -> Result<crate::channelmap::Map, PAErr> {

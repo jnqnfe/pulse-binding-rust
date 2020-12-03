@@ -1516,8 +1516,6 @@ pub struct CardProfileInfo<'a> {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-///
-/// Available since PA version 5.
 #[derive(Debug)]
 #[cfg(any(doc, feature = "pa_v5"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
