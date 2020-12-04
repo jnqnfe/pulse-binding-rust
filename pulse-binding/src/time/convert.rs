@@ -15,6 +15,15 @@
 
 use super::*;
 
+// To `MicroSeconds`
+
+impl From<Duration> for MicroSeconds {
+    #[inline]
+    fn from(t: Duration) -> Self {
+        MicroSeconds((t.as_secs() * MILLIS_PER_SEC) + t.subsec_millis() as u64)
+    }
+}
+
 impl From<Timeval> for MicroSeconds {
     #[inline]
     fn from(t: Timeval) -> Self {
@@ -30,12 +39,8 @@ impl From<MicroSeconds> for Timeval {
     }
 }
 
-impl From<Duration> for MicroSeconds {
-    #[inline]
-    fn from(t: Duration) -> Self {
-        MicroSeconds((t.as_secs() * MILLIS_PER_SEC) + t.subsec_millis() as u64)
-    }
-}
+// To `Duration`
+
 impl From<MicroSeconds> for Duration {
     #[inline]
     fn from(t: MicroSeconds) -> Self {
@@ -43,15 +48,16 @@ impl From<MicroSeconds> for Duration {
     }
 }
 
-impl From<Duration> for Timeval {
-    #[inline]
-    fn from(t: Duration) -> Self {
-        Timeval::new(t.as_secs() as self::timeval::TvSecs, t.subsec_millis() as self::timeval::TvUsecs)
-    }
-}
 impl From<Timeval> for Duration {
     #[inline]
     fn from(t: Timeval) -> Self {
         Duration::from_millis((MicroSeconds::from(t)).0)
+    }
+}
+
+impl From<Duration> for Timeval {
+    #[inline]
+    fn from(t: Duration) -> Self {
+        Timeval::new(t.as_secs() as self::timeval::TvSecs, t.subsec_millis() as self::timeval::TvUsecs)
     }
 }
