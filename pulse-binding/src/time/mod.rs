@@ -13,6 +13,7 @@
 
 //! Time handling functionality.
 
+mod convert; //private!
 mod microseconds;
 mod monotonic;
 mod timeval;
@@ -39,44 +40,3 @@ pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
 /// Largest valid time value in microseconds (largest integer value is reserved for representing
 /// ‘invalid’).
 pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
-
-impl From<Timeval> for MicroSeconds {
-    #[inline]
-    fn from(t: Timeval) -> Self {
-        MicroSeconds(unsafe { capi::pa_timeval_load(&t.0) })
-    }
-}
-impl From<MicroSeconds> for Timeval {
-    #[inline]
-    fn from(t: MicroSeconds) -> Self {
-        let secs = t.0 / MICROS_PER_SEC;
-        let usecs = t.0 % MICROS_PER_SEC;
-        Timeval::new(secs as self::timeval::TvSecs, usecs as self::timeval::TvUsecs)
-    }
-}
-
-impl From<Duration> for MicroSeconds {
-    #[inline]
-    fn from(t: Duration) -> Self {
-        MicroSeconds((t.as_secs() * MILLIS_PER_SEC) + t.subsec_millis() as u64)
-    }
-}
-impl From<MicroSeconds> for Duration {
-    #[inline]
-    fn from(t: MicroSeconds) -> Self {
-        Duration::from_millis(t.0)
-    }
-}
-
-impl From<Duration> for Timeval {
-    #[inline]
-    fn from(t: Duration) -> Self {
-        Timeval::new(t.as_secs() as self::timeval::TvSecs, t.subsec_millis() as self::timeval::TvUsecs)
-    }
-}
-impl From<Timeval> for Duration {
-    #[inline]
-    fn from(t: Timeval) -> Self {
-        Duration::from_millis((MicroSeconds::from(t)).0)
-    }
-}
