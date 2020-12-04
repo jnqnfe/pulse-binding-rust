@@ -36,7 +36,7 @@
 //! Subscribe (declare interest):
 //!
 //! ```rust,ignore
-//! use pulse::context::subscribe::subscription_masks;
+//! use libpulse_binding::context::subscribe::subscription_masks;
 //!
 //! let interest = subscription_masks::SINK |
 //!     subscription_masks::SOURCE;

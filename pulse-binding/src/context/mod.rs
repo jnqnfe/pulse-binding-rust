@@ -528,7 +528,7 @@ impl Context {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
+    /// use libpulse_binding::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = context.rttime_new::<Mainloop, _>(&mainloop,
     ///     MonotonicTs::now() + MicroSeconds(5 * MICROS_PER_SEC),
     ///     |_| { println!("Timer event fired!"); });

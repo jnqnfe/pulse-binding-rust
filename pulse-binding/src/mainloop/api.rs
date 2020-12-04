@@ -162,7 +162,7 @@ pub trait Mainloop {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::time::{UnixTs, MicroSeconds, MICROS_PER_SEC};
+    /// use libpulse_binding::time::{UnixTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event(
     ///     &(UnixTs::now() + MicroSeconds(5 * MICROS_PER_SEC)),
     ///     Box::new(|_| { println!("Timer event fired!"); }));
@@ -208,7 +208,7 @@ pub trait Mainloop {
     /// Example event set to fire in five seconds time:
     ///
     /// ```rust,ignore
-    /// use pulse::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
+    /// use libpulse_binding::time::{MonotonicTs, MicroSeconds, MICROS_PER_SEC};
     /// let _t_event = mainloop.new_timer_event_rt(
     ///     MonotonicTs::now() + MicroSeconds(5 * MICROS_PER_SEC),
     ///     Box::new(|_| { println!("Timer event fired!"); }));
