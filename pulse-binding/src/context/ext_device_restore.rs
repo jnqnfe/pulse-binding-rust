@@ -90,7 +90,7 @@ impl Context {
 }
 
 impl DeviceRestore {
-    /// Creates a new `DeviceManager` from an existing
+    /// Creates a new `DeviceRestore` from an existing
     /// [`ContextInternal`](../../../libpulse_sys/context/struct.pa_context.html) pointer.
     fn from_raw(context: *mut ContextInternal) -> Self {
         Self { context: context, cb_ptrs: Default::default() }
