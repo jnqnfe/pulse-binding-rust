@@ -11,8 +11,13 @@
    result. The solution was also re-implemented based upon `FromPrimative`.
  * Implemented `std::fmt::Display` for `error::Code`.
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
- * Failed mapping of a certain couple of integer to enum attributes in introspection will now cause
-   a deliberate panic rather than silent undefined behaviour, for better stability.
+ * Fixed an extremely unlikely but possible source of undefined behaviour in introspection. This
+   relates to translation of a few integers into enum variants. Previously values that did not match
+   an enum variant would be transmuted to the enum type anyway, resulting in undefined behaviour.
+   Now a panic will occur instead. Pragmatically you should never encounter this, so no advisory is
+   being issued - it would only occur via a bug in PulseAudio, the mapping, or a mismatch in version
+   compatibility with the running PulseAudio client library, with this latter issue being something
+   dangerous that users must avoid anyway.
  * Some test additions.
  * Updated `libpulse-sys` version dependency (1.14 → 1.15).
 
