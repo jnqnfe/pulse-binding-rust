@@ -15,12 +15,14 @@
 //!
 //! This crate is a *sys* type crate targetting the PulseAudio (GLIB mainloop extension) C API. As a
 //! *sys* type crate it does nothing more than simply describe the C API in Rust form. Please be
-//! aware that there is a “higher level” *binding* crate available (`libpulse-glib-binding`) built
+//! aware that there is a “higher level” *binding* crate available ([`libpulse-glib-binding`]) built
 //! on top of this, which you will most likely prefer to use instead.
 //!
 //! Virtually no documentation is provided here, since it is pointless to duplicate it here from the
 //! C header files, considering that most users will be using the binding crate (which is heavily
 //! documented).
+//!
+//! [`libpulse-glib-binding`]: https://docs.rs/libpulse-glib-binding
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

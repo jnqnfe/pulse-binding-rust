@@ -15,12 +15,14 @@
 //!
 //! This crate is a *sys* type crate targetting the PulseAudio (“simple” interface)  C API. As a
 //! *sys* type crate it does nothing more than simply describe the C API in Rust form. Please be
-//! aware that there is a “higher level” *binding* crate available (`libpulse-simple-binding`) built
-//! on top of this, which you will most likely prefer to use instead.
+//! aware that there is a “higher level” *binding* crate available ([`libpulse-simple-binding`])
+//! built on top of this, which you will most likely prefer to use instead.
 //!
 //! Virtually no documentation is provided here, since it is pointless to duplicate it here from the
 //! C header files, considering that most users will be using the binding crate (which is heavily
 //! documented).
+//!
+//! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

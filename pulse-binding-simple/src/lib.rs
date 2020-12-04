@@ -23,7 +23,7 @@
 //! preferred over the raw C API provided by the underlying `sys` linking crate.
 //!
 //! This crate provides an interface to PulseAudio’s ‘simple’ component, and should be used in
-//! addition to the general `libpulse_binding` crate.
+//! addition to the general [`libpulse-binding`] crate.
 //!
 //! # Introduction
 //!
@@ -35,7 +35,7 @@
 //! # Usage
 //!
 //! Firstly, add a dependency on the crate in your program’s `Cargo.toml` file. Secondly, import the
-//! crate along with the general `libpulse_binding` crate to the root of your program:
+//! crate along with the general [`libpulse-binding`] crate to the root of your program:
 //!
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
@@ -105,6 +105,7 @@
 //! [`Simple::get_latency()`]: struct.Simple.html#method.get_latency
 //! [`Simple::flush()`]: struct.Simple.html#method.flush
 //! [`Simple::drain()`]: struct.Simple.html#method.drain
+//! [`libpulse-binding`]: https://docs.rs/libpulse-binding
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

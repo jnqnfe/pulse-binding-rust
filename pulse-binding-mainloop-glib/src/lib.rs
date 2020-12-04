@@ -23,7 +23,7 @@
 //! preferred over the raw C API provided by the underlying `sys` linking crate.
 //!
 //! This crate provides an interface to PulseAudio’s ‘GLIB mainloop’ component, and should be used
-//! in addition to the general `libpulse_binding` crate.
+//! in addition to the general [`libpulse-binding`] crate.
 //!
 //! # Introduction
 //!
@@ -34,18 +34,19 @@
 //! # Usage
 //!
 //! Firstly, add a dependency on the crate in your program’s `Cargo.toml` file. Secondly, import the
-//! crate along with the general `libpulse_binding` crate to the root of your program:
+//! crate along with the general [`libpulse-binding`] crate to the root of your program:
 //!
 //! ```rust,ignore
 //! extern crate libpulse_binding as pulse;
 //! extern crate libpulse_glib_binding as pglib;
 //! ```
 //!
-//! See the documentation in `libpulse_binding` for further information regarding actual usage of
+//! See the documentation in [`libpulse-binding`] for further information regarding actual usage of
 //! libpulse mainloops.
 //!
 //! [`Mainloop::new()`]: struct.Mainloop.html#method.new
 //! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
+//! [`libpulse-binding`]: https://docs.rs/libpulse-binding
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

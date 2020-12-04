@@ -37,7 +37,7 @@
 //! ## Simple API
 //!
 //! Use this if you develop your program in synchronous style and just need a way to play or record
-//! data on the sound server. This functionality is kept in the separate `libpulse_simple_binding`
+//! data on the sound server. This functionality is kept in the separate [`libpulse-simple-binding`]
 //! crate. See that for details.
 //!
 //! ## Asynchronous API
@@ -109,6 +109,7 @@
 //! See sub-modules for further information.
 //!
 //! [`mainloop`]: mainloop/index.html
+//! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
