@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.19.0 (December 8th, 2020)
 
  * Fixed broken conversions between `Duration` and other time duration types (`MicroSeconds` and
    `Timeval`), which were mistakenly converting based upon milliseconds rather than microseconds and

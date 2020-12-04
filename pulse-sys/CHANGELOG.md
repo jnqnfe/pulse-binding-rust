@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.15.2 (December 8th, 2020)
 
  * Added missing `Default` implementation for `channelmap::pa_channel_map_def_t`.
  * Added documentation for `pa_check_version()`. If you use it, please double check that it actually
