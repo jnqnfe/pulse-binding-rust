@@ -30,14 +30,6 @@ impl From<Timeval> for MicroSeconds {
         MicroSeconds(unsafe { capi::pa_timeval_load(&t.0) })
     }
 }
-impl From<MicroSeconds> for Timeval {
-    #[inline]
-    fn from(t: MicroSeconds) -> Self {
-        let secs = t.0 / MICROS_PER_SEC;
-        let usecs = t.0 % MICROS_PER_SEC;
-        Timeval::new(secs as self::timeval::TvSecs, usecs as self::timeval::TvUsecs)
-    }
-}
 
 // To `Duration`
 
@@ -55,9 +47,22 @@ impl From<Timeval> for Duration {
     }
 }
 
+// To `Timeval`
+
+impl From<MicroSeconds> for Timeval {
+    #[inline]
+    fn from(t: MicroSeconds) -> Self {
+        let secs = (t.0 / MICROS_PER_SEC) as self::timeval::TvSecs;
+        let micros = (t.0 % MICROS_PER_SEC) as self::timeval::TvUsecs;
+        Timeval::new(secs, micros)
+    }
+}
+
 impl From<Duration> for Timeval {
     #[inline]
     fn from(t: Duration) -> Self {
-        Timeval::new(t.as_secs() as self::timeval::TvSecs, t.subsec_millis() as self::timeval::TvUsecs)
+        let secs = t.as_secs() as self::timeval::TvSecs;
+        let millis = t.subsec_millis() as self::timeval::TvUsecs;
+        Timeval::new(secs, millis)
     }
 }
