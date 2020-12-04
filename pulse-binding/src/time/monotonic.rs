@@ -47,6 +47,12 @@ impl MonotonicTs {
     }
 }
 
+impl std::fmt::Display for MonotonicTs {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 impl Add<MicroSeconds> for MonotonicTs {
     type Output = Self;
 
@@ -74,11 +80,5 @@ impl SubAssign<MicroSeconds> for MonotonicTs {
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = *self - rhs;
-    }
-}
-
-impl std::fmt::Display for MonotonicTs {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.0)
     }
 }

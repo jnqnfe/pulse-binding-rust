@@ -64,6 +64,12 @@ impl MicroSeconds {
     }
 }
 
+impl std::fmt::Display for MicroSeconds {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} µs", self.0)
+    }
+}
+
 impl Add for MicroSeconds {
     type Output = Self;
 
@@ -166,11 +172,5 @@ impl RemAssign<u32> for MicroSeconds {
     #[inline]
     fn rem_assign(&mut self, rhs: u32) {
         *self = *self % rhs;
-    }
-}
-
-impl std::fmt::Display for MicroSeconds {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{} µs", self.0)
     }
 }

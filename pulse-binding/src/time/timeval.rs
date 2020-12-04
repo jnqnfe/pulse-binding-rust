@@ -55,12 +55,6 @@ impl PartialOrd for Timeval {
     }
 }
 
-impl std::fmt::Debug for Timeval {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "timeval {{ tv_sec: {}, tv_usec: {} }}", self.0.tv_sec, self.0.tv_usec)
-    }
-}
-
 impl Timeval {
     /// Creates a new instance, with values provided.
     #[inline]
@@ -170,6 +164,12 @@ impl Timeval {
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_rem(rhs).and_then(|i| Some(i.into()))
+    }
+}
+
+impl std::fmt::Debug for Timeval {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "timeval {{ tv_sec: {}, tv_usec: {} }}", self.0.tv_sec, self.0.tv_usec)
     }
 }
 

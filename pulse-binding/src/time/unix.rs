@@ -51,6 +51,12 @@ impl UnixTs {
     }
 }
 
+impl std::fmt::Display for UnixTs {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self.0)
+    }
+}
+
 impl Add<MicroSeconds> for UnixTs {
     type Output = Self;
 
@@ -78,11 +84,5 @@ impl SubAssign<MicroSeconds> for UnixTs {
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = *self - rhs;
-    }
-}
-
-impl std::fmt::Display for UnixTs {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?}", self.0)
     }
 }
