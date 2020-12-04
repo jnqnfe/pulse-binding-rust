@@ -1,3 +1,8 @@
+# [unreleased]
+
+ * Added documentation for `version::check_version()`. If you use it, please double check that it
+   actually does what you think it does. It does **not** involve talking to the client library.
+
 # 2.18.1 (November 25th, 2020)
 
  * Fixed deprecated license attribute syntax.
