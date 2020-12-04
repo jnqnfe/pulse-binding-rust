@@ -60,6 +60,8 @@
  * Some test additions.
  * Updated required dependencies:
     - `libpulse-sys` from 1.14 to 1.15.
+    - `num-traits` 0.2 now required.
+    - `num-derive` 0.3 now required.
 
 # 2.17.0 (November 24th, 2020)
 

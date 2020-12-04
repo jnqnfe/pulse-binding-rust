@@ -34,6 +34,9 @@
 
  * Marked `pa_encoding_t` as `#[non_exhaustive]`.
  * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on enums.
+ * Updated required dependencies:
+    - `num-traits` 0.2 now required.
+    - `num-derive` 0.3 now required.
 
 # 1.14.1 (November 25th, 2020)
 
