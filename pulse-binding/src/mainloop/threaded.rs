@@ -56,7 +56,7 @@
 //!
 //! Example:
 //!
-//! ```rust,ignore
+//! ```rust,no_run
 //! extern crate libpulse_binding as pulse;
 //!
 //! use std::rc::Rc;
@@ -94,7 +94,7 @@
 //!
 //! Example:
 //!
-//! ```rust,ignore
+//! ```rust,no_run
 //! extern crate libpulse_binding as pulse;
 //!
 //! use std::rc::Rc;
@@ -146,7 +146,7 @@
 //! receives some data that is desired. To access this data safely, we must extend our example a
 //! bit:
 //!
-//! ```rust,ignore
+//! ```rust,no_run
 //! extern crate libpulse_binding as pulse;
 //!
 //! use std::rc::Rc;
