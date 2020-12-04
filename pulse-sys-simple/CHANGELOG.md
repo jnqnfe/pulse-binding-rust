@@ -19,11 +19,13 @@
 
 # 1.15.0 (November 25th, 2020)
 
- * Updated `libpulse-sys` version dependency (1.14 → 1.15).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.14 to 1.15.
 
 # 1.14.0 (November 24th, 2020)
 
- * Updated `libpulse-sys` version dependency (1.13 → 1.14).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.13 to 1.14.
 
 # 1.13.2 (September 9th, 2020)
 
@@ -36,7 +38,8 @@
 # 1.13.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features.
- * Updated `libpulse-sys` version dependency (1.12 → 1.13).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.12 to 1.13.
 
 # 1.12.1 (December 29th, 2019)
 
@@ -45,17 +48,20 @@
 # 1.12.0 (December 29th, 2019)
 
  * Now using pkg-config in build script for more than just Linux.
- * Updated `libpulse-sys` version dependency (1.11 → 1.12).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.11 to 1.12.
 
 # 1.11.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0. See [here][issue26] for details.
- * Updated `libpulse-sys` version dependency (1.10 → 1.11).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.10 to 1.11.
 
 # 1.10.0 (September 15th, 2019)
 
  * Added PA v13 compatibility control feature.
- * Updated `libpulse-sys` version dependency (1.9 → 1.10).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.9 to 1.10.
 
 # 1.9.1 (August 19th, 2019)
 
@@ -70,12 +76,14 @@
    It enables the very latest PA version compatibility, while bypassing the pkg-config check, thus
    is useful for generating documentation that includes information on features from versions of PA
    that may be newer than the version you have installed.
- * Updated `libpulse-sys` version dependency (1.8 → 1.9).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.8 to 1.9.
 
 # 1.8.0 (August 15th, 2019)
 
  * Specified edition in toml file.
- * Updated `libpulse-sys` version dependency (1.6 → 1.8).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.6 to 1.8.
 
 Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate changes.
 
@@ -86,13 +94,15 @@ Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate chan
    behaviour.
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
    `latest_pa_compatibility`.
- * Updated `libpulse-sys` version dependency (1.5 → 1.6).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.5 to 1.6.
 
 # 1.5.0 (December 22nd, 2018)
 
  * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
    `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
- * Updated `libpulse-sys` version dependency (1.4 → 1.5).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.4 to 1.5.
 
 # 1.4.0 (November 4th, 2018)
 
@@ -100,7 +110,8 @@ Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate chan
    for those without the necessary *.pc files installed). Thanks to @JohnAZoidberg on github for
    the original patch.
  * Clarified `pa_encoding_from_string` feature purpose.
- * Updated `libpulse-sys` version dependency (1.3 → 1.4).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.3 to 1.4.
 
 # 1.3.4 (October 8th, 2018)
 
@@ -123,15 +134,18 @@ Note: version 1.7 skipped, used only for `libpulse-mainloop-glib-sys` crate chan
 
 # 1.3 (July 17th, 2018)
 
- * Updated `libpulse-sys` version dependency (1.2 → 1.3).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.2 to 1.3.
 
 # 1.2 (June 16th, 2018)
 
- * Updated `libpulse-sys` version dependency (1.1 → 1.2).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.1 to 1.2.
 
 # 1.1 (May 27th, 2018)
 
- * Updated `libpulse-sys` version dependency (1.0 → 1.1).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.0 to 1.1.
 
 # 1.0.2 (February 9th, 2018)
 

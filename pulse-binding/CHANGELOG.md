@@ -58,7 +58,8 @@
    compatibility with the running PulseAudio client library, with this latter issue being something
    dangerous that users must avoid anyway.
  * Some test additions.
- * Updated `libpulse-sys` version dependency (1.14 → 1.15).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.14 to 1.15.
 
 # 2.17.0 (November 24th, 2020)
 
@@ -66,7 +67,8 @@
  * Mainloop (standard): Changed the `prepare()` method to take an `Option<MicroSeconds>` instead of
    `Option<i32>`.
  * Renamed the error `Code::Io` enum variant to `Code::IO`.
- * Updated `libpulse-sys` version dependency (1.13 → 1.14).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.13 to 1.14.
 
 # 2.16.3 (November 21st, 2020)
 
@@ -89,7 +91,8 @@
  * Removed deprecated comparison methods.
  * Removed deprecated proplist methods.
  * Removed deprecated Cargo features.
- * Updated `libpulse-sys` version dependency (1.12 → 1.13).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.12 to 1.13.
 
 # 2.15.1 (April 18th, 2020)
 
@@ -98,7 +101,8 @@
 
 # 2.15.0 (December 29th, 2019)
 
- * Updated `libpulse-sys` version dependency (1.11 → 1.12).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.11 to 1.12.
 
 # 2.14.1 (December 29th, 2019)
 
@@ -116,7 +120,8 @@
 # 2.13.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0. See [here][issue26] for details.
- * Updated `libpulse-sys` version dependency (1.10 → 1.11).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.10 to 1.11.
 
 # 2.12.0 (September 15th, 2019)
 
@@ -130,7 +135,8 @@
    The C API function allows a null pointer to be used for this param, which was not a use case
    allowed in the binding, for no particular reason. This enables it.
  * Added PA v13 compatibility control feature.
- * Updated `libpulse-sys` version dependency (1.9 → 1.10).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.9 to 1.10.
 
 # 2.11.1 (August 19th, 2019)
 
@@ -146,7 +152,8 @@
    is useful for generating documentation that includes information on features from versions of PA
    that may be newer than the version you have installed.
  * Improved version documentation further.
- * Updated `libpulse-sys` version dependency (1.8 → 1.9).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.8 to 1.9.
 
 # 2.10.1 (August 17th, 2019)
 
@@ -175,7 +182,8 @@
     - `Timeval::new()` and `Timeval::new_zero()`.
     - `subscribe::Facility::to_interest_mask()`.
  * Version: purged deprecated items.
- * Updated `libpulse-sys` version dependency (1.6 → 1.8).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.6 to 1.8.
 
 Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate changes.
 
@@ -206,7 +214,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
    `latest_pa_compatibility`.
  * Added tests to assert that size and alignment of certain structs and enums are identical to their
    `sys` crate counterparts.
- * Updated `libpulse-sys` version dependency (1.5 → 1.6).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.5 to 1.6.
 
 # 2.6.0 (March 10th, 2019)
 
@@ -241,7 +250,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
    `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
  * Removed unnecessary `From` conversion implementation to/from C type for `format::Info`.
- * Updated `libpulse-sys` version dependency (1.4 → 1.5).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.4 to 1.5.
 
 # 2.4.0 (November 28th, 2018)
 
@@ -268,7 +278,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
     - Deprecated `get_headers_version()`.
  * Clarified PA version compatibility in `version` mod.
  * Clarified `pa_encoding_from_string` feature purpose.
- * Updated `libpulse-sys` version dependency (1.3 → 1.4).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.3 to 1.4.
 
 # 2.2.6 (October 28th, 2018)
 
@@ -365,7 +376,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
  * Purged context documentation discussing ref counting.
  * Moved documentation discussing mainloop abstraction from the `context` mod to the `mainloop` mod.
  * Added mainloop documentation discussing callback execution.
- * Updated `libpulse-sys` version dependency (1.2 → 1.3).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.2 to 1.3.
 
 # 2.0.1 (June 26th, 2018)
 
@@ -414,7 +426,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
    and the sys instances. While this is necessary for the sys to binding direction, the other really
    wasn’t needed.
  * Purged subscribe autoload API (deprecated in PulseAudio since 2009).
- * Updated `libpulse-sys` version dependency (1.1 → 1.2).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.1 to 1.2.
 
 # 1.2.2 (June 16th, 2018)
 
@@ -489,7 +502,8 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
    proplist and operation objects. Although our objects in these cases can be used immutably (no
    change in the wrapped pointer), we should reflect mutability needs of the operation being
    performed on the underlying C objects.
- * Updated `libpulse-sys` version dependency (1.0 → 1.1).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.0 to 1.1.
 
 # 1.0.5 (May 27th, 2018)
 

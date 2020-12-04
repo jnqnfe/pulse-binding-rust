@@ -15,15 +15,17 @@
 
 # 2.18.0 (November 25th, 2020)
 
- * Updated `libpulse-binding` version dependency (2.17 → 2.18).
- * Updated `libpulse-sys` version dependency (1.14 → 1.15).
- * Updated `libpulse-simple-sys` version dependency (1.14 → 1.15).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.17 to 2.18.
+    - `libpulse-sys`        from 1.14 to 1.15.
+    - `libpulse-simple-sys` from 1.14 to 1.15.
 
 # 2.17.0 (November 24th, 2020)
 
- * Updated `libpulse-binding` version dependency (2.16 → 2.17).
- * Updated `libpulse-sys` version dependency (1.13 → 1.14).
- * Updated `libpulse-simple-sys` version dependency (1.13 → 1.14).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.16 to 2.17.
+    - `libpulse-sys`        from 1.13 to 1.14.
+    - `libpulse-simple-sys` from 1.13 to 1.14.
 
 # 2.16.2 (November 21st, 2020)
 
@@ -36,33 +38,38 @@
 # 2.16.0 (April 18th, 2020)
 
  * Removed deprecated Cargo features.
- * Updated `libpulse-binding` version dependency (2.15 → 2.16).
- * Updated `libpulse-sys` version dependency (1.12 → 1.13).
- * Updated `libpulse-simple-sys` version dependency (1.12 → 1.13).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.15 to 2.16.
+    - `libpulse-sys`        from 1.12 to 1.13.
+    - `libpulse-simple-sys` from 1.12 to 1.13.
 
 # 2.15.0 (December 29th, 2019)
 
- * Updated `libpulse-binding` version dependency (2.14 → 2.15).
- * Updated `libpulse-sys` version dependency (1.11 → 1.12).
- * Updated `libpulse-simple-sys` version dependency (1.11 → 1.12).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.14 to 2.15.
+    - `libpulse-sys`        from 1.11 to 1.12.
+    - `libpulse-simple-sys` from 1.11 to 1.12.
 
 # 2.14.0 (October 28th, 2019)
 
- * Updated `libpulse-binding` version dependency (2.13 → 2.14).
+ * Updated required dependencies:
+    - `libpulse-binding` from 2.13 to 2.14.
 
 # 2.13.0 (September 17th, 2019)
 
  * Changed the license model from LGPL to dual MIT and Apache-2.0. See [here][issue26] for details.
- * Updated `libpulse-binding` version dependency (2.12 → 2.13).
- * Updated `libpulse-sys` version dependency (1.10 → 1.11).
- * Updated `libpulse-simple-sys` version dependency (1.10 → 1.11).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.12 to 2.13.
+    - `libpulse-sys`        from 1.10 to 1.11.
+    - `libpulse-simple-sys` from 1.10 to 1.11.
 
 # 2.12.0 (September 15th, 2019)
 
  * Added PA v13 compatibility control feature.
- * Updated `libpulse-binding` version dependency (2.11 → 2.12).
- * Updated `libpulse-sys` version dependency (1.9 → 1.10).
- * Updated `libpulse-simple-sys` version dependency (1.9 → 1.10).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.11 to 2.12.
+    - `libpulse-sys`        from 1.9 to 1.10.
+    - `libpulse-simple-sys` from 1.9 to 1.10.
 
 # 2.11.1 (August 19th, 2019)
 
@@ -76,17 +83,19 @@
    It enables the very latest PA version compatibility, while bypassing the pkg-config check, thus
    is useful for generating documentation that includes information on features from versions of PA
    that may be newer than the version you have installed.
- * Updated `libpulse-binding` version dependency (2.10 → 2.11).
- * Updated `libpulse-sys` version dependency (1.8 → 1.9).
- * Updated `libpulse-simple-sys` version dependency (1.8 → 1.9).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.10 to 2.11.
+    - `libpulse-sys`        from 1.8 to 1.9.
+    - `libpulse-simple-sys` from 1.8 to 1.9.
 
 # 2.10.0 (August 15th, 2019)
 
  * Updated `use` conventions to that of Rust 1.30/1.31.
  * Specified edition in toml file.
- * Updated `libpulse-binding` version dependency (2.7 → 2.10).
- * Updated `libpulse-sys` version dependency (1.6 → 1.8).
- * Updated `libpulse-simple-sys` version dependency (1.6 → 1.8).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.7 to 2.10.
+    - `libpulse-sys`        from 1.6 to 1.8.
+    - `libpulse-simple-sys` from 1.6 to 1.8.
 
 Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate changes.
 
@@ -94,9 +103,10 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
 
  * Added a new `latest_pa_common_compatibility` feature flag, used by default now instead of
    `latest_pa_compatibility`.
- * Updated `libpulse-binding` version dependency (2.6 → 2.7).
- * Updated `libpulse-sys` version dependency (1.5 → 1.6).
- * Updated `libpulse-simple-sys` version dependency (1.5 → 1.6).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.6 to 2.7.
+    - `libpulse-sys`        from 1.5 to 1.6.
+    - `libpulse-simple-sys` from 1.5 to 1.6.
 
 # 2.6.1 (April 5th, 2019)
 
@@ -104,26 +114,31 @@ Note: versions 2.8 and 2.9 skipped, used only for `libpulse-glib-binding` crate 
 
 # 2.6.0 (March 10th, 2019)
 
- * Updated `libpulse-binding` version dependency (2.5 → 2.6).
+ * Updated required dependencies:
+    - `libpulse-binding` from 2.5 to 2.6.
 
 # 2.5.0 (December 22nd, 2018)
 
  * Added the new `latest_pa_compatibility` and `pa_v12_compatibility` feature flags, and deprecated
    `pa_encoding_from_string` in favour of `pa_v12_compatibility`.
- * Updated `libpulse-binding` version dependency (2.4 → 2.5).
- * Updated `libpulse-sys` version dependency (1.4 → 1.5).
- * Updated `libpulse-simple-sys` version dependency (1.4 → 1.5).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.4 to 2.5.
+    - `libpulse-sys`        from 1.4 to 1.5.
+    - `libpulse-simple-sys` from 1.4 to 1.5.
 
 # 2.4.0 (November 28th, 2018)
 
- * Updated `libpulse-binding` version dependency (2.3 → 2.4).
+ * Updated required dependencies:
+    - `libpulse-binding` from 2.3 to 2.4.
 
 # 2.3.0 (November 4th, 2018)
 
  * Clarified `pa_encoding_from_string` feature purpose.
- * Updated `libpulse-binding` version dependency (2.2 → 2.3).
- * Updated `libpulse-sys` version dependency (1.3 → 1.4).
- * Updated `libpulse-simple-sys` version dependency (1.3 → 1.4).
+
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.2 to 2.3.
+    - `libpulse-sys`        from 1.3 to 1.4.
+    - `libpulse-simple-sys` from 1.3 to 1.4.
 
 # 2.2.5 (October 8th, 2018)
 
@@ -149,14 +164,16 @@ Note, version number 2.2.1 skipped, bumping number into line with the main bindi
 
 # 2.2 (August 21st, 2018)
 
- * Updated `libpulse-binding` version dependency (2.1 → 2.2).
+ * Updated required dependencies:
+    - `libpulse-binding` from 2.1 to 2.2.
 
 # 2.1 (July 17th, 2018)
 
  * Updated with respect to having renamed the `timeval` mod to `time` in the main binding.
- * Updated `libpulse-binding` version dependency (2.0 → 2.1).
- * Updated `libpulse-sys` version dependency (1.2 → 1.3).
- * Updated `libpulse-simple-sys` version dependency (1.2 → 1.3).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.0 to 2.1.
+    - `libpulse-sys`        from 1.2 to 1.3.
+    - `libpulse-simple-sys` from 1.2 to 1.3.
 
 # 2.0.1 (June 26th, 2018)
 
@@ -164,22 +181,25 @@ Note, version number 2.2.1 skipped, bumping number into line with the main bindi
 
 # 2.0 (June 16th, 2018)
 
- * Updated `libpulse-binding` version dependency (1.2 → 2.0).
- * Updated `libpulse-sys` version dependency (1.1 → 1.2).
- * Updated `libpulse-simple-sys` version dependency (1.1 → 1.2).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 1.2 to 2.0.
+    - `libpulse-sys`        from 1.1 to 1.2.
+    - `libpulse-simple-sys` from 1.1 to 1.2.
 
 # 1.2 (June 1st, 2018)
 
  * Tidied up error code handling, per version 1.2 of `libpulse-binding`.
  * Improved time handling, per version 1.2 of `libpulse-binding`.
- * Updated `libpulse-binding` version dependency (1.1 → 1.2).
+ * Updated required dependencies:
+    - `libpulse-binding` from 1.1 to 1.2.
 
 # 1.1 (May 27th, 2018)
 
  * Privatised `SimpleInternal`.
- * Updated `libpulse-binding` version dependency (1.0 → 1.1).
- * Updated `libpulse-sys` version dependency (1.0 → 1.1).
- * Updated `libpulse-simple-sys` version dependency (1.0 → 1.1).
+ * Updated required dependencies:
+    - `libpulse-binding`    from 1.0 to 1.1.
+    - `libpulse-sys`        from 1.0 to 1.1.
+    - `libpulse-simple-sys` from 1.0 to 1.1.
 
 # 1.0.5 (May 27th, 2018)
 
