@@ -63,9 +63,12 @@ pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 pub use capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK as FACILITY_MASK;
 pub use capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK as OPERATION_MASK;
 
-/// A set of facility masks, passed to
-/// [`Context::subscribe`](../struct.Context.html#method.subscribe). Convert a
-/// [`Facility`](enum.Facility.html) to a mask with [`facility_to_mask`](fn.facility_to_mask.html).
+/// A set of facility masks, passed to [`Context::subscribe`]. Convert a [`Facility`] to a mask with
+/// [`Facility::to_interest_mask`].
+///
+/// [`Context::subscribe`]: ../struct.Context.html#method.subscribe
+/// [`Facility`]: enum.Facility.html
+/// [`Facility::to_interest_mask`]: enum.Facility.html#method.to_interest_mask
 pub type InterestMaskSet = capi::context::subscribe::pa_subscription_mask_t;
 
 /// A set of masks used for expressing which facilities you are interested in when subscribing.
