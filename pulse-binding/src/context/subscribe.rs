@@ -28,8 +28,8 @@
 //! constants in the [`subscription_masks`] submodule.
 //!
 //! The callback will be called with event type information representing the event that caused the
-//! callback, detailing *facility* and *operation*, where for instance `Facility::Source` with
-//! `Operation::New` indicates that a new source was added.
+//! callback, detailing *facility* and *operation*, where for instance [`Facility::Source`] with
+//! [`Operation::New`] indicates that a new source was added.
 //!
 //! # Example
 //!
@@ -49,6 +49,8 @@
 //!
 //! [`Facility`]: enum.Facility.html
 //! [`Operation`]: enum.Operation.html
+//! [`Facility::Source`]: enum.Facility.html#variant.Source
+//! [`Operation::New`]: enum.Operation.html#variant.New
 //! [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
 //! [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
 //! [`Context::set_subscribe_callback()`]: ../struct.Context.html#method.set_subscribe_callback
