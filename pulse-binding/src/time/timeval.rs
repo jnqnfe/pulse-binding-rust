@@ -222,6 +222,21 @@ impl AddAssign<MicroSeconds> for Timeval {
     }
 }
 
+impl Sub<MicroSeconds> for Timeval {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, rhs: MicroSeconds) -> Self {
+        self.checked_sub_us(rhs).unwrap()
+    }
+}
+impl SubAssign<MicroSeconds> for Timeval {
+    #[inline]
+    fn sub_assign(&mut self, rhs: MicroSeconds) {
+        *self = self.checked_sub_us(rhs).unwrap();
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Operations with `Duration`
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,21 +253,6 @@ impl AddAssign<Duration> for Timeval {
     #[inline]
     fn add_assign(&mut self, rhs: Duration) {
         *self = self.checked_add_duration(rhs).unwrap();
-    }
-}
-
-impl Sub<MicroSeconds> for Timeval {
-    type Output = Self;
-
-    #[inline]
-    fn sub(self, rhs: MicroSeconds) -> Self {
-        self.checked_sub_us(rhs).unwrap()
-    }
-}
-impl SubAssign<MicroSeconds> for Timeval {
-    #[inline]
-    fn sub_assign(&mut self, rhs: MicroSeconds) {
-        *self = self.checked_sub_us(rhs).unwrap();
     }
 }
 
