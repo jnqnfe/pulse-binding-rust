@@ -9,6 +9,9 @@
    for time types, such that those that were not previously making use of “checked” calculations
    now do so, and thus overflow causes a panic rather than being wrapped. If panicing is not wanted,
    the “checked” methods should be used directly which return a `None` on failure.
+ * Added an `Option` wrapper to the `volume` param of `Context::play_sample()` and
+   `Context::play_sample_with_proplist()` “scache” methods to simplify usage. Supplying `None` is
+   a nicer alternative to passing `Volume::INVALID`.
  * Moved the following functions from the `sample` mod to methods of `sample::Spec`:
    `format_is_valid()`, `rate_is_valid()` and `channels_are_valid()`, having noticed that they
    clearly relate to the attributes of that type and so should have been there all along.

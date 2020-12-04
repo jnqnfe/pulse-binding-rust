@@ -96,15 +96,15 @@ impl Context {
     ///
     /// * `name`: Name of the sample to play.
     /// * `dev`: Sink to play this sample on, or `None` for default.
-    /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
-    ///   [`Volume::INVALID`] which will leave the decision about the volume to the server side
-    ///   which is a good idea.
+    /// * `volume`: Volume to play this sample with, or `None` to leave the decision about the
+    ///   volume to the server side which is a good idea. [`Volume::INVALID`] has the same meaning
+    ///   as `None.
     /// * `callback`: Optional success callback. It must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`Volume::INVALID`]: ../volume/struct.Volume.html#associatedconstant.INVALID
-    pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: Volume,
+    pub fn play_sample(&mut self, name: &str, dev: Option<&str>, volume: Option<Volume>,
         callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -116,10 +116,11 @@ impl Context {
         };
 
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
+        let vol = volume.unwrap_or(Volume::INVALID);
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
-        let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, volume.0,
+        let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, vol.0,
             cb_fn, cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
@@ -134,9 +135,9 @@ impl Context {
     ///
     /// * `name`: Name of the sample to play.
     /// * `dev`: Sink to play this sample on, or `None` for default.
-    /// * `volume`: Volume to play this sample with. Starting with 0.9.15 you may pass here
-    ///   [`Volume::INVALID`] which will leave the decision about the volume to the server side
-    ///   which is a good idea.
+    /// * `volume`: Volume to play this sample with, or `None` to leave the decision about the
+    ///   volume to the server side which is a good idea. [`Volume::INVALID`] has the same meaning
+    ///   as `None.
     /// * `proplist`: Property list for this sound. The property list of the cached entry will have
     ///   this merged into it.
     /// * `callback`: Optional success callback. It must accept an `u32` index value wrapper in a
@@ -146,8 +147,9 @@ impl Context {
     /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`Volume::INVALID`]: ../volume/struct.Volume.html#associatedconstant.INVALID
-    pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>, volume: Volume,
-        proplist: &Proplist, callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)
+    pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
+        volume: Option<Volume>, proplist: &Proplist,
+        callback: Option<Box<dyn FnMut(Result<u32, ()>) + 'static>>)
         -> Operation<dyn FnMut(Result<u32, ()>)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a
@@ -159,11 +161,12 @@ impl Context {
         };
 
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
+        let vol = volume.unwrap_or(Volume::INVALID);
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, play_sample_success_cb_proxy);
         let ptr = unsafe {
-            capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, volume.0,
+            capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, vol.0,
                 proplist.0.ptr, cb_fn, cb_data)
         };
         assert!(!ptr.is_null());
