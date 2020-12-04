@@ -109,7 +109,7 @@ pub enum Facility {
     Client       = 5,
     SampleCache  = 6,
     /// Global server change, only occurring with
-    /// [`Operation::Changed`](enum.Operation.html#Changed.v).
+    /// [`Operation::Changed`](enum.Operation.html#variant.Changed).
     Server       = 7,
     /* NOTE: value `8` previously assigned, obsoleted */
     Card         = 9,

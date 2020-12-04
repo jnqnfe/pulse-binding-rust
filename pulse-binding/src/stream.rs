@@ -221,10 +221,10 @@
 //! [`flags::INTERPOLATE_TIMING`]: flags/constant.INTERPOLATE_TIMING.html
 //! [`flags::START_CORKED`]: flags/constant.START_CORKED.html
 //! [`Operation`]: ../operation/struct.Operation.html
-//! [`SeekMode::Absolute`]: enum.SeekMode.html#Absolute.v
-//! [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
-//! [`SeekMode::RelativeEnd`]: enum.SeekMode.html#RelativeEnd.v
-//! [`SeekMode::RelativeOnRead`]: enum.SeekMode.html#RelativeOnRead.v
+//! [`SeekMode::Absolute`]: enum.SeekMode.html#variant.Absolute
+//! [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
+//! [`SeekMode::RelativeEnd`]: enum.SeekMode.html#variant.RelativeEnd
+//! [`SeekMode::RelativeOnRead`]: enum.SeekMode.html#variant.RelativeOnRead
 //! [`Stream::connect_playback()`]: struct.Stream.html#method.connect_playback
 //! [`Stream::connect_record()`]: struct.Stream.html#method.connect_record
 //! [`Stream::connect_upload()`]: struct.Stream.html#method.connect_upload
@@ -954,7 +954,7 @@ impl Stream {
     ///   stream’s sample spec frame size.
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
+    /// [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
     /// [`begin_write()`]: #method.begin_write
     /// [`write()`]: #method.write
     pub fn write(&mut self, data: &[u8], free_cb: Option<def::FreeCb>, offset: i64,
@@ -985,7 +985,7 @@ impl Stream {
     ///   stream’s sample spec frame size.
     /// * `seek`: Seek mode. Must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
+    /// [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
     /// [`write()`]: #method.write
     #[inline(always)]
     pub fn write_copy(&mut self, data: &[u8], offset: i64, seek: SeekMode) -> Result<(), PAErr> {
@@ -1007,7 +1007,7 @@ impl Stream {
     /// * `offset`: Offset for seeking. Must be `0` for upload streams.
     /// * `seek`: Seek mode, must be [`SeekMode::Relative`] for upload streams.
     ///
-    /// [`SeekMode::Relative`]: enum.SeekMode.html#Relative.v
+    /// [`SeekMode::Relative`]: enum.SeekMode.html#variant.Relative
     /// [`write()`]: #method.write
     #[cfg(any(doc, feature = "pa_v6"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
@@ -1050,9 +1050,9 @@ impl Stream {
     /// if there is a hole.
     ///
     /// [`PeekResult`]: enum.PeekResult.html
-    /// [`Empty`]: enum.PeekResult.html#Empty.v
-    /// [`Hole`]: enum.PeekResult.html#Hole.v
-    /// [`Data`]: enum.PeekResult.html#Data.v
+    /// [`Empty`]: enum.PeekResult.html#variant.Empty
+    /// [`Hole`]: enum.PeekResult.html#variant.Hole
+    /// [`Data`]: enum.PeekResult.html#variant.Data
     /// [`discard()`]: #method.discard
     pub fn peek<'a>(&mut self) -> Result<PeekResult<'a>, PAErr> {
         let mut data_ptr = null::<c_void>();

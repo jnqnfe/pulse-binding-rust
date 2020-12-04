@@ -203,8 +203,8 @@ pub struct TimingInfo {
     /// has been issued in the time since this latency info was current. Only write commands with
     /// [`SeekMode::RelativeOnRead`] and [`SeekMode::RelativeEnd`] can corrupt `write_index`.
     ///
-    /// [`SeekMode::RelativeOnRead`]: ../stream/enum.SeekMode.html#RelativeOnRead.v
-    /// [`SeekMode::RelativeEnd`]: ../stream/enum.SeekMode.html#RelativeEnd.v
+    /// [`SeekMode::RelativeOnRead`]: ../stream/enum.SeekMode.html#variant.RelativeOnRead
+    /// [`SeekMode::RelativeEnd`]: ../stream/enum.SeekMode.html#variant.RelativeEnd
     pub write_index_corrupt: i32,
 
     /// Current write index into the playback buffer in bytes.
@@ -212,7 +212,7 @@ pub struct TimingInfo {
     /// Think twice before using this for seeking purposes: it might be out of date at the time you
     /// want to use it. Consider using [`SeekMode::Relative`] instead.
     ///
-    /// [`SeekMode::Relative`]: ../stream/enum.SeekMode.html#Relative.v
+    /// [`SeekMode::Relative`]: ../stream/enum.SeekMode.html#variant.Relative
     pub write_index: i64,
 
     /// Non-zero if `read_index` is not up-to-date because a local pause or flush request that
@@ -224,7 +224,7 @@ pub struct TimingInfo {
     /// Think twice before using this for seeking purposes: it might be out of date at the time you
     /// want to use it. Consider using [`SeekMode::RelativeOnRead`] instead.
     ///
-    /// [`SeekMode::RelativeOnRead`]: ../stream/enum.SeekMode.html#RelativeOnRead.v
+    /// [`SeekMode::RelativeOnRead`]: ../stream/enum.SeekMode.html#variant.RelativeOnRead
     pub read_index: i64,
 
     /// The configured latency for the sink.
