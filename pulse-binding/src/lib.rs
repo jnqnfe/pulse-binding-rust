@@ -99,17 +99,17 @@
 //!
 //! # Usage
 //!
-//! Firstly, add a dependency on the crate in your program’s `Cargo.toml` file. Secondly, import the
-//! crate to the root of your program:
-//!
-//! ```rust,ignore
-//! extern crate libpulse_binding as pulse;
-//! ```
+//! Start by adding a dependency on the crate in your program’s `Cargo.toml` file. Note that it is
+//! recommended that you rename the crate such that you can refer to it by a shorter name within
+//! your code (such as `pulse`, as used within examples within this crate’s documentation). Such
+//! renaming can be done [within your `Cargo.toml` file][rename] with cargo version 1.31 or newer,
+//! or otherwise with `extern crate` statements.
 //!
 //! See sub-modules for further information.
 //!
 //! [`mainloop`]: mainloop/index.html
 //! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
+//! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

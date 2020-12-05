@@ -33,13 +33,11 @@
 //!
 //! # Usage
 //!
-//! Firstly, add a dependency on the crate in your program’s `Cargo.toml` file. Secondly, import the
-//! crate along with the general [`libpulse-binding`] crate to the root of your program:
-//!
-//! ```rust,ignore
-//! extern crate libpulse_binding as pulse;
-//! extern crate libpulse_glib_binding as pglib;
-//! ```
+//! Start by adding a dependency on the crate, along with the main binding crate, in your program’s
+//! `Cargo.toml` file. Note that it is recommended that you rename the crates such that you can
+//! refer to them by shorter names within your code (such as `pulse` and `pulse_glib`). Such
+//! renaming can be done [within your `Cargo.toml` file][rename] with cargo version 1.31 or newer,
+//! or otherwise with `extern crate` statements.
 //!
 //! See the documentation in [`libpulse-binding`] for further information regarding actual usage of
 //! libpulse mainloops.
@@ -47,6 +45,7 @@
 //! [`Mainloop::new()`]: struct.Mainloop.html#method.new
 //! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
 //! [`libpulse-binding`]: https://docs.rs/libpulse-binding
+//! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
