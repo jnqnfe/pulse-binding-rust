@@ -10,18 +10,30 @@ A Rust language binding for the PulseAudio libpulse library.
 
 ## Usage
 
-Add this to your `Cargo.toml`:
+Add this crate to the dependencies specified in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-libpulse-binding = { version = "2.0", features = "" }
+libpulse-binding = "2.0"
 ```
 
-and this to your crate root:
+Though you may wish to rename the crate to a shorter name (for example `pulse`) for cleaner
+references within your code:
 
-```rust
-extern crate libpulse_binding as pulse;
+```toml
+[dependencies]
+pulse = { version = "2.0", package = "libpulse-binding" }
 ```
+
+An alternative to that which some may prefer is:
+
+```toml
+[dependencies.pulse]
+version = "2.0"
+package = "libpulse-binding"
+```
+
+### PulseAudio version compatibility
 
 Finally, fill in the `features` attribute of the dependency added above with the right compatibility
 flag (listed within this crates’ toml file) to disable functionality for versions of the PulseAudio

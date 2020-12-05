@@ -11,20 +11,37 @@ FFI bindings for the PulseAudio libpulse-mainloop-glib system library. See also 
 
 ## Usage
 
-Add this to your `Cargo.toml`:
+Add the following two crates to the dependencies specified in your `Cargo.toml` (you will likely
+need to use components from the main binding crate in addition to this crate itself):
 
 ```toml
 [dependencies]
-libpulse-sys = { version = "1.0", features = "" }
-libpulse-mainloop-glib-sys = { version = "1.0", features = "" }
+libpulse-sys = "1.0"
+libpulse-mainloop-glib-sys = "1.0"
 ```
 
-and this to your crate root:
+Though you may wish to rename the crates to shorter names (for example `pulse` and `pulse_glib`) for
+cleaner references within your code:
 
-```rust
-extern crate libpulse_sys as pulse;
-extern crate libpulse_mainloop_glib_sys as pulse_glib;
+```toml
+[dependencies]
+pulse = { version = "1.0", package = "libpulse-sys" }
+pulse_glib = { version = "1.0", package = "libpulse-mainloop-glib-sys" }
 ```
+
+An alternative to that which some may prefer is:
+
+```toml
+[dependencies.pulse]
+version = "1.0"
+package = "libpulse-sys"
+
+[dependencies.pulse_glib]
+version = "1.0"
+package = "libpulse-mainloop-glib-sys"
+```
+
+### PulseAudio version compatibility
 
 Finally, fill in the `features` attribute of the dependencies added above with the right
 compatibility flags (listed within the respective crates’ toml files) to disable functionality for

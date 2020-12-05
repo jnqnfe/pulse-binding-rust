@@ -10,20 +10,37 @@ A Rust language binding for the PulseAudio libpulse-simple library.
 
 ## Usage
 
-Add this to your `Cargo.toml`:
+Add the following two crates to the dependencies specified in your `Cargo.toml` (you will likely
+need to use components from the main binding crate in addition to this crate itself):
 
 ```toml
 [dependencies]
-libpulse-binding = { version = "2.0", features = "" }
-libpulse-simple-binding = { version = "2.0", features = "" }
+libpulse-binding = "2.0"
+libpulse-simple-binding = "2.0"
 ```
 
-and this to your crate root:
+Though you may wish to rename the crates to shorter names (for example `pulse` and `psimple`) for
+cleaner references within your code:
 
-```rust
-extern crate libpulse_binding as pulse;
-extern crate libpulse_simple_binding as psimple;
+```toml
+[dependencies]
+pulse = { version = "2.0", package = "libpulse-binding" }
+psimple = { version = "2.0", package = "libpulse-simple-binding" }
 ```
+
+An alternative to that which some may prefer is:
+
+```toml
+[dependencies.pulse]
+version = "2.0"
+package = "libpulse-binding"
+
+[dependencies.psimple]
+version = "2.0"
+package = "libpulse-simple-binding"
+```
+
+### PulseAudio version compatibility
 
 Finally, fill in the `features` attribute of the dependencies added above with the right
 compatibility flags (listed within the respective crates’ toml files) to disable functionality for
