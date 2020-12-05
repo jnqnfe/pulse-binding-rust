@@ -355,6 +355,33 @@ impl SubAssign<Duration> for MicroSeconds {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Operations with primatives
+//
+// NOTE 1: We only implement `u32` here because:
+//  - We do not expect operations will be needed for the larger `u64` range, otherwise we should
+//    switch to that.
+//  - Although implementing for the set of { `u8`, `u16`, `u32`, `u64 } is very easy with a macro,
+//    and may avoid possible need for `as u32` for non-`u32` variables, it introduces ambiguity such
+//    that the compiler does not know which type the `2` should be in the example use case of
+//     `2 * MicroSeconds::SECOND` and so it goes with `i32`, and since we don't implement the ops
+//    for `i32`, the user thus gets an error, forcing them to write instead
+//    `2u32 * MicroSeconds::SECOND`.
+//
+// NOTE 2: Addition and subtraction deliberately not implemented, since allowing arbitrary such
+// operations would allow mistakes to be made that the `MicroSeconds` type exists to prevent. I.e.
+// allowing the following:
+//
+// ```rust
+// let a = 10u32;
+// let b = MicroSeconds(1) + a;
+// ```
+//
+// ...would allow mistakes to be made around the form of `a`. We must force `a` to be wrapped in
+// `MicroSeconds`.
+//
+// NOTE 3: We support an integer being the Lhs of the operation for multiplicaton (for example
+// `2 * MicroSeconds`), but not for division/remainder, because dividing a generic integer by an
+// amount of microseconds makes no sense.
+//
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 impl Mul<u32> for MicroSeconds {
@@ -369,6 +396,15 @@ impl MulAssign<u32> for MicroSeconds {
     #[inline]
     fn mul_assign(&mut self, rhs: u32) {
         *self = *self * rhs;
+    }
+}
+
+impl Mul<MicroSeconds> for u32 {
+    type Output = MicroSeconds;
+
+    #[inline]
+    fn mul(self, rhs: MicroSeconds) -> MicroSeconds {
+        rhs * self
     }
 }
 
@@ -405,7 +441,7 @@ impl RemAssign<u32> for MicroSeconds {
 #[test]
 fn primatives() {
     assert_eq!(MicroSeconds::SECOND * 2, MicroSeconds(2 * super::MICROS_PER_SEC));
-    //assert_eq!(2 * MicroSeconds::SECOND, MicroSeconds(2 * super::MICROS_PER_SEC)); not implemented
+    assert_eq!(2 * MicroSeconds::SECOND, MicroSeconds(2 * super::MICROS_PER_SEC));
     assert_eq!(MicroSeconds::MILLISECOND * 2, MicroSeconds(2 * super::MICROS_PER_MILLI));
-    //assert_eq!(2 * MicroSeconds::MILLISECOND, MicroSeconds(2 * super::MICROS_PER_MILLI)); not implemented
+    assert_eq!(2 * MicroSeconds::MILLISECOND, MicroSeconds(2 * super::MICROS_PER_MILLI));
 }
