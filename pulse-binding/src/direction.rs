@@ -11,18 +11,22 @@
 // Portions of documentation are copied from the LGPL 2.1+ licensed PulseAudio C headers on a
 // fair-use basis, as discussed in the overall project readme (available in the git repository).
 
-//! Utility functions for Direction.
+//! Utilities for direction.
 
 #[cfg(any(doc, feature = "pa_v6"))]
 use std::ffi::CStr;
 
+/// Flag set.
 pub type FlagSet = capi::direction::pa_direction_t;
 
+/// Available flags for `FlagSet`.
 pub mod flags {
     use capi;
     use super::FlagSet;
 
+    /// Output flag.
     pub const OUTPUT: FlagSet = capi::PA_DIRECTION_OUTPUT;
+    /// Input flag.
     pub const INPUT:  FlagSet = capi::PA_DIRECTION_INPUT;
 }
 

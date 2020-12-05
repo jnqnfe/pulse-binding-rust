@@ -114,6 +114,7 @@
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
 
+#![warn(missing_docs)]
 #![deny(bare_trait_objects)]
 
 #[cfg_attr(docsrs, feature(doc_cfg))]

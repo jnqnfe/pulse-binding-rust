@@ -33,6 +33,7 @@ pub trait MainloopInternalType {}
 /// accessors for the internal pointers, allowing access to these pointers across the generic
 /// implementations to work.
 pub trait MainloopInnerType {
+    /// Internal mainloop type.
     type I: MainloopInternalType;
 
     /// Return opaque main loop object pointer.
@@ -105,9 +106,12 @@ impl<T> MainloopInnerType for MainloopInner<T>
     }
 }
 
+/// Mainloop trait, to be implemented by the different types of mainloops.
 pub trait Mainloop {
+    /// Inner mainloop type.
     type MI: MainloopInnerType;
 
+    /// Get inner mainloop.
     fn inner(&self) -> Rc<Self::MI>;
 
     /// Creates a new IO event.

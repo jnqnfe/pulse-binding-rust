@@ -48,6 +48,7 @@ pub fn pa_stream_is_good(state: pa_stream_state_t) -> bool {
     state == pa_stream_state_t::Ready
 }
 
+/// Stream direction.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
@@ -94,6 +95,7 @@ pub mod flags {
     pub const PA_STREAM_PASSTHROUGH:               pa_stream_flags_t = 0x80000;
 }
 
+/// Seek mode.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]

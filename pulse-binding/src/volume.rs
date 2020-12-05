@@ -74,12 +74,16 @@ use std::ptr::null;
 use crate::sample;
 use crate::channelmap::{Map, Position, PositionMask, POSITION_MASK_ALL};
 
+/// A “normal” volume level.
 #[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_NORM:    Volume = Volume(capi::PA_VOLUME_NORM);
+/// A muted volume level.
 #[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_MUTED:   Volume = Volume(capi::PA_VOLUME_MUTED);
+/// A maximum volume level.
 #[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_MAX:     Volume = Volume(capi::PA_VOLUME_MAX);
+/// An invalid volume level.
 #[deprecated(note="use the associated constant on `Volume` instead")]
 pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
 
@@ -245,11 +249,13 @@ impl From<VolumeDB> for VolumeLinear {
 }
 
 impl VolumeLinear {
+    /// Is a muted volume level.
     #[inline]
     pub fn is_muted(&self) -> bool {
         self.0 <= 0.0
     }
 
+    /// Is a “normal” volume level.
     #[inline]
     pub fn is_normal(&self) -> bool {
         self.0 == 1.0
@@ -266,16 +272,19 @@ impl Volume {
     /// An invalid volume level.
     pub const INVALID: Self = Self(capi::PA_VOLUME_INVALID);
 
+    /// Is a muted volume level.
     #[inline]
     pub fn is_muted(&self) -> bool {
         *self == Self::MUTED
     }
 
+    /// Is a “normal” volume level.
     #[inline]
     pub fn is_normal(&self) -> bool {
         *self == Self::NORMAL
     }
 
+    /// Is a maximum volume level.
     #[inline]
     pub fn is_max(&self) -> bool {
         *self == Self::MAX

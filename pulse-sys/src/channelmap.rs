@@ -156,6 +156,9 @@ impl Default for pa_channel_position_t {
     }
 }
 
+/// Channel map definition standards.
+///
+/// Used in having a channel map automatically setup per number of channels and a specific standard.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]

@@ -40,11 +40,15 @@ impl UnixTs {
         MicroSeconds(unsafe { capi::pa_timeval_age(&(self.0).0) })
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
     #[inline]
     pub fn checked_add(self, other: MicroSeconds) -> Option<Self> {
         self.0.checked_add_us(other).and_then(|us| Some(UnixTs(us)))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub(self, other: MicroSeconds) -> Option<Self> {
         self.0.checked_sub_us(other).and_then(|us| Some(UnixTs(us)))

@@ -19,6 +19,7 @@ use num_derive::{FromPrimitive, ToPrimitive};
 /// An asynchronous operation object.
 #[repr(C)] pub struct pa_operation { _private: [u8; 0] }
 
+/// Operation state.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]

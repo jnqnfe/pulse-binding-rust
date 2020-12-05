@@ -24,9 +24,12 @@ use crate::def;
 use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
 use crate::operation::Operation;
 
+/// Role priority information.
 #[derive(Debug)]
 pub struct RolePriorityInfo<'a> {
+    /// Role name
     pub role: Option<Cow<'a, str>>,
+    /// Priority
     pub priority: u32,
 }
 

@@ -190,6 +190,7 @@ impl State {
     }
 }
 
+/// Context flag set.
 pub type FlagSet = capi::pa_context_flags_t;
 
 /// Some special flags for contexts.
@@ -197,6 +198,7 @@ pub mod flags {
     use capi;
     use super::FlagSet;
 
+    /// No flags set.
     pub const NOFLAGS:     FlagSet = capi::PA_CONTEXT_NOFLAGS;
     /// Disable autospawning of the PulseAudio daemon if required.
     pub const NOAUTOSPAWN: FlagSet = capi::PA_CONTEXT_NOAUTOSPAWN;

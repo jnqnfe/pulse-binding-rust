@@ -31,16 +31,21 @@ impl MonotonicTs {
         MonotonicTs(MicroSeconds(unsafe { capi::pa_rtclock_now() }))
     }
 
+    /// Returns `true` so long as inner value is not `MicroSeconds::INVALID`.
     #[inline]
     pub fn is_valid(&self) -> bool {
         self.0.is_valid()
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner `MicroSeconds`’s `checked_add()` method.
     #[inline]
     pub fn checked_add(self, other: MicroSeconds) -> Option<Self> {
         self.0.checked_add(other).and_then(|us| Some(MonotonicTs(us)))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner `MicroSeconds`’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub(self, other: MicroSeconds) -> Option<Self> {
         self.0.checked_sub(other).and_then(|us| Some(MonotonicTs(us)))

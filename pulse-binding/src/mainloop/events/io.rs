@@ -23,6 +23,7 @@ pub use capi::pa_io_event as IoEventInternal;
 /// A bitmask for IO events.
 pub type IoEventFlagSet = capi::mainloop::pa_io_event_flags_t;
 
+/// Flags for `IoEventFlagSet`.
 pub mod flags {
     use capi;
     use super::IoEventFlagSet;

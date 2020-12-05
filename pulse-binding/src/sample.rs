@@ -81,7 +81,7 @@ pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
 #[deprecated(note="use the associated constant on `Spec` instead")]
 pub const RATE_MAX: u32 = capi::PA_RATE_MAX;
 
-/// Sample format
+/// Sample format.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]

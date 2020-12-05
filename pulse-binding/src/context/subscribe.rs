@@ -80,6 +80,7 @@ pub const OPERATION_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
 pub type InterestMaskSet = capi::context::subscribe::pa_subscription_mask_t;
 
 /// A set of masks used for expressing which facilities you are interested in when subscribing.
+#[allow(missing_docs)]
 pub mod subscription_masks {
     use capi;
     use super::InterestMaskSet;
@@ -101,6 +102,7 @@ pub mod subscription_masks {
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
+#[allow(missing_docs)]
 pub enum Facility {
     Sink         = 0,
     Source       = 1,

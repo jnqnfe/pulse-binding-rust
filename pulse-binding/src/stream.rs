@@ -308,7 +308,7 @@ type NotifyCb = callbacks::MultiUseCallback<dyn FnMut(),
 type EventCb = callbacks::MultiUseCallback<dyn FnMut(String, Proplist),
     extern "C" fn(*mut StreamInternal, name: *const c_char, pl: *mut ProplistInternal, *mut c_void)>;
 
-/// The state of a stream.
+/// Stream state.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
@@ -364,6 +364,7 @@ impl State {
     }
 }
 
+/// Flag set.
 pub type FlagSet = capi::pa_stream_flags_t;
 
 /// Some special flags for stream connections.
@@ -569,8 +570,11 @@ pub enum PeekResult<'a> {
 /// Result type for [`Stream::get_latency()`](struct.Stream.html#method.get_latency).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Latency {
+    /// No latency.
     None,
+    /// A positive (greater than zero) amount of latency.
     Positive(MicroSeconds),
+    /// A negative (less than zero) amount of latency.
     Negative(MicroSeconds),
 }
 

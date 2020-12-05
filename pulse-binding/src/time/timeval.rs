@@ -117,50 +117,68 @@ impl Timeval {
         self
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
     pub fn checked_add(self, other: Self) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         let other_us = MicroSeconds::from(other);
         self_us.checked_add(other_us).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
     pub fn checked_add_us(self, rhs: MicroSeconds) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_add(rhs).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         let rhs_us = MicroSeconds::from(rhs);
         self_us.checked_add(rhs_us).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
     pub fn checked_sub(self, other: Self) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         let other_us = MicroSeconds::from(other);
         self_us.checked_sub(other_us).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
     pub fn checked_sub_us(self, rhs: MicroSeconds) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_sub(rhs).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         let rhs_us = MicroSeconds::from(rhs);
         self_us.checked_sub(rhs_us).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer multiplication. Computes `self * rhs`, returning `None` if overflow
+    /// occurred, using the inner integer’s `checked_mul()` method.
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_mul(rhs).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer division. Computes `self / rhs`, returning `None` if `rhs == 0`, using the
+    /// inner integer’s `checked_div()` method.
     pub fn checked_div(self, rhs: u32) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_div(rhs).and_then(|i| Some(i.into()))
     }
 
+    /// Checked integer remainder. Computes `self % rhs`, returning `None` if `rhs == 0`, using the
+    /// inner integer’s `checked_rem()` method.
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
         self_us.checked_rem(rhs).and_then(|i| Some(i.into()))

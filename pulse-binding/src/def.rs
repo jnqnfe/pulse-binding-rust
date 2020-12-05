@@ -22,8 +22,10 @@ pub use capi::pa_device_type_t as Device;
 pub use capi::pa_port_available_t as PortAvailable;
 pub use capi::pa_device_port_type_t as DevicePortType;
 
+/// A callback type for releasing allocations.
 pub type FreeCb = extern "C" fn(p: *mut c_void);
 
+/// PulseAudio 'quit return value' type.
 pub type RetvalActual = i32;
 
 /// A wrapper around integer ‘quit return values’ returned by PulseAudio.
@@ -293,6 +295,7 @@ impl AsRef<capi::pa_spawn_api> for SpawnApi {
     }
 }
 
+/// Set of sink flags.
 pub type SinkFlagSet = capi::def::pa_sink_flags_t;
 
 /// Special sink flags.
@@ -341,6 +344,7 @@ pub mod sink_flags {
     pub const SET_FORMATS: SinkFlagSet = capi::PA_SINK_SET_FORMATS;
 }
 
+/// Sink state.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
@@ -403,6 +407,7 @@ impl SinkState {
     }
 }
 
+/// Set of source flags.
 pub type SourceFlagSet = capi::def::pa_source_flags_t;
 
 /// Special source flags.

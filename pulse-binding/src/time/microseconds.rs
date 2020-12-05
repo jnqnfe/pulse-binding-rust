@@ -16,7 +16,9 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
 
-/// Microseconds. This is an unsigned 64-bit type.
+/// Microseconds. Represents a span of time like `std::time::Duration`.
+///
+/// This is an unsigned 64-bit type, and thus represents absolute values only.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MicroSeconds(pub u64);
 
@@ -24,46 +26,61 @@ impl MicroSeconds {
     /// `MicroSeconds` value representing an ‘invalid’ time.
     pub const INVALID: Self = Self(capi::PA_USEC_INVALID);
 
-    /// Largest valid time value in (largest integer value is reserved for representing ‘invalid’).
+    /// Largest valid time value (largest integer value is reserved for representing ‘invalid’).
     pub const MAX: Self = Self(capi::PA_USEC_MAX);
 
+    /// Returns `true` so long as inner value is not `Self::INVALID`.
     #[inline]
     pub fn is_valid(&self) -> bool {
         *self != Self::INVALID
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
     #[inline]
     pub fn checked_add(self, other: Self) -> Option<Self> {
         self.0.checked_add(other.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
     #[inline]
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
         let usecs = MicroSeconds::from(rhs);
         self.0.checked_add(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub(self, other: Self) -> Option<Self> {
         self.0.checked_sub(other.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
         let usecs = MicroSeconds::from(rhs);
         self.0.checked_sub(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Checked integer multiplication. Computes `self * rhs`, returning `None` if overflow
+    /// occurred, using the inner integer’s `checked_mul()` method.
     #[inline]
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
         self.0.checked_mul(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Checked integer division. Computes `self / rhs`, returning `None` if `rhs == 0`, using the
+    /// inner integer’s `checked_div()` method.
     #[inline]
     pub fn checked_div(self, rhs: u32) -> Option<Self> {
         self.0.checked_div(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Checked integer remainder. Computes `self % rhs`, returning `None` if `rhs == 0`, using the
+    /// inner integer’s `checked_rem()` method.
     #[inline]
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
         self.0.checked_rem(rhs as u64).and_then(|i| Some(MicroSeconds(i)))

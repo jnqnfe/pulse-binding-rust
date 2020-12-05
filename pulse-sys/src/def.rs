@@ -23,6 +23,7 @@ pub const PA_INVALID_INDEX: u32 = std::u32::MAX;
 
 pub type pa_free_cb_t = Option<extern "C" fn(p: *mut c_void)>;
 
+/// Device type, source or sink.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
@@ -161,6 +162,7 @@ pub fn pa_source_is_running(state: pa_source_state_t) -> bool {
     state == pa_source_state_t::Running
 }
 
+/// Port availability.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
@@ -177,7 +179,7 @@ pub const PA_PORT_AVAILABLE_UNKNOWN: pa_port_available_t = pa_port_available_t::
 pub const PA_PORT_AVAILABLE_NO:      pa_port_available_t = pa_port_available_t::No;
 pub const PA_PORT_AVAILABLE_YES:     pa_port_available_t = pa_port_available_t::Yes;
 
-/// Port type
+/// Port type.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]

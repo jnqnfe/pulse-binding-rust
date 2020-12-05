@@ -295,6 +295,7 @@ pub const PA_PROP_FORMAT_CHANNEL_MAP: &str = "format.channel_map";
 /// values.
 #[repr(C)] pub struct pa_proplist { _private: [u8; 0] }
 
+/// Update mode.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
