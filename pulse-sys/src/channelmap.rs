@@ -14,6 +14,7 @@
 //! Constants and routines for handing channel mapping.
 
 use std::os::raw::c_char;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::sample::pa_sample_spec;
 
 pub type pa_channel_position_mask_t = u64;

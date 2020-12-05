@@ -14,6 +14,7 @@
 //! Global definitions.
 
 use std::os::raw::c_void;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::timeval::timeval;
 use crate::sample::pa_usec_t;
 

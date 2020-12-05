@@ -57,6 +57,7 @@
 //! [`subscription_masks`]: subscription_masks/index.html
 
 use std::os::raw::c_void;
+use num_derive::{FromPrimitive, ToPrimitive};
 use super::{ContextInternal, Context};
 use crate::operation;
 use crate::callbacks::{box_closure_get_capi_ptr, MultiUseCallback};

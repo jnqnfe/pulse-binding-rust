@@ -14,6 +14,7 @@
 //! Property list constants and functions.
 
 use std::os::raw::{c_char, c_void};
+use num_derive::{FromPrimitive, ToPrimitive};
 
 /// For streams: localized media name, formatted as UTF-8. E.g. "Guns'N'Roses: Civil War".
 pub const PA_PROP_MEDIA_NAME: &str = "media.name";

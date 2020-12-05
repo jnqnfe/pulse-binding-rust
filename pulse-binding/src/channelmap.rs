@@ -44,6 +44,7 @@
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::sample;
 
 pub use capi::pa_channel_map_def_t as MapDef;

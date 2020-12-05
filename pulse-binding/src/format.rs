@@ -25,6 +25,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::borrow::Cow;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::{sample, channelmap};
 use crate::error::PAErr;
 use crate::proplist::{Proplist, ProplistInternal};

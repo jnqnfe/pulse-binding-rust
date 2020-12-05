@@ -31,9 +31,6 @@
 
 #[cfg_attr(docsrs, feature(doc_cfg))]
 
-#[macro_use]
-extern crate num_derive;
-
 pub mod channelmap;
 pub mod context;
 pub mod def;

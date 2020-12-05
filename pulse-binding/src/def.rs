@@ -14,6 +14,7 @@
 //! Global definitions.
 
 use std::os::raw::c_void;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::time::{Timeval, MicroSeconds};
 
 pub use capi::PA_INVALID_INDEX as INVALID_INDEX;

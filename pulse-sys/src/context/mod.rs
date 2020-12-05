@@ -31,6 +31,7 @@ pub use self::scache::*;
 pub use self::subscribe::*;
 
 use std::os::raw::{c_char, c_void};
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::mainloop::api::{pa_time_event, pa_time_event_cb_t, pa_mainloop_api};
 use crate::{operation::pa_operation, def::pa_spawn_api};
 use crate::proplist::{pa_proplist, pa_update_mode_t};

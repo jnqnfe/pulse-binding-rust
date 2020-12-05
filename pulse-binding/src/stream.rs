@@ -257,6 +257,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::borrow::Cow;
+use num_derive::{FromPrimitive, ToPrimitive};
 use capi::pa_stream as StreamInternal;
 use crate::{channelmap, format, def, proplist, sample};
 use crate::callbacks::{self, box_closure_get_capi_ptr, get_su_capi_params, get_su_callback};

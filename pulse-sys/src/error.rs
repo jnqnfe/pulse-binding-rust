@@ -14,6 +14,7 @@
 //! Error management.
 
 use std::os::raw::c_char;
+use num_derive::{FromPrimitive, ToPrimitive};
 
 /// Error code.
 ///

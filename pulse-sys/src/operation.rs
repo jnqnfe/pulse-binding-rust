@@ -14,6 +14,7 @@
 //! Asynchronous operations.
 
 use std::os::raw::c_void;
+use num_derive::{FromPrimitive, ToPrimitive};
 
 /// An asynchronous operation object.
 #[repr(C)] pub struct pa_operation { _private: [u8; 0] }

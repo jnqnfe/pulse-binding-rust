@@ -14,6 +14,7 @@
 //! Constants and routines for sample type handling.
 
 use std::os::raw::c_char;
+use num_derive::{FromPrimitive, ToPrimitive};
 
 /// Maximum number of allowed channels.
 pub const PA_CHANNELS_MAX: u8 = 32;

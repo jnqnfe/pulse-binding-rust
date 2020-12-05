@@ -14,6 +14,7 @@
 //! Utility functions for handling a stream or sink format.
 
 use std::os::raw::c_char;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::sample::{pa_sample_spec, pa_sample_format_t};
 use crate::{proplist::pa_proplist, channelmap::pa_channel_map};
 

@@ -84,6 +84,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::rc::Rc;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::{def, sample};
 use crate::mainloop::api::{Mainloop, MainloopInnerType};
 use crate::mainloop::events;

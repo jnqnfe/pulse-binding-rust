@@ -14,6 +14,7 @@
 //! Audio streams for input, output and sample upload.
 
 use std::os::raw::{c_char, c_void};
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::sample::{pa_sample_spec, pa_usec_t};
 use crate::def::{pa_buffer_attr, pa_timing_info, pa_free_cb_t};
 use crate::proplist::{pa_proplist, pa_update_mode_t};

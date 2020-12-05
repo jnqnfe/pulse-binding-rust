@@ -70,6 +70,7 @@
 
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
+use num_derive::{FromPrimitive, ToPrimitive};
 use crate::time::MicroSeconds;
 
 /// Maximum number of allowed channels.
