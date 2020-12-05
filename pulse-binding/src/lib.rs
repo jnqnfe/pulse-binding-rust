@@ -118,7 +118,6 @@
 
 #[cfg_attr(docsrs, feature(doc_cfg))]
 
-extern crate libc;
 extern crate libpulse_sys as capi;
 #[macro_use]
 extern crate num_derive;

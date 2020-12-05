@@ -31,7 +31,6 @@
 
 #[cfg_attr(docsrs, feature(doc_cfg))]
 
-extern crate libc;
 #[macro_use]
 extern crate num_derive;
 

@@ -1,5 +1,3 @@
-extern crate pkg_config;
-
 fn main() {
     // Skip pkg-config check if just generating documentation.
     if cfg!(doc) {
