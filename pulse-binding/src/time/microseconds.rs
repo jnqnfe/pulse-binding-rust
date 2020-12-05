@@ -24,15 +24,86 @@ pub struct MicroSeconds(pub u64);
 
 impl MicroSeconds {
     /// `MicroSeconds` value representing an ‘invalid’ time.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::INVALID, MicroSeconds(std::u64::MAX));
+    /// ```
     pub const INVALID: Self = Self(capi::PA_USEC_INVALID);
 
-    /// Largest valid time value (largest integer value is reserved for representing ‘invalid’).
+    /// One second in microseconds.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::SECOND, MicroSeconds(1_000_000));
+    /// ```
+    pub const SECOND: Self = Self(super::MICROS_PER_SEC);
+
+    /// One millisecond in microseconds.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::MILLISECOND, MicroSeconds(1_000));
+    /// ```
+    pub const MILLISECOND: Self = Self(super::MICROS_PER_MILLI);
+
+    /// Zero value.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::ZERO, MicroSeconds(0));
+    /// ```
+    pub const ZERO: Self = Self(0);
+
+    /// Smallest _valid_ time value (zero).
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::MIN, MicroSeconds(0));
+    /// ```
+    pub const MIN: Self = Self(0);
+
+    /// Largest _valid_ time value (largest integer value is reserved for representing ‘invalid’).
+    ///
+    /// Roughly equal to 5,124,095,576 hours, 213,503,982 days, or 584,542 years.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::MAX, MicroSeconds(std::u64::MAX - 1));
+    /// ```
     pub const MAX: Self = Self(capi::PA_USEC_MAX);
 
     /// Returns `true` so long as inner value is not `Self::INVALID`.
     #[inline]
     pub const fn is_valid(&self) -> bool {
         self.0 != Self::INVALID.0
+    }
+
+    /// Returns `true` so long as inner value is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::ZERO.is_zero(), true);
+    /// assert_eq!(MicroSeconds(0).is_zero(), true);
+    /// assert_eq!(MicroSeconds(1).is_zero(), false);
+    /// ```
+    #[inline]
+    pub const fn is_zero(&self) -> bool {
+        self.0 == 0
     }
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
@@ -204,4 +275,12 @@ impl RemAssign<u32> for MicroSeconds {
     fn rem_assign(&mut self, rhs: u32) {
         *self = *self % rhs;
     }
+}
+
+#[test]
+fn primatives() {
+    assert_eq!(MicroSeconds::SECOND * 2, MicroSeconds(2 * super::MICROS_PER_SEC));
+    //assert_eq!(2 * MicroSeconds::SECOND, MicroSeconds(2 * super::MICROS_PER_SEC)); not implemented
+    assert_eq!(MicroSeconds::MILLISECOND * 2, MicroSeconds(2 * super::MICROS_PER_MILLI));
+    //assert_eq!(2 * MicroSeconds::MILLISECOND, MicroSeconds(2 * super::MICROS_PER_MILLI)); not implemented
 }

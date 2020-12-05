@@ -15,7 +15,7 @@
  * Shrunk the type of the `channels` param of `channelmap::Map` methods `init_auto()` and
    `init_extend()` from `u32` to `u8`.
  * Shrunk the `sample::CHANNELS_MAX` type from `usize` to `u8`.
- * Made use of the associated constants feature provided in Rust 1.20 (long overdue):
+ * Moved many existing constants to be associated constants (long overdue):
     - Deprecated `sample::{CHANNELS_MAX, RATE_MAX}`.
     - Added `sample::Spec::{CHANNELS_MAX, RATE_MAX}` replacements.
     - Added `volume::ChannelVolumes::CHANNELS_MAX` replacement.
@@ -27,6 +27,9 @@
     - Added `time::MicroSeconds::{INVALID, MAX}` replacements.
     - Deprecated `context::subscribe::{FACILITY_MASK, OPERATION_MASK}`.
     - Added `context::subscribe::{Facility::MASK, Operation::MASK}` replacements.
+ * Made some improvements to `MicroSeconds`:
+    - Added `MicroSeconds::{MIN, ZERO, SECOND, MILLISECOND}` associated constants.
+    - Added `MicroSeconds::is_zero()`.
  * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
  * Added support for feature tagging in documentation (requires nightly Rust version, so only
