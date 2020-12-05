@@ -36,11 +36,11 @@ package = "libpulse-sys"
 
 ### PulseAudio version compatibility
 
-Finally, fill in the `features` attribute of the dependency added above with the right compatibility
-flag (listed within this crates’ toml file) to disable functionality for versions of the PulseAudio
-client library that are too new for you. (This crate targets the entire PA client C API, and you
-will naturally encounter problems where mismatching version support with the version of PA on your
-systems). See the overall project `COMPATIBILITY.md` file for further details.
+The default functionality provided is support for PulseAudio version 8.0 or newer. This should be
+good enough for most needs, however if you _need_ to use something only available in a newer
+version then you can select the corresponding version compatibility feature to raise the minimum
+compatibility level. You can also reduce support down to even older versions if you wish. See the
+overall project `COMPATIBILITY.md` file for further details.
 
 ## License
 
