@@ -310,7 +310,7 @@ pub struct SinkPortInfo<'a> {
     /// This is meant especially for handling cases where one 3.5 mm connector is used for
     /// headphones, headsets and microphones, and the hardware can only tell that something was
     /// plugged in but not what exactly. In this situation the ports for all those devices share
-    /// their availability status, and PulseAudio can't tell which one is actually plugged in, and
+    /// their availability status, and PulseAudio can’t tell which one is actually plugged in, and
     /// some application may ask the user what was plugged in. Such applications should get a list
     /// of all card ports and compare their `availability_group` fields. Ports that have the same
     /// group are those that need input from the user to determine which device was plugged in. The
@@ -725,7 +725,7 @@ pub struct SourcePortInfo<'a> {
     /// This is meant especially for handling cases where one 3.5 mm connector is used for
     /// headphones, headsets and microphones, and the hardware can only tell that something was
     /// plugged in but not what exactly. In this situation the ports for all those devices share
-    /// their availability status, and PulseAudio can't tell which one is actually plugged in, and
+    /// their availability status, and PulseAudio can’t tell which one is actually plugged in, and
     /// some application may ask the user what was plugged in. Such applications should get a list
     /// of all card ports and compare their `availability_group` fields. Ports that have the same
     /// group are those that need input from the user to determine which device was plugged in. The
@@ -1607,7 +1607,7 @@ pub struct CardPortInfo<'a> {
     /// This is meant especially for handling cases where one 3.5 mm connector is used for
     /// headphones, headsets and microphones, and the hardware can only tell that something was
     /// plugged in but not what exactly. In this situation the ports for all those devices share
-    /// their availability status, and PulseAudio can't tell which one is actually plugged in, and
+    /// their availability status, and PulseAudio can’t tell which one is actually plugged in, and
     /// some application may ask the user what was plugged in. Such applications should get a list
     /// of all card ports and compare their `availability_group` fields. Ports that have the same
     /// group are those that need input from the user to determine which device was plugged in. The

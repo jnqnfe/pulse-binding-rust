@@ -39,7 +39,7 @@ fn main() {
     };
 
     // If the user does not have pkg-config or the PA *.pc file (they have not installed the dev
-    // package), then let's try a default fallback (having to install dev packages for Rust
+    // package), then let’s try a default fallback (having to install dev packages for Rust
     // development is unnatural imo, ideally distros should start shipping *.pc files differently).
     if fallback {
         println!("cargo:rustc-link-lib={}", fallback_name);
