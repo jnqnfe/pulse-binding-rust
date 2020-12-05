@@ -36,11 +36,8 @@ pa_v8  = ["pa_v6"]
 pa_v6  = ["pa_v5"]
 pa_v5  = []
 
-# This skips the pkg-config check. It is meant for documentation generation purposes only.
-dox = []
-
 [package.metadata.docs.rs]
-features = ["dox"]
 all-features = false
 no-default-features = true
+rustc-args = ["--cfg", "doc"]
 rustdoc-args = ["--cfg", "docsrs"]

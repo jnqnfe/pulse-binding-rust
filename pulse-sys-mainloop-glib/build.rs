@@ -1,11 +1,11 @@
-#[cfg(not(feature = "dox"))]
 extern crate pkg_config;
 
-#[cfg(feature = "dox")]
-fn main() {}
-
-#[cfg(not(feature = "dox"))]
 fn main() {
+    // Skip pkg-config check if just generating documentation.
+    if cfg!(doc) {
+        return;
+    }
+
     let lib_name = "libpulse-mainloop-glib";
     let fallback_name = {
         #[cfg(target_os = "linux")]

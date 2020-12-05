@@ -29,11 +29,8 @@ pa_v8  = ["pa_v6",  "libpulse-binding/pa_v8",  "libpulse-mainloop-glib-sys/pa_v8
 pa_v6  = ["pa_v5",  "libpulse-binding/pa_v6",  "libpulse-mainloop-glib-sys/pa_v6"]
 pa_v5  = [          "libpulse-binding/pa_v5",  "libpulse-mainloop-glib-sys/pa_v5"]
 
-# This skips the pkg-config check. It is meant for documentation generation purposes only.
-dox = ["libpulse-binding/dox", "libpulse-mainloop-glib-sys/dox"]
-
 [package.metadata.docs.rs]
-features = ["dox"]
 all-features = false
 no-default-features = true
+rustc-args = ["--cfg", "doc"]
 rustdoc-args = ["--cfg", "docsrs"]
