@@ -29,7 +29,7 @@
     - Added `context::subscribe::{Facility::MASK, Operation::MASK}` replacements.
  * Made some improvements to `MicroSeconds`:
     - Added `MicroSeconds::{MIN, ZERO, SECOND, MILLISECOND}` associated constants.
-    - Added `MicroSeconds::is_zero()`.
+    - Added `MicroSeconds::is_zero()`, `MicroSeconds::from_secs()`, `MicroSeconds::from_millis()`.
  * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
  * Added support for feature tagging in documentation (requires nightly Rust version, so only

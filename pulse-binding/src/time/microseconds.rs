@@ -117,6 +117,36 @@ impl MicroSeconds {
         self.0 == 0
     }
 
+    /// Creates a new `MicroSeconds` from the specified number of whole seconds. Returns `None` on
+    /// overflow.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::from_secs(2), Some(MicroSeconds(2_000_000)));
+    /// assert_eq!(MicroSeconds::from_secs(0xffff_ffff_0000_0000), None);
+    /// ```
+    #[inline]
+    pub fn from_secs(secs: u64) -> Option<Self> {
+        secs.checked_mul(super::MICROS_PER_SEC).and_then(|i| Some(MicroSeconds(i)))
+    }
+
+    /// Creates a new `MicroSeconds` from the specified number of whole milliseconds. Returns `None`
+    /// on overflow.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::from_millis(23), Some(MicroSeconds(23_000)));
+    /// assert_eq!(MicroSeconds::from_millis(0xffff_ffff_0000_0000), None);
+    /// ```
+    #[inline]
+    pub fn from_millis(millis: u64) -> Option<Self> {
+        millis.checked_mul(super::MICROS_PER_MILLI).and_then(|i| Some(MicroSeconds(i)))
+    }
+
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_add()` method.
     ///
