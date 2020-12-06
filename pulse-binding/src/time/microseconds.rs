@@ -13,6 +13,7 @@
 
 //! MicroSeconds.
 
+use std::convert::TryFrom;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
 use super::op_err;
@@ -225,7 +226,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
-        let usecs = MicroSeconds::from(rhs);
+        let usecs = MicroSeconds::try_from(rhs).ok()?;
         self.0.checked_add(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 
@@ -265,7 +266,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
-        let usecs = MicroSeconds::from(rhs);
+        let usecs = MicroSeconds::try_from(rhs).ok()?;
         self.0.checked_sub(usecs.0).and_then(|i| Some(MicroSeconds(i)))
     }
 

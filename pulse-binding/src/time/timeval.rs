@@ -14,6 +14,7 @@
 //! Timeval.
 
 use std::cmp::Ordering;
+use std::convert::TryFrom;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
 use super::{UnixTs, MonotonicTs, MicroSeconds, op_err};
@@ -136,7 +137,7 @@ impl Timeval {
     /// using the inner integer’s `checked_add()` method.
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
-        let rhs_us = MicroSeconds::from(rhs);
+        let rhs_us = MicroSeconds::try_from(rhs).ok()?;
         self_us.checked_add(rhs_us).and_then(|i| Some(i.into()))
     }
 
@@ -159,7 +160,7 @@ impl Timeval {
     /// using the inner integer’s `checked_sub()` method.
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
         let self_us = MicroSeconds::from(self);
-        let rhs_us = MicroSeconds::from(rhs);
+        let rhs_us = MicroSeconds::try_from(rhs).ok()?;
         self_us.checked_sub(rhs_us).and_then(|i| Some(i.into()))
     }
 

@@ -17,10 +17,14 @@ use super::*;
 
 // To `MicroSeconds`
 
-impl From<Duration> for MicroSeconds {
+impl TryFrom<Duration> for MicroSeconds {
+    type Error = ();
+
     #[inline]
-    fn from(t: Duration) -> Self {
-        MicroSeconds((t.as_secs() * MICROS_PER_SEC) + t.subsec_micros() as u64)
+    fn try_from(t: Duration) -> Result<Self, Self::Error> {
+        let secs_as_micros = t.as_secs().checked_mul(MICROS_PER_SEC).ok_or(())?;
+        let total_micros = secs_as_micros.checked_add(t.subsec_micros() as u64).ok_or(())?;
+        Ok(MicroSeconds(total_micros))
     }
 }
 
@@ -73,7 +77,7 @@ fn tests() {
     let duration = Duration::from_micros(2_700_000);
     let timeval = Timeval::new(2, 700_000);
 
-    assert_eq!(MicroSeconds::from(duration), micro);
+    assert_eq!(MicroSeconds::try_from(duration).unwrap(), micro);
     assert_eq!(MicroSeconds::from(timeval), micro);
 
     assert_eq!(Duration::from(micro), duration);
