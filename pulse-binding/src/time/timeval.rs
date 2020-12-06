@@ -24,9 +24,6 @@ use super::{UnixTs, MonotonicTs, MicroSeconds, op_err};
 #[cfg(windows)] pub(crate) type TvSecs = libc::c_long;
 #[cfg(windows)] pub(crate) type TvUsecs = libc::c_long;
 
-/// Bit to set in `timeval`’s `tv_usec` attribute to mark that the `timeval` is in monotonic time.
-const PA_TIMEVAL_RTCLOCK: i64 = 1 << 30;
-
 /// Wrapper for `libc::timeval`, attaching various methods and trait implementations.
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -57,6 +54,9 @@ impl PartialOrd for Timeval {
 }
 
 impl Timeval {
+    /// Bit to set in `tv_usec` attribute to mark that the `timeval` is in monotonic time.
+    const RTCLOCK_BIT: i64 = 1 << 30;
+
     /// Creates a new instance, with values provided.
     #[inline]
     pub const fn new(sec: TvSecs, usec: TvUsecs) -> Self {
@@ -97,7 +97,7 @@ impl Timeval {
         *self = v.into();
 
         match rtclock {
-            true => { self.0.tv_usec |= PA_TIMEVAL_RTCLOCK as TvUsecs; },
+            true => { self.0.tv_usec |= Self::RTCLOCK_BIT as TvUsecs; },
             false => { self.wallclock_from_rtclock(); },
         }
         self
