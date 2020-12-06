@@ -48,3 +48,12 @@ pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
 /// ‘invalid’).
 #[deprecated(note="use the associated constant on `MicroSeconds` instead")]
 pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
+
+/// Basic math operation errors.
+mod op_err {
+    pub const ADD: &str = "attempt to add with overflow";
+    pub const SUB: &str = "attempt to subtract with overflow";
+    pub const MUL: &str = "attempt to multiply with overflow";
+    pub const DIV: &str = "attempt to divide by zero";
+    pub const REM: &str = DIV;
+}

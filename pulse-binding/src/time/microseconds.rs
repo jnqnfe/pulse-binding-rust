@@ -15,6 +15,7 @@
 
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
+use super::op_err;
 
 /// Microseconds. Represents a span of time like `std::time::Duration`.
 ///
@@ -294,7 +295,7 @@ impl Add for MicroSeconds {
 
     #[inline]
     fn add(self, other: Self) -> Self {
-        self.checked_add(other).unwrap()
+        self.checked_add(other).expect(op_err::ADD)
     }
 }
 impl AddAssign for MicroSeconds {
@@ -309,7 +310,7 @@ impl Sub for MicroSeconds {
 
     #[inline]
     fn sub(self, other: Self) -> Self {
-        self.checked_sub(other).unwrap()
+        self.checked_sub(other).expect(op_err::SUB)
     }
 }
 impl SubAssign for MicroSeconds {
@@ -328,7 +329,7 @@ impl Add<Duration> for MicroSeconds {
 
     #[inline]
     fn add(self, rhs: Duration) -> Self {
-        self.checked_add_duration(rhs).unwrap()
+        self.checked_add_duration(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<Duration> for MicroSeconds {
@@ -343,7 +344,7 @@ impl Add<MicroSeconds> for Duration {
 
     #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
-        self.checked_add(Duration::from_micros(rhs.0)).unwrap()
+        self.checked_add(Duration::from_micros(rhs.0)).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for Duration {
@@ -358,7 +359,7 @@ impl Sub<Duration> for MicroSeconds {
 
     #[inline]
     fn sub(self, rhs: Duration) -> Self {
-        self.checked_sub_duration(rhs).unwrap()
+        self.checked_sub_duration(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<Duration> for MicroSeconds {
@@ -373,7 +374,7 @@ impl Sub<MicroSeconds> for Duration {
 
     #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
-        self.checked_sub(Duration::from_micros(rhs.0)).unwrap()
+        self.checked_sub(Duration::from_micros(rhs.0)).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for Duration {
@@ -419,7 +420,7 @@ impl Mul<u32> for MicroSeconds {
 
     #[inline]
     fn mul(self, rhs: u32) -> Self {
-        MicroSeconds(self.0.checked_mul(rhs as u64).unwrap())
+        MicroSeconds(self.0.checked_mul(rhs as u64).expect(op_err::MUL))
     }
 }
 impl MulAssign<u32> for MicroSeconds {
@@ -443,7 +444,7 @@ impl Div<u32> for MicroSeconds {
 
     #[inline]
     fn div(self, rhs: u32) -> Self {
-        MicroSeconds(self.0.checked_div(rhs as u64).unwrap())
+        MicroSeconds(self.0.checked_div(rhs as u64).expect(op_err::DIV))
     }
 }
 impl DivAssign<u32> for MicroSeconds {
@@ -458,7 +459,7 @@ impl Rem<u32> for MicroSeconds {
 
     #[inline]
     fn rem(self, rhs: u32) -> Self {
-        MicroSeconds(self.0.checked_rem(rhs as u64).unwrap())
+        MicroSeconds(self.0.checked_rem(rhs as u64).expect(op_err::REM))
     }
 }
 impl RemAssign<u32> for MicroSeconds {

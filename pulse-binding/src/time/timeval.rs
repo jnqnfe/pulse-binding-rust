@@ -16,7 +16,7 @@
 use std::cmp::Ordering;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
-use super::{UnixTs, MonotonicTs, MicroSeconds};
+use super::{UnixTs, MonotonicTs, MicroSeconds, op_err};
 
 #[cfg(not(windows))] pub(crate) type TvSecs = libc::time_t;
 #[cfg(not(windows))] pub(crate) type TvUsecs = libc::suseconds_t;
@@ -196,7 +196,7 @@ impl Add for Timeval {
 
     #[inline]
     fn add(self, other: Self) -> Self {
-        self.checked_add(other).unwrap()
+        self.checked_add(other).expect(op_err::ADD)
     }
 }
 impl AddAssign for Timeval {
@@ -211,7 +211,7 @@ impl Sub for Timeval {
 
     #[inline]
     fn sub(self, other: Self) -> Self {
-        self.checked_sub(other).unwrap()
+        self.checked_sub(other).expect(op_err::SUB)
     }
 }
 impl SubAssign for Timeval {
@@ -230,7 +230,7 @@ impl Add<MicroSeconds> for Timeval {
 
     #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
-        self.checked_add_us(rhs).unwrap()
+        self.checked_add_us(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for Timeval {
@@ -245,7 +245,7 @@ impl Sub<MicroSeconds> for Timeval {
 
     #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
-        self.checked_sub_us(rhs).unwrap()
+        self.checked_sub_us(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for Timeval {
@@ -264,7 +264,7 @@ impl Add<Duration> for Timeval {
 
     #[inline]
     fn add(self, rhs: Duration) -> Self {
-        self.checked_add_duration(rhs).unwrap()
+        self.checked_add_duration(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<Duration> for Timeval {
@@ -279,7 +279,7 @@ impl Sub<Duration> for Timeval {
 
     #[inline]
     fn sub(self, rhs: Duration) -> Self {
-        self.checked_sub_duration(rhs).unwrap()
+        self.checked_sub_duration(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<Duration> for Timeval {
@@ -298,7 +298,7 @@ impl Mul<u32> for Timeval {
 
     #[inline]
     fn mul(self, rhs: u32) -> Self {
-        self.checked_mul(rhs).unwrap()
+        self.checked_mul(rhs).expect(op_err::MUL)
     }
 }
 impl MulAssign<u32> for Timeval {
@@ -313,7 +313,7 @@ impl Div<u32> for Timeval {
 
     #[inline]
     fn div(self, rhs: u32) -> Self {
-        self.checked_div(rhs).unwrap()
+        self.checked_div(rhs).expect(op_err::DIV)
     }
 }
 impl DivAssign<u32> for Timeval {
@@ -328,7 +328,7 @@ impl Rem<u32> for Timeval {
 
     #[inline]
     fn rem(self, rhs: u32) -> Self {
-        self.checked_rem(rhs).unwrap()
+        self.checked_rem(rhs).expect(op_err::REM)
     }
 }
 impl RemAssign<u32> for Timeval {

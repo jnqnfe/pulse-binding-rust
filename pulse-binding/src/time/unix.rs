@@ -14,7 +14,7 @@
 //! Unix timestamps.
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
-use super::{Timeval, MicroSeconds};
+use super::{Timeval, MicroSeconds, op_err};
 
 /// A Unix timestamp.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -66,7 +66,7 @@ impl Add<MicroSeconds> for UnixTs {
 
     #[inline]
     fn add(self, other: MicroSeconds) -> Self {
-        self.checked_add(other).unwrap()
+        self.checked_add(other).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for UnixTs {
@@ -81,7 +81,7 @@ impl Sub<MicroSeconds> for UnixTs {
 
     #[inline]
     fn sub(self, other: MicroSeconds) -> Self {
-        self.checked_sub(other).unwrap()
+        self.checked_sub(other).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for UnixTs {

@@ -14,7 +14,7 @@
 //! Monotonic timestamps.
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
-use super::MicroSeconds;
+use super::{MicroSeconds, op_err};
 
 /// A monotonic timestamp.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
@@ -63,7 +63,7 @@ impl Add<MicroSeconds> for MonotonicTs {
 
     #[inline]
     fn add(self, other: MicroSeconds) -> Self {
-        self.checked_add(other).unwrap()
+        self.checked_add(other).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for MonotonicTs {
@@ -78,7 +78,7 @@ impl Sub<MicroSeconds> for MonotonicTs {
 
     #[inline]
     fn sub(self, other: MicroSeconds) -> Self {
-        self.checked_sub(other).unwrap()
+        self.checked_sub(other).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for MonotonicTs {
