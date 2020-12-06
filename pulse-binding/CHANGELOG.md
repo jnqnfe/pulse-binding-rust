@@ -5,6 +5,10 @@
     - Removed the `pa_latest` and `pa_latest_common` cargo features.
     - Changed the default version feature level to `pa_v8`.
  * MSRV bumped from 1.40 to 1.41.
+ * Improved the basic implementations of integer operations `Add`, `Sub`, `Mul`, `Div` and `Rem`
+   for time types, such that those that were not previously making use of “checked” calculations
+   now do so, and thus overflow causes a panic rather than being wrapped. If panicing is not wanted,
+   the “checked” methods should be used directly which return a `None` on failure.
  * Moved the following functions from the `sample` mod to methods of `sample::Spec`:
    `format_is_valid()`, `rate_is_valid()` and `channels_are_valid()`, having noticed that they
    clearly relate to the attributes of that type and so should have been there all along.

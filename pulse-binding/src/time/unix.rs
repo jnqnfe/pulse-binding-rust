@@ -66,7 +66,7 @@ impl Add<MicroSeconds> for UnixTs {
 
     #[inline]
     fn add(self, other: MicroSeconds) -> Self {
-        UnixTs(self.0 + other)
+        self.checked_add(other).unwrap()
     }
 }
 impl AddAssign<MicroSeconds> for UnixTs {
@@ -81,7 +81,7 @@ impl Sub<MicroSeconds> for UnixTs {
 
     #[inline]
     fn sub(self, other: MicroSeconds) -> Self {
-        UnixTs(self.0 - other)
+        self.checked_sub(other).unwrap()
     }
 }
 impl SubAssign<MicroSeconds> for UnixTs {

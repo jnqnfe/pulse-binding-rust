@@ -98,7 +98,7 @@ impl Add for MicroSeconds {
 
     #[inline]
     fn add(self, other: Self) -> Self {
-        MicroSeconds(self.0 + other.0)
+        self.checked_add(other).unwrap()
     }
 }
 impl AddAssign for MicroSeconds {
@@ -113,7 +113,7 @@ impl Sub for MicroSeconds {
 
     #[inline]
     fn sub(self, other: Self) -> Self {
-        MicroSeconds(self.0 - other.0)
+        self.checked_sub(other).unwrap()
     }
 }
 impl SubAssign for MicroSeconds {
@@ -166,7 +166,7 @@ impl Mul<u32> for MicroSeconds {
 
     #[inline]
     fn mul(self, rhs: u32) -> Self {
-        MicroSeconds(self.0 * rhs as u64)
+        MicroSeconds(self.0.checked_mul(rhs as u64).unwrap())
     }
 }
 impl MulAssign<u32> for MicroSeconds {
@@ -181,7 +181,7 @@ impl Div<u32> for MicroSeconds {
 
     #[inline]
     fn div(self, rhs: u32) -> Self {
-        MicroSeconds(self.0 / rhs as u64)
+        MicroSeconds(self.0.checked_div(rhs as u64).unwrap())
     }
 }
 impl DivAssign<u32> for MicroSeconds {
@@ -196,7 +196,7 @@ impl Rem<u32> for MicroSeconds {
 
     #[inline]
     fn rem(self, rhs: u32) -> Self {
-        MicroSeconds(self.0 % rhs as u64)
+        MicroSeconds(self.0.checked_rem(rhs as u64).unwrap())
     }
 }
 impl RemAssign<u32> for MicroSeconds {

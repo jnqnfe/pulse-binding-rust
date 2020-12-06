@@ -63,7 +63,7 @@ impl Add<MicroSeconds> for MonotonicTs {
 
     #[inline]
     fn add(self, other: MicroSeconds) -> Self {
-        MonotonicTs(self.0 + other)
+        self.checked_add(other).unwrap()
     }
 }
 impl AddAssign<MicroSeconds> for MonotonicTs {
@@ -78,7 +78,7 @@ impl Sub<MicroSeconds> for MonotonicTs {
 
     #[inline]
     fn sub(self, other: MicroSeconds) -> Self {
-        MonotonicTs(self.0 - other)
+        self.checked_sub(other).unwrap()
     }
 }
 impl SubAssign<MicroSeconds> for MonotonicTs {
