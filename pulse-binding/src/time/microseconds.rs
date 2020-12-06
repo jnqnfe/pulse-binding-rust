@@ -300,7 +300,7 @@ impl Add for MicroSeconds {
 impl AddAssign for MicroSeconds {
     #[inline]
     fn add_assign(&mut self, rhs: Self) {
-        *self = *self + rhs;
+        *self = self.add(rhs);
     }
 }
 
@@ -315,7 +315,7 @@ impl Sub for MicroSeconds {
 impl SubAssign for MicroSeconds {
     #[inline]
     fn sub_assign(&mut self, rhs: Self) {
-        *self = *self - rhs;
+        *self = self.sub(rhs);
     }
 }
 
@@ -334,7 +334,7 @@ impl Add<Duration> for MicroSeconds {
 impl AddAssign<Duration> for MicroSeconds {
     #[inline]
     fn add_assign(&mut self, rhs: Duration) {
-        *self = self.checked_add_duration(rhs).unwrap();
+        *self = self.add(rhs);
     }
 }
 
@@ -349,7 +349,7 @@ impl Add<MicroSeconds> for Duration {
 impl AddAssign<MicroSeconds> for Duration {
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
-        *self = self.checked_add(Duration::from_micros(rhs.0)).unwrap();
+        *self = self.add(rhs);
     }
 }
 
@@ -364,7 +364,7 @@ impl Sub<Duration> for MicroSeconds {
 impl SubAssign<Duration> for MicroSeconds {
     #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
-        *self = self.checked_sub_duration(rhs).unwrap();
+        *self = self.sub(rhs);
     }
 }
 
@@ -379,7 +379,7 @@ impl Sub<MicroSeconds> for Duration {
 impl SubAssign<MicroSeconds> for Duration {
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
-        *self = self.checked_sub(Duration::from_micros(rhs.0)).unwrap();
+        *self = self.sub(rhs);
     }
 }
 
@@ -425,7 +425,7 @@ impl Mul<u32> for MicroSeconds {
 impl MulAssign<u32> for MicroSeconds {
     #[inline]
     fn mul_assign(&mut self, rhs: u32) {
-        *self = *self * rhs;
+        *self = self.mul(rhs);
     }
 }
 
@@ -434,7 +434,7 @@ impl Mul<MicroSeconds> for u32 {
 
     #[inline]
     fn mul(self, rhs: MicroSeconds) -> MicroSeconds {
-        rhs * self
+        rhs.mul(self)
     }
 }
 
@@ -449,7 +449,7 @@ impl Div<u32> for MicroSeconds {
 impl DivAssign<u32> for MicroSeconds {
     #[inline]
     fn div_assign(&mut self, rhs: u32) {
-        *self = *self / rhs;
+        *self = self.div(rhs);
     }
 }
 
@@ -464,7 +464,7 @@ impl Rem<u32> for MicroSeconds {
 impl RemAssign<u32> for MicroSeconds {
     #[inline]
     fn rem_assign(&mut self, rhs: u32) {
-        *self = *self % rhs;
+        *self = self.rem(rhs);
     }
 }
 

@@ -202,7 +202,7 @@ impl Add for Timeval {
 impl AddAssign for Timeval {
     #[inline]
     fn add_assign(&mut self, rhs: Self) {
-        *self = self.checked_add(rhs).unwrap();
+        *self = self.add(rhs);
     }
 }
 
@@ -217,7 +217,7 @@ impl Sub for Timeval {
 impl SubAssign for Timeval {
     #[inline]
     fn sub_assign(&mut self, rhs: Self) {
-        *self = self.checked_sub(rhs).unwrap();
+        *self = self.sub(rhs);
     }
 }
 
@@ -236,7 +236,7 @@ impl Add<MicroSeconds> for Timeval {
 impl AddAssign<MicroSeconds> for Timeval {
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
-        *self = self.checked_add_us(rhs).unwrap();
+        *self = self.add(rhs);
     }
 }
 
@@ -251,7 +251,7 @@ impl Sub<MicroSeconds> for Timeval {
 impl SubAssign<MicroSeconds> for Timeval {
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
-        *self = self.checked_sub_us(rhs).unwrap();
+        *self = self.sub(rhs);
     }
 }
 
@@ -270,7 +270,7 @@ impl Add<Duration> for Timeval {
 impl AddAssign<Duration> for Timeval {
     #[inline]
     fn add_assign(&mut self, rhs: Duration) {
-        *self = self.checked_add_duration(rhs).unwrap();
+        *self = self.add(rhs);
     }
 }
 
@@ -285,7 +285,7 @@ impl Sub<Duration> for Timeval {
 impl SubAssign<Duration> for Timeval {
     #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
-        *self = self.checked_sub_duration(rhs).unwrap();
+        *self = self.sub(rhs);
     }
 }
 
@@ -304,7 +304,7 @@ impl Mul<u32> for Timeval {
 impl MulAssign<u32> for Timeval {
     #[inline]
     fn mul_assign(&mut self, rhs: u32) {
-        *self = self.checked_mul(rhs).unwrap();
+        *self = self.mul(rhs);
     }
 }
 
@@ -319,7 +319,7 @@ impl Div<u32> for Timeval {
 impl DivAssign<u32> for Timeval {
     #[inline]
     fn div_assign(&mut self, rhs: u32) {
-        *self = self.checked_div(rhs).unwrap();
+        *self = self.div(rhs);
     }
 }
 
@@ -334,6 +334,6 @@ impl Rem<u32> for Timeval {
 impl RemAssign<u32> for Timeval {
     #[inline]
     fn rem_assign(&mut self, rhs: u32) {
-        *self = self.checked_rem(rhs).unwrap();
+        *self = self.rem(rhs);
     }
 }

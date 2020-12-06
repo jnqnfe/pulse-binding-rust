@@ -72,7 +72,7 @@ impl Add<MicroSeconds> for UnixTs {
 impl AddAssign<MicroSeconds> for UnixTs {
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
-        *self = *self + rhs;
+        *self = self.add(rhs);
     }
 }
 
@@ -87,6 +87,6 @@ impl Sub<MicroSeconds> for UnixTs {
 impl SubAssign<MicroSeconds> for UnixTs {
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
-        *self = *self - rhs;
+        *self = self.sub(rhs);
     }
 }
