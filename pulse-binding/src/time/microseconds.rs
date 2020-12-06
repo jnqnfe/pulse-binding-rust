@@ -190,6 +190,112 @@ impl MicroSeconds {
         self.0 / super::MICROS_PER_MILLI
     }
 
+    /// Creates a new `MicroSeconds` from the specified number of seconds represented as `f64`.
+    ///
+    /// **Panics** if `secs` is not finite, is negative, or the value overflows.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::from_secs_f64(0.5), MicroSeconds(500_000));
+    /// assert_eq!(MicroSeconds::from_secs_f64(2.3), MicroSeconds(2_300_000));
+    /// ```
+    ///
+    /// These should panic.
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f64(std::f64::INFINITY);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f64(-0.5);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f64(std::f64::MAX);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f64(std::f64::NAN);
+    /// ```
+    #[inline]
+    pub fn from_secs_f64(secs: f64) -> Self {
+        let duration = Duration::from_secs_f64(secs);
+        Self::try_from(duration).expect("overflow during microseconds conversion")
+    }
+
+    /// Creates a new `MicroSeconds` from the specified number of seconds represented as `f32`.
+    ///
+    /// **Panics** if `secs` is not finite, is negative, or the value overflows.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds::from_secs_f32(0.5), MicroSeconds(500_000));
+    /// assert_eq!(MicroSeconds::from_secs_f32(2.3), MicroSeconds(2_300_000));
+    /// ```
+    ///
+    /// These should panic.
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f32(std::f32::INFINITY);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f32(-0.5);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f32(std::f32::MAX);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::from_secs_f32(std::f32::NAN);
+    /// ```
+    #[inline]
+    pub fn from_secs_f32(secs: f32) -> Self {
+        let duration = Duration::from_secs_f32(secs);
+        Self::try_from(duration).expect("overflow during microseconds conversion")
+    }
+
+    /// Returns the number of seconds as `f64`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds(2_300_000).as_secs_f64(), 2.3);
+    /// assert_eq!(MicroSeconds(500_000).as_secs_f64(), 0.5);
+    /// ```
+    #[inline]
+    pub fn as_secs_f64(&self) -> f64 {
+        (self.0 as f64) / (super::MICROS_PER_SEC as f64)
+    }
+
+    /// Returns the number of seconds as `f32`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds(2_300_000).as_secs_f32(), 2.3);
+    /// assert_eq!(MicroSeconds(500_000).as_secs_f32(), 0.5);
+    /// ```
+    #[inline]
+    pub fn as_secs_f32(&self) -> f32 {
+        (self.0 as f32) / (super::MICROS_PER_SEC as f32)
+    }
+
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_add()` method.
     ///

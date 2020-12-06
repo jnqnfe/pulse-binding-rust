@@ -31,6 +31,9 @@
     - Added `MicroSeconds::{MIN, ZERO, SECOND, MILLISECOND}` associated constants.
     - Added `MicroSeconds::is_zero()`, `MicroSeconds::from_secs()`, `MicroSeconds::from_millis()`,
       `MicroSeconds::inner()`, `MicroSeconds::as_secs()`, `MicroSeconds::as_millis()`.
+    - Additionally added `MicroSeconds::from_secs_f64()`, `MicroSeconds::from_secs_f32()`,
+      `MicroSeconds::as_secs_f64()` and `MicroSeconds::as_secs_f32()` for converting to/from
+      floating point form.
     - Removed the restriction using `Mul` operations between an integer primitive and a
       `MicroSeconds` that required the Rhs to be the integer, by extending the implementation. Thus
       you can now do `2 * MicroSeconds(20)` not just `MicroSeconds(20) * 2`.
