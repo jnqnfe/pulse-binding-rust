@@ -201,12 +201,14 @@ impl std::fmt::Debug for Timeval {
 impl Add for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, other: Self) -> Self {
         self.checked_add(other).expect(op_err::ADD)
     }
 }
 impl AddAssign for Timeval {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: Self) {
         *self = self.add(rhs);
@@ -216,12 +218,14 @@ impl AddAssign for Timeval {
 impl Sub for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, other: Self) -> Self {
         self.checked_sub(other).expect(op_err::SUB)
     }
 }
 impl SubAssign for Timeval {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: Self) {
         *self = self.sub(rhs);
@@ -235,12 +239,14 @@ impl SubAssign for Timeval {
 impl Add<MicroSeconds> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
         self.checked_add_us(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for Timeval {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
         *self = self.add(rhs);
@@ -250,12 +256,14 @@ impl AddAssign<MicroSeconds> for Timeval {
 impl Sub<MicroSeconds> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
         self.checked_sub_us(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for Timeval {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = self.sub(rhs);
@@ -269,12 +277,14 @@ impl SubAssign<MicroSeconds> for Timeval {
 impl Add<Duration> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: Duration) -> Self {
         self.checked_add_duration(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<Duration> for Timeval {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: Duration) {
         *self = self.add(rhs);
@@ -284,12 +294,14 @@ impl AddAssign<Duration> for Timeval {
 impl Sub<Duration> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: Duration) -> Self {
         self.checked_sub_duration(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<Duration> for Timeval {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
         *self = self.sub(rhs);
@@ -303,12 +315,14 @@ impl SubAssign<Duration> for Timeval {
 impl Mul<u32> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn mul(self, rhs: u32) -> Self {
         self.checked_mul(rhs).expect(op_err::MUL)
     }
 }
 impl MulAssign<u32> for Timeval {
+    #[track_caller]
     #[inline]
     fn mul_assign(&mut self, rhs: u32) {
         *self = self.mul(rhs);
@@ -318,12 +332,14 @@ impl MulAssign<u32> for Timeval {
 impl Div<u32> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn div(self, rhs: u32) -> Self {
         self.checked_div(rhs).expect(op_err::DIV)
     }
 }
 impl DivAssign<u32> for Timeval {
+    #[track_caller]
     #[inline]
     fn div_assign(&mut self, rhs: u32) {
         *self = self.div(rhs);
@@ -333,12 +349,14 @@ impl DivAssign<u32> for Timeval {
 impl Rem<u32> for Timeval {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn rem(self, rhs: u32) -> Self {
         self.checked_rem(rhs).expect(op_err::REM)
     }
 }
 impl RemAssign<u32> for Timeval {
+    #[track_caller]
     #[inline]
     fn rem_assign(&mut self, rhs: u32) {
         *self = self.rem(rhs);

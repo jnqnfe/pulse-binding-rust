@@ -633,12 +633,14 @@ impl std::fmt::Display for MicroSeconds {
 impl Add for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, other: Self) -> Self {
         self.checked_add(other).expect(op_err::ADD)
     }
 }
 impl AddAssign for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: Self) {
         *self = self.add(rhs);
@@ -648,12 +650,14 @@ impl AddAssign for MicroSeconds {
 impl Sub for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, other: Self) -> Self {
         self.checked_sub(other).expect(op_err::SUB)
     }
 }
 impl SubAssign for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: Self) {
         *self = self.sub(rhs);
@@ -667,12 +671,14 @@ impl SubAssign for MicroSeconds {
 impl Add<Duration> for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: Duration) -> Self {
         self.checked_add_duration(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<Duration> for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: Duration) {
         *self = self.add(rhs);
@@ -682,12 +688,14 @@ impl AddAssign<Duration> for MicroSeconds {
 impl Add<MicroSeconds> for Duration {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
         self.checked_add(Duration::from_micros(rhs.0)).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for Duration {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
         *self = self.add(rhs);
@@ -697,12 +705,14 @@ impl AddAssign<MicroSeconds> for Duration {
 impl Sub<Duration> for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: Duration) -> Self {
         self.checked_sub_duration(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<Duration> for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
         *self = self.sub(rhs);
@@ -712,12 +722,14 @@ impl SubAssign<Duration> for MicroSeconds {
 impl Sub<MicroSeconds> for Duration {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
         self.checked_sub(Duration::from_micros(rhs.0)).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for Duration {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = self.sub(rhs);
@@ -758,12 +770,14 @@ impl SubAssign<MicroSeconds> for Duration {
 impl Mul<u32> for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn mul(self, rhs: u32) -> Self {
         Self(self.0.checked_mul(rhs as u64).expect(op_err::MUL))
     }
 }
 impl MulAssign<u32> for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn mul_assign(&mut self, rhs: u32) {
         *self = self.mul(rhs);
@@ -773,6 +787,7 @@ impl MulAssign<u32> for MicroSeconds {
 impl Mul<MicroSeconds> for u32 {
     type Output = MicroSeconds;
 
+    #[track_caller]
     #[inline]
     fn mul(self, rhs: MicroSeconds) -> MicroSeconds {
         rhs.mul(self)
@@ -782,12 +797,14 @@ impl Mul<MicroSeconds> for u32 {
 impl Div<u32> for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn div(self, rhs: u32) -> Self {
         Self(self.0.checked_div(rhs as u64).expect(op_err::DIV))
     }
 }
 impl DivAssign<u32> for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn div_assign(&mut self, rhs: u32) {
         *self = self.div(rhs);
@@ -797,12 +814,14 @@ impl DivAssign<u32> for MicroSeconds {
 impl Rem<u32> for MicroSeconds {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn rem(self, rhs: u32) -> Self {
         Self(self.0.checked_rem(rhs as u64).expect(op_err::REM))
     }
 }
 impl RemAssign<u32> for MicroSeconds {
+    #[track_caller]
     #[inline]
     fn rem_assign(&mut self, rhs: u32) {
         *self = self.rem(rhs);

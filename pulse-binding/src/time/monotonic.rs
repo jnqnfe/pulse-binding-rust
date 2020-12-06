@@ -76,12 +76,14 @@ impl std::fmt::Display for MonotonicTs {
 impl Add<MicroSeconds> for MonotonicTs {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
         self.checked_add(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for MonotonicTs {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
         *self = self.add(rhs);
@@ -91,12 +93,14 @@ impl AddAssign<MicroSeconds> for MonotonicTs {
 impl Sub<MicroSeconds> for MonotonicTs {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
         self.checked_sub(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for MonotonicTs {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = self.sub(rhs);
@@ -106,12 +110,14 @@ impl SubAssign<MicroSeconds> for MonotonicTs {
 impl Add<Duration> for MonotonicTs {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: Duration) -> Self {
         Self(self.0.add(rhs))
     }
 }
 impl AddAssign<Duration> for MonotonicTs {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: Duration) {
         *self = self.add(rhs);
@@ -121,12 +127,14 @@ impl AddAssign<Duration> for MonotonicTs {
 impl Sub<Duration> for MonotonicTs {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: Duration) -> Self {
         Self(self.0.sub(rhs))
     }
 }
 impl SubAssign<Duration> for MonotonicTs {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
         *self = self.sub(rhs);

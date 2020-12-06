@@ -1,3 +1,8 @@
+# [unreleased]
+
+ * Time: Made use of `#[track_caller]` such that panics from overflows and such in math operation
+   implementations will point to the caller as the source of the problem.
+
 # 2.25.0 (August 29th, 2021)
 
  * Made the attributes of `MainloopInner` private. Methods `new()` and `get_api_ptr()` were added to

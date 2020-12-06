@@ -64,12 +64,14 @@ impl std::fmt::Display for UnixTs {
 impl Add<MicroSeconds> for UnixTs {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn add(self, rhs: MicroSeconds) -> Self {
         self.checked_add(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for UnixTs {
+    #[track_caller]
     #[inline]
     fn add_assign(&mut self, rhs: MicroSeconds) {
         *self = self.add(rhs);
@@ -79,12 +81,14 @@ impl AddAssign<MicroSeconds> for UnixTs {
 impl Sub<MicroSeconds> for UnixTs {
     type Output = Self;
 
+    #[track_caller]
     #[inline]
     fn sub(self, rhs: MicroSeconds) -> Self {
         self.checked_sub(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for UnixTs {
+    #[track_caller]
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
         *self = self.sub(rhs);
