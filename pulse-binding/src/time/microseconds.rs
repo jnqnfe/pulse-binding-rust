@@ -161,6 +161,34 @@ impl MicroSeconds {
         millis.checked_mul(super::MICROS_PER_MILLI).and_then(|i| Some(MicroSeconds(i)))
     }
 
+    /// Returns the total number of whole seconds.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds(2_300_000).as_secs(), 2);
+    /// assert_eq!(MicroSeconds(2_800_000).as_secs(), 2);
+    /// ```
+    #[inline]
+    pub const fn as_secs(&self) -> u64 {
+        self.0 / super::MICROS_PER_SEC
+    }
+
+    /// Returns the total number of whole milliseconds.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds(23_000_300).as_millis(), 23_000);
+    /// assert_eq!(MicroSeconds(23_000_800).as_millis(), 23_000);
+    /// ```
+    #[inline]
+    pub const fn as_millis(&self) -> u64 {
+        self.0 / super::MICROS_PER_MILLI
+    }
+
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_add()` method.
     ///
