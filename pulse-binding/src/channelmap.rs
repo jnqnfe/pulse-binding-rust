@@ -422,7 +422,7 @@ impl Map {
 
     /// Gets the number of active channels.
     #[inline]
-    pub fn len(&self) -> u8 {
+    pub const fn len(&self) -> u8 {
         self.channels
     }
 

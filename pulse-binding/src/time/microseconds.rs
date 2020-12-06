@@ -31,8 +31,8 @@ impl MicroSeconds {
 
     /// Returns `true` so long as inner value is not `Self::INVALID`.
     #[inline]
-    pub fn is_valid(&self) -> bool {
-        *self != Self::INVALID
+    pub const fn is_valid(&self) -> bool {
+        self.0 != Self::INVALID.0
     }
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
