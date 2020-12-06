@@ -19,8 +19,8 @@ use std::marker::PhantomData;
 
 /// List result instance.
 ///
-/// Fetching a list can result in a callback being fired for each list item, and then once to signal
-/// that the end of the list having been reached. This is used to distinguish such state to a
+/// Fetching a list can result in a callback being fired for each list item, and then once more to
+/// signal the end of the list having been reached. This type is used to distinguish such state to a
 /// closure callback.
 pub enum ListResult<T> {
     /// List item
