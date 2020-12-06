@@ -86,6 +86,19 @@ impl MicroSeconds {
     /// ```
     pub const MAX: Self = Self(capi::PA_USEC_MAX);
 
+    /// Get the inner `u64` value.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds(100).inner(), 100);
+    /// ```
+    #[inline]
+    pub const fn inner(&self) -> u64 {
+        self.0
+    }
+
     /// Returns `true` so long as inner value is not `Self::INVALID`.
     ///
     /// # Examples
@@ -177,7 +190,7 @@ impl MicroSeconds {
     /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC, NANOS_PER_MICRO};
     /// let half_minute = MicroSeconds(30 * MICROS_PER_SEC);
     /// let duration1 = Duration::new(2, 5 * NANOS_PER_MICRO + 20); // 2s + 5us + 20ns
-    /// let duration2 = Duration::new(MicroSeconds::MAX.0 / MICROS_PER_SEC, 0);
+    /// let duration2 = Duration::new(MicroSeconds::MAX.inner() / MICROS_PER_SEC, 0);
     ///
     /// assert_eq!(half_minute.checked_add_duration(duration1), Some(MicroSeconds(32_000_005)));
     /// assert_eq!(half_minute.checked_add_duration(duration2), None);

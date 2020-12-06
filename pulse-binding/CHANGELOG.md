@@ -29,7 +29,8 @@
     - Added `context::subscribe::{Facility::MASK, Operation::MASK}` replacements.
  * Made some improvements to `MicroSeconds`:
     - Added `MicroSeconds::{MIN, ZERO, SECOND, MILLISECOND}` associated constants.
-    - Added `MicroSeconds::is_zero()`, `MicroSeconds::from_secs()`, `MicroSeconds::from_millis()`.
+    - Added `MicroSeconds::is_zero()`, `MicroSeconds::from_secs()`, `MicroSeconds::from_millis()`,
+      `MicroSeconds::inner()`.
     - Removed the restriction using `Mul` operations between an integer primitive and a
       `MicroSeconds` that required the Rhs to be the integer, by extending the implementation. Thus
       you can now do `2 * MicroSeconds(20)` not just `MicroSeconds(20) * 2`.
