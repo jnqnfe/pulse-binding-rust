@@ -1,5 +1,6 @@
 # [unreleased]
 
+ * Added missing `Default` implementation for `channelmap::pa_channel_map_def_t`.
  * Added documentation for `pa_check_version()`. If you use it, please double check that it actually
    does what you think it does. It does **not** involve talking to the client library.
 

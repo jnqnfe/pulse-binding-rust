@@ -184,6 +184,12 @@ pub const PA_CHANNEL_MAP_WAVEEX:  pa_channel_map_def_t = pa_channel_map_def_t::W
 pub const PA_CHANNEL_MAP_OSS:     pa_channel_map_def_t = pa_channel_map_def_t::OSS;
 pub const PA_CHANNEL_MAP_DEFAULT: pa_channel_map_def_t = pa_channel_map_def_t::AIFF;
 
+impl Default for pa_channel_map_def_t {
+    fn default() -> Self {
+        PA_CHANNEL_MAP_DEFAULT
+    }
+}
+
 #[repr(C)]
 #[derive(Default, Debug, Copy, Clone)]
 pub struct pa_channel_map {
