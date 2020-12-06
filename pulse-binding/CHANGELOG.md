@@ -33,6 +33,8 @@
     - Removed the restriction using `Mul` operations between an integer primitive and a
       `MicroSeconds` that required the Rhs to be the integer, by extending the implementation. Thus
       you can now do `2 * MicroSeconds(20)` not just `MicroSeconds(20) * 2`.
+    - Enabled `MicroSeconds` to be added or subtracted from a `Duration`, not just the other way
+      around.
  * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
  * Added support for feature tagging in documentation (requires nightly Rust version, so only

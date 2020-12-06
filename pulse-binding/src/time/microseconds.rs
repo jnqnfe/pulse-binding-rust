@@ -338,6 +338,21 @@ impl AddAssign<Duration> for MicroSeconds {
     }
 }
 
+impl Add<MicroSeconds> for Duration {
+    type Output = Self;
+
+    #[inline]
+    fn add(self, rhs: MicroSeconds) -> Self {
+        self.checked_add(Duration::from_micros(rhs.0)).unwrap()
+    }
+}
+impl AddAssign<MicroSeconds> for Duration {
+    #[inline]
+    fn add_assign(&mut self, rhs: MicroSeconds) {
+        *self = self.checked_add(Duration::from_micros(rhs.0)).unwrap();
+    }
+}
+
 impl Sub<Duration> for MicroSeconds {
     type Output = Self;
 
@@ -350,6 +365,21 @@ impl SubAssign<Duration> for MicroSeconds {
     #[inline]
     fn sub_assign(&mut self, rhs: Duration) {
         *self = self.checked_sub_duration(rhs).unwrap();
+    }
+}
+
+impl Sub<MicroSeconds> for Duration {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, rhs: MicroSeconds) -> Self {
+        self.checked_sub(Duration::from_micros(rhs.0)).unwrap()
+    }
+}
+impl SubAssign<MicroSeconds> for Duration {
+    #[inline]
+    fn sub_assign(&mut self, rhs: MicroSeconds) {
+        *self = self.checked_sub(Duration::from_micros(rhs.0)).unwrap();
     }
 }
 
