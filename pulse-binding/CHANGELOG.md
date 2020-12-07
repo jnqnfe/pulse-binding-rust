@@ -1,5 +1,8 @@
 # [unreleased]
 
+ * Fixed broken conversions between `Duration` and other time duration types (`MicroSeconds` and
+   `Timeval`), which were mistakenly converting based upon milliseconds rather than microseconds and
+   thus were off by a scale of 1000. Lack of tests failed to catch this, which have now been added.
  * Added documentation for `version::check_version()`. If you use it, please double check that it
    actually does what you think it does. It does **not** involve talking to the client library.
 

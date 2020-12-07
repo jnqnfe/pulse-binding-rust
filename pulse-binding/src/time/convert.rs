@@ -20,7 +20,7 @@ use super::*;
 impl From<Duration> for MicroSeconds {
     #[inline]
     fn from(t: Duration) -> Self {
-        MicroSeconds((t.as_secs() * MILLIS_PER_SEC) + t.subsec_millis() as u64)
+        MicroSeconds((t.as_secs() * MICROS_PER_SEC) + t.subsec_micros() as u64)
     }
 }
 
@@ -36,14 +36,14 @@ impl From<Timeval> for MicroSeconds {
 impl From<MicroSeconds> for Duration {
     #[inline]
     fn from(t: MicroSeconds) -> Self {
-        Duration::from_millis(t.0)
+        Duration::from_micros(t.0)
     }
 }
 
 impl From<Timeval> for Duration {
     #[inline]
     fn from(t: Timeval) -> Self {
-        Duration::from_millis((MicroSeconds::from(t)).0)
+        Duration::from_micros((MicroSeconds::from(t)).0)
     }
 }
 
@@ -62,7 +62,23 @@ impl From<Duration> for Timeval {
     #[inline]
     fn from(t: Duration) -> Self {
         let secs = t.as_secs() as self::timeval::TvSecs;
-        let millis = t.subsec_millis() as self::timeval::TvUsecs;
-        Timeval::new(secs, millis)
+        let micros = t.subsec_micros() as self::timeval::TvUsecs;
+        Timeval::new(secs, micros)
     }
+}
+
+#[test]
+fn tests() {
+    let micro = MicroSeconds(2_700_000);
+    let duration = Duration::from_micros(2_700_000);
+    let timeval = Timeval::new(2, 700_000);
+
+    assert_eq!(MicroSeconds::from(duration), micro);
+    assert_eq!(MicroSeconds::from(timeval), micro);
+
+    assert_eq!(Duration::from(micro), duration);
+    assert_eq!(Duration::from(timeval), duration);
+
+    assert_eq!(Timeval::from(micro), timeval);
+    assert_eq!(Timeval::from(duration), timeval);
 }
