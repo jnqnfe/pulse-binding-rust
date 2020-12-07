@@ -43,15 +43,15 @@ impl UnixTs {
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_add()` method.
     #[inline]
-    pub fn checked_add(self, other: MicroSeconds) -> Option<Self> {
-        self.0.checked_add_us(other).and_then(|us| Some(UnixTs(us)))
+    pub fn checked_add(self, rhs: MicroSeconds) -> Option<Self> {
+        self.0.checked_add_us(rhs).and_then(|us| Some(UnixTs(us)))
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_sub()` method.
     #[inline]
-    pub fn checked_sub(self, other: MicroSeconds) -> Option<Self> {
-        self.0.checked_sub_us(other).and_then(|us| Some(UnixTs(us)))
+    pub fn checked_sub(self, rhs: MicroSeconds) -> Option<Self> {
+        self.0.checked_sub_us(rhs).and_then(|us| Some(UnixTs(us)))
     }
 }
 
@@ -65,8 +65,8 @@ impl Add<MicroSeconds> for UnixTs {
     type Output = Self;
 
     #[inline]
-    fn add(self, other: MicroSeconds) -> Self {
-        self.checked_add(other).expect(op_err::ADD)
+    fn add(self, rhs: MicroSeconds) -> Self {
+        self.checked_add(rhs).expect(op_err::ADD)
     }
 }
 impl AddAssign<MicroSeconds> for UnixTs {
@@ -80,8 +80,8 @@ impl Sub<MicroSeconds> for UnixTs {
     type Output = Self;
 
     #[inline]
-    fn sub(self, other: MicroSeconds) -> Self {
-        self.checked_sub(other).expect(op_err::SUB)
+    fn sub(self, rhs: MicroSeconds) -> Self {
+        self.checked_sub(rhs).expect(op_err::SUB)
     }
 }
 impl SubAssign<MicroSeconds> for UnixTs {
