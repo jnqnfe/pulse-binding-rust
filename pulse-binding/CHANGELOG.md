@@ -41,6 +41,10 @@
       you can now do `2 * MicroSeconds(20)` not just `MicroSeconds(20) * 2`.
     - Enabled `MicroSeconds` to be added or subtracted from a `Duration`, not just the other way
       around.
+ * Added `MonotonicTs::checked_add_duration()` and `MonotonicTs::checked_sub_duration()` along with
+   corresponding `Add[Assign]` and `Sub[Assign]` impls for adding a `Duration` to `MonotonicTs`.
+   This complements the existing functionality for adding a `MicroSeconds`, without requiring
+   conversion of a `Duration` to a `MicroSeconds`.
  * Made use of `#[cfg(doc)]` to always include stuff behind PA version feature guards in generated
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
  * Added support for feature tagging in documentation (requires nightly Rust version, so only

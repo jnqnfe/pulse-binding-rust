@@ -14,6 +14,7 @@
 //! Monotonic timestamps.
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
+use std::time::Duration;
 use super::{MicroSeconds, op_err};
 
 /// A monotonic timestamp.
@@ -44,11 +45,25 @@ impl MonotonicTs {
         self.0.checked_add(rhs).and_then(|us| Some(Self(us)))
     }
 
+    /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_add()` method.
+    #[inline]
+    pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
+        self.0.checked_add_duration(rhs).and_then(|i| Some(Self(i)))
+    }
+
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
     /// using the inner `MicroSeconds`’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub(self, rhs: MicroSeconds) -> Option<Self> {
         self.0.checked_sub(rhs).and_then(|us| Some(Self(us)))
+    }
+
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
+    /// using the inner integer’s `checked_sub()` method.
+    #[inline]
+    pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
+        self.0.checked_sub_duration(rhs).and_then(|i| Some(Self(i)))
     }
 }
 
@@ -84,6 +99,36 @@ impl Sub<MicroSeconds> for MonotonicTs {
 impl SubAssign<MicroSeconds> for MonotonicTs {
     #[inline]
     fn sub_assign(&mut self, rhs: MicroSeconds) {
+        *self = self.sub(rhs);
+    }
+}
+
+impl Add<Duration> for MonotonicTs {
+    type Output = Self;
+
+    #[inline]
+    fn add(self, rhs: Duration) -> Self {
+        Self(self.0.add(rhs))
+    }
+}
+impl AddAssign<Duration> for MonotonicTs {
+    #[inline]
+    fn add_assign(&mut self, rhs: Duration) {
+        *self = self.add(rhs);
+    }
+}
+
+impl Sub<Duration> for MonotonicTs {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, rhs: Duration) -> Self {
+        Self(self.0.sub(rhs))
+    }
+}
+impl SubAssign<Duration> for MonotonicTs {
+    #[inline]
+    fn sub_assign(&mut self, rhs: Duration) {
         *self = self.sub(rhs);
     }
 }
