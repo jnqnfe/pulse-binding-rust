@@ -430,6 +430,179 @@ impl MicroSeconds {
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
         self.0.checked_rem(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
     }
+
+    /// Multiplies `MicroSeconds` by `f64`.
+    ///
+    /// Converts to an `f64` representing seconds, multiplies by the given factor, then converts
+    /// back to microseconds.
+    ///
+    /// **Panics** if `rhs` is not finite, is negative, or the value overflows.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let micros = MicroSeconds(2_700_000_000);
+    ///
+    /// assert_eq!(micros.mul_f64(3.14), MicroSeconds(8_478_000_000));
+    /// assert_eq!(micros.mul_f64(3.14e5), MicroSeconds(847_800_000_000_000));
+    /// ```
+    ///
+    /// These should panic.
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.mul_f64(std::f64::INFINITY);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.mul_f64(-0.5);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// MicroSeconds(2 * MICROS_PER_SEC).mul_f64(std::f64::MAX / 10.0);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.mul_f64(std::f64::NAN);
+    /// ```
+    #[inline]
+    pub fn mul_f64(self, rhs: f64) -> Self {
+        // It is expected that overflow in the initial multiplication would result in `NaN`.
+        // We rely upon the underlying `Duration::from_secs_f64()` to panic appropriately for
+        // unsupported input and result values.
+        Self::from_secs_f64(rhs * self.as_secs_f64())
+    }
+
+    /// Multiplies `MicroSeconds` by `f32`.
+    ///
+    /// Converts to an `f32` representing seconds, multiplies by the given factor, then converts
+    /// back to microseconds.
+    ///
+    /// **Panics** if `rhs` is not finite, is negative, or the value overflows.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let micros = MicroSeconds(2_700_000_000);
+    ///
+    /// // Note the rounding errors that are clear here.
+    /// assert_eq!(micros.mul_f32(3.14), MicroSeconds(8_478_000_152));
+    /// assert_eq!(micros.mul_f32(3.14e5), MicroSeconds(847_800_018_512_379));
+    /// ```
+    ///
+    /// These should panic.
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.mul_f32(std::f32::INFINITY);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.mul_f32(-0.5);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// MicroSeconds(2 * MICROS_PER_SEC).mul_f32(std::f32::MAX / 10.0);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.mul_f32(std::f32::NAN);
+    /// ```
+    #[inline]
+    pub fn mul_f32(self, rhs: f32) -> Self {
+        // It is expected that overflow in the initial multiplication would result in `NaN`.
+        // We rely upon the underlying `Duration::from_secs_f64()` to panic appropriately for
+        // unsupported input and result values.
+        Self::from_secs_f32(rhs * self.as_secs_f32())
+    }
+
+    /// Divides `MicroSeconds` by `f64`.
+    ///
+    /// Converts to an `f64` representing seconds, divides by the given factor, then converts back
+    /// to microseconds.
+    ///
+    /// **Panics** if `rhs` is not finite, is negative, or the value overflows.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let micros = MicroSeconds(2_700_000_000);
+    ///
+    /// assert_eq!(micros.div_f64(3.14), MicroSeconds(859_872_611));
+    /// assert_eq!(micros.div_f64(3.14e5), MicroSeconds(8_598));
+    /// ```
+    ///
+    /// These should panic.
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.div_f64(-2.0);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// MicroSeconds::MAX.div_f64(0.5);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.div_f64(std::f64::NAN);
+    /// ```
+    #[inline]
+    pub fn div_f64(self, rhs: f64) -> Self {
+        // Note that division by zero results in a ∞ or −∞ value, which will be handled by the
+        // underlying `Duration::from_secs_f64()` which we rely upon to panic appropriately.
+        Self::from_secs_f64(self.as_secs_f64() / rhs)
+    }
+
+    /// Divides `MicroSeconds` by `f32`.
+    ///
+    /// Converts to an `f32` representing seconds, divides by the given factor, then converts back
+    /// to microseconds.
+    ///
+    /// **Panics** if `rhs` is not finite, is negative, or the value overflows.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let micros = MicroSeconds(2_700_000_000);
+    ///
+    /// assert_eq!(micros.div_f32(3.14), MicroSeconds(859_872_559));
+    /// assert_eq!(micros.div_f32(3.14e5), MicroSeconds(8_598));
+    /// ```
+    ///
+    /// These should panic.
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.div_f32(-2.0);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// MicroSeconds::MAX.div_f32(0.5);
+    /// ```
+    ///
+    /// ```rust,should_panic
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// MicroSeconds::SECOND.div_f32(std::f32::NAN);
+    /// ```
+    #[inline]
+    pub fn div_f32(self, rhs: f32) -> Self {
+        // Note that division by zero results in a ∞ or −∞ value, which will be handled by the
+        // underlying `Duration::from_secs_f64()` which we rely upon to panic appropriately.
+        Self::from_secs_f32(self.as_secs_f32() / rhs)
+    }
 }
 
 impl std::fmt::Display for MicroSeconds {
