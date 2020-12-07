@@ -86,6 +86,17 @@ impl MicroSeconds {
     pub const MAX: Self = Self(capi::PA_USEC_MAX);
 
     /// Returns `true` so long as inner value is not `Self::INVALID`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// assert_eq!(MicroSeconds::MIN.is_valid(), true);
+    /// assert_eq!(MicroSeconds::MAX.is_valid(), true);
+    /// assert_eq!(MicroSeconds::INVALID.is_valid(), false);
+    /// assert_eq!(MicroSeconds::ZERO.is_valid(), true);
+    /// assert_eq!(MicroSeconds(60 * MICROS_PER_SEC).is_valid(), true);
+    /// ```
     #[inline]
     pub const fn is_valid(&self) -> bool {
         self.0 != Self::INVALID.0
@@ -108,6 +119,18 @@ impl MicroSeconds {
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_add()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let quater_minute = MicroSeconds(15 * MICROS_PER_SEC);
+    /// let half_minute = MicroSeconds(30 * MICROS_PER_SEC);
+    /// let three_quater_minute = MicroSeconds(45 * MICROS_PER_SEC);
+    ///
+    /// assert_eq!(half_minute.checked_add(quater_minute), Some(three_quater_minute));
+    /// assert_eq!(MicroSeconds::MAX.checked_add(half_minute), None);
+    /// ```
     #[inline]
     pub fn checked_add(self, other: Self) -> Option<Self> {
         self.0.checked_add(other.0).and_then(|i| Some(MicroSeconds(i)))
@@ -115,6 +138,19 @@ impl MicroSeconds {
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_add()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use std::time::Duration;
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC, NANOS_PER_MICRO};
+    /// let half_minute = MicroSeconds(30 * MICROS_PER_SEC);
+    /// let duration1 = Duration::new(2, 5 * NANOS_PER_MICRO + 20); // 2s + 5us + 20ns
+    /// let duration2 = Duration::new(MicroSeconds::MAX.0 / MICROS_PER_SEC, 0);
+    ///
+    /// assert_eq!(half_minute.checked_add_duration(duration1), Some(MicroSeconds(32_000_005)));
+    /// assert_eq!(half_minute.checked_add_duration(duration2), None);
+    /// ```
     #[inline]
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
         let usecs = MicroSeconds::from(rhs);
@@ -123,6 +159,18 @@ impl MicroSeconds {
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_sub()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let quater_minute = MicroSeconds(15 * MICROS_PER_SEC);
+    /// let three_quater_minute = MicroSeconds(45 * MICROS_PER_SEC);
+    /// let whole_minute = MicroSeconds(60 * MICROS_PER_SEC);
+    ///
+    /// assert_eq!(whole_minute.checked_sub(quater_minute), Some(three_quater_minute));
+    /// assert_eq!(quater_minute.checked_sub(whole_minute), None);
+    /// ```
     #[inline]
     pub fn checked_sub(self, other: Self) -> Option<Self> {
         self.0.checked_sub(other.0).and_then(|i| Some(MicroSeconds(i)))
@@ -130,6 +178,19 @@ impl MicroSeconds {
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_sub()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use std::time::Duration;
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC, NANOS_PER_MICRO};
+    /// let half_minute = MicroSeconds(30 * MICROS_PER_SEC);
+    /// let duration1 = Duration::new(2, 5 * NANOS_PER_MICRO + 20); // 2s + 5us + 20ns
+    /// let duration2 = Duration::new(45, 0);
+    ///
+    /// assert_eq!(half_minute.checked_sub_duration(duration1), Some(MicroSeconds(27_999_995)));
+    /// assert_eq!(half_minute.checked_sub_duration(duration2), None);
+    /// ```
     #[inline]
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
         let usecs = MicroSeconds::from(rhs);
@@ -138,6 +199,17 @@ impl MicroSeconds {
 
     /// Checked integer multiplication. Computes `self * rhs`, returning `None` if overflow
     /// occurred, using the inner integer’s `checked_mul()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let quater_minute = MicroSeconds(15 * MICROS_PER_SEC);
+    /// let whole_minute = MicroSeconds(60 * MICROS_PER_SEC);
+    ///
+    /// assert_eq!(quater_minute.checked_mul(4), Some(whole_minute));
+    /// assert_eq!(MicroSeconds::MAX.checked_mul(2), None);
+    /// ```
     #[inline]
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
         self.0.checked_mul(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
@@ -145,6 +217,17 @@ impl MicroSeconds {
 
     /// Checked integer division. Computes `self / rhs`, returning `None` if `rhs == 0`, using the
     /// inner integer’s `checked_div()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let quater_minute = MicroSeconds(15 * MICROS_PER_SEC);
+    /// let whole_minute = MicroSeconds(60 * MICROS_PER_SEC);
+    ///
+    /// assert_eq!(whole_minute.checked_div(4), Some(quater_minute));
+    /// assert_eq!(whole_minute.checked_div(0), None);
+    /// ```
     #[inline]
     pub fn checked_div(self, rhs: u32) -> Option<Self> {
         self.0.checked_div(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
@@ -152,6 +235,18 @@ impl MicroSeconds {
 
     /// Checked integer remainder. Computes `self % rhs`, returning `None` if `rhs == 0`, using the
     /// inner integer’s `checked_rem()` method.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
+    /// let quater_minute = MicroSeconds(15 * MICROS_PER_SEC);
+    /// let whole_minute = MicroSeconds(60 * MICROS_PER_SEC);
+    ///
+    /// assert_eq!(whole_minute.checked_rem(4), Some(MicroSeconds::ZERO));
+    /// assert_eq!(whole_minute.checked_rem(7), Some(MicroSeconds(4)));
+    /// assert_eq!(whole_minute.checked_rem(0), None);
+    /// ```
     #[inline]
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
         self.0.checked_rem(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
