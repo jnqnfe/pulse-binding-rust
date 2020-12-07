@@ -60,13 +60,13 @@ impl Timeval {
     /// Creates a new instance, with values provided.
     #[inline]
     pub const fn new(sec: TvSecs, usec: TvUsecs) -> Self {
-        Timeval(libc::timeval { tv_sec: sec, tv_usec: usec })
+        Self(libc::timeval { tv_sec: sec, tv_usec: usec })
     }
 
     /// Creates a new instance, with value of zero.
     #[inline]
     pub const fn new_zero() -> Self {
-        Timeval::new(0, 0)
+        Self::new(0, 0)
     }
 
     /// Calculates the difference between the two specified timeval structs.
@@ -110,8 +110,8 @@ impl Timeval {
         let rt_now = Timeval::from((MonotonicTs::now()).0);
 
         let _ = match rt_now.cmp(self) {
-            Ordering::Less => { wc_now.add(Timeval::diff(self, &rt_now)) },
-            _              => { wc_now.sub(Timeval::diff(&rt_now, self)) },
+            Ordering::Less => { wc_now.add(Self::diff(self, &rt_now)) },
+            _              => { wc_now.sub(Self::diff(&rt_now, self)) },
         };
 
         *self = wc_now;

@@ -25,7 +25,7 @@ impl UnixTs {
     pub fn now() -> Self {
         let mut tv = Timeval::new_zero();
         unsafe { capi::pa_gettimeofday(&mut tv.0) };
-        UnixTs(tv)
+        Self(tv)
     }
 
     /// Calculates the difference between the two specified timestamps.
@@ -44,14 +44,14 @@ impl UnixTs {
     /// using the inner integer’s `checked_add()` method.
     #[inline]
     pub fn checked_add(self, rhs: MicroSeconds) -> Option<Self> {
-        self.0.checked_add_us(rhs).and_then(|us| Some(UnixTs(us)))
+        self.0.checked_add_us(rhs).and_then(|us| Some(Self(us)))
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
     /// using the inner integer’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub(self, rhs: MicroSeconds) -> Option<Self> {
-        self.0.checked_sub_us(rhs).and_then(|us| Some(UnixTs(us)))
+        self.0.checked_sub_us(rhs).and_then(|us| Some(Self(us)))
     }
 }
 

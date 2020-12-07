@@ -144,7 +144,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn from_secs(secs: u64) -> Option<Self> {
-        secs.checked_mul(super::MICROS_PER_SEC).and_then(|i| Some(MicroSeconds(i)))
+        secs.checked_mul(super::MICROS_PER_SEC).and_then(|i| Some(Self(i)))
     }
 
     /// Creates a new `MicroSeconds` from the specified number of whole milliseconds. Returns `None`
@@ -159,7 +159,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn from_millis(millis: u64) -> Option<Self> {
-        millis.checked_mul(super::MICROS_PER_MILLI).and_then(|i| Some(MicroSeconds(i)))
+        millis.checked_mul(super::MICROS_PER_MILLI).and_then(|i| Some(Self(i)))
     }
 
     /// Returns the total number of whole seconds.
@@ -312,7 +312,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_add(self, other: Self) -> Option<Self> {
-        self.0.checked_add(other.0).and_then(|i| Some(MicroSeconds(i)))
+        self.0.checked_add(other.0).and_then(|i| Some(Self(i)))
     }
 
     /// Checked integer addition. Computes `self + rhs`, returning `None` if overflow occurred,
@@ -332,8 +332,8 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_add_duration(self, rhs: Duration) -> Option<Self> {
-        let usecs = MicroSeconds::try_from(rhs).ok()?;
-        self.0.checked_add(usecs.0).and_then(|i| Some(MicroSeconds(i)))
+        let usecs = Self::try_from(rhs).ok()?;
+        self.0.checked_add(usecs.0).and_then(|i| Some(Self(i)))
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
@@ -352,7 +352,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_sub(self, other: Self) -> Option<Self> {
-        self.0.checked_sub(other.0).and_then(|i| Some(MicroSeconds(i)))
+        self.0.checked_sub(other.0).and_then(|i| Some(Self(i)))
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
@@ -372,8 +372,8 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_sub_duration(self, rhs: Duration) -> Option<Self> {
-        let usecs = MicroSeconds::try_from(rhs).ok()?;
-        self.0.checked_sub(usecs.0).and_then(|i| Some(MicroSeconds(i)))
+        let usecs = Self::try_from(rhs).ok()?;
+        self.0.checked_sub(usecs.0).and_then(|i| Some(Self(i)))
     }
 
     /// Checked integer multiplication. Computes `self * rhs`, returning `None` if overflow
@@ -391,7 +391,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_mul(self, rhs: u32) -> Option<Self> {
-        self.0.checked_mul(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
+        self.0.checked_mul(rhs as u64).and_then(|i| Some(Self(i)))
     }
 
     /// Checked integer division. Computes `self / rhs`, returning `None` if `rhs == 0`, using the
@@ -409,7 +409,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_div(self, rhs: u32) -> Option<Self> {
-        self.0.checked_div(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
+        self.0.checked_div(rhs as u64).and_then(|i| Some(Self(i)))
     }
 
     /// Checked integer remainder. Computes `self % rhs`, returning `None` if `rhs == 0`, using the
@@ -428,7 +428,7 @@ impl MicroSeconds {
     /// ```
     #[inline]
     pub fn checked_rem(self, rhs: u32) -> Option<Self> {
-        self.0.checked_rem(rhs as u64).and_then(|i| Some(MicroSeconds(i)))
+        self.0.checked_rem(rhs as u64).and_then(|i| Some(Self(i)))
     }
 
     /// Multiplies `MicroSeconds` by `f64`.
@@ -741,7 +741,7 @@ impl Mul<u32> for MicroSeconds {
 
     #[inline]
     fn mul(self, rhs: u32) -> Self {
-        MicroSeconds(self.0.checked_mul(rhs as u64).expect(op_err::MUL))
+        Self(self.0.checked_mul(rhs as u64).expect(op_err::MUL))
     }
 }
 impl MulAssign<u32> for MicroSeconds {
@@ -765,7 +765,7 @@ impl Div<u32> for MicroSeconds {
 
     #[inline]
     fn div(self, rhs: u32) -> Self {
-        MicroSeconds(self.0.checked_div(rhs as u64).expect(op_err::DIV))
+        Self(self.0.checked_div(rhs as u64).expect(op_err::DIV))
     }
 }
 impl DivAssign<u32> for MicroSeconds {
@@ -780,7 +780,7 @@ impl Rem<u32> for MicroSeconds {
 
     #[inline]
     fn rem(self, rhs: u32) -> Self {
-        MicroSeconds(self.0.checked_rem(rhs as u64).expect(op_err::REM))
+        Self(self.0.checked_rem(rhs as u64).expect(op_err::REM))
     }
 }
 impl RemAssign<u32> for MicroSeconds {

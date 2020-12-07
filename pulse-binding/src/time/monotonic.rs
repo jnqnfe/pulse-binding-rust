@@ -28,7 +28,7 @@ impl MonotonicTs {
     /// return value is still a `MonotonicTs` type.
     #[inline]
     pub fn now() -> Self {
-        MonotonicTs(MicroSeconds(unsafe { capi::pa_rtclock_now() }))
+        Self(MicroSeconds(unsafe { capi::pa_rtclock_now() }))
     }
 
     /// Returns `true` so long as inner value is not `MicroSeconds::INVALID`.
@@ -41,14 +41,14 @@ impl MonotonicTs {
     /// using the inner `MicroSeconds`’s `checked_add()` method.
     #[inline]
     pub fn checked_add(self, rhs: MicroSeconds) -> Option<Self> {
-        self.0.checked_add(rhs).and_then(|us| Some(MonotonicTs(us)))
+        self.0.checked_add(rhs).and_then(|us| Some(Self(us)))
     }
 
     /// Checked integer subtraction. Computes `self - rhs`, returning `None` if overflow occurred,
     /// using the inner `MicroSeconds`’s `checked_sub()` method.
     #[inline]
     pub fn checked_sub(self, rhs: MicroSeconds) -> Option<Self> {
-        self.0.checked_sub(rhs).and_then(|us| Some(MonotonicTs(us)))
+        self.0.checked_sub(rhs).and_then(|us| Some(Self(us)))
     }
 }
 
