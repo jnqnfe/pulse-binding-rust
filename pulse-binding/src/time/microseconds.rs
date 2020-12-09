@@ -789,11 +789,3 @@ impl RemAssign<u32> for MicroSeconds {
         *self = self.rem(rhs);
     }
 }
-
-#[test]
-fn primatives() {
-    assert_eq!(MicroSeconds::SECOND * 2, MicroSeconds(2 * super::MICROS_PER_SEC));
-    assert_eq!(2 * MicroSeconds::SECOND, MicroSeconds(2 * super::MICROS_PER_SEC));
-    assert_eq!(MicroSeconds::MILLISECOND * 2, MicroSeconds(2 * super::MICROS_PER_MILLI));
-    assert_eq!(2 * MicroSeconds::MILLISECOND, MicroSeconds(2 * super::MICROS_PER_MILLI));
-}
