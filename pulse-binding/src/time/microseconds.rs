@@ -162,6 +162,25 @@ impl MicroSeconds {
         millis.checked_mul(super::MICROS_PER_MILLI).and_then(|i| Some(Self(i)))
     }
 
+    /// Returns the absolute difference with `other`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use libpulse_binding::time::MicroSeconds;
+    /// assert_eq!(MicroSeconds(0).diff(MicroSeconds(0)), MicroSeconds(0));
+    /// assert_eq!(MicroSeconds(100).diff(MicroSeconds(100)), MicroSeconds(0));
+    /// assert_eq!(MicroSeconds(200).diff(MicroSeconds(150)), MicroSeconds(50));
+    /// assert_eq!(MicroSeconds(150).diff(MicroSeconds(200)), MicroSeconds(50));
+    /// ```
+    #[inline]
+    pub fn diff(self, other: Self) -> Self {
+        match self >= other {
+            true => Self(self.0 - other.0),
+            false => Self(other.0 - self.0),
+        }
+    }
+
     /// Returns the total number of whole seconds.
     ///
     /// # Examples

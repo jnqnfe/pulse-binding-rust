@@ -33,7 +33,8 @@
  * Made some improvements to `MicroSeconds`:
     - Added `MicroSeconds::{MIN, ZERO, SECOND, MILLISECOND}` associated constants.
     - Added `MicroSeconds::is_zero()`, `MicroSeconds::from_secs()`, `MicroSeconds::from_millis()`,
-      `MicroSeconds::inner()`, `MicroSeconds::as_secs()`, `MicroSeconds::as_millis()`.
+      `MicroSeconds::inner()`, `MicroSeconds::as_secs()`, `MicroSeconds::as_millis()`,
+      and `MicroSeconds::diff()`.
     - Additionally added `MicroSeconds::from_secs_f64()`, `MicroSeconds::from_secs_f32()`,
       `MicroSeconds::as_secs_f64()` and `MicroSeconds::as_secs_f32()` for converting to/from
       floating point form, and `MicroSeconds::mul_f32()`, `MicroSeconds::mul_f64()`,
