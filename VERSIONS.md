@@ -7,7 +7,7 @@ problem, not expecting so much work to end up being done here, and for *binding*
 versioning to diverge so much.
 
 Since version numbering of crates started to diverge, version tagging remained associated with the
-“higher-level” binding crates. Furthermore some times minor versions of the less commonly updated
+“higher-level” binding crates. Furthermore sometimes minor versions of the less commonly updated
 *simple* and *glib-mainloop* crates are skipped over to keep versioning inline with the main crates,
 to try to keep some sanity.
 
