@@ -56,8 +56,8 @@ impl From<Timeval> for Duration {
 impl From<MicroSeconds> for Timeval {
     #[inline]
     fn from(t: MicroSeconds) -> Self {
-        let secs = (t.0 / MICROS_PER_SEC) as self::timeval::TvSecs;
-        let micros = (t.0 % MICROS_PER_SEC) as self::timeval::TvUsecs;
+        let secs = (t.0 / MICROS_PER_SEC) as super::timeval::TvSecs;
+        let micros = (t.0 % MICROS_PER_SEC) as super::timeval::TvUsecs;
         Timeval::new(secs, micros)
     }
 }
@@ -65,8 +65,8 @@ impl From<MicroSeconds> for Timeval {
 impl From<Duration> for Timeval {
     #[inline]
     fn from(t: Duration) -> Self {
-        let secs = t.as_secs() as self::timeval::TvSecs;
-        let micros = t.subsec_micros() as self::timeval::TvUsecs;
+        let secs = t.as_secs() as super::timeval::TvSecs;
+        let micros = t.subsec_micros() as super::timeval::TvUsecs;
         Timeval::new(secs, micros)
     }
 }
