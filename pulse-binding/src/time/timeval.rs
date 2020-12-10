@@ -55,7 +55,7 @@ impl PartialOrd for Timeval {
 
 impl Timeval {
     /// Bit to set in `tv_usec` attribute to mark that the `timeval` is in monotonic time.
-    const RTCLOCK_BIT: i64 = 1 << 30;
+    const RTCLOCK_BIT: TvUsecs = 1 << 30;
 
     /// Creates a new instance, with values provided.
     #[inline]
@@ -97,7 +97,7 @@ impl Timeval {
         *self = v.into();
 
         match rtclock {
-            true => { self.0.tv_usec |= Self::RTCLOCK_BIT as TvUsecs; },
+            true => { self.0.tv_usec |= Self::RTCLOCK_BIT; },
             false => { self.wallclock_from_rtclock(); },
         }
         self
