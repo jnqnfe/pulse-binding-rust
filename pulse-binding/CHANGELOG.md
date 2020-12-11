@@ -45,6 +45,8 @@
       you can now do `2 * MicroSeconds(20)` not just `MicroSeconds(20) * 2`.
     - Enabled `MicroSeconds` to be added or subtracted from a `Duration`, not just the other way
       around.
+ * Converted `stream::FlagSet` to a [`bitflags`] type, moving the `stream::flags::*` constants to
+   associated constants of it, deprecating the old constant set.
  * Added `MonotonicTs::checked_add_duration()` and `MonotonicTs::checked_sub_duration()` along with
    corresponding `Add[Assign]` and `Sub[Assign]` impls for adding a `Duration` to `MonotonicTs`.
    This complements the existing functionality for adding a `MicroSeconds`, without requiring

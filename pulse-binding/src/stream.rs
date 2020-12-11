@@ -257,6 +257,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::borrow::Cow;
+use bitflags::bitflags;
 use num_derive::{FromPrimitive, ToPrimitive};
 use capi::pa_stream as StreamInternal;
 use crate::{channelmap, format, def, proplist, sample};
@@ -364,21 +365,200 @@ impl State {
     }
 }
 
-/// Flag set.
-pub type FlagSet = capi::pa_stream_flags_t;
+bitflags! {
+    /// Flag set.
+    #[repr(transparent)]
+    pub struct FlagSet: u32 {
+        /// Flag to pass when no specific options are needed.
+        const NOFLAGS = capi::PA_STREAM_NOFLAGS;
+
+        /// Create the stream corked, requiring an explicit [`Stream::uncork()`] call to uncork it.
+        ///
+        /// [`Stream::uncork()`]: struct.Stream.html#method.uncork
+        const START_CORKED = capi::PA_STREAM_START_CORKED;
+
+        /// Interpolate the latency for this stream. When enabled, [`Stream::get_latency()`] and
+        /// [`Stream::get_time()`] will try to estimate the current record/playback time based on
+        /// the local time that passed since the last timing info update. Using this option has the
+        /// advantage of not requiring a whole round trip when the current playback/recording time
+        /// is needed. Consider using this option when requesting latency information frequently.
+        /// This is especially useful on long latency network connections. It makes a lot of sense
+        /// to combine this option with [`AUTO_TIMING_UPDATE`].
+        ///
+        /// [`AUTO_TIMING_UPDATE`]: struct.FlagSet.html#associatedconstant.AUTO_TIMING_UPDATE
+        /// [`Stream::get_latency()`]: struct.Stream.html#method.get_latency
+        /// [`Stream::get_time()`]: struct.Stream.html#method.get_time
+        const INTERPOLATE_TIMING = capi::PA_STREAM_INTERPOLATE_TIMING;
+
+        /// Don’t force the time to increase monotonically. If this option is enabled,
+        /// [`Stream::get_time()`] will not necessarily return always monotonically increasing time
+        /// values on each call. This may confuse applications which cannot deal with time going
+        /// ‘backwards’, but has the advantage that bad transport latency estimations that caused
+        /// the time to jump ahead can be corrected quickly, without the need to wait.
+        ///
+        /// [`Stream::get_time()`]: struct.Stream.html#method.get_time
+        const NOT_MONOTONIC = capi::PA_STREAM_NOT_MONOTONIC;
+
+        /// If set timing update requests are issued periodically automatically. Combined with
+        /// [`INTERPOLATE_TIMING`] you will be able to query the current time and latency with
+        /// [`Stream::get_time()`] and [`Stream::get_latency()`] at all times without a packet round
+        /// trip.
+        ///
+        /// [`INTERPOLATE_TIMING`]: struct.FlagSet.html#associatedconstant.INTERPOLATE_TIMING
+        /// [`Stream::get_time()`]: struct.Stream.html#method.get_time
+        /// [`Stream::get_latency()`]: struct.Stream.html#method.get_latency
+        const AUTO_TIMING_UPDATE = capi::PA_STREAM_AUTO_TIMING_UPDATE;
+
+        /// Don’t remap channels by their name, instead map them simply by their index. Implies
+        /// [`NO_REMIX_CHANNELS`](struct.FlagSet.html#associatedconstant.NO_REMIX_CHANNELS).
+        const NO_REMAP_CHANNELS = capi::PA_STREAM_NO_REMAP_CHANNELS;
+
+        /// When remapping channels by name, don’t upmix or downmix them to related channels. Copy
+        /// them into matching channels of the device 1:1.
+        const NO_REMIX_CHANNELS = capi::PA_STREAM_NO_REMIX_CHANNELS;
+
+        /// Use the sample format of the sink/device this stream is being connected to, and possibly
+        /// ignore the format the sample spec contains -- but you still have to pass a valid value
+        /// in it as a hint to PulseAudio what would suit your stream best. If this is used you
+        /// should query the used sample format after creating the stream by using
+        /// [`Stream::get_sample_spec()`]. Also, if you specified manual buffer metrics it is
+        /// recommended to update them with [`Stream::set_buffer_attr()`] to compensate for the
+        /// changed frame sizes.
+        ///
+        /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
+        /// specify a format with PCM encoding, and you want the server to choose the sample format,
+        /// then you should leave the sample format unspecified in the [`Info`] object. This also
+        /// means that you can’t use [`Info::new_from_sample_spec()`], because that function always
+        /// sets the sample format.
+        ///
+        /// [`Stream::get_sample_spec()`]: struct.Stream.html#method.get_sample_spec
+        /// [`Stream::set_buffer_attr()`]: struct.Stream.html#method.set_buffer_attr
+        /// [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
+        /// [`Info`]: ../format/struct.Info.html
+        /// [`Info::new_from_sample_spec()`]: ../format/struct.Info.html#method.new_from_sample_spec
+        const FIX_FORMAT = capi::PA_STREAM_FIX_FORMAT;
+
+        /// Use the sample rate of the sink, and possibly ignore the rate the sample spec contains.
+        /// Usage similar to [`FIX_FORMAT`].
+        ///
+        /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
+        /// specify a format with PCM encoding, and you want the server to choose the sample rate,
+        /// then you should leave the rate unspecified in the [`Info`] object. This also means that
+        /// you can’t use [`Info::new_from_sample_spec()`], because that function always sets the
+        /// sample rate.
+        ///
+        /// [`FIX_FORMAT`]: struct.FlagSet.html#associatedconstant.FIX_FORMAT
+        /// [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
+        /// [`Info`]: ../format/struct.Info.html
+        /// [`Info::new_from_sample_spec()`]: ../format/struct.Info.html#method.new_from_sample_spec
+        const FIX_RATE = capi::PA_STREAM_FIX_RATE;
+
+        /// Use the number of channels and the channel map of the sink, and possibly ignore the number
+        /// of channels and the map the sample spec and the passed channel map contains. Usage similar
+        /// to [`FIX_FORMAT`].
+        ///
+        /// When creating streams with [`Stream::new_extended()`], this flag has no effect. If you
+        /// specify a format with PCM encoding, and you want the server to choose the channel count
+        /// and/or channel map, then you should leave the channels and/or the channel map
+        /// unspecified in the [`Info`] object. This also means that you can’t use
+        /// [`Info::new_from_sample_spec()`], because that function always sets the channel count
+        /// (but if you only want to leave the channel map unspecified, then
+        /// [`Info::new_from_sample_spec()`] works, because the channel map parameter is optional).
+        ///
+        /// [`FIX_FORMAT`]: struct.FlagSet.html#associatedconstant.FIX_FORMAT
+        /// [`Stream::new_extended()`]: struct.Stream.html#method.new_extended
+        /// [`Info`]: ../format/struct.Info.html
+        /// [`Info::new_from_sample_spec()`]: ../format/struct.Info.html#method.new_from_sample_spec
+        const FIX_CHANNELS = capi::PA_STREAM_FIX_CHANNELS;
+
+        /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
+        /// `Fix*` flags and want to make sure that resampling never takes place -- which might
+        /// happen if the stream is moved to another sink/source with a different sample
+        /// spec/channel map.
+        const DONT_MOVE = capi::PA_STREAM_DONT_MOVE;
+
+        /// Allow dynamic changing of the sampling rate during playback with
+        /// [`Stream::update_sample_rate()`].
+        ///
+        /// [`Stream::update_sample_rate()`]: struct.Stream.html#method.update_sample_rate
+        const VARIABLE_RATE = capi::PA_STREAM_VARIABLE_RATE;
+
+        /// Find peaks instead of resampling.
+        const PEAK_DETECT = capi::PA_STREAM_PEAK_DETECT;
+
+        /// Create in muted state. If neither [`START_UNMUTED`] nor this is specified, it is left to
+        /// the server to decide whether to create the stream in muted or in un-muted state.
+        ///
+        /// [`START_UNMUTED`]: struct.FlagSet.html#associatedconstant.START_UNMUTED
+        const START_MUTED = capi::PA_STREAM_START_MUTED;
+
+        /// Try to adjust the latency of the sink/source based on the requested buffer metrics and
+        /// adjust buffer metrics accordingly. Also see [`BufferAttr`]. This option may not be
+        /// specified at the same time as [`EARLY_REQUESTS`].
+        ///
+        /// [`EARLY_REQUESTS`]: struct.FlagSet.html#associatedconstant.EARLY_REQUESTS
+        /// [`BufferAttr`]: ../def/struct.BufferAttr.html
+        const ADJUST_LATENCY = capi::PA_STREAM_ADJUST_LATENCY;
+
+        /// Enable compatibility mode for legacy clients that rely on a “classic” hardware device
+        /// fragment-style playback model. If this option is set, the `minreq` value of the buffer
+        /// metrics gets a new meaning: instead of just specifying that no requests asking for less
+        /// new data than this value will be made to the client it will also guarantee that requests
+        /// are generated as early as this limit is reached. This flag should only be set in very
+        /// few situations where compatibility with a fragment-based playback model needs to be kept
+        /// and the client applications cannot deal with data requests that are delayed to the
+        /// latest moment possible. (Usually these are programs that use usleep() or a similar call
+        /// in their playback loops instead of sleeping on the device itself.) Also see
+        /// [`BufferAttr`]. This option may not be specified at the same time as [`ADJUST_LATENCY`].
+        ///
+        /// [`ADJUST_LATENCY`]: struct.FlagSet.html#associatedconstant.ADJUST_LATENCY
+        /// [`BufferAttr`]: ../def/struct.BufferAttr.html
+        const EARLY_REQUESTS = capi::PA_STREAM_EARLY_REQUESTS;
+
+        /// If set this stream won’t be taken into account when it is checked whether the device
+        /// this stream is connected to should auto-suspend.
+        const DONT_INHIBIT_AUTO_SUSPEND = capi::PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND;
+
+        /// Create in unmuted state. If neither [`START_MUTED`] nor this is specified, it is left to
+        /// the server to decide whether to create the stream in muted or in unmuted state.
+        ///
+        /// [`START_MUTED`]: struct.FlagSet.html#associatedconstant.START_MUTED
+        const START_UNMUTED = capi::PA_STREAM_START_UNMUTED;
+
+        /// If the sink/source this stream is connected to is suspended during the creation of this
+        /// stream, cause it to fail. If the sink/source is being suspended during creation of this
+        /// stream, make sure this stream is terminated.
+        const FAIL_ON_SUSPEND = capi::PA_STREAM_FAIL_ON_SUSPEND;
+
+        /// If a volume is passed when this stream is created, consider it relative to the sink’s
+        /// current volume, never as absolute device volume. If this is not specified the volume
+        /// will be consider absolute when the sink is in flat volume mode, relative otherwise.
+        const RELATIVE_VOLUME = capi::PA_STREAM_RELATIVE_VOLUME;
+
+        /// Used to tag content that will be rendered by passthrough sinks. The data will be left as
+        /// is and not reformatted, resampled.
+        const PASSTHROUGH = capi::PA_STREAM_PASSTHROUGH;
+    }
+}
+
+impl Default for FlagSet {
+    fn default() -> Self {
+        Self::NOFLAGS
+    }
+}
 
 /// Some special flags for stream connections.
+#[deprecated(note = "Use the associated constants on `FlagSet`.")]
 pub mod flags {
-    use capi;
     use super::FlagSet;
 
     /// Flag to pass when no specific options are needed.
-    pub const NOFLAGS: FlagSet = capi::PA_STREAM_NOFLAGS;
+    pub const NOFLAGS: FlagSet = FlagSet::NOFLAGS;
 
     /// Create the stream corked, requiring an explicit [`Stream::uncork()`] call to uncork it.
     ///
     /// [`Stream::uncork()`]: ../struct.Stream.html#method.uncork
-    pub const START_CORKED: FlagSet = capi::PA_STREAM_START_CORKED;
+    pub const START_CORKED: FlagSet = FlagSet::START_CORKED;
 
     /// Interpolate the latency for this stream. When enabled, [`Stream::get_latency()`] and
     /// [`Stream::get_time()`] will try to estimate the current record/playback time based on the
@@ -390,7 +570,7 @@ pub mod flags {
     ///
     /// [`Stream::get_latency()`]: ../struct.Stream.html#method.get_latency
     /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
-    pub const INTERPOLATE_TIMING: FlagSet = capi::PA_STREAM_INTERPOLATE_TIMING;
+    pub const INTERPOLATE_TIMING: FlagSet = FlagSet::INTERPOLATE_TIMING;
 
     /// Don’t force the time to increase monotonically. If this option is enabled,
     /// [`Stream::get_time()`] will not necessarily return always monotonically increasing time
@@ -399,7 +579,7 @@ pub mod flags {
     /// time to jump ahead can be corrected quickly, without the need to wait.
     ///
     /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
-    pub const NOT_MONOTONIC: FlagSet = capi::PA_STREAM_NOT_MONOTONIC;
+    pub const NOT_MONOTONIC: FlagSet = FlagSet::NOT_MONOTONIC;
 
     /// If set timing update requests are issued periodically automatically. Combined with
     /// [`INTERPOLATE_TIMING`] you will be able to query the current time and latency with
@@ -409,15 +589,15 @@ pub mod flags {
     /// [`INTERPOLATE_TIMING`]: constant.INTERPOLATE_TIMING.html
     /// [`Stream::get_time()`]: ../struct.Stream.html#method.get_time
     /// [`Stream::get_latency()`]: ../struct.Stream.html#method.get_latency
-    pub const AUTO_TIMING_UPDATE: FlagSet = capi::PA_STREAM_AUTO_TIMING_UPDATE;
+    pub const AUTO_TIMING_UPDATE: FlagSet = FlagSet::AUTO_TIMING_UPDATE;
 
     /// Don’t remap channels by their name, instead map them simply by their index. Implies
     /// [`NO_REMIX_CHANNELS`](constant.NO_REMIX_CHANNELS.html).
-    pub const NO_REMAP_CHANNELS: FlagSet = capi::PA_STREAM_NO_REMAP_CHANNELS;
+    pub const NO_REMAP_CHANNELS: FlagSet = FlagSet::NO_REMAP_CHANNELS;
 
     /// When remapping channels by name, don’t upmix or downmix them to related channels. Copy them
     /// into matching channels of the device 1:1.
-    pub const NO_REMIX_CHANNELS: FlagSet = capi::PA_STREAM_NO_REMIX_CHANNELS;
+    pub const NO_REMIX_CHANNELS: FlagSet = FlagSet::NO_REMIX_CHANNELS;
 
     /// Use the sample format of the sink/device this stream is being connected to, and possibly
     /// ignore the format the sample spec contains -- but you still have to pass a valid value in it
@@ -437,7 +617,7 @@ pub mod flags {
     /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
     /// [`Info`]: ../../format/struct.Info.html
     /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
-    pub const FIX_FORMAT: FlagSet = capi::PA_STREAM_FIX_FORMAT;
+    pub const FIX_FORMAT: FlagSet = FlagSet::FIX_FORMAT;
 
     /// Use the sample rate of the sink, and possibly ignore the rate the sample spec contains.
     /// Usage similar to [`FIX_FORMAT`].
@@ -451,7 +631,7 @@ pub mod flags {
     /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
     /// [`Info`]: ../../format/struct.Info.html
     /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
-    pub const FIX_RATE: FlagSet = capi::PA_STREAM_FIX_RATE;
+    pub const FIX_RATE: FlagSet = FlagSet::FIX_RATE;
 
     /// Use the number of channels and the channel map of the sink, and possibly ignore the number
     /// of channels and the map the sample spec and the passed channel map contains. Usage similar
@@ -469,34 +649,34 @@ pub mod flags {
     /// [`Stream::new_extended()`]: ../struct.Stream.html#method.new_extended
     /// [`Info`]: ../../format/struct.Info.html
     /// [`Info::new_from_sample_spec()`]: ../../format/struct.Info.html#method.new_from_sample_spec
-    pub const FIX_CHANNELS: FlagSet = capi::PA_STREAM_FIX_CHANNELS;
+    pub const FIX_CHANNELS: FlagSet = FlagSet::FIX_CHANNELS;
 
     /// Don’t allow moving of this stream to another sink/device. Useful if you use any of the
     /// `Fix*` flags and want to make sure that resampling never takes place -- which might happen
     /// if the stream is moved to another sink/source with a different sample spec/channel map.
-    pub const DONT_MOVE: FlagSet = capi::PA_STREAM_DONT_MOVE;
+    pub const DONT_MOVE: FlagSet = FlagSet::DONT_MOVE;
 
     /// Allow dynamic changing of the sampling rate during playback with
     /// [`Stream::update_sample_rate()`].
     ///
     /// [`Stream::update_sample_rate()`]: ../struct.Stream.html#method.update_sample_rate
-    pub const VARIABLE_RATE: FlagSet = capi::PA_STREAM_VARIABLE_RATE;
+    pub const VARIABLE_RATE: FlagSet = FlagSet::VARIABLE_RATE;
 
     /// Find peaks instead of resampling.
-    pub const PEAK_DETECT: FlagSet = capi::PA_STREAM_PEAK_DETECT;
+    pub const PEAK_DETECT: FlagSet = FlagSet::PEAK_DETECT;
 
     /// Create in muted state. If neither [`START_UNMUTED`] nor this is specified, it is left to the
     /// server to decide whether to create the stream in muted or in un-muted state.
     ///
     /// [`START_UNMUTED`]: constant.START_UNMUTED.html
-    pub const START_MUTED: FlagSet = capi::PA_STREAM_START_MUTED;
+    pub const START_MUTED: FlagSet = FlagSet::START_MUTED;
 
     /// Try to adjust the latency of the sink/source based on the requested buffer metrics and
     /// adjust buffer metrics accordingly. Also see [`BufferAttr`]. This option may not be
     /// specified at the same time as [`EARLY_REQUESTS`](constant.EARLY_REQUESTS.html).
     ///
     /// [`BufferAttr`]: ../../def/struct.BufferAttr.html
-    pub const ADJUST_LATENCY: FlagSet = capi::PA_STREAM_ADJUST_LATENCY;
+    pub const ADJUST_LATENCY: FlagSet = FlagSet::ADJUST_LATENCY;
 
     /// Enable compatibility mode for legacy clients that rely on a “classic” hardware device
     /// fragment-style playback model. If this option is set, the `minreq` value of the buffer
@@ -510,31 +690,31 @@ pub mod flags {
     /// not be specified at the same time as [`ADJUST_LATENCY`](constant.ADJUST_LATENCY.html).
     ///
     /// [`BufferAttr`]: ../../def/struct.BufferAttr.html
-    pub const EARLY_REQUESTS: FlagSet = capi::PA_STREAM_EARLY_REQUESTS;
+    pub const EARLY_REQUESTS: FlagSet = FlagSet::EARLY_REQUESTS;
 
     /// If set this stream won’t be taken into account when it is checked whether the device this
     /// stream is connected to should auto-suspend.
-    pub const DONT_INHIBIT_AUTO_SUSPEND: FlagSet = capi::PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND;
+    pub const DONT_INHIBIT_AUTO_SUSPEND: FlagSet = FlagSet::DONT_INHIBIT_AUTO_SUSPEND;
 
     /// Create in unmuted state. If neither [`START_MUTED`] nor this is specified, it is left to the
     /// server to decide whether to create the stream in muted or in unmuted state.
     ///
     /// [`START_MUTED`]: constant.START_MUTED.html
-    pub const START_UNMUTED: FlagSet = capi::PA_STREAM_START_UNMUTED;
+    pub const START_UNMUTED: FlagSet = FlagSet::START_UNMUTED;
 
     /// If the sink/source this stream is connected to is suspended during the creation of this
     /// stream, cause it to fail. If the sink/source is being suspended during creation of this
     /// stream, make sure this stream is terminated.
-    pub const FAIL_ON_SUSPEND: FlagSet = capi::PA_STREAM_FAIL_ON_SUSPEND;
+    pub const FAIL_ON_SUSPEND: FlagSet = FlagSet::FAIL_ON_SUSPEND;
 
     /// If a volume is passed when this stream is created, consider it relative to the sink’s
     /// current volume, never as absolute device volume. If this is not specified the volume will be
     /// consider absolute when the sink is in flat volume mode, relative otherwise.
-    pub const RELATIVE_VOLUME: FlagSet = capi::PA_STREAM_RELATIVE_VOLUME;
+    pub const RELATIVE_VOLUME: FlagSet = FlagSet::RELATIVE_VOLUME;
 
     /// Used to tag content that will be rendered by passthrough sinks. The data will be left as is
     /// and not reformatted, resampled.
-    pub const PASSTHROUGH: FlagSet = capi::PA_STREAM_PASSTHROUGH;
+    pub const PASSTHROUGH: FlagSet = FlagSet::PASSTHROUGH;
 }
 
 /// Common event names supplied to the [`set_event_callback()`] callback.
@@ -793,7 +973,7 @@ impl Stream {
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
         let r = unsafe {
-            capi::pa_stream_connect_playback(self.ptr, p_dev, p_attr, flags, p_vol, p_sync)
+            capi::pa_stream_connect_playback(self.ptr, p_dev, p_attr, flags.bits(), p_vol, p_sync)
         };
         match r {
             0 => Ok(()),
@@ -821,7 +1001,7 @@ impl Stream {
         let p_attr = attr.map_or(null::<capi::pa_buffer_attr>(), |a| a.as_ref());
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
 
-        match unsafe { capi::pa_stream_connect_record(self.ptr, p_dev, p_attr, flags) } {
+        match unsafe { capi::pa_stream_connect_record(self.ptr, p_dev, p_attr, flags.bits()) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }

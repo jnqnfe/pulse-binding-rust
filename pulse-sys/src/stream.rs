@@ -72,27 +72,27 @@ pub use self::flags::*;
 pub mod flags {
     use super::pa_stream_flags_t;
 
-    pub const PA_STREAM_NOFLAGS:                   pa_stream_flags_t = 0x0;
-    pub const PA_STREAM_START_CORKED:              pa_stream_flags_t = 0x1;
-    pub const PA_STREAM_INTERPOLATE_TIMING:        pa_stream_flags_t = 0x2;
-    pub const PA_STREAM_NOT_MONOTONIC:             pa_stream_flags_t = 0x4;
-    pub const PA_STREAM_AUTO_TIMING_UPDATE:        pa_stream_flags_t = 0x8;
-    pub const PA_STREAM_NO_REMAP_CHANNELS:         pa_stream_flags_t = 0x10;
-    pub const PA_STREAM_NO_REMIX_CHANNELS:         pa_stream_flags_t = 0x20;
-    pub const PA_STREAM_FIX_FORMAT:                pa_stream_flags_t = 0x40;
-    pub const PA_STREAM_FIX_RATE:                  pa_stream_flags_t = 0x80;
-    pub const PA_STREAM_FIX_CHANNELS:              pa_stream_flags_t = 0x100;
-    pub const PA_STREAM_DONT_MOVE:                 pa_stream_flags_t = 0x200;
-    pub const PA_STREAM_VARIABLE_RATE:             pa_stream_flags_t = 0x400;
-    pub const PA_STREAM_PEAK_DETECT:               pa_stream_flags_t = 0x800;
-    pub const PA_STREAM_START_MUTED:               pa_stream_flags_t = 0x1000;
-    pub const PA_STREAM_ADJUST_LATENCY:            pa_stream_flags_t = 0x2000;
-    pub const PA_STREAM_EARLY_REQUESTS:            pa_stream_flags_t = 0x4000;
-    pub const PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND: pa_stream_flags_t = 0x8000;
-    pub const PA_STREAM_START_UNMUTED:             pa_stream_flags_t = 0x10000;
-    pub const PA_STREAM_FAIL_ON_SUSPEND:           pa_stream_flags_t = 0x20000;
-    pub const PA_STREAM_RELATIVE_VOLUME:           pa_stream_flags_t = 0x40000;
-    pub const PA_STREAM_PASSTHROUGH:               pa_stream_flags_t = 0x80000;
+    pub const PA_STREAM_NOFLAGS:                   pa_stream_flags_t = 0;
+    pub const PA_STREAM_START_CORKED:              pa_stream_flags_t = 1 << 0;
+    pub const PA_STREAM_INTERPOLATE_TIMING:        pa_stream_flags_t = 1 << 1;
+    pub const PA_STREAM_NOT_MONOTONIC:             pa_stream_flags_t = 1 << 2;
+    pub const PA_STREAM_AUTO_TIMING_UPDATE:        pa_stream_flags_t = 1 << 3;
+    pub const PA_STREAM_NO_REMAP_CHANNELS:         pa_stream_flags_t = 1 << 4;
+    pub const PA_STREAM_NO_REMIX_CHANNELS:         pa_stream_flags_t = 1 << 5;
+    pub const PA_STREAM_FIX_FORMAT:                pa_stream_flags_t = 1 << 6;
+    pub const PA_STREAM_FIX_RATE:                  pa_stream_flags_t = 1 << 7;
+    pub const PA_STREAM_FIX_CHANNELS:              pa_stream_flags_t = 1 << 8;
+    pub const PA_STREAM_DONT_MOVE:                 pa_stream_flags_t = 1 << 9;
+    pub const PA_STREAM_VARIABLE_RATE:             pa_stream_flags_t = 1 << 10;
+    pub const PA_STREAM_PEAK_DETECT:               pa_stream_flags_t = 1 << 11;
+    pub const PA_STREAM_START_MUTED:               pa_stream_flags_t = 1 << 12;
+    pub const PA_STREAM_ADJUST_LATENCY:            pa_stream_flags_t = 1 << 13;
+    pub const PA_STREAM_EARLY_REQUESTS:            pa_stream_flags_t = 1 << 14;
+    pub const PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND: pa_stream_flags_t = 1 << 15;
+    pub const PA_STREAM_START_UNMUTED:             pa_stream_flags_t = 1 << 16;
+    pub const PA_STREAM_FAIL_ON_SUSPEND:           pa_stream_flags_t = 1 << 17;
+    pub const PA_STREAM_RELATIVE_VOLUME:           pa_stream_flags_t = 1 << 18;
+    pub const PA_STREAM_PASSTHROUGH:               pa_stream_flags_t = 1 << 19;
 }
 
 /// Seek mode.
