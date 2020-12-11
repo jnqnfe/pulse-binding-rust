@@ -13,6 +13,7 @@ exclude = ["README.md"]
 
 [dependencies]
 libc = "0.2"
+bitflags = "1.2"
 num-traits = "0.2"
 num-derive = "0.3"
 libpulse-sys = { path = "../pulse-sys", version = "1.15.1", default-features = false }

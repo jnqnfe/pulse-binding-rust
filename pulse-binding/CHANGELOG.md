@@ -54,6 +54,8 @@
  * Added support for feature tagging in documentation (requires nightly Rust version, so only
    enabled if a certain config flag is used, as for the docs.rs copy).
  * Marked `version::Compatibility` as `#[non_exhaustive]`.
+ * Updated required dependencies:
+    - `bitflags` 1.2 now required.
 
 # 2.19.0 (December 8th, 2020)
 
@@ -570,5 +572,6 @@ Note, version number 1.0.4 skipped (it was used for non-crate project changes).
 
  * Original release.
 
+[`bitflags`]: https://docs.rs/bitflags
 [issue11]: https://github.com/jnqnfe/pulse-binding-rust/issues/11
 [issue26]: https://github.com/jnqnfe/pulse-binding-rust/issues/26
