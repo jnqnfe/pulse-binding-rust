@@ -1,3 +1,8 @@
+# [unreleased]
+
+ * Fixed incorrect `PA_SOURCE_DYNAMIC_LATENCY` flag value. Was mistakenly `0x42` instead of `0x40`
+   (thus combined with `PA_SOURCE_LATENCY`).
+
 # 1.15.2 (December 8th, 2020)
 
  * Added missing `Default` implementation for `channelmap::pa_channel_map_def_t`.

@@ -130,7 +130,7 @@ pub mod source_flags {
     pub const PA_SOURCE_NETWORK:         pa_source_flags_t = 0x8;
     pub const PA_SOURCE_HW_MUTE_CTRL:    pa_source_flags_t = 0x10;
     pub const PA_SOURCE_DECIBEL_VOLUME:  pa_source_flags_t = 0x20;
-    pub const PA_SOURCE_DYNAMIC_LATENCY: pa_source_flags_t = 0x42;
+    pub const PA_SOURCE_DYNAMIC_LATENCY: pa_source_flags_t = 0x40;
     pub const PA_SOURCE_FLAT_VOLUME:     pa_source_flags_t = 0x80;
 }
 
