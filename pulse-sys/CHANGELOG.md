@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.15.3 (December 11th, 2020)
 
  * Fixed incorrect `PA_SOURCE_DYNAMIC_LATENCY` flag value. Was mistakenly `0x42` instead of `0x40`
    (thus combined with `PA_SOURCE_LATENCY`).
