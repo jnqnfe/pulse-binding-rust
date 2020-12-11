@@ -15,19 +15,28 @@
 
 #[cfg(any(doc, feature = "pa_v6"))]
 use std::ffi::CStr;
+use bitflags::bitflags;
 
-/// Flag set.
-pub type FlagSet = capi::direction::pa_direction_t;
+bitflags! {
+    /// Flag set.
+    #[repr(transparent)]
+    pub struct FlagSet: i32 {
+        /// Output flag.
+        const OUTPUT = capi::PA_DIRECTION_OUTPUT;
+        /// Input flag.
+        const INPUT = capi::PA_DIRECTION_INPUT;
+    }
+}
 
 /// Available flags for `FlagSet`.
+#[deprecated(note = "Use the associated constants on `FlagSet`.")]
 pub mod flags {
-    use capi;
     use super::FlagSet;
 
     /// Output flag.
-    pub const OUTPUT: FlagSet = capi::PA_DIRECTION_OUTPUT;
+    pub const OUTPUT: FlagSet = FlagSet::OUTPUT;
     /// Input flag.
-    pub const INPUT:  FlagSet = capi::PA_DIRECTION_INPUT;
+    pub const INPUT:  FlagSet = FlagSet::INPUT;
 }
 
 /// Checks whether direction is valid (either input, output or bidirectional).
@@ -35,7 +44,7 @@ pub mod flags {
 #[cfg(any(doc, feature = "pa_v6"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
 pub fn is_valid(f: FlagSet) -> bool {
-    unsafe { capi::pa_direction_valid(f) != 0 }
+    unsafe { capi::pa_direction_valid(f.bits()) != 0 }
 }
 
 /// Gets a textual representation of the direction.
@@ -43,5 +52,5 @@ pub fn is_valid(f: FlagSet) -> bool {
 #[cfg(any(doc, feature = "pa_v6"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
 pub fn to_string(f: FlagSet) -> String {
-    unsafe { CStr::from_ptr(capi::pa_direction_to_string(f)).to_string_lossy().into_owned() }
+    unsafe { CStr::from_ptr(capi::pa_direction_to_string(f.bits())).to_string_lossy().into_owned() }
 }

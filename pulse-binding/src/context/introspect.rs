@@ -1677,7 +1677,7 @@ impl<'a> CardPortInfo<'a> {
                 },
                 priority: src.priority,
                 available: def::PortAvailable::from_i32(src.available).unwrap(),
-                direction: src.direction,
+                direction: direction::FlagSet::from_bits_truncate(src.direction),
                 proplist: Proplist::from_raw_weak(src.proplist),
                 latency_offset: src.latency_offset,
                 profiles: profiles_vec,
