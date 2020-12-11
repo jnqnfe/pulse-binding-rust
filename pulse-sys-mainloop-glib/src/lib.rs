@@ -26,7 +26,7 @@
 //! [`libpulse-glib-binding`]: https://docs.rs/libpulse-glib-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 
-#![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
+#![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
 
 #![allow(non_camel_case_types, non_snake_case)]
