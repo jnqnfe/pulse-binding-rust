@@ -11,19 +11,20 @@
 // Portions of documentation are copied from the LGPL 2.1+ licensed PulseAudio C headers on a
 // fair-use basis, as discussed in the overall project readme (available in the git repository).
 
-//! PulseAudio Rust language binding library for the ‘GLIB mainloop’ component.
+//! A binding for the PulseAudio ‘GLIB mainloop’ component (`libpulse-mainloop-glib` system
+//! library).
+//!
+//! # About
+//!
+//! This binding enables Rust projects to make use of the ‘GLIB mainloop’ component of the
+//! [PulseAudio] client system library. It builds upon the [separate raw FFI crate][sys] to provide
+//! a more “Rusty” interface.
 //!
 //! This component provides a wrapper around the GLIB main loop. Use this to embed PulseAudio into
 //! your GLIB/GTK+/GNOME programs.
 //!
-//! # About
-//!
-//! This library is a binding that allows Rust code to connect to the PulseAudio sound server via
-//! PulseAudio’s existing C API. This binding provides a safe(r) Rust interface which might be
-//! preferred over the raw C API provided by the underlying `sys` linking crate.
-//!
-//! This crate provides an interface to PulseAudio’s ‘GLIB mainloop’ component, and should be used
-//! in addition to the general [`libpulse-binding`] crate.
+//! Note that you will need components of the primary [`libpulse-binding`] crate to make use of
+//! this.
 //!
 //! # Introduction
 //!
@@ -44,7 +45,9 @@
 //!
 //! [`Mainloop::new()`]: struct.Mainloop.html#method.new
 //! [`Mainloop::get_api()`]: struct.Mainloop.html#method.get_api
+//! [sys]: https://docs.rs/libpulse-mainloop-glib-sys
 //! [`libpulse-binding`]: https://docs.rs/libpulse-binding
+//! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 //! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",

@@ -11,19 +11,19 @@
 // Portions of documentation are copied from the LGPL 2.1+ licensed PulseAudio C headers on a
 // fair-use basis, as discussed in the overall project readme (available in the git repository).
 
-//! PulseAudio Rust language binding library for the ‘simple’ component.
-//!
-//! PulseAudio ‘simple’ provides a simple but limited synchronous playback and recording API. This
-//! is a synchronous, simplified wrapper around the standard asynchronous API.
+//! A binding for the PulseAudio binding ‘simple’ interface (`libpulse-simple` system library).
 //!
 //! # About
 //!
-//! This library is a binding that allows Rust code to connect to the PulseAudio sound server via
-//! PulseAudio’s existing C API. This binding provides a safe(r) Rust interface which might be
-//! preferred over the raw C API provided by the underlying `sys` linking crate.
+//! This binding enables Rust projects to make use of the ‘simple’ interface of the [PulseAudio]
+//! client system library. It builds upon the [separate raw FFI crate][sys] to provide a more
+//! “Rusty” interface.
 //!
-//! This crate provides an interface to PulseAudio’s ‘simple’ component, and should be used in
-//! addition to the general [`libpulse-binding`] crate.
+//! The ‘simple’ interface provides a simple but limited synchronous playback and recording API. It
+//! is a synchronous, simplified wrapper around the standard asynchronous API.
+//!
+//! Note that you will need components of the primary [`libpulse-binding`] crate to make use of
+//! this.
 //!
 //! # Introduction
 //!
@@ -95,7 +95,7 @@
 //! # Cleanup
 //!
 //! Once playback or capture is complete, the connection should be closed and resources freed. This
-//! is done automatically once the object is dropped.
+//! is done automatically once the [`Simple`] object is dropped.
 //!
 //! [`Simple`]: struct.Simple.html
 //! [`read()`]: struct.Simple.html#method.read
@@ -103,7 +103,9 @@
 //! [`Simple::get_latency()`]: struct.Simple.html#method.get_latency
 //! [`Simple::flush()`]: struct.Simple.html#method.flush
 //! [`Simple::drain()`]: struct.Simple.html#method.drain
+//! [sys]: https://docs.rs/libpulse-simple-sys
 //! [`libpulse-binding`]: https://docs.rs/libpulse-binding
+//! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 //! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",

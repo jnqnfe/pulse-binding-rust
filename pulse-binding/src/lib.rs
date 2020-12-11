@@ -11,16 +11,35 @@
 // Portions of documentation are copied from the LGPL 2.1+ licensed PulseAudio C headers on a
 // fair-use basis, as discussed in the overall project readme (available in the git repository).
 
-//! PulseAudio Rust language binding library.
+//! A binding for the PulseAudio system library (`libpulse`).
 //!
 //! # About
 //!
-//! This library is a binding that allows Rust code to connect to the PulseAudio sound server via
-//! PulseAudio’s existing C API. This binding provides a safe(r) Rust interface which might be
-//! preferred over the raw C API provided by the underlying `sys` linking crate.
+//! This binding enables Rust projects to make use of the [PulseAudio] client system library. It
+//! builds upon the [separate raw FFI crate][sys] to provide a more “Rusty” interface.
 //!
-//! The documentation below and throughout this crate have been largely lifted from the C API header
-//! files.
+//! The documentation below and throughout this crate has been largely copied (under fair-use terms)
+//! from those in the PulseAudio C API header files, and adjusted where appropriate to fit any
+//! differences, thus it should not be too unfamiliar to those of you already familiar with the C
+//! API.
+//!
+//! <div style="border-left:#bda000aa 5px solid; padding:0.5em 1em; margin:1em 0 0.6em 0; background-color:#aaa2">
+//! <h3 style="color:#bfa800; margin-top:0.2em">
+//! <span aria-hidden="true">
+//! <svg style="width:1em; height:1em; margin-bottom:-0.15em; fill:currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path></svg>
+//! </span>
+//! Warning
+//! </h3>
+//! <p>
+//! The PulseAudio API, even in this Rust-ified form, is not the easiest thing to understand how to
+//! make use of. Furthermore, the somewhat complex underlying C API imposes certain limitations upon
+//! just how safe and simple an interface this binding can reasonably offer. One particularly
+//! notable example is the threaded mainloop locking mechanism, which uses a perfectly legitimate
+//! design, but one that happens to conflict with what is typically used in Rust code; it does fit
+//! perfectly with the Rust borrow checking mechanism and thus you cannot rely upon the borrow
+//! checker to prevent unsafe use as much as is typical.
+//! </p>
+//! </div>
 //!
 //! # Introduction
 //!
@@ -108,7 +127,9 @@
 //! See sub-modules for further information.
 //!
 //! [`mainloop`]: mainloop/index.html
+//! [sys]: https://docs.rs/libpulse-sys
 //! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
+//! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 //! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",

@@ -11,18 +11,19 @@
 // Portions of documentation are copied from the LGPL 2.1+ licensed PulseAudio C headers on a
 // fair-use basis, as discussed in the overall project readme (available in the git repository).
 
-//! PulseAudio Rust language linking library.
+//! PulseAudio FFI bindings for the main `libpulse` system library.
 //!
-//! This crate is a *sys* type crate targetting the PulseAudio C API. As a *sys* type crate it does
-//! nothing more than simply describe the C API in Rust form. Please be aware that there is a
-//! “higher level” *binding* crate available ([`libpulse-binding`]) built on top of this, which you
-//! will most likely prefer to use instead.
+//! This crate does nothing more than offer a simple FFI binding to the C API of the [PulseAudio]
+//! client system library. Please note that there is a “higher-level” binding available (the
+//! [`libpulse-binding`] crate), built on top of this, which offers a more Rust-oriented interface.
 //!
-//! Virtually no documentation is provided here, since it is pointless to duplicate it here from the
-//! C header files, considering that most users will be using the binding crate (which is heavily
-//! documented).
+//! Unlike the “higher-level” binding just mentioned, virtually no documentation is provided here.
+//! Things that *are* documented here are typically only those directly re-exported by the
+//! “higher-level” binding. Please see either the equivalent documentation in that, or the
+//! documentation of the actual PulseAudio C header files, if you need documentation.
 //!
 //! [`libpulse-binding`]: https://docs.rs/libpulse-binding
+//! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.png",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
