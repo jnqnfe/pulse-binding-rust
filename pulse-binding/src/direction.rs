@@ -39,18 +39,20 @@ pub mod flags {
     pub const INPUT:  FlagSet = FlagSet::INPUT;
 }
 
-/// Checks whether direction is valid (either input, output or bidirectional).
-#[inline]
-#[cfg(any(doc, feature = "pa_v6"))]
-#[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
-pub fn is_valid(f: FlagSet) -> bool {
-    unsafe { capi::pa_direction_valid(f.bits()) != 0 }
-}
+impl FlagSet {
+    /// Checks whether direction is valid (either input, output or bidirectional).
+    #[inline]
+    #[cfg(any(doc, feature = "pa_v6"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
+    pub fn is_valid(self) -> bool {
+        unsafe { capi::pa_direction_valid(self.bits()) != 0 }
+    }
 
-/// Gets a textual representation of the direction.
-#[inline]
-#[cfg(any(doc, feature = "pa_v6"))]
-#[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
-pub fn to_string(f: FlagSet) -> String {
-    unsafe { CStr::from_ptr(capi::pa_direction_to_string(f.bits())).to_string_lossy().into_owned() }
+    /// Gets a textual representation of the direction.
+    #[inline]
+    #[cfg(any(doc, feature = "pa_v6"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
+    pub fn to_string(self) -> String {
+        unsafe { CStr::from_ptr(capi::pa_direction_to_string(self.bits())).to_string_lossy().into_owned() }
+    }
 }
