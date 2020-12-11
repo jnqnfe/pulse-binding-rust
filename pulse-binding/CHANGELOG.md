@@ -52,6 +52,9 @@
    deprecating the old constant sets.
  * Converted `direction::FlagSet` to a [`bitflags`] type, moving the `direction::flags::*` constants
    to associated constants of it, deprecating the old constant set.
+ * Converted `mainloop::events::io::IoEventFlagSet` to a [`bitflags`] type, moving the
+   `mainloop::events::io::flags::*` constants to associated constants of it, deprecating the old
+   constant set. Additionally, the type was renamed from `IoEventFlagSet` to simply `FlagSet`.
  * Moved `direction::is_valid()` and `direction::to_string()` to methods of `direction::FlagSet`.
  * Added `MonotonicTs::checked_add_duration()` and `MonotonicTs::checked_sub_duration()` along with
    corresponding `Add[Assign]` and `Sub[Assign]` impls for adding a `Duration` to `MonotonicTs`.

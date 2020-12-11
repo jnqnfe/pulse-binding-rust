@@ -15,29 +15,44 @@
 
 use std::os::raw::c_void;
 use std::rc::Rc;
+use bitflags::bitflags;
 use crate::mainloop::api::{MainloopApi, MainloopInnerType};
 use crate::callbacks::MultiUseCallback;
 
 pub use capi::pa_io_event as IoEventInternal;
 
-/// A bitmask for IO events.
-pub type IoEventFlagSet = capi::mainloop::pa_io_event_flags_t;
+bitflags! {
+    /// IO event flag set.
+    #[repr(transparent)]
+    pub struct FlagSet: u32 {
+        /// No event.
+        const NULL = capi::PA_IO_EVENT_NULL;
+        /// Input event.
+        const INPUT = capi::PA_IO_EVENT_INPUT;
+        /// Output event.
+        const OUTPUT = capi::PA_IO_EVENT_OUTPUT;
+        /// Hangup event.
+        const HANGUP = capi::PA_IO_EVENT_HANGUP;
+        /// Error event.
+        const ERROR = capi::PA_IO_EVENT_ERROR;
+    }
+}
 
-/// Flags for `IoEventFlagSet`.
+/// Flags for `FlagSet`.
+#[deprecated(note = "Use the associated constants on `FlagSet`.")]
 pub mod flags {
-    use capi;
-    use super::IoEventFlagSet;
+    use super::FlagSet;
 
     /// No event.
-    pub const NULL:   IoEventFlagSet = capi::PA_IO_EVENT_NULL;
+    pub const NULL:   FlagSet = FlagSet::NULL;
     /// Input event.
-    pub const INPUT:  IoEventFlagSet = capi::PA_IO_EVENT_INPUT;
+    pub const INPUT:  FlagSet = FlagSet::INPUT;
     /// Output event.
-    pub const OUTPUT: IoEventFlagSet = capi::PA_IO_EVENT_OUTPUT;
+    pub const OUTPUT: FlagSet = FlagSet::OUTPUT;
     /// Hangup event.
-    pub const HANGUP: IoEventFlagSet = capi::PA_IO_EVENT_HANGUP;
+    pub const HANGUP: FlagSet = FlagSet::HANGUP;
     /// Error event.
-    pub const ERROR:  IoEventFlagSet = capi::PA_IO_EVENT_ERROR;
+    pub const ERROR:  FlagSet = FlagSet::ERROR;
 }
 
 /// An IO event source
@@ -61,8 +76,8 @@ pub struct IoEventRef<T: 'static>
     owner: Rc<T>,
 }
 
-pub(crate) type EventCb = MultiUseCallback<dyn FnMut(*mut IoEventInternal, i32, IoEventFlagSet),
-    extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: IoEventFlagSet,
+pub(crate) type EventCb = MultiUseCallback<dyn FnMut(*mut IoEventInternal, i32, FlagSet),
+    extern "C" fn(a: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: FlagSet,
     userdata: *mut c_void)>;
 
 impl<T> IoEvent<T>
@@ -78,7 +93,7 @@ impl<T> IoEvent<T>
 
     /// Enables or disables IO events on this object.
     #[inline]
-    pub fn enable(&mut self, events: IoEventFlagSet) {
+    pub fn enable(&mut self, events: FlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
         fn_ptr(self.ptr, events);
     }
@@ -95,7 +110,7 @@ impl<T> IoEventRef<T>
 
     /// Enables or disables IO events on this object.
     #[inline]
-    pub fn enable(&mut self, events: IoEventFlagSet) {
+    pub fn enable(&mut self, events: FlagSet) {
         let fn_ptr = (*self.owner).get_api().io_enable.unwrap();
         fn_ptr(self.ptr, events);
     }
@@ -116,7 +131,7 @@ impl<T> Drop for IoEvent<T>
 /// must be accomplished separately to avoid a memory leak.
 pub(crate)
 extern "C"
-fn event_cb_proxy(_: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: IoEventFlagSet,
+fn event_cb_proxy(_: *const MainloopApi, e: *mut IoEventInternal, fd: i32, events: FlagSet,
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {

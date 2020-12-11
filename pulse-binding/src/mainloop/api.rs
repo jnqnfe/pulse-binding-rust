@@ -18,7 +18,7 @@ use std::rc::Rc;
 use libc::timeval;
 use crate::def;
 use super::events;
-use super::events::io::{IoEvent, IoEventRef, IoEventInternal, IoEventFlagSet};
+use super::events::io::{IoEvent, IoEventRef, IoEventInternal, FlagSet as IoEventFlagSet};
 use super::events::timer::{TimeEvent, TimeEventRef, TimeEventInternal};
 use super::events::deferred::{DeferEvent, DeferEventRef, DeferEventInternal};
 use crate::time::{UnixTs, MonotonicTs, Timeval, MicroSeconds};
