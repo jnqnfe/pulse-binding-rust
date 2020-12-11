@@ -122,11 +122,26 @@
 //!
 //! See sub-modules for further information.
 //!
+//! <div style="border-left:#bda000aa 5px solid; padding:0.5em 1em; margin:1em 0 0.6em 0; background-color:#aaa2">
+//! <h3 style="color:#bfa800; margin-top:0.2em">
+//! <span aria-hidden="true">
+//! <svg style="width:1em; height:1em; margin-bottom:-0.15em; fill:currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path></svg>
+//! </span>
+//! Warning
+//! </h3>
+//! <p>
+//! It is important that you read the <code>COMPATIBILITY.md</code> guide available in the
+//! <a href="https://github.com/jnqnfe/pulse-binding-rust">code repository</a> to understand the
+//! topic of compatibility with different versions of PulseAudio.
+//! </p>
+//! </div>
+//!
 //! [`mainloop`]: mainloop/index.html
 //! [sys]: https://docs.rs/libpulse-sys
 //! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 //! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
+//! [code repository]: https://github.com/jnqnfe/pulse-binding-rust
 
 #![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
        html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]

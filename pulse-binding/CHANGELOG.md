@@ -5,6 +5,8 @@
     - Removed the `pa_latest` and `pa_latest_common` cargo features.
     - Changed the default version feature level to `pa_v8`.
  * MSRV bumped from 1.40 to 1.41.
+ * Re-wrote the `COMPATIBILITY.md` guide (available in the code repo), including adding important
+   dicsussion of the hazard of “forward compatibility” concerns.
  * Improved the basic implementations of integer operations `Add`, `Sub`, `Mul`, `Div` and `Rem`
    for time types, such that those that were not previously making use of “checked” calculations
    now do so, and thus overflow causes a panic rather than being wrapped. If panicing is not wanted,
