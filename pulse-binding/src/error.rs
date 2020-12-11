@@ -20,7 +20,7 @@ use num_derive::{FromPrimitive, ToPrimitive};
 
 /// A wrapper around integer errors returned by PulseAudio. Can be converted to a `Code` variant for
 /// comparison purposes if desired.
-#[repr(C)]
+#[repr(transparent)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct PAErr(pub i32);
 
