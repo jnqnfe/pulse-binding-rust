@@ -77,16 +77,16 @@ pub use self::sink_flags::*;
 pub mod sink_flags {
     use super::pa_sink_flags_t;
 
-    pub const PA_SINK_NOFLAGS:         pa_sink_flags_t = 0x0;
-    pub const PA_SINK_HW_VOLUME_CTRL:  pa_sink_flags_t = 0x1;
-    pub const PA_SINK_LATENCY:         pa_sink_flags_t = 0x2;
-    pub const PA_SINK_HARDWARE:        pa_sink_flags_t = 0x4;
-    pub const PA_SINK_NETWORK:         pa_sink_flags_t = 0x8;
-    pub const PA_SINK_HW_MUTE_CTRL:    pa_sink_flags_t = 0x10;
-    pub const PA_SINK_DECIBEL_VOLUME:  pa_sink_flags_t = 0x20;
-    pub const PA_SINK_FLAT_VOLUME:     pa_sink_flags_t = 0x40;
-    pub const PA_SINK_DYNAMIC_LATENCY: pa_sink_flags_t = 0x80;
-    pub const PA_SINK_SET_FORMATS:     pa_sink_flags_t = 0x100;
+    pub const PA_SINK_NOFLAGS:         pa_sink_flags_t = 0;
+    pub const PA_SINK_HW_VOLUME_CTRL:  pa_sink_flags_t = 1 << 0;
+    pub const PA_SINK_LATENCY:         pa_sink_flags_t = 1 << 1;
+    pub const PA_SINK_HARDWARE:        pa_sink_flags_t = 1 << 2;
+    pub const PA_SINK_NETWORK:         pa_sink_flags_t = 1 << 3;
+    pub const PA_SINK_HW_MUTE_CTRL:    pa_sink_flags_t = 1 << 4;
+    pub const PA_SINK_DECIBEL_VOLUME:  pa_sink_flags_t = 1 << 5;
+    pub const PA_SINK_FLAT_VOLUME:     pa_sink_flags_t = 1 << 6;
+    pub const PA_SINK_DYNAMIC_LATENCY: pa_sink_flags_t = 1 << 7;
+    pub const PA_SINK_SET_FORMATS:     pa_sink_flags_t = 1 << 8;
 }
 
 #[repr(C)]
@@ -125,15 +125,15 @@ pub use self::source_flags::*;
 pub mod source_flags {
     use super::pa_source_flags_t;
 
-    pub const PA_SOURCE_NOFLAGS:         pa_source_flags_t = 0x0;
-    pub const PA_SOURCE_HW_VOLUME_CTRL:  pa_source_flags_t = 0x1;
-    pub const PA_SOURCE_LATENCY:         pa_source_flags_t = 0x2;
-    pub const PA_SOURCE_HARDWARE:        pa_source_flags_t = 0x4;
-    pub const PA_SOURCE_NETWORK:         pa_source_flags_t = 0x8;
-    pub const PA_SOURCE_HW_MUTE_CTRL:    pa_source_flags_t = 0x10;
-    pub const PA_SOURCE_DECIBEL_VOLUME:  pa_source_flags_t = 0x20;
-    pub const PA_SOURCE_DYNAMIC_LATENCY: pa_source_flags_t = 0x40;
-    pub const PA_SOURCE_FLAT_VOLUME:     pa_source_flags_t = 0x80;
+    pub const PA_SOURCE_NOFLAGS:         pa_source_flags_t = 0;
+    pub const PA_SOURCE_HW_VOLUME_CTRL:  pa_source_flags_t = 1 << 0;
+    pub const PA_SOURCE_LATENCY:         pa_source_flags_t = 1 << 1;
+    pub const PA_SOURCE_HARDWARE:        pa_source_flags_t = 1 << 2;
+    pub const PA_SOURCE_NETWORK:         pa_source_flags_t = 1 << 3;
+    pub const PA_SOURCE_HW_MUTE_CTRL:    pa_source_flags_t = 1 << 4;
+    pub const PA_SOURCE_DECIBEL_VOLUME:  pa_source_flags_t = 1 << 5;
+    pub const PA_SOURCE_DYNAMIC_LATENCY: pa_source_flags_t = 1 << 6;
+    pub const PA_SOURCE_FLAT_VOLUME:     pa_source_flags_t = 1 << 7;
 }
 
 #[repr(C)]

@@ -14,6 +14,7 @@
 //! Global definitions.
 
 use std::os::raw::c_void;
+use bitflags::bitflags;
 use num_derive::{FromPrimitive, ToPrimitive};
 use crate::time::{Timeval, MicroSeconds};
 
@@ -295,33 +296,76 @@ impl AsRef<capi::pa_spawn_api> for SpawnApi {
     }
 }
 
-/// Set of sink flags.
-pub type SinkFlagSet = capi::def::pa_sink_flags_t;
+bitflags! {
+    /// Set of sink flags.
+    #[repr(transparent)]
+    pub struct SinkFlagSet: u32 {
+        /// Flag to pass when no specific options are needed.
+        const NOFLAGS = capi::PA_SINK_NOFLAGS;
+
+        /// Supports hardware volume control. This is a dynamic flag and may change at runtime after
+        /// the sink has initialized.
+        const HW_VOLUME_CTRL = capi::PA_SINK_HW_VOLUME_CTRL;
+
+        /// Supports latency querying.
+        const LATENCY = capi::PA_SINK_LATENCY;
+
+        /// Is a hardware sink of some kind, in contrast to “virtual”/software sinks.
+        const HARDWARE = capi::PA_SINK_HARDWARE;
+
+        /// Is a networked sink of some kind.
+        const NETWORK = capi::PA_SINK_NETWORK;
+
+        /// Supports hardware mute control. This is a dynamic flag and may change at runtime after
+        /// the sink has initialized.
+        const HW_MUTE_CTRL = capi::PA_SINK_HW_MUTE_CTRL;
+
+        /// Volume can be translated to dB with the `From` based conversions between [`Volume`],
+        /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at
+        /// runtime after the sink has initialized.
+        ///
+        /// [`Volume`]: ../volume/struct.Volume.html
+        /// [`VolumeDB`]: ../volume/struct.VolumeDB.html
+        /// [`VolumeLinear`]: ../volume/struct.VolumeLinear.html
+        const DECIBEL_VOLUME = capi::PA_SINK_DECIBEL_VOLUME;
+
+        /// This sink is in flat volume mode, i.e. always the maximum of the volume  of all
+        /// connected inputs.
+        const FLAT_VOLUME = capi::PA_SINK_FLAT_VOLUME;
+
+        /// The latency can be adjusted dynamically depending on the needs of the connected streams.
+        const DYNAMIC_LATENCY = capi::PA_SINK_DYNAMIC_LATENCY;
+
+        /// The sink allows setting what formats are supported by the connected hardware. The actual
+        /// functionality to do this might be provided by an extension.
+        const SET_FORMATS = capi::PA_SINK_SET_FORMATS;
+    }
+}
 
 /// Special sink flags.
+#[deprecated(note = "Use the associated constants on `SinkFlagSet`.")]
 pub mod sink_flags {
-    use capi;
     use super::SinkFlagSet;
 
     /// Flag to pass when no specific options are needed.
-    pub const NOFLAGS: SinkFlagSet = capi::PA_SINK_NOFLAGS;
+    pub const NOFLAGS: SinkFlagSet = SinkFlagSet::NOFLAGS;
 
     /// Supports hardware volume control. This is a dynamic flag and may change at runtime after the
     /// sink has initialized.
-    pub const HW_VOLUME_CTRL: SinkFlagSet = capi::PA_SINK_HW_VOLUME_CTRL;
+    pub const HW_VOLUME_CTRL: SinkFlagSet = SinkFlagSet::HW_VOLUME_CTRL;
 
     /// Supports latency querying.
-    pub const LATENCY: SinkFlagSet = capi::PA_SINK_LATENCY;
+    pub const LATENCY: SinkFlagSet = SinkFlagSet::LATENCY;
 
     /// Is a hardware sink of some kind, in contrast to “virtual”/software sinks.
-    pub const HARDWARE: SinkFlagSet = capi::PA_SINK_HARDWARE;
+    pub const HARDWARE: SinkFlagSet = SinkFlagSet::HARDWARE;
 
     /// Is a networked sink of some kind.
-    pub const NETWORK: SinkFlagSet = capi::PA_SINK_NETWORK;
+    pub const NETWORK: SinkFlagSet = SinkFlagSet::NETWORK;
 
     /// Supports hardware mute control. This is a dynamic flag and may change at runtime after the
     /// sink has initialized.
-    pub const HW_MUTE_CTRL: SinkFlagSet = capi::PA_SINK_HW_MUTE_CTRL;
+    pub const HW_MUTE_CTRL: SinkFlagSet = SinkFlagSet::HW_MUTE_CTRL;
 
     /// Volume can be translated to dB with the `From` based conversions between [`Volume`],
     /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at runtime
@@ -330,18 +374,18 @@ pub mod sink_flags {
     /// [`Volume`]: ../../volume/struct.Volume.html
     /// [`VolumeDB`]: ../../volume/struct.VolumeDB.html
     /// [`VolumeLinear`]: ../../volume/struct.VolumeLinear.html
-    pub const DECIBEL_VOLUME: SinkFlagSet = capi::PA_SINK_DECIBEL_VOLUME;
+    pub const DECIBEL_VOLUME: SinkFlagSet = SinkFlagSet::DECIBEL_VOLUME;
 
     /// This sink is in flat volume mode, i.e. always the maximum of the volume  of all connected
     /// inputs.
-    pub const FLAT_VOLUME: SinkFlagSet = capi::PA_SINK_FLAT_VOLUME;
+    pub const FLAT_VOLUME: SinkFlagSet = SinkFlagSet::FLAT_VOLUME;
 
     /// The latency can be adjusted dynamically depending on the needs of the connected streams.
-    pub const DYNAMIC_LATENCY: SinkFlagSet = capi::PA_SINK_DYNAMIC_LATENCY;
+    pub const DYNAMIC_LATENCY: SinkFlagSet = SinkFlagSet::DYNAMIC_LATENCY;
 
     /// The sink allows setting what formats are supported by the connected hardware. The actual
     /// functionality to do this might be provided by an extension.
-    pub const SET_FORMATS: SinkFlagSet = capi::PA_SINK_SET_FORMATS;
+    pub const SET_FORMATS: SinkFlagSet = SinkFlagSet::SET_FORMATS;
 }
 
 /// Sink state.
@@ -407,33 +451,72 @@ impl SinkState {
     }
 }
 
-/// Set of source flags.
-pub type SourceFlagSet = capi::def::pa_source_flags_t;
+bitflags! {
+    /// Set of source flags.
+    #[repr(transparent)]
+    pub struct SourceFlagSet: u32 {
+        /// Flag to pass when no specific options are needed.
+        const NOFLAGS = capi::PA_SOURCE_NOFLAGS;
+
+        /// Supports hardware volume control. This is a dynamic flag and may change at runtime after
+        /// the source has initialized.
+        const HW_VOLUME_CTRL = capi::PA_SOURCE_HW_VOLUME_CTRL;
+
+        /// Supports latency querying.
+        const LATENCY = capi::PA_SOURCE_LATENCY;
+
+        /// Is a hardware source of some kind, in contrast to “virtual”/software source.
+        const HARDWARE = capi::PA_SOURCE_HARDWARE;
+
+        /// Is a networked source of some kind.
+        const NETWORK = capi::PA_SOURCE_NETWORK;
+
+        /// Supports hardware mute control. This is a dynamic flag and may change at runtime after
+        /// the source has initialized.
+        const HW_MUTE_CTRL = capi::PA_SOURCE_HW_MUTE_CTRL;
+
+        /// Volume can be translated to dB with the `From` based conversions between [`Volume`],
+        /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at
+        /// runtime after the source has initialized.
+        ///
+        /// [`Volume`]: ../volume/struct.Volume.html
+        /// [`VolumeDB`]: ../volume/struct.VolumeDB.html
+        /// [`VolumeLinear`]: ../volume/struct.VolumeLinear.html
+        const DECIBEL_VOLUME = capi::PA_SOURCE_DECIBEL_VOLUME;
+
+        /// The latency can be adjusted dynamically depending on the needs of the connected streams.
+        const DYNAMIC_LATENCY = capi::PA_SOURCE_DYNAMIC_LATENCY;
+
+        /// This source is in flat volume mode, i.e. always the maximum of the volume of all
+        /// connected outputs.
+        const FLAT_VOLUME = capi::PA_SOURCE_FLAT_VOLUME;
+    }
+}
 
 /// Special source flags.
+#[deprecated(note = "Use the associated constants on `SourceFlagSet`.")]
 pub mod source_flags {
-    use capi;
     use super::SourceFlagSet;
 
     /// Flag to pass when no specific options are needed.
-    pub const NOFLAGS: SourceFlagSet = capi::PA_SOURCE_NOFLAGS;
+    pub const NOFLAGS: SourceFlagSet = SourceFlagSet::NOFLAGS;
 
     /// Supports hardware volume control. This is a dynamic flag and may change at runtime after the
     /// source has initialized.
-    pub const HW_VOLUME_CTRL: SourceFlagSet = capi::PA_SOURCE_HW_VOLUME_CTRL;
+    pub const HW_VOLUME_CTRL: SourceFlagSet = SourceFlagSet::HW_VOLUME_CTRL;
 
     /// Supports latency querying.
-    pub const LATENCY: SourceFlagSet = capi::PA_SOURCE_LATENCY;
+    pub const LATENCY: SourceFlagSet = SourceFlagSet::LATENCY;
 
     /// Is a hardware source of some kind, in contrast to “virtual”/software source.
-    pub const HARDWARE: SourceFlagSet = capi::PA_SOURCE_HARDWARE;
+    pub const HARDWARE: SourceFlagSet = SourceFlagSet::HARDWARE;
 
     /// Is a networked source of some kind.
-    pub const NETWORK: SourceFlagSet = capi::PA_SOURCE_NETWORK;
+    pub const NETWORK: SourceFlagSet = SourceFlagSet::NETWORK;
 
     /// Supports hardware mute control. This is a dynamic flag and may change at runtime after the
     /// source has initialized.
-    pub const HW_MUTE_CTRL: SourceFlagSet = capi::PA_SOURCE_HW_MUTE_CTRL;
+    pub const HW_MUTE_CTRL: SourceFlagSet = SourceFlagSet::HW_MUTE_CTRL;
 
     /// Volume can be translated to dB with the `From` based conversions between [`Volume`],
     /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at runtime
@@ -442,14 +525,14 @@ pub mod source_flags {
     /// [`Volume`]: ../../volume/struct.Volume.html
     /// [`VolumeDB`]: ../../volume/struct.VolumeDB.html
     /// [`VolumeLinear`]: ../../volume/struct.VolumeLinear.html
-    pub const DECIBEL_VOLUME: SourceFlagSet = capi::PA_SOURCE_DECIBEL_VOLUME;
+    pub const DECIBEL_VOLUME: SourceFlagSet = SourceFlagSet::DECIBEL_VOLUME;
 
     /// The latency can be adjusted dynamically depending on the needs of the connected streams.
-    pub const DYNAMIC_LATENCY: SourceFlagSet = capi::PA_SOURCE_DYNAMIC_LATENCY;
+    pub const DYNAMIC_LATENCY: SourceFlagSet = SourceFlagSet::DYNAMIC_LATENCY;
 
     /// This source is in flat volume mode, i.e. always the maximum of the volume of all connected
     /// outputs.
-    pub const FLAT_VOLUME: SourceFlagSet = capi::PA_SOURCE_FLAT_VOLUME;
+    pub const FLAT_VOLUME: SourceFlagSet = SourceFlagSet::FLAT_VOLUME;
 }
 
 /// Source state.

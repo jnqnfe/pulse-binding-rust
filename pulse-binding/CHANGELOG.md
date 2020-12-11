@@ -47,6 +47,9 @@
       around.
  * Converted `stream::FlagSet` to a [`bitflags`] type, moving the `stream::flags::*` constants to
    associated constants of it, deprecating the old constant set.
+ * Converted `def::{SinkFlagSet, SourceFlagSet}` to [`bitflags`] types, moving the
+   `def::sink_flags::*` and `def::source_flags::*` to associated constants of them respectively,
+   deprecating the old constant sets.
  * Added `MonotonicTs::checked_add_duration()` and `MonotonicTs::checked_sub_duration()` along with
    corresponding `Add[Assign]` and `Sub[Assign]` impls for adding a `Duration` to `MonotonicTs`.
    This complements the existing functionality for adding a `MicroSeconds`, without requiring
