@@ -29,7 +29,7 @@ pub type FreeCb = extern "C" fn(p: *mut c_void);
 pub type RetvalActual = i32;
 
 /// A wrapper around integer ‘quit return values’ returned by PulseAudio.
-#[repr(C)]
+#[repr(transparent)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Retval(pub RetvalActual);
 
