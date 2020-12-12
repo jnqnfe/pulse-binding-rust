@@ -45,16 +45,20 @@
       you can now do `2 * MicroSeconds(20)` not just `MicroSeconds(20) * 2`.
     - Enabled `MicroSeconds` to be added or subtracted from a `Duration`, not just the other way
       around.
- * Converted `stream::FlagSet` to a [`bitflags`] type, moving the `stream::flags::*` constants to
-   associated constants of it, deprecating the old constant set.
- * Converted `def::{SinkFlagSet, SourceFlagSet}` to [`bitflags`] types, moving the
-   `def::sink_flags::*` and `def::source_flags::*` to associated constants of them respectively,
-   deprecating the old constant sets.
- * Converted `direction::FlagSet` to a [`bitflags`] type, moving the `direction::flags::*` constants
-   to associated constants of it, deprecating the old constant set.
- * Converted `mainloop::events::io::IoEventFlagSet` to a [`bitflags`] type, moving the
-   `mainloop::events::io::flags::*` constants to associated constants of it, deprecating the old
-   constant set. Additionally, the type was renamed from `IoEventFlagSet` to simply `FlagSet`.
+ * Improved handling of flag sets through making use of [`bitflags`] (long overdue). The following
+   types which have been simple integer primative type aliases have now been changed to [`bitflags`]
+   wrappers. The set of flags associated with them have been thus assigned as associated constants
+   to them, and the separate set marked as deprectated.
+    - `stream::FlagSet`, with its `stream::flags::*` flags.
+    - `def::{SinkFlagSet, SourceFlagSet}` and their `def::sink_flags::*` and `def::source_flags::*`
+       flag sets.
+    - `direction::FlagSet` and its `direction::flags::*` flags.
+    - `mainloop::events::io::IoEventFlagSet` and its `mainloop::events::io::flags::*` flags.
+    - `context::subscribe::InterestMaskSet` and its `context::subscribe::subscription_masks` flags.
+ * Renamed the `mainloop::events::io::IoEventFlagSet` type to simply `FlagSet`.
+ * Renamed the `MASK_CARD` constant from `context::subscribe` to simply `CARD`, since the inclusion
+   of `MASK_` in the name was a mistake (part of a prefix removed from others but mistakenly left
+   in place for this one).
  * Moved `direction::is_valid()` and `direction::to_string()` to methods of `direction::FlagSet`.
  * Added `MonotonicTs::checked_add_duration()` and `MonotonicTs::checked_sub_duration()` along with
    corresponding `Add[Assign]` and `Sub[Assign]` impls for adding a `Duration` to `MonotonicTs`.

@@ -35,16 +35,16 @@ pub mod subscription_masks {
     use super::pa_subscription_mask_t;
 
     pub const PA_SUBSCRIPTION_MASK_NULL:          pa_subscription_mask_t = 0;
-    pub const PA_SUBSCRIPTION_MASK_SINK:          pa_subscription_mask_t = 0x1;
-    pub const PA_SUBSCRIPTION_MASK_SOURCE:        pa_subscription_mask_t = 0x2;
-    pub const PA_SUBSCRIPTION_MASK_SINK_INPUT:    pa_subscription_mask_t = 0x4;
-    pub const PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT: pa_subscription_mask_t = 0x8;
-    pub const PA_SUBSCRIPTION_MASK_MODULE:        pa_subscription_mask_t = 0x10;
-    pub const PA_SUBSCRIPTION_MASK_CLIENT:        pa_subscription_mask_t = 0x20;
-    pub const PA_SUBSCRIPTION_MASK_SAMPLE_CACHE:  pa_subscription_mask_t = 0x40;
-    pub const PA_SUBSCRIPTION_MASK_SERVER:        pa_subscription_mask_t = 0x80;
+    pub const PA_SUBSCRIPTION_MASK_SINK:          pa_subscription_mask_t = 1 << 0;
+    pub const PA_SUBSCRIPTION_MASK_SOURCE:        pa_subscription_mask_t = 1 << 1;
+    pub const PA_SUBSCRIPTION_MASK_SINK_INPUT:    pa_subscription_mask_t = 1 << 2;
+    pub const PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT: pa_subscription_mask_t = 1 << 3;
+    pub const PA_SUBSCRIPTION_MASK_MODULE:        pa_subscription_mask_t = 1 << 4;
+    pub const PA_SUBSCRIPTION_MASK_CLIENT:        pa_subscription_mask_t = 1 << 5;
+    pub const PA_SUBSCRIPTION_MASK_SAMPLE_CACHE:  pa_subscription_mask_t = 1 << 6;
+    pub const PA_SUBSCRIPTION_MASK_SERVER:        pa_subscription_mask_t = 1 << 7;
     /* NOTE: value `0x100` previously assigned, obsoleted */
-    pub const PA_SUBSCRIPTION_MASK_CARD:          pa_subscription_mask_t = 0x200;
+    pub const PA_SUBSCRIPTION_MASK_CARD:          pa_subscription_mask_t = 1 << 9;
     pub const PA_SUBSCRIPTION_MASK_ALL:           pa_subscription_mask_t = 0x2ff;
 }
 

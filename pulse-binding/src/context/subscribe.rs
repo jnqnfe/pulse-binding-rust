@@ -57,6 +57,7 @@
 //! [`subscription_masks`]: subscription_masks/index.html
 
 use std::os::raw::c_void;
+use bitflags::bitflags;
 use num_derive::{FromPrimitive, ToPrimitive};
 use super::{ContextInternal, Context};
 use crate::operation;
@@ -71,31 +72,58 @@ pub const FACILITY_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
 #[deprecated(note="use the associated constant on `Operation` instead")]
 pub const OPERATION_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
 
-/// A set of facility masks, passed to [`Context::subscribe()`]. Convert a [`Facility`] to a mask
-/// with [`Facility::to_interest_mask()`].
-///
-/// [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
-/// [`Facility`]: enum.Facility.html
-/// [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
-pub type InterestMaskSet = capi::context::subscribe::pa_subscription_mask_t;
+bitflags! {
+    /// A set of facility masks, to be passed to [`Context::subscribe()`].
+    ///
+    /// Note that you can convert a [`Facility`] to a mask with [`Facility::to_interest_mask()`].
+    ///
+    /// [`Context::subscribe()`]: ../struct.Context.html#method.subscribe
+    /// [`Facility`]: enum.Facility.html
+    /// [`Facility::to_interest_mask()`]: enum.Facility.html#method.to_interest_mask
+    #[repr(transparent)]
+    pub struct InterestMaskSet: u32 {
+        /// No facility (null selection; zero).
+        const NULL = capi::PA_SUBSCRIPTION_MASK_NULL;
+        /// Sink facility.
+        const SINK = capi::PA_SUBSCRIPTION_MASK_SINK;
+        /// Source facility.
+        const SOURCE = capi::PA_SUBSCRIPTION_MASK_SOURCE;
+        /// Sink input facility.
+        const SINK_INPUT = capi::PA_SUBSCRIPTION_MASK_SINK_INPUT;
+        /// Source output facility.
+        const SOURCE_OUTPUT = capi::PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT;
+        /// Module facility.
+        const MODULE = capi::PA_SUBSCRIPTION_MASK_MODULE;
+        /// Client facility.
+        const CLIENT = capi::PA_SUBSCRIPTION_MASK_CLIENT;
+        /// Sample cache facility.
+        const SAMPLE_CACHE = capi::PA_SUBSCRIPTION_MASK_SAMPLE_CACHE;
+        /// Server facility.
+        const SERVER = capi::PA_SUBSCRIPTION_MASK_SERVER;
+        /// Card facility.
+        const CARD = capi::PA_SUBSCRIPTION_MASK_CARD;
+        /// All facilities.
+        const ALL = capi::PA_SUBSCRIPTION_MASK_ALL;
+    }
+}
 
 /// A set of masks used for expressing which facilities you are interested in when subscribing.
+#[deprecated(note = "Use the associated constants on `InterestMaskSet`.")]
 #[allow(missing_docs)]
 pub mod subscription_masks {
-    use capi;
     use super::InterestMaskSet;
 
-    pub const NULL:          InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_NULL;
-    pub const SINK:          InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SINK;
-    pub const SOURCE:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SOURCE;
-    pub const SINK_INPUT:    InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SINK_INPUT;
-    pub const SOURCE_OUTPUT: InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT;
-    pub const MODULE:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_MODULE;
-    pub const CLIENT:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CLIENT;
-    pub const SAMPLE_CACHE:  InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SAMPLE_CACHE;
-    pub const SERVER:        InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_SERVER;
-    pub const MASK_CARD:     InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_CARD;
-    pub const ALL:           InterestMaskSet = capi::PA_SUBSCRIPTION_MASK_ALL;
+    pub const NULL:          InterestMaskSet = InterestMaskSet::NULL;
+    pub const SINK:          InterestMaskSet = InterestMaskSet::SINK;
+    pub const SOURCE:        InterestMaskSet = InterestMaskSet::SOURCE;
+    pub const SINK_INPUT:    InterestMaskSet = InterestMaskSet::SINK_INPUT;
+    pub const SOURCE_OUTPUT: InterestMaskSet = InterestMaskSet::SOURCE_OUTPUT;
+    pub const MODULE:        InterestMaskSet = InterestMaskSet::MODULE;
+    pub const CLIENT:        InterestMaskSet = InterestMaskSet::CLIENT;
+    pub const SAMPLE_CACHE:  InterestMaskSet = InterestMaskSet::SAMPLE_CACHE;
+    pub const SERVER:        InterestMaskSet = InterestMaskSet::SERVER;
+    pub const MASK_CARD:     InterestMaskSet = InterestMaskSet::CARD;
+    pub const ALL:           InterestMaskSet = InterestMaskSet::ALL;
 }
 
 /// Facility component of an event.
@@ -154,7 +182,7 @@ impl Facility {
     /// Converts to an interest mask.
     #[inline(always)]
     pub const fn to_interest_mask(self) -> InterestMaskSet {
-        1u32 << (self as u32)
+        InterestMaskSet::from_bits_truncate(1u32 << (self as u32))
     }
 }
 
@@ -202,8 +230,8 @@ impl Context {
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
-        let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask, Some(super::success_cb_proxy),
-            cb_data) };
+        let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask.bits(),
+            Some(super::success_cb_proxy), cb_data) };
         assert!(!ptr.is_null());
         operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
