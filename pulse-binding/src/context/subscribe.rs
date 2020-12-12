@@ -161,10 +161,10 @@ pub enum Operation {
 
 impl Facility {
     /// Mask to extract facility value from the event type passed to the user callback.
-    pub const MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
+    pub const MASK: EventType = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
 
-    fn from_int(value: u32) -> Option<Facility> {
-        match value {
+    fn from_event(value: EventType) -> Option<Facility> {
+        match value & Self::MASK {
             0 => Some(Facility::Sink),
             1 => Some(Facility::Source),
             2 => Some(Facility::SinkInput),
@@ -188,28 +188,16 @@ impl Facility {
 
 impl Operation {
     /// Mask to extract operation value from the event type passed to the user callback.
-    pub const MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
+    pub const MASK: EventType = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
 
-    fn from_int(value: u32) -> Option<Operation> {
-        match value {
+    fn from_event(value: EventType) -> Option<Operation> {
+        match value & Self::MASK {
             0 => Some(Operation::New),
             0x10 => Some(Operation::Changed),
             0x20 => Some(Operation::Removed),
             _ => None,
         }
     }
-}
-
-/// Extracts facility from `EventType` value.
-#[inline]
-fn get_facility(value: EventType) -> Option<Facility> {
-    Facility::from_int((value & Facility::MASK) as u32)
-}
-
-/// Extracts operation from `EventType` value.
-#[inline]
-fn get_operation(value: EventType) -> Option<Operation> {
-    Operation::from_int((value & Operation::MASK) as u32)
 }
 
 pub(super) type Callback = MultiUseCallback<dyn FnMut(Option<Facility>, Option<Operation>, u32),
@@ -265,8 +253,8 @@ impl Context {
 extern "C"
 fn cb_proxy(_: *mut ContextInternal, et: EventType, index: u32, userdata: *mut c_void) {
     let _ = std::panic::catch_unwind(|| {
-        let facility = get_facility(et);
-        let operation = get_operation(et);
+        let facility = Facility::from_event(et);
+        let operation = Operation::from_event(et);
         let callback = Callback::get_callback(userdata);
         (callback)(facility, operation, index);
     });
