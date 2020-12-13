@@ -49,10 +49,6 @@
 //! * The complete but somewhat complicated to use asynchronous API.
 //! * The simplified, easy to use, but limited synchronous API.
 //!
-//! All strings in PulseAudio are in the UTF-8 encoding, regardless of current locale. Some
-//! functions will filter invalid sequences from the string, some will simply fail. To ensure
-//! reliable behaviour, make sure everything you pass to the API is valid UTF-8.
-//!
 //! ## Simple API
 //!
 //! Use this if you develop your program in synchronous style and just need a way to play or record
