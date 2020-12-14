@@ -47,7 +47,7 @@ jobs:
       - name: Install PulseAudio and `libpulse-dev`
         run: sudo apt-get install pulseaudio libpulse-mainloop-glib0 libpulse-dev
       - name: Start PulseAudio
-        run: dbus-launch pulseaudio --start
+        run: pulseaudio -D --start
       - name: Check building main binding (cargo check)
         working-directory: ./pulse-binding
         run: |
