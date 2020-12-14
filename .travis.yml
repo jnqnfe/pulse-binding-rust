@@ -32,7 +32,7 @@ script:
   - cargo check --verbose --no-default-features --features pa_v6
   - cargo check --verbose --no-default-features --features pa_v5
   - cargo check --verbose --no-default-features
-  - cargo test --verbose --no-default-features --features pa_v8 #latest available on travis
+  - cargo test --verbose --no-default-features --features pa_v13 #latest available on travis
   - cargo doc --verbose --no-default-features --features dox
   #
   # 'Simple' binding
@@ -46,7 +46,7 @@ script:
   - cargo check --verbose --no-default-features --features pa_v6
   - cargo check --verbose --no-default-features --features pa_v5
   - cargo check --verbose --no-default-features
-  - cargo test --verbose --no-default-features --features pa_v8 #latest available on travis
+  - cargo test --verbose --no-default-features --features pa_v13 #latest available on travis
   - cargo doc --verbose --no-default-features --features dox
   #
   # Glib mainloop binding
@@ -60,5 +60,5 @@ script:
   - cargo check --verbose --no-default-features --features pa_v6
   - cargo check --verbose --no-default-features --features pa_v5
   - cargo check --verbose --no-default-features
-  - cargo test --verbose --no-default-features --features pa_v8 #latest available on travis
+  - cargo test --verbose --no-default-features --features pa_v13 #latest available on travis
   - cargo doc --verbose --no-default-features --features dox
