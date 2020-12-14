@@ -42,12 +42,12 @@ pub const MICROS_PER_MILLI: u64 = 1_000;
 pub const MILLIS_PER_SEC:   u64 = 1_000;
 
 /// Invalid time. Microseconds value representing ‘invalid’.
-#[deprecated(note="use the associated constant on `MicroSeconds` instead")]
+#[deprecated(since = "2.20.0", note="use the associated constant on `MicroSeconds` instead")]
 pub const USEC_INVALID: MicroSeconds = MicroSeconds(capi::PA_USEC_INVALID);
 
 /// Largest valid time value in microseconds (largest integer value is reserved for representing
 /// ‘invalid’).
-#[deprecated(note="use the associated constant on `MicroSeconds` instead")]
+#[deprecated(since = "2.20.0", note="use the associated constant on `MicroSeconds` instead")]
 pub const USEC_MAX: MicroSeconds = MicroSeconds(capi::PA_USEC_MAX);
 
 /// Basic math operation errors.

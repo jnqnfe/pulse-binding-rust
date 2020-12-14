@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.20.0 (December 14th, 2020)
 
  * Made some changes to cargo features:
     - Removed the now obsolete `dox` cargo feature.
@@ -72,6 +72,7 @@
    enabled if a certain config flag is used, as for the docs.rs copy).
  * Marked `version::Compatibility` as `#[non_exhaustive]`.
  * Updated required dependencies:
+    - `libpulse-sys` from 1.15 to 1.16.
     - `bitflags` 1.2 now required.
 
 # 2.19.0 (December 8th, 2020)

@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.20.0 (December 14th, 2020)
 
  * Made some changes to cargo features:
     - Removed the now obsolete `dox` cargo feature.
@@ -9,6 +9,11 @@
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
  * Added support for feature tagging in documentation (requires nightly Rust version, so only
    enabled if a certain config flag is used, as for the docs.rs copy).
+ * Updated required dependencies:
+    - `libpulse-binding`           from 2.18 to 2.20.
+    - `libpulse-mainloop-glib-sys` from 1.15 to 1.16.
+
+Note: versions 2.19 skipped, used only for `libpulse-binding` crate changes.
 
 # 2.18.1 (November 25th, 2020)
 

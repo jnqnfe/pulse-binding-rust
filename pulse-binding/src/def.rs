@@ -343,7 +343,7 @@ bitflags! {
 }
 
 /// Special sink flags.
-#[deprecated(note = "Use the associated constants on `SinkFlagSet`.")]
+#[deprecated(since = "2.20.0", note = "Use the associated constants on `SinkFlagSet`.")]
 pub mod sink_flags {
     use super::SinkFlagSet;
 
@@ -494,7 +494,7 @@ bitflags! {
 }
 
 /// Special source flags.
-#[deprecated(note = "Use the associated constants on `SourceFlagSet`.")]
+#[deprecated(since = "2.20.0", note = "Use the associated constants on `SourceFlagSet`.")]
 pub mod source_flags {
     use super::SourceFlagSet;
 

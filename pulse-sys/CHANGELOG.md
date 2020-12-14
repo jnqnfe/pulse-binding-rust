@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.16.0 (December 14th, 2020)
 
  * Made some changes to cargo features:
     - Removed the now obsolete `dox` cargo feature.

@@ -548,7 +548,7 @@ impl Default for FlagSet {
 }
 
 /// Some special flags for stream connections.
-#[deprecated(note = "Use the associated constants on `FlagSet`.")]
+#[deprecated(since = "2.20.0", note = "Use the associated constants on `FlagSet`.")]
 pub mod flags {
     use super::FlagSet;
 

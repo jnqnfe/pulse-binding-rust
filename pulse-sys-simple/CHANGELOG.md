@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.16.0 (December 14th, 2020)
 
  * Made some changes to cargo features:
     - Removed the now obsolete `dox` cargo feature.
@@ -9,6 +9,8 @@
    documentation. (Required bump of minimum supported Rust version from 1.40 to 1.41).
  * Added support for feature tagging in documentation (requires nightly Rust version, so only
    enabled if a certain config flag is used, as for the docs.rs copy).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.15 to 1.16.
 
 # 1.15.1 (November 25th, 2020)
 
