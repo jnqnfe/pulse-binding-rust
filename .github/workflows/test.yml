@@ -1,0 +1,98 @@
+# NOTE: this name is used in the badge links in used in the readme files.
+# Don't break them by changing it!
+name: Build & Test
+
+on:
+  push:
+    branches: [master]
+    paths: ['**.rs', '**.toml', '**.yml']
+  pull_request:
+    branches: [master, next]
+    paths: ['**.rs', '**.toml', '**.yml']
+
+jobs:
+  # NOTE: I'm leaving this with no descriptive name so it is not too long in the list of jobs.
+  # Previously I assigned a name of "Check building & testing" which resulted in entries like:
+  # "Check building & testing (ubuntu-20.04, stable, false)" and "stable" was barely visible.
+  test:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Use the Ubuntu Focal (20.04) environment, which uses PA v13.99.1
+        os: [ubuntu-20.04]
+        rustc:
+          - 1.41.0 # MSRV (Minimum supported rust version)
+          - stable
+          - beta
+        experimental: [false]
+        include:
+          - os: ubuntu-20.04
+            rustc: nightly
+            experimental: true
+    env:
+      #TODO: add pa_v14 once environment supports it
+      PA_BUILD_VERSIONS: "pa_v13 pa_v12 pa_v8 pa_v6 pa_v5 minimum"
+      PA_TEST_VERSION: pa_v13
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rustc }}
+          override: true
+      - name: Install PulseAudio and `libpulse-dev`
+        run: sudo apt-get install pulseaudio libpulse-mainloop-glib0 libpulse-dev
+      - name: Start PulseAudio
+        run: dbus-launch pulseaudio --start
+      - name: Check building main binding (cargo check)
+        working-directory: ./pulse-binding
+        run: |
+          for PA_VERSION in $PA_BUILD_VERSIONS; do
+            echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
+            if [ "$PA_VERSION" != "minimum" ]; then
+              cargo check --verbose --no-default-features --features $PA_VERSION
+            else
+              cargo check --verbose --no-default-features
+            fi
+          done
+      - name: Check building simple binding (cargo check)
+        working-directory: ./pulse-binding-simple
+        run: |
+          for PA_VERSION in $PA_BUILD_VERSIONS; do
+            echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
+            if [ "$PA_VERSION" != "minimum" ]; then
+              cargo check --verbose --no-default-features --features $PA_VERSION
+            else
+              cargo check --verbose --no-default-features
+            fi
+          done
+      - name: Check building glib binding (cargo check)
+        working-directory: ./pulse-binding-mainloop-glib
+        run: |
+          for PA_VERSION in $PA_BUILD_VERSIONS; do
+            echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
+            if [ "$PA_VERSION" != "minimum" ]; then
+              cargo check --verbose --no-default-features --features $PA_VERSION
+            else
+              cargo check --verbose --no-default-features
+            fi
+          done
+      - name: Test main binding
+        working-directory: ./pulse-binding
+        run: |
+          echo "Testing for PulseAudio version compatibility '${PA_TEST_VERSION}'"
+          cargo test --verbose --features $PA_TEST_VERSION
+      - name: Test simple binding
+        working-directory: ./pulse-binding-simple
+        run: |
+          echo "Testing for PulseAudio version compatibility '${PA_TEST_VERSION}'"
+          cargo test --verbose --features $PA_TEST_VERSION
+      - name: Test glib binding
+        working-directory: ./pulse-binding-mainloop-glib
+        run: |
+          echo "Testing for PulseAudio version compatibility '${PA_TEST_VERSION}'"
+          cargo test --verbose --features $PA_TEST_VERSION
