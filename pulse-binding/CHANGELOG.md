@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.21.0 (December 15th, 2020)
 
  * Converted `context::FlagSet` to a [`bitflags`] type, moving the `context::flags::*` constants
    to associated constants of it, deprecating the old constant set. This was overlooked in 2.20.
