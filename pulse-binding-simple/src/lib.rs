@@ -113,7 +113,7 @@
 
 #![warn(missing_docs)]
 
-#[cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 extern crate libpulse_binding as pulse;
 extern crate libpulse_sys as pcapi;

@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Fixed mistake made trying to conditionally enable `#[cfg(doc)]` for docs.rs.
+
 # 2.20.0 (December 14th, 2020)
 
  * Made some changes to cargo features:
