@@ -29,7 +29,6 @@ pub struct PAErr(pub i32);
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
-#[allow(missing_docs)]
 pub enum Code {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */
@@ -49,16 +48,23 @@ pub enum Code {
     ConnectionRefused,
     /// Protocol error.
     Protocol,
+    /// Timeout.
     Timeout,
     /// No authentication key.
     AuthKey,
+    /// Internal.
     Internal,
+    /// Connection terminated.
     ConnectionTerminated,
     /// Entity killed.
     Killed,
+    /// Invalid server.
     InvalidServer,
+    /// Module init failed.
     ModInitFailed,
+    /// Bad state.
     BadState,
+    /// No data.
     NoData,
     /// Incompatible protocol version.
     Version,

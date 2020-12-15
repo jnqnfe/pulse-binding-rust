@@ -83,12 +83,18 @@ pub const PA_FORMAT_INFO_SNPRINT_MAX: usize = 256;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_prop_type_t {
+    /// Integer.
     Int,
+    /// Integer range.
     IntRange,
+    /// Integer array.
     IntArray,
+    /// String.
     String,
+    /// String array.
     StringArray,
 
+    /// Invalid.
     Invalid = -1,
 }
 

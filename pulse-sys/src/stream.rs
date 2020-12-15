@@ -53,9 +53,13 @@ pub fn pa_stream_is_good(state: pa_stream_state_t) -> bool {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_stream_direction_t {
+    /// Invalid.
     Invalid,
+    /// Playback.
     Playback,
+    /// Record.
     Record,
+    /// Upload.
     Upload,
 }
 

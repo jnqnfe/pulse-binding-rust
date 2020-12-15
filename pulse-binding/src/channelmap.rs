@@ -62,12 +62,14 @@ pub const POSITION_MASK_ALL: PositionMask = 0xffffffffffffffffu64;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
-#[allow(missing_docs)]
 pub enum Position {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */
 
+    /// Invalid.
     Invalid = -1,
+
+    /// Mono.
     Mono = 0,
 
     /// Apple, Dolby call this ‘Left’.
@@ -103,37 +105,69 @@ pub enum Position {
     /// Dolby calls this ‘Surround Right’.
     SideRight,
 
+    /// Auxillary 0.
     Aux0,
+    /// Auxillary 1.
     Aux1,
+    /// Auxillary 2.
     Aux2,
+    /// Auxillary 3.
     Aux3,
+    /// Auxillary 4.
     Aux4,
+    /// Auxillary 5.
     Aux5,
+    /// Auxillary 6.
     Aux6,
+    /// Auxillary 7.
     Aux7,
+    /// Auxillary 8.
     Aux8,
+    /// Auxillary 9.
     Aux9,
+    /// Auxillary 10.
     Aux10,
+    /// Auxillary 11.
     Aux11,
+    /// Auxillary 12.
     Aux12,
+    /// Auxillary 13.
     Aux13,
+    /// Auxillary 14.
     Aux14,
+    /// Auxillary 15.
     Aux15,
+    /// Auxillary 16.
     Aux16,
+    /// Auxillary 17.
     Aux17,
+    /// Auxillary 18.
     Aux18,
+    /// Auxillary 19.
     Aux19,
+    /// Auxillary 20.
     Aux20,
+    /// Auxillary 21.
     Aux21,
+    /// Auxillary 22.
     Aux22,
+    /// Auxillary 23.
     Aux23,
+    /// Auxillary 24.
     Aux24,
+    /// Auxillary 25.
     Aux25,
+    /// Auxillary 26.
     Aux26,
+    /// Auxillary 27.
     Aux27,
+    /// Auxillary 28.
     Aux28,
+    /// Auxillary 29.
     Aux29,
+    /// Auxillary 30.
     Aux30,
+    /// Auxillary 31.
     Aux31,
 
     /// Apple calls this ‘Top Center Surround’.

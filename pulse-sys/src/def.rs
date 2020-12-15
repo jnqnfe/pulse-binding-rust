@@ -28,7 +28,9 @@ pub type pa_free_cb_t = Option<extern "C" fn(p: *mut c_void)>;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 pub enum pa_device_type_t {
+    /// A sink.
     Sink,
+    /// A source.
     Source,
 }
 
@@ -185,28 +187,51 @@ pub const PA_PORT_AVAILABLE_YES:     pa_port_available_t = pa_port_available_t::
 #[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum pa_device_port_type_t {
+    /// Unknown.
     Unknown    = 0,
+    /// Auxillary.
     Aux        = 1,
+    /// Speaker.
     Speaker    = 2,
+    /// Headphones.
     Headphones = 3,
+    /// Line.
     Line       = 4,
+    /// Mic.
     Mic        = 5,
+    /// Headset.
     Headset    = 6,
+    /// Handset.
     Handset    = 7,
+    /// Earpiece.
     Earpiece   = 8,
+    /// SPDIF.
     SPDIF      = 9,
+    /// HDMI.
     HDMI       = 10,
+    /// TV.
     TV         = 11,
+    /// Radio.
     Radio      = 12,
+    /// Video.
     Video      = 13,
+    /// USB.
     USB        = 14,
+    /// Bluetooth.
     Bluetooth  = 15,
+    /// Portable.
     Portable   = 16,
+    /// Handsfree.
     Handsfree  = 17,
+    /// Car.
     Car        = 18,
+    /// HiFi.
     HiFi       = 19,
+    /// Phone.
     Phone      = 20,
+    /// Network.
     Network    = 21,
+    /// Analog.
     Analog     = 22,
 }
 

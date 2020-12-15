@@ -109,20 +109,30 @@ bitflags! {
 
 /// A set of masks used for expressing which facilities you are interested in when subscribing.
 #[deprecated(since = "2.20.0", note = "Use the associated constants on `InterestMaskSet`.")]
-#[allow(missing_docs)]
 pub mod subscription_masks {
     use super::InterestMaskSet;
 
+    /// No facility (null selection; zero).
     pub const NULL:          InterestMaskSet = InterestMaskSet::NULL;
+    /// Sink facility.
     pub const SINK:          InterestMaskSet = InterestMaskSet::SINK;
+    /// Source facility.
     pub const SOURCE:        InterestMaskSet = InterestMaskSet::SOURCE;
+    /// Sink input facility.
     pub const SINK_INPUT:    InterestMaskSet = InterestMaskSet::SINK_INPUT;
+    /// Source output facility.
     pub const SOURCE_OUTPUT: InterestMaskSet = InterestMaskSet::SOURCE_OUTPUT;
+    /// Module facility.
     pub const MODULE:        InterestMaskSet = InterestMaskSet::MODULE;
+    /// Client facility.
     pub const CLIENT:        InterestMaskSet = InterestMaskSet::CLIENT;
+    /// Sample cache facility.
     pub const SAMPLE_CACHE:  InterestMaskSet = InterestMaskSet::SAMPLE_CACHE;
+    /// Server facility.
     pub const SERVER:        InterestMaskSet = InterestMaskSet::SERVER;
+    /// Card facility.
     pub const MASK_CARD:     InterestMaskSet = InterestMaskSet::CARD;
+    /// All facilities.
     pub const ALL:           InterestMaskSet = InterestMaskSet::ALL;
 }
 
@@ -130,19 +140,26 @@ pub mod subscription_masks {
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
-#[allow(missing_docs)]
 pub enum Facility {
+    /// Sink.
     Sink         = 0,
+    /// Source.
     Source       = 1,
+    /// Sink-input.
     SinkInput    = 2,
+    /// Source-output.
     SourceOutput = 3,
+    /// Module.
     Module       = 4,
+    /// Client.
     Client       = 5,
+    /// Sample-cache.
     SampleCache  = 6,
     /// Global server change, only occurring with
     /// [`Operation::Changed`](enum.Operation.html#variant.Changed).
     Server       = 7,
     /* NOTE: value `8` previously assigned, obsoleted */
+    /// Card.
     Card         = 9,
 }
 
