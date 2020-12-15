@@ -1,3 +1,8 @@
+# [unreleased]
+
+ * Converted `context::FlagSet` to a [`bitflags`] type, moving the `context::flags::*` constants
+   to associated constants of it, deprecating the old constant set. This was overlooked in 2.20.
+
 # 2.20.1 (December 15th, 2020)
 
  * Fixed mistake made trying to conditionally enable `#[cfg(doc)]` for docs.rs.

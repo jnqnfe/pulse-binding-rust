@@ -84,6 +84,7 @@ use std::os::raw::{c_char, c_void};
 use std::ffi::{CStr, CString};
 use std::ptr::{null, null_mut};
 use std::rc::Rc;
+use bitflags::bitflags;
 use num_derive::{FromPrimitive, ToPrimitive};
 use crate::{def, sample};
 use crate::mainloop::api::{Mainloop, MainloopInnerType};
@@ -190,23 +191,36 @@ impl State {
     }
 }
 
-/// Context flag set.
-pub type FlagSet = capi::pa_context_flags_t;
+bitflags! {
+    /// Context flag set.
+    #[repr(transparent)]
+    pub struct FlagSet: u32 {
+        /// No flags set.
+        const NOFLAGS = capi::PA_CONTEXT_NOFLAGS;
+        /// Disable autospawning of the PulseAudio daemon if required.
+        const NOAUTOSPAWN = capi::PA_CONTEXT_NOAUTOSPAWN;
+        /// Don’t fail if the daemon is not available when
+        /// [`Context::connect()`](struct.Context.html#method.connect) is called, instead enter
+        /// [`State::Connecting`](enum.State.html#variant.Connecting) state and wait for the daemon
+        /// to appear.
+        const NOFAIL = capi::PA_CONTEXT_NOFAIL;
+    }
+}
 
 /// Some special flags for contexts.
+#[deprecated(note = "Use the associated constants on `FlagSet`.")]
 pub mod flags {
-    use capi;
     use super::FlagSet;
 
     /// No flags set.
-    pub const NOFLAGS:     FlagSet = capi::PA_CONTEXT_NOFLAGS;
+    pub const NOFLAGS:     FlagSet = FlagSet::NOFLAGS;
     /// Disable autospawning of the PulseAudio daemon if required.
-    pub const NOAUTOSPAWN: FlagSet = capi::PA_CONTEXT_NOAUTOSPAWN;
+    pub const NOAUTOSPAWN: FlagSet = FlagSet::NOAUTOSPAWN;
     /// Don’t fail if the daemon is not available when
     /// [`Context::connect()`](../struct.Context.html#method.connect) is called, instead enter
     /// [`State::Connecting`](../enum.State.html#variant.Connecting) state and wait for the daemon
     /// to appear.
-    pub const NOFAIL:      FlagSet = capi::PA_CONTEXT_NOFAIL;
+    pub const NOFAIL:      FlagSet = FlagSet::NOFAIL;
 }
 
 impl Context {
@@ -307,7 +321,7 @@ impl Context {
         let p_api = api.map_or(null::<capi::pa_spawn_api>(), |a| a.as_ref());
         let p_server = server.map_or(null::<c_char>(), |_| c_server.as_ptr() as *const c_char);
 
-        match unsafe { capi::pa_context_connect(self.ptr, p_server, flags, p_api) } {
+        match unsafe { capi::pa_context_connect(self.ptr, p_server, flags.bits(), p_api) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
