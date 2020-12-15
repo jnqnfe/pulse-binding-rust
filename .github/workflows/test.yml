@@ -54,6 +54,11 @@ jobs:
       - name: Start PulseAudio
         run: pulseaudio -D --start
 
+      - name: Check toolchain versions
+        run: |
+          cargo -V
+          rustc -V
+
       - name: Check building main binding (cargo check)
         working-directory: ./pulse-binding
         run: |
