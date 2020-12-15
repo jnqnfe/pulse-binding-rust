@@ -208,7 +208,7 @@ bitflags! {
 }
 
 /// Some special flags for contexts.
-#[deprecated(note = "Use the associated constants on `FlagSet`.")]
+#[deprecated(since = "2.21.0", note = "Use the associated constants on `FlagSet`.")]
 pub mod flags {
     use super::FlagSet;
 
