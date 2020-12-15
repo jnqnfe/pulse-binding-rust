@@ -725,7 +725,7 @@ impl SubAssign<MicroSeconds> for Duration {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Operations with primatives
+// Operations with primitives
 //
 // NOTE 1: We only implement `u32` here because:
 //  - We do not expect operations will be needed for the larger `u64` range, otherwise we should

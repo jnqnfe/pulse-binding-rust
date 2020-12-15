@@ -57,9 +57,9 @@
     - Enabled `MicroSeconds` to be added or subtracted from a `Duration`, not just the other way
       around.
  * Improved handling of flag sets through making use of [`bitflags`] (long overdue). The following
-   types which have been simple integer primative type aliases have now been changed to [`bitflags`]
+   types which have been simple integer primitive type aliases have now been changed to [`bitflags`]
    wrappers. The set of flags associated with them have been thus assigned as associated constants
-   to them, and the separate set marked as deprectated.
+   to them, and the separate set marked as deprecated.
     - `stream::FlagSet`, with its `stream::flags::*` flags.
     - `def::{SinkFlagSet, SourceFlagSet}` and their `def::sink_flags::*` and `def::source_flags::*`
        flag sets.
@@ -103,9 +103,9 @@
  * Replaced the `From<PAErr> for Code` impl with `TryFrom<PAErr> for Code`, since the conversion is
    fallible and now that `TryFrom` has been stable for a while (since 1.40). Unfortunately it was
    not possible to leave the `From` version in place with a deprecation notice due to conflicts that
-   result. The solution was also re-implemented based upon `FromPrimative`.
+   result. The solution was also re-implemented based upon `FromPrimitive`.
  * Implemented `std::fmt::Display` for `error::Code`.
- * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums
+ * Added derive of `FromPrimitive` and `ToPrimitive` from the `num-derive` crate on basic enums.
  * Fixed an extremely unlikely but possible source of undefined behaviour in introspection. This
    relates to translation of a few integers into enum variants. Previously values that did not match
    an enum variant would be transmuted to the enum type anyway, resulting in undefined behaviour.

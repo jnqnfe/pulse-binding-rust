@@ -99,11 +99,11 @@ fn duration_sub_overflow_to_duration() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Operations with primatives
+// Operations with primitives
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #[test]
-fn primatives() {
+fn primitives() {
     assert_eq!(MicroSeconds::SECOND * 2, MicroSeconds(2_000_000));
     assert_eq!(2 * MicroSeconds::SECOND, MicroSeconds(2_000_000));
     let mut x = MicroSeconds::SECOND;
