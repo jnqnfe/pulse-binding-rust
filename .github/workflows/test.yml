@@ -52,34 +52,40 @@ jobs:
         working-directory: ./pulse-binding
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
+            echo "::group::${PA_VERSION}"
             echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
             if [ "$PA_VERSION" != "minimum" ]; then
               cargo check --verbose --no-default-features --features $PA_VERSION
             else
               cargo check --verbose --no-default-features
             fi
+            echo "::endgroup::"
           done
       - name: Check building simple binding (cargo check)
         working-directory: ./pulse-binding-simple
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
+            echo "::group::${PA_VERSION}"
             echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
             if [ "$PA_VERSION" != "minimum" ]; then
               cargo check --verbose --no-default-features --features $PA_VERSION
             else
               cargo check --verbose --no-default-features
             fi
+            echo "::endgroup::"
           done
       - name: Check building glib binding (cargo check)
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
+            echo "::group::${PA_VERSION}"
             echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
             if [ "$PA_VERSION" != "minimum" ]; then
               cargo check --verbose --no-default-features --features $PA_VERSION
             else
               cargo check --verbose --no-default-features
             fi
+            echo "::endgroup::"
           done
       - name: Test main binding
         working-directory: ./pulse-binding
