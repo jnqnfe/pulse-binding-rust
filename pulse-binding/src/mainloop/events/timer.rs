@@ -35,6 +35,7 @@ pub use capi::pa_time_event as TimeEventInternal;
 pub struct TimeEvent<T>
     where T: MainloopInnerType
 {
+    /// Internal object pointer
     ptr: *mut TimeEventInternal,
     /// Source mainloop.
     owner: Rc<T>,
@@ -47,6 +48,7 @@ pub struct TimeEvent<T>
 pub struct TimeEventRef<T: 'static>
     where T: MainloopInnerType
 {
+    /// Internal object pointer
     ptr: *mut TimeEventInternal,
     /// Source mainloop
     owner: Rc<T>,

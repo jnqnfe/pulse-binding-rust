@@ -24,6 +24,7 @@ pub use capi::pa_defer_event as DeferEventInternal;
 pub struct DeferEvent<T>
     where T: MainloopInnerType
 {
+    /// Internal object pointer
     ptr: *mut DeferEventInternal,
     /// Source mainloop.
     owner: Rc<T>,
@@ -36,6 +37,7 @@ pub struct DeferEvent<T>
 pub struct DeferEventRef<T: 'static>
     where T: MainloopInnerType
 {
+    /// Internal object pointer
     ptr: *mut DeferEventInternal,
     /// Source mainloop.
     owner: Rc<T>,

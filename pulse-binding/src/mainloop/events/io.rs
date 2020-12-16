@@ -59,6 +59,7 @@ pub mod flags {
 pub struct IoEvent<T>
     where T: MainloopInnerType
 {
+    /// Internal object pointer
     ptr: *mut IoEventInternal,
     /// Source mainloop.
     owner: Rc<T>,
@@ -71,6 +72,7 @@ pub struct IoEvent<T>
 pub struct IoEventRef<T: 'static>
     where T: MainloopInnerType
 {
+    /// Internal object pointer
     ptr: *mut IoEventInternal,
     /// Source mainloop.
     owner: Rc<T>,
