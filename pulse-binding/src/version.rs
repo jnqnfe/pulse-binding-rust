@@ -70,9 +70,6 @@ use std::ffi::CStr;
 pub use capi::version::{Compatibility, get_compatibility};
 pub use capi::version::{TARGET_VERSION_STRING, TARGET_VERSION};
 pub use capi::version::{PA_API_VERSION as API_VERSION, PA_PROTOCOL_VERSION as PROTOCOL_VERSION};
-#[deprecated(since = "2.22.0")]
-#[allow(deprecated)]
-pub use capi::version::pa_check_version as check_version;
 
 /// Kinds of errors from trying to parse the runtime PulseAudio system library version string.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -172,6 +169,16 @@ fn pa_version_str_to_num(ver: &str) -> Result<(u8, u8, u8), ErrorKind> {
 #[inline]
 pub fn get_library_version() -> &'static CStr {
     unsafe { CStr::from_ptr(capi::pa_get_library_version()) }
+}
+
+/// Just compares given version with that defined in `TARGET_VERSION` and returns `true` if the
+/// `TARGET_VERSION` version is greater. This does **not** involve talking to the PulseAudio client
+/// library at runtime. This is not very useful!
+#[deprecated(since = "2.22.0")]
+#[inline(always)]
+pub fn check_version(major: u8, minor: u8, micro: u8) -> bool {
+    #[allow(deprecated)]
+    capi::pa_check_version(major, minor, micro)
 }
 
 #[test]
