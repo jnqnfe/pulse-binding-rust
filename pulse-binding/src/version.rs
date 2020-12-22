@@ -31,25 +31,17 @@
 //!
 //! # Dynamic constants
 //!
-//! The version constants defined here mostly relate to those provided in the PA C headers. They are
-//! typically only updated following a new **major** release of PA. They are also dynamic, depending
-//! upon the level of compatibility support selected at compile time via the available Cargo feature
-//! flags.
+//! The version constants defined here mostly relate to those provided in the PA C headers, and are
+//! likely of little use to most projects. They are set dynamically, depending upon the feature
+//! flags used, or in other words the level of minimum compatibility support selected. Note that PA
+//! version feature flags are only introduced when new versions of PA introduce changes to its API
+//! that would require one. The version numbers associated with each PA version feature flag are
+//! those from the PA version that required introduction of that feature flag.
 //!
-//! Note that there is **not** a one-to-one mapping of major PA version to compatibility feature. A
-//! new such feature is only introduced where actual changes in the PA client API require one
-//! because they introduce changes such as the addition of new functions.
-//!
-//! It is not obvious how the constants relate to version compatibility levels without reading the
-//! code, so this needs explaining. Simply put, version numbers are updated typically only on
-//! release of a new major version of PA, and update the existing version number associated with the
-//! current latest compatibility level selector when there are no changes requiring a new
-//! compatibility feature.
-//!
-//! Thus, for instance, PA versions 8 and 12 introduced additions to the API and have corresponding
-//! compatibility features to control the inclusion of those additions on top of the minimum level
-//! of support offered. If you have v8 compatibility enabled but not v12, then the version number
-//! indicated will be v11.
+//! As an example to clarify, if the “newest” PA version feature flag enabled is `pa_v8` (which
+//! obviously corresponds to a minimum compatibility level of PA version 8.0), then the
+//! [`TARGET_VERSION`] constant is set to `(8, 0)`. The “next-newest” feature flag is `pa_v11`,
+//! which if enabled would bump it up to `(11, 0)`.
 //!
 //! [`get_library_version()`]: fn.get_library_version.html
 

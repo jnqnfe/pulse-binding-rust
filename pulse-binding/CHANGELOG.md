@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Tweaked version constants.
+
 # 2.21.0 (December 15th, 2020)
 
  * Converted `context::FlagSet` to a [`bitflags`] type, moving the `context::flags::*` constants

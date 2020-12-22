@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Tweaked version constants.
+
 # 1.16.2 (December 15th, 2020)
 
  * Nothing notable.

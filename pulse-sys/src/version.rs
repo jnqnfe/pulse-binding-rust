@@ -103,17 +103,17 @@ mod actual {
 #[cfg(all(feature = "pa_v8", not(feature = "pa_v12")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V8Plus;
-    pub const TARGET_VERSION_STRING: &str = "11.0.0";
-    pub const TARGET_VERSION: (u8, u8) = (11, 0);
-    pub const PA_PROTOCOL_VERSION: u16 = 32;
+    pub const TARGET_VERSION_STRING: &str = "8.0.0";
+    pub const TARGET_VERSION: (u8, u8) = (8, 0);
+    pub const PA_PROTOCOL_VERSION: u16 = 30;
 }
 
 // Pre-v8
 #[cfg(all(feature = "pa_v6", not(feature = "pa_v8")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V6Plus;
-    pub const TARGET_VERSION_STRING: &str = "7.0.0";
-    pub const TARGET_VERSION: (u8, u8) = (7, 0);
+    pub const TARGET_VERSION_STRING: &str = "6.0.0";
+    pub const TARGET_VERSION: (u8, u8) = (6, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 30;
 }
 
