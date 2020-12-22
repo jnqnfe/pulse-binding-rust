@@ -70,6 +70,8 @@ use std::ffi::CStr;
 pub use capi::version::{Compatibility, get_compatibility};
 pub use capi::version::{TARGET_VERSION_STRING, TARGET_VERSION};
 pub use capi::version::{PA_API_VERSION as API_VERSION, PA_PROTOCOL_VERSION as PROTOCOL_VERSION};
+#[deprecated]
+#[allow(deprecated)]
 pub use capi::version::pa_check_version as check_version;
 
 /// Kinds of errors from trying to parse the runtime PulseAudio system library version string.

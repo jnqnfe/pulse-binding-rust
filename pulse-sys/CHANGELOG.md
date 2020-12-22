@@ -1,6 +1,7 @@
 # [unreleased]
 
  * Tweaked version constants.
+ * Deprecated `pa_check_version()`.
 
 # 1.16.2 (December 15th, 2020)
 
