@@ -70,7 +70,7 @@ use std::ffi::CStr;
 pub use capi::version::{Compatibility, get_compatibility};
 pub use capi::version::{TARGET_VERSION_STRING, TARGET_VERSION};
 pub use capi::version::{PA_API_VERSION as API_VERSION, PA_PROTOCOL_VERSION as PROTOCOL_VERSION};
-#[deprecated]
+#[deprecated(since = "2.22.0")]
 #[allow(deprecated)]
 pub use capi::version::pa_check_version as check_version;
 

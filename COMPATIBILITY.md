@@ -85,8 +85,8 @@ expose them to buggy behaviour or even possibly security vulnerabilities.
 (Note that as discussed in the next section, you will get an error compiling if you don’t have a new
 enough version; this error does not occur when running the program though).
 
-Note, as of version {version} the `Context` creation functions `new()` and `new_with_proplist()`
-will deliberately fail (return `None`) to block use of the library if the version of the PulseAudio
+Note, as of version 2.22 the `Context` creation functions `new()` and `new_with_proplist()` will
+deliberately fail (return `None`) to block use of the library if the version of the PulseAudio
 client system library is older then the minimum compatibility level set via use of the version
 feature flags as a means of helping prevent the problems describe here.
 
