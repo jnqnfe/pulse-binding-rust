@@ -228,17 +228,29 @@ impl Context {
     ///
     /// It is recommended to use [`new_with_proplist()`](#method.new_with_proplist) instead and
     /// specify some initial properties.
+    ///
+    /// Note, this will fail either should the underlying C API call return a null pointer for some
+    /// reason, or if the version of the PulseAudio client system library at runtime is found to be
+    /// older than the minimum version set via this crate’s feature flags (as a means to help
+    /// prevent “forward” compatibility problems, as discussed in the project `COMPATIBILITY.md`
+    /// documentation).
     pub fn new(mainloop: &impl Mainloop, name: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_new(mainloop.inner().get_api().as_ref(),
             c_name.as_ptr()) };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        Self::create(ptr)
     }
 
     /// Instantiates a new connection context with an abstract mainloop API and an application name,
     /// and specify the initial client property list.
+    ///
+    /// Note, this will fail either should the underlying C API call return a null pointer for some
+    /// reason, or if the version of the PulseAudio client system library at runtime is found to be
+    /// older than the minimum version set via this crate’s feature flags (as a means to help
+    /// prevent “forward” compatibility problems, as discussed in the project `COMPATIBILITY.md`
+    /// documentation).
     pub fn new_with_proplist(mainloop: &impl Mainloop, name: &str, proplist: &Proplist)
         -> Option<Self>
     {
@@ -247,7 +259,22 @@ impl Context {
         let c_name = CString::new(name.clone()).unwrap();
         let ptr = unsafe { capi::pa_context_new_with_proplist(mainloop.inner().get_api().as_ref(),
             c_name.as_ptr(), proplist.0.ptr) };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        Self::create(ptr)
+    }
+
+    /// Internal common creation function
+    fn create(ptr: *mut ContextInternal) -> Option<Self> {
+        // Block creation if runtime client system library is too old, to block the potential
+        // “forward” compatibility problems discussed in the project `COMPATIBILITY.md`
+        // documentation.
+        if crate::version::library_version_is_too_old() != Ok(false) {
+            return None;
+        }
+
+        match ptr.is_null() {
+            false => Some(Self::from_raw(ptr)),
+            true => None,
+        }
     }
 
     /// Creates a new `Context` from an existing [`ContextInternal`] pointer.

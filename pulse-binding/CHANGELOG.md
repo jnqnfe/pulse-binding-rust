@@ -1,5 +1,10 @@
 # [unreleased]
 
+ * The `Context` creation functions `new()` and `new_with_proplist()` will now fail if the version
+   of the PulseAudio client system library is older then the minimum compatibility level set via use
+   of the version feature flags. This is done to block use of the library in such a circumstance as
+   a means of helping to prevent the undefined behaviour that could result from the possible
+   “forward” compatibility problems discussed in the project `COMPATIBILITY.md` documentation.
  * Added the following functions to help check the version of the PA system library at runtime:
    `version::get_library_version_numbers()`, `version::compare_with_library_version()` and
    `version::library_version_is_too_old()`.
