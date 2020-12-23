@@ -361,6 +361,8 @@ impl Spec {
     /// Calculates the time it would take to play a buffer of the specified size.
     ///
     /// The return value will always be rounded down for non-integral return values.
+    ///
+    /// Note, the underlying calculation may overflow for very large values.
     #[inline]
     pub fn bytes_to_usec(&self, length: u64) -> MicroSeconds {
         MicroSeconds(unsafe { capi::pa_bytes_to_usec(length, self.as_ref()) })
@@ -369,6 +371,8 @@ impl Spec {
     /// Calculates the size of a buffer required, for playback duration of the time specified.
     ///
     /// The return value will always be rounded down for non-integral return values.
+    ///
+    /// Note, the underlying calculation may overflow for very large values.
     #[inline]
     pub fn usec_to_bytes(&self, t: MicroSeconds) -> usize {
         unsafe { capi::pa_usec_to_bytes(t.0, self.as_ref()) }
