@@ -231,7 +231,7 @@ impl Simple {
     pub fn get_latency(&self) -> Option<MicroSeconds> {
         let mut error: i32 = 0;
         let ret = unsafe { capi::pa_simple_get_latency(self.ptr, &mut error) };
-        if error != 0 {
+        if error != 0 || ret == pcapi::PA_USEC_INVALID {
             return None;
         }
         Some(MicroSeconds(ret))

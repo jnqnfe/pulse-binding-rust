@@ -1,3 +1,10 @@
+# [unreleased]
+
+ * Tweaked the implementation of `Simple::get_latency()` such that in the hypothetical situation (it
+   is not clear whether this ever happens) whereby the underlying C function indicates success yet
+   returns `PA_USEC_INVALID`, this will now result in `None` being returned, rather than
+   `MicroSeconds(PA_USEC_INVALID)`.
+
 # 2.24.1 (August 29th, 2021)
 
  * Minor formatting tweaks.
