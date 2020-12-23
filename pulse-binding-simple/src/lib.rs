@@ -118,7 +118,8 @@ extern crate libpulse_simple_sys as capi;
 use std::os::raw::{c_char, c_void};
 use std::{ffi::CString, ptr::null};
 use std::mem;
-use pulse::{error::PAErr, time::MicroSeconds};
+use pulse::error::{Code, PAErr};
+use pulse::time::MicroSeconds;
 use pulse::{stream, sample, channelmap, def};
 
 use capi::pa_simple as SimpleInternal;
@@ -228,13 +229,16 @@ impl Simple {
     }
 
     /// Gets the playback or record latency.
-    pub fn get_latency(&self) -> Option<MicroSeconds> {
+    pub fn get_latency(&self) -> Result<MicroSeconds, PAErr> {
         let mut error: i32 = 0;
         let ret = unsafe { capi::pa_simple_get_latency(self.ptr, &mut error) };
-        if error != 0 || ret == pcapi::PA_USEC_INVALID {
-            return None;
+        if error != 0 {
+            return Err(PAErr(error));
         }
-        Some(MicroSeconds(ret))
+        match ret {
+            pcapi::PA_USEC_INVALID => Err(Code::Invalid.into()),
+            r => Ok(MicroSeconds(r)),
+        }
     }
 
     /// Flushes the playback or record buffer.
