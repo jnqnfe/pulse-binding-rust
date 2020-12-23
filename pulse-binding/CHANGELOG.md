@@ -1,3 +1,7 @@
+# [unreleased]
+
+ * Implemented `std::error::Error` for `error::{Code, PAErr}`.
+
 # 2.22.0 (December 22nd, 2020)
 
  * The `Context` creation functions `new()` and `new_with_proplist()` will now fail if the version

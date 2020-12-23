@@ -150,6 +150,8 @@ impl PAErr {
     }
 }
 
+impl std::error::Error for PAErr {}
+
 impl std::fmt::Display for PAErr {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.to_string() {
@@ -166,6 +168,8 @@ impl Code {
         PAErr::from(self).to_string()
     }
 }
+
+impl std::error::Error for Code {}
 
 impl std::fmt::Display for Code {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
