@@ -17,6 +17,7 @@ use std::ops::{Add, AddAssign, Sub, SubAssign};
 use super::{Timeval, MicroSeconds, op_err};
 
 /// A Unix timestamp.
+#[repr(transparent)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct UnixTs(pub(crate) Timeval);
 
