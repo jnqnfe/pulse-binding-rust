@@ -4,17 +4,17 @@ Overview
 [<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jnqnfe/pulse-binding-rust/Build%20&%20Test/master?style=for-the-badge" height="24">](https://github.com/jnqnfe/pulse-binding-rust/actions)
 <img alt="license" src="https://img.shields.io/crates/l/libpulse-binding.svg?style=for-the-badge" height="24">
 
-This repository contains *sys* and *binding* libraries (crates) for connecting to PulseAudio (PA)
-from the Rust programming language.
+This repository contains *sys* (FFI) and *binding* libraries (crates) for connecting to PulseAudio
+(PA) from the Rust programming language.
 
 These are provided for each of the three system libraries:
  * `libpulse_binding` for `libpulse`,
  * `libpulse_simple_binding` for `libpulse-simple`, and
  * `libpulse_glib_binding` for `libpulse-mainloop-glib`.
 
-The *sys* crates provide basic interfaces to the raw C APIs, while the *bindings* add Rust-oriented
-higher-level abstractions on top of these. (It is the bindings that you should prefer to make direct
-use of in Rust applications).
+The *sys* (FFI) crates provide basic interfaces to the raw C APIs, while the *bindings* add
+Rust-oriented higher-level abstractions on top of these. (It is the bindings that you should prefer
+to make direct use of in Rust applications).
 
 See the respective library sub-directories for details.
 
