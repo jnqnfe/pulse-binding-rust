@@ -103,7 +103,7 @@ impl MainloopSignals for Mainloop {}
 
 /// Drop function for MainloopInner<MainloopInternal>.
 fn drop_actual(self_: &mut MainloopInner<MainloopInternal>) {
-    unsafe { capi::pa_glib_mainloop_free(mem::transmute(&self_.ptr)) };
+    unsafe { capi::pa_glib_mainloop_free(mem::transmute(self_.ptr)) };
     self_.ptr = null_mut::<MainloopInternal>();
     self_.api = null::<MainloopApi>();
 }
