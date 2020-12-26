@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.20.2 (December 26th, 2020)
 
  * Fixed segfault thanks to @DanielChabrowski on github.
 
