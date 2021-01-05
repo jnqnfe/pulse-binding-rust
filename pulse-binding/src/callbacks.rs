@@ -42,6 +42,7 @@ pub(crate) struct MultiUseCallback<ClosureProto: ?Sized, ProxyProto> {
 }
 
 impl<ClosureProto: ?Sized, ProxyProto> Default for MultiUseCallback<ClosureProto, ProxyProto> {
+    #[inline(always)]
     fn default() -> Self {
         MultiUseCallback::<ClosureProto, ProxyProto> { saved: None, proxy: PhantomData }
     }
@@ -52,6 +53,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
     ///
     /// **Note**, an existing instance should always be overwritten with a new one, to ensure the
     /// old one is correctly freed.
+    #[inline]
     pub fn new(cb: Option<Box<ClosureProto>>) -> Self {
         match cb {
             Some(f) => MultiUseCallback::<ClosureProto, ProxyProto> {
@@ -63,6 +65,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
     }
 
     /// Returns callback params to give to the C API (a tuple of function pointer and data pointer).
+    #[inline]
     pub fn get_capi_params(&self, proxy: ProxyProto) -> (Option<ProxyProto>, *mut c_void) {
         match self.saved {
             Some(ref f) => (Some(proxy), *f as *mut c_void),
@@ -78,6 +81,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
     /// triggering of destruction.
     ///
     /// Panics if `ptr` is null.
+    #[inline(always)]
     pub fn get_callback<'a>(ptr: *mut c_void) -> &'a mut Box<ClosureProto> {
         assert!(!ptr.is_null());
         // Note, does NOT destroy closure callback after use - only handles pointer
@@ -86,6 +90,7 @@ impl<ClosureProto: ?Sized, ProxyProto> MultiUseCallback<ClosureProto, ProxyProto
 }
 
 impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, ProxyProto> {
+    #[inline]
     fn drop(&mut self) {
         if self.saved.is_some() {
             let _to_drop = unsafe { Box::from_raw(self.saved.unwrap()) };
@@ -104,6 +109,7 @@ impl<ClosureProto: ?Sized, ProxyProto> Drop for MultiUseCallback<ClosureProto, P
 /// to a ‘vtable’). We can only pass a normal sized pointer through the C API, so we must further
 /// box it, producing `Box<Box<Closure>>` which we convert to `*mut Box<Closure>` and then further
 /// to simply `*mut c_void`.
+#[inline(always)]
 pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<ClosureProto>)
     -> *mut c_void
 {
@@ -117,6 +123,7 @@ pub(crate) fn box_closure_get_capi_ptr<ClosureProto: ?Sized>(callback: Box<Closu
 /// be returned. Otherwise, a pair consisting of the given proxy and a pointer for the given closure
 /// will be returned. The data pointer can be restored to the actual (boxed) closure in the
 /// `extern "C"` callback proxy with `get_su_callback`.
+#[inline]
 pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
     callback: Option<Box<ClosureProto>>, proxy: ProxyProto) -> (Option<ProxyProto>, *mut c_void)
 {
@@ -133,6 +140,7 @@ pub(crate) fn get_su_capi_params<ClosureProto: ?Sized, ProxyProto>(
 /// Returns ownership of the closure, thus it can be destroyed after use.
 ///
 /// Panics if `ptr` is null.
+#[inline(always)]
 pub(crate) fn get_su_callback<ClosureProto: ?Sized>(ptr: *mut c_void) -> Box<Box<ClosureProto>> {
     assert!(!ptr.is_null());
     unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) }
