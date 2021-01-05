@@ -108,7 +108,6 @@ impl StreamRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
@@ -121,7 +120,6 @@ impl StreamRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
@@ -140,7 +138,6 @@ impl StreamRestore {
                 data.len() as u32, apply_immediately as i32, Some(super::success_cb_proxy),
                 cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -170,7 +167,6 @@ impl StreamRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_delete(self.context, c_stream_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -185,7 +181,6 @@ impl StreamRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

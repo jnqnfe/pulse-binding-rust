@@ -225,7 +225,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask.bits(),
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

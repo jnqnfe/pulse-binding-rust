@@ -108,7 +108,6 @@ impl DeviceRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
@@ -123,7 +122,6 @@ impl DeviceRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -152,7 +150,6 @@ impl DeviceRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats_all(self.context,
             Some(read_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
@@ -166,7 +163,6 @@ impl DeviceRestore {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_read_formats(self.context, type_, index,
             Some(read_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
@@ -191,7 +187,6 @@ impl DeviceRestore {
                 format_ptrs.len() as u8, format_ptrs.as_ptr(), Some(super::success_cb_proxy),
                 cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }

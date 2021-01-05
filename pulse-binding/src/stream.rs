@@ -1247,7 +1247,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_drain(self.ptr, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1269,7 +1268,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_update_timing_info(self.ptr, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1437,7 +1435,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1462,7 +1459,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1480,7 +1476,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_flush(self.ptr, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1499,7 +1494,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_prebuf(self.ptr, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1519,7 +1513,6 @@ impl Stream {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
         let ptr = unsafe { capi::pa_stream_trigger(self.ptr, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1540,7 +1533,6 @@ impl Stream {
         let ptr = unsafe {
             capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_fn, cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1693,7 +1685,6 @@ impl Stream {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_set_buffer_attr(self.ptr, attr.as_ref(),
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1714,7 +1705,6 @@ impl Stream {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_update_sample_rate(self.ptr, rate,
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1736,7 +1726,6 @@ impl Stream {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_stream_proplist_update(self.ptr, mode, proplist.0.ptr,
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1768,7 +1757,6 @@ impl Stream {
             capi::pa_stream_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
                 Some(success_cb_proxy), cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

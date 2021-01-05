@@ -385,7 +385,6 @@ impl Context {
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -404,7 +403,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -423,7 +421,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -452,7 +449,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -496,7 +492,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, pl.0.ptr,
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -524,7 +519,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

@@ -50,7 +50,7 @@ impl<ClosureProto: ?Sized> Operation<ClosureProto> {
     pub(crate) fn from_raw(ptr: *mut OperationInternal, saved_cb: *mut Box<ClosureProto>)
         -> Self
     {
-        assert_eq!(false, ptr.is_null());
+        assert!(!ptr.is_null());
         let saved_cb_actual = match saved_cb.is_null() {
             true => Some(saved_cb),
             false => None,

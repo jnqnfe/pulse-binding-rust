@@ -149,7 +149,6 @@ impl DeviceManager {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_test(self.context,
             Some(super::ext_test_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
@@ -162,7 +161,6 @@ impl DeviceManager {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
     }
 
@@ -185,7 +183,6 @@ impl DeviceManager {
             capi::pa_ext_device_manager_set_device_description(self.context, c_dev.as_ptr(),
                 c_desc.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -215,7 +212,6 @@ impl DeviceManager {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_delete(self.context, c_dev_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -233,7 +229,6 @@ impl DeviceManager {
             capi::pa_ext_device_manager_enable_role_device_priority_routing(self.context,
                 enable as i32, Some(super::success_cb_proxy), cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -267,7 +262,6 @@ impl DeviceManager {
             capi::pa_ext_device_manager_reorder_devices_for_role(self.context, c_role.as_ptr(),
                 c_dev_ptrs.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -282,7 +276,6 @@ impl DeviceManager {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

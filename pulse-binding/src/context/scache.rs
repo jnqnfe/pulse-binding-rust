@@ -82,7 +82,6 @@ impl Context {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -118,7 +117,6 @@ impl Context {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, vol.0,
             cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -163,7 +161,6 @@ impl Context {
             capi::pa_context_play_sample_with_proplist(self.ptr, c_name.as_ptr(), p_dev, vol.0,
                 proplist.0.ptr, cb_fn, cb_data)
         };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(Result<u32, ()>)>)
     }
 }

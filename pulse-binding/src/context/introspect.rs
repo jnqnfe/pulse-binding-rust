@@ -463,7 +463,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SinkInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sink_info_by_name(self.context, c_name.as_ptr(),
             Some(get_sink_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInfo>)>)
     }
 
@@ -477,7 +476,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SinkInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sink_info_by_index(self.context, index,
             Some(get_sink_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInfo>)>)
     }
 
@@ -490,7 +488,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SinkInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sink_info_list(self.context,
             Some(get_sink_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInfo>)>)
     }
 
@@ -506,7 +503,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -526,7 +522,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_name(self.context, c_name.as_ptr(),
             volume.as_ref(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -542,7 +537,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_index(self.context, index, mute as i32,
             cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -562,7 +556,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -582,7 +575,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -599,7 +591,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_index(self.context, index,
             suspend as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -619,7 +610,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_port_by_index(self.context, index,
             c_port.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -640,7 +630,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -875,7 +864,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SourceInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_source_info_by_name(self.context, c_name.as_ptr(),
             Some(get_source_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceInfo>)>)
     }
 
@@ -889,7 +877,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SourceInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_source_info_by_index(self.context, index,
             Some(get_source_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceInfo>)>)
     }
 
@@ -903,7 +890,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SourceInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_source_info_list(self.context,
             Some(get_source_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceInfo>)>)
     }
 
@@ -919,7 +905,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -939,7 +924,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context,
             c_name.as_ptr(), volume.as_ref(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -955,7 +939,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_index(self.context, index,
             mute as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -975,7 +958,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -995,7 +977,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_source_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1012,7 +993,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_source_by_index(self.context, index,
             suspend as i32, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1032,7 +1012,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_port_by_index(self.context, index,
             c_port.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1053,7 +1032,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -1148,7 +1126,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(&ServerInfo)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_server_info(self.context,
             Some(get_server_info_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(&ServerInfo)>)
     }
 }
@@ -1227,7 +1204,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&ModuleInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_module_info(self.context, index,
             Some(mod_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ModuleInfo>)>)
     }
 
@@ -1241,7 +1217,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&ModuleInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_module_info_list(self.context,
             Some(mod_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ModuleInfo>)>)
     }
 
@@ -1261,7 +1236,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_load_module(self.context, c_name.as_ptr(),
             c_arg.as_ptr(), Some(context_index_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
     }
 
@@ -1276,7 +1250,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_unload_module(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -1363,7 +1336,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&ClientInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_client_info(self.context, index,
             Some(get_client_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ClientInfo>)>)
     }
 
@@ -1377,7 +1349,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&ClientInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_client_info_list(self.context,
             Some(get_client_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&ClientInfo>)>)
     }
 
@@ -1392,7 +1363,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_kill_client(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -1728,7 +1698,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&CardInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_card_info_by_index(self.context, index,
             Some(get_card_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&CardInfo>)>)
     }
 
@@ -1746,7 +1715,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&CardInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_card_info_by_name(self.context, c_name.as_ptr(),
             Some(get_card_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&CardInfo>)>)
     }
 
@@ -1759,7 +1727,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&CardInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_card_info_list(self.context,
             Some(get_card_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&CardInfo>)>)
     }
 
@@ -1779,7 +1746,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_card_profile_by_index(self.context, index,
             c_profile.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1800,7 +1766,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_card_profile_by_name(self.context, c_name.as_ptr(),
             c_profile.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1821,7 +1786,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_port_latency_offset(self.context, c_name.as_ptr(),
             c_port.as_ptr(), offset, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -1947,7 +1911,6 @@ impl Introspector {
             box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SinkInputInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sink_input_info(self.context, index,
             Some(get_sink_input_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInputInfo>)>)
     }
 
@@ -1962,7 +1925,6 @@ impl Introspector {
             box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SinkInputInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sink_input_info_list(self.context,
             Some(get_sink_input_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SinkInputInfo>)>)
     }
 
@@ -1982,7 +1944,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_name(self.context, index,
             c_name.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -1998,7 +1959,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_index(self.context, index,
             sink_index, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2014,7 +1974,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2030,7 +1989,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_mute(self.context, index, mute as i32,
             cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2045,7 +2003,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_kill_sink_input(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -2171,7 +2128,6 @@ impl Introspector {
             box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SourceOutputInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_source_output_info(self.context, index,
             Some(get_source_output_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceOutputInfo>)>)
     }
 
@@ -2186,7 +2142,6 @@ impl Introspector {
             box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SourceOutputInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_source_output_info_list(self.context,
             Some(get_source_output_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SourceOutputInfo>)>)
     }
 
@@ -2206,7 +2161,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_source_output_by_name(self.context, index,
             c_name.as_ptr(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2222,7 +2176,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_source_output_by_index(self.context, index,
             source_index, cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2238,7 +2191,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2254,7 +2206,6 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_mute(self.context, index, mute as i32,
             cb_fn, cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -2269,7 +2220,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_kill_source_output(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 }
@@ -2300,7 +2250,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(&StatInfo)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_stat(self.context, Some(get_stat_info_cb_proxy),
             cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(&StatInfo)>)
     }
 }
@@ -2392,7 +2341,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SampleInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sample_info_by_name(self.context, c_name.as_ptr(),
             Some(get_sample_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SampleInfo>)>)
     }
 
@@ -2406,7 +2354,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SampleInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sample_info_by_index(self.context, index,
             Some(get_sample_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SampleInfo>)>)
     }
 
@@ -2420,7 +2367,6 @@ impl Introspector {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SampleInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sample_info_list(self.context,
             Some(get_sample_info_list_cb_proxy), cb_data) };
-        assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&SampleInfo>)>)
     }
 }
