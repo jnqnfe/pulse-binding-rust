@@ -66,12 +66,12 @@
 //! The buffer metrics may be controlled by the application. They are described with a
 //! [`BufferAttr`] structure.
 //!
-//! If [`flags::ADJUST_LATENCY`] is set, then the `tlength`/`fragsize` parameters of this structure
-//! will be interpreted slightly differently than otherwise when passed to
+//! If [`FlagSet::ADJUST_LATENCY`] is set, then the `tlength`/`fragsize` parameters of this
+//! structure will be interpreted slightly differently than otherwise when passed to
 //! [`Stream::connect_record()`] and [`Stream::connect_playback()`]: the overall latency that is
 //! comprised of both the server side playback buffer length, the hardware playback buffer length
 //! and additional latencies will be adjusted in a way that it matches `tlength` resp. `fragsize`.
-//! Set [`flags::ADJUST_LATENCY`] if you want to control the overall playback latency for your
+//! Set [`FlagSet::ADJUST_LATENCY`] if you want to control the overall playback latency for your
 //! stream. Unset it if you want to control only the latency induced by the server-side, rewritable
 //! playback buffer. The server will try to fulfill the client’s latency requests as good as
 //! possible. However if the underlying hardware cannot change the hardware buffer length or only in
@@ -80,7 +80,7 @@
 //! via [`Stream::get_latency()`] or a similar call, and not make any assumptions about the latency
 //! available. The function [`Stream::get_buffer_attr()`] will always return the actual size of the
 //! server-side per-stream buffer in `tlength`/`fragsize`, regardless whether
-//! [`flags::ADJUST_LATENCY`] is set or not.
+//! [`FlagSet::ADJUST_LATENCY`] is set or not.
 //!
 //! The server-side per-stream playback buffers are indexed by a write and a read index. The
 //! application writes to the write index and the sound device reads from the read index. The read
@@ -158,7 +158,7 @@
 //! This structure is updated every time a [`Stream::update_timing_info()`] operation is executed.
 //! (i.e. before the first call to this function the timing information structure is not available!)
 //! Since it is a lot of work to keep this structure up-to-date manually, PulseAudio can do that
-//! automatically for you: if [`flags::AUTO_TIMING_UPDATE`] is passed when connecting the stream
+//! automatically for you: if [`FlagSet::AUTO_TIMING_UPDATE`] is passed when connecting the stream
 //! PulseAudio will automatically update the structure every 100ms and every time a function is
 //! called that might invalidate the previously known timing data (such as [`Stream::write()`] or
 //! [`Stream::flush()`]). Please note however, that there always is a short time window when the
@@ -176,11 +176,11 @@
 //!
 //! Since updating the timing info structure usually requires a full network round trip and some
 //! applications monitor the timing very often PulseAudio offers a timing interpolation system. If
-//! [`flags::INTERPOLATE_TIMING`] is passed when connecting the stream, [`Stream::get_time()`] and
+//! [`FlagSet::INTERPOLATE_TIMING`] is passed when connecting the stream, [`Stream::get_time()`] and
 //! [`Stream::get_latency()`] will try to interpolate the current playback time/latency by
 //! estimating the number of samples that have been played back by the hardware since the last
 //! regular timing update. It is especially useful to combine this option with
-//! [`flags::AUTO_TIMING_UPDATE`], which will enable you to monitor the current playback
+//! [`FlagSet::AUTO_TIMING_UPDATE`], which will enable you to monitor the current playback
 //! time/latency very precisely and very frequently without requiring a network round trip every
 //! time.
 //!
@@ -199,8 +199,8 @@
 //!
 //! To synchronize a stream to another, just pass the “master” stream as the last argument to
 //! [`Stream::connect_playback()`]. To make sure that the freshly created stream doesn’t start
-//! playback right-away, make sure to pass [`flags::START_CORKED`] and, after all streams have been
-//! created, uncork them all with a single call to [`Stream::uncork()`] for the master stream.
+//! playback right-away, make sure to pass [`FlagSet::START_CORKED`] and, after all streams have
+//! been created, uncork them all with a single call to [`Stream::uncork()`] for the master stream.
 //!
 //! To make sure that a particular stream doesn’t stop to play when a server side buffer underrun
 //! happens on it while the other synchronized streams continue playing and hence deviate, you need
@@ -872,7 +872,7 @@ impl Stream {
     /// Connects the stream to a sink.
     ///
     /// It is strongly recommended to pass `None` in both `dev` and `volume` and to set neither
-    /// [`flags::START_MUTED`] nor [`flags::START_UNMUTED`] -- unless these options are directly
+    /// [`FlagSet::START_MUTED`] nor [`FlagSet::START_UNMUTED`] -- unless these options are directly
     /// dependent on user input or configuration.
     ///
     /// If you follow this rule then the sound server will have the full flexibility to choose the
@@ -1347,7 +1347,7 @@ impl Stream {
 
     /// Sets the callback function that is called whenever a latency information update happens.
     ///
-    /// Useful on [`flags::AUTO_TIMING_UPDATE`] streams only.
+    /// Useful on [`FlagSet::AUTO_TIMING_UPDATE`] streams only.
     pub fn set_latency_update_callback(&mut self, callback: Option<Box<dyn FnMut() + 'static>>) {
         let saved = &mut self.cb_ptrs.latency_update;
         *saved = NotifyCb::new(callback);
@@ -1423,8 +1423,8 @@ impl Stream {
     /// The pause operation is executed as quickly as possible. If a cork is very quickly followed
     /// by an uncork, this might not actually have any effect on the stream that is output. You can
     /// use [`is_corked()`] to find out whether the stream is currently paused or not. Normally a
-    /// stream will be created in uncorked state. If you pass [`flags::START_CORKED`] as a flag when
-    /// connecting the stream, it will be created in corked state.
+    /// stream will be created in uncorked state. If you pass [`FlagSet::START_CORKED`] as a flag
+    /// when connecting the stream, it will be created in corked state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1448,8 +1448,8 @@ impl Stream {
     /// The un-pause operation is executed as quickly as possible. If an uncork is very quickly
     /// followed by a cork, this might not actually have any effect on the stream that is output.
     /// You can use [`is_corked()`] to find out whether the stream is currently paused or not.
-    /// Normally a stream will be created in uncorked state. If you pass [`flags::START_CORKED`] as
-    /// a flag when connecting the stream, it will be created in corked state.
+    /// Normally a stream will be created in uncorked state. If you pass [`FlagSet::START_CORKED`]
+    /// as a flag when connecting the stream, it will be created in corked state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     ///
@@ -1551,17 +1551,17 @@ impl Stream {
     /// different rate than the system clock.
     ///
     /// This function will usually only return new data if a timing info update has been received.
-    /// Only if timing interpolation has been requested ([`flags::INTERPOLATE_TIMING`]) the data
+    /// Only if timing interpolation has been requested ([`FlagSet::INTERPOLATE_TIMING`]) the data
     /// from the last timing update is used for an estimation of the current playback/recording time
     /// based on the local time that passed since the timing info structure has been acquired.
     ///
     /// The time value returned by this function is guaranteed to increase monotonically (the
     /// returned value is always greater or equal to the value returned by the last call). This
-    /// behaviour can be disabled by using [`flags::NOT_MONOTONIC`]. This may be desirable to better
-    /// deal with bad estimations of transport latencies, but may have strange effects if the
+    /// behaviour can be disabled by using [`FlagSet::NOT_MONOTONIC`]. This may be desirable to
+    /// better deal with bad estimations of transport latencies, but may have strange effects if the
     /// application is not able to deal with time going ‘backwards’.
     ///
-    /// The time interpolator activated by [`flags::INTERPOLATE_TIMING`] favours ‘smooth’ time
+    /// The time interpolator activated by [`FlagSet::INTERPOLATE_TIMING`] favours ‘smooth’ time
     /// graphs over accurate ones to improve the smoothness of UI operations that are tied to the
     /// audio clock. If accuracy is more important to you, you might need to estimate your timing
     /// based on the data from [`get_timing_info()`] yourself or not work with interpolated timing
@@ -1617,7 +1617,7 @@ impl Stream {
     /// this data structure may be requested using [`update_timing_info()`].
     ///
     /// If no timing information has been received before (i.e. by requesting
-    /// [`update_timing_info()`] or by using [`flags::AUTO_TIMING_UPDATE`]), this function will
+    /// [`update_timing_info()`] or by using [`FlagSet::AUTO_TIMING_UPDATE`]), this function will
     /// return `None` (as it will also if an error occurs).
     ///
     /// Please note that the `write_index` member field (and only this field) is updated on each
@@ -1662,7 +1662,7 @@ impl Stream {
     /// Only valid after the stream has been connected successfully. This will return the actual
     /// configured buffering metrics, which may differ from what was requested during
     /// [`connect_record()`] or [`connect_playback()`]. This call will always return the actual
-    /// per-stream server-side buffer metrics, regardless whether [`flags::ADJUST_LATENCY`] is set
+    /// per-stream server-side buffer metrics, regardless whether [`FlagSet::ADJUST_LATENCY`] is set
     /// or not.
     ///
     /// [`connect_record()`]: Self::connect_record
@@ -1679,7 +1679,7 @@ impl Stream {
     /// The server might have chosen different buffer metrics then requested. The selected metrics
     /// may be queried with [`get_buffer_attr()`] as soon as the callback is called. Only valid
     /// after the stream has been connected successfully. Please be aware of the slightly different
-    /// semantics of the call depending whether [`flags::ADJUST_LATENCY`] is set or not.
+    /// semantics of the call depending whether [`FlagSet::ADJUST_LATENCY`] is set or not.
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
@@ -1699,7 +1699,7 @@ impl Stream {
 
     /// Changes the stream sampling rate during playback.
     ///
-    /// You need to pass [`flags::VARIABLE_RATE`] in the flags parameter of [`connect_playback()`]
+    /// You need to pass [`FlagSet::VARIABLE_RATE`] in the flags parameter of [`connect_playback()`]
     /// if you plan to use this function. Only valid after the stream has been connected
     /// successfully.
     ///

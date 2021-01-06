@@ -51,13 +51,13 @@
 //!
 //! It’s often unknown what scale hardware volumes relate to. Don’t use the above functions on sink
 //! and source volumes, unless the sink or source in question has the
-//! [`sink_flags::DECIBEL_VOLUME`] or [`source_flags::DECIBEL_VOLUME`] flag set. The conversion
+//! [`SinkFlagSet::DECIBEL_VOLUME`] or [`SourceFlagSet::DECIBEL_VOLUME`] flag set. The conversion
 //! functions are rarely needed anyway, most of the time it’s sufficient to treat all volumes as
 //! opaque with a range from [`Volume::MUTED`] \(0%) to [`Volume::NORMAL`] \(100%).
 //!
 //! [`Introspector::get_sink_info_by_name()`]: crate::context::introspect::Introspector::get_sink_info_by_name
-//! [`sink_flags::DECIBEL_VOLUME`]: crate::def::sink_flags::DECIBEL_VOLUME
-//! [`source_flags::DECIBEL_VOLUME`]: crate::def::source_flags::DECIBEL_VOLUME
+//! [`SinkFlagSet::DECIBEL_VOLUME`]: crate::def::SinkFlagSet::DECIBEL_VOLUME
+//! [`SourceFlagSet::DECIBEL_VOLUME`]: crate::def::SourceFlagSet::DECIBEL_VOLUME
 
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CStr;

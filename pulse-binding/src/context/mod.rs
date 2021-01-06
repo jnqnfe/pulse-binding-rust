@@ -317,7 +317,7 @@ impl Context {
     ///
     /// If server is `None`, connect to the default server. This routine may but will not always
     /// return synchronously on error. Use [`set_state_callback()`] to be notified when the
-    /// connection is established. If `flags` doesn’t have [`flags::NOAUTOSPAWN`] set and no
+    /// connection is established. If `flags` doesn’t have [`FlagSet::NOAUTOSPAWN`] set and no
     /// specific server is specified or accessible, a new daemon is spawned. If `api` is not `None`,
     /// the functions specified in the structure are used when forking a new child process.
     ///

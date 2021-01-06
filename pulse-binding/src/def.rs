@@ -44,12 +44,12 @@ pub struct BufferAttr {
     ///
     /// Setting this to [`std::u32::MAX`] will initialize this to the maximum value supported by the
     /// server, which is recommended. In strict low-latency playback scenarios you might want to set
-    /// this to a lower value, likely together with the [`stream::flags::ADJUST_LATENCY`] flag. If
+    /// this to a lower value, likely together with the [`stream::FlagSet::ADJUST_LATENCY`] flag. If
     /// you do so, you ensure that the latency doesn’t grow beyond what is acceptable for the use
     /// case, at the cost of getting more underruns if the latency is lower than what the server can
     /// reliably handle.
     ///
-    /// [`stream::flags::ADJUST_LATENCY`]: crate::stream::flags::ADJUST_LATENCY
+    /// [`stream::FlagSet::ADJUST_LATENCY`]: crate::stream::FlagSet::ADJUST_LATENCY
     pub maxlength: u32,
 
     /// Target length of the buffer (playback only). The server tries to assure that at least
@@ -62,14 +62,14 @@ pub struct BufferAttr {
     /// 2s; for applications that have specific latency requirements this value should be set to
     /// the maximum latency that the application can deal with.
     ///
-    /// When [`stream::flags::ADJUST_LATENCY`] is not set this value will influence only the
-    /// per-stream playback buffer size. When [`stream::flags::ADJUST_LATENCY`] is set, the overall
-    /// latency of the sink plus the playback buffer size is configured to this value. Set
-    /// [`stream::flags::ADJUST_LATENCY`] if you are interested in adjusting the overall latency.
+    /// When [`stream::FlagSet::ADJUST_LATENCY`] is not set this value will influence only the
+    /// per-stream playback buffer size. When [`stream::FlagSet::ADJUST_LATENCY`] is set, the
+    /// overall latency of the sink plus the playback buffer size is configured to this value. Set
+    /// [`stream::FlagSet::ADJUST_LATENCY`] if you are interested in adjusting the overall latency.
     /// Don’t set it if you are interested in configuring the server-side per-stream playback buffer
     /// size.
     ///
-    /// [`stream::flags::ADJUST_LATENCY`]: crate::stream::flags::ADJUST_LATENCY
+    /// [`stream::FlagSet::ADJUST_LATENCY`]: crate::stream::FlagSet::ADJUST_LATENCY
     pub tlength: u32,
 
     /// Pre-buffering (playback only). The server does not start with playback before at least
@@ -80,7 +80,7 @@ pub struct BufferAttr {
     /// Initialize to `0` to enable manual start/stop control of the stream. This means that
     /// playback will not stop on underrun and playback will not start automatically, instead
     /// [`Stream::cork()`] needs to be called explicitly. If you set this value to `0` you should
-    /// also set [`stream::flags::START_CORKED`]. Should underrun occur, the read index of the
+    /// also set [`stream::FlagSet::START_CORKED`]. Should underrun occur, the read index of the
     /// output buffer overtakes the write index, and hence the fill level of the buffer is negative.
     ///
     /// Start of playback can be forced using [`Stream::trigger()`] even though the prebuffer size
@@ -88,7 +88,7 @@ pub struct BufferAttr {
     ///
     /// [`Stream::cork()`]: crate::stream::Stream::cork
     /// [`Stream::trigger()`]: crate::stream::Stream::trigger
-    /// [`stream::flags::START_CORKED`]: crate::stream::flags::START_CORKED
+    /// [`stream::FlagSet::START_CORKED`]: crate::stream::FlagSet::START_CORKED
     pub prebuf: u32,
 
     /// Minimum request (playback only). The server does not request less than `minreq` bytes from
@@ -108,10 +108,10 @@ pub struct BufferAttr {
     /// default to something like 2s; For applications that have specific latency requirements this
     /// value should be set to the maximum latency that the application can deal with.
     ///
-    /// If [`stream::flags::ADJUST_LATENCY`] is set the overall source latency will be adjusted
+    /// If [`stream::FlagSet::ADJUST_LATENCY`] is set the overall source latency will be adjusted
     /// according to this value. If it is not set the source latency is left unmodified.
     ///
-    /// [`stream::flags::ADJUST_LATENCY`]: crate::stream::flags::ADJUST_LATENCY
+    /// [`stream::FlagSet::ADJUST_LATENCY`]: crate::stream::FlagSet::ADJUST_LATENCY
     pub fragsize: u32,
 }
 
