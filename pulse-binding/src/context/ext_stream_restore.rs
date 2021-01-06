@@ -21,7 +21,7 @@ use std::mem;
 use capi::pa_ext_stream_restore_info as InfoInternal;
 use super::{ContextInternal, Context};
 use crate::{channelmap, proplist};
-use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance};
 use crate::{operation::Operation, volume::ChannelVolumes};
 
 /// Stores information about one entry in the stream database that is maintained by
@@ -216,14 +216,6 @@ fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&Info>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = Info::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, Info::new_from_raw);
     });
 }

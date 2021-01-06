@@ -16,6 +16,7 @@
 use std::os::raw::c_void;
 use std::ptr::null_mut;
 use std::marker::PhantomData;
+use std::mem::ManuallyDrop;
 
 /// List result instance.
 ///
@@ -146,35 +147,35 @@ pub(crate) fn get_su_callback<ClosureProto: ?Sized>(ptr: *mut c_void) -> Box<Box
     unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) }
 }
 
-pub(crate) enum ListInstanceCallback<'a, ClosureProto: 'a + ?Sized> {
-    /// An entry instance. Contains reference to closure callback.
-    Entry(&'a mut Box<ClosureProto>),
-    /// End-of-list instance. Contains owned closure callback, for destruction after use.
-    End(Box<Box<ClosureProto>>),
-    /// Error instance. Contains owned closure callback, for destruction after use.
-    Error(Box<Box<ClosureProto>>),
-}
-
-/// Used by multi-use-list style callback proxies.
-///
-/// Provide this with the `eol` parameter, and the userdata (closure) pointer parameter, and it will
-/// return either a reference to the closure or the owned closure, depending upon whether or not
-/// `eol` signals end-of-list/error.
-pub(crate) fn callback_for_list_instance<'a, ClosureProto: ?Sized>(eol: i32, ptr: *mut c_void)
-    -> ListInstanceCallback<'a, ClosureProto>
+/// Used by list-iteration style callback proxies, which are single use, but make multiple
+/// executions of the callback, once per item and once to signal end-of-list.
+#[inline]
+pub(crate) fn callback_for_list_instance<Item, ItemRaw, Conv>(i: *const ItemRaw, eol: i32,
+    userdata: *mut c_void, conv: Conv)
+    where Conv: Fn(*const ItemRaw) -> Item // Converter, from raw item pointer to item wrapper
 {
-    assert!(!ptr.is_null());
+    assert!(!userdata.is_null());
+    let mut callback = ManuallyDrop::new(unsafe {
+        Box::from_raw(userdata as *mut Box<dyn FnMut(ListResult<&Item>)>)
+    });
+
     match eol {
-        0 => { // NOT end-of-list or error. Return reference to avoid destruction.
-            let callback = unsafe { &mut *(ptr as *mut Box<ClosureProto>) };
-            ListInstanceCallback::Entry(callback)
+        // Item instance (NOT end-of-list or error)
+        0 => {
+            assert!(!i.is_null());
+            let item = conv(i); // Convert from raw item pointer to item wrapper
+            (callback)(ListResult::Item(&item));
+            // Deliberately not dropping!
+            return;
         },
-        i => { // End-of-list or error. Return owned, so it can be destroyed after use.
-            let callback = unsafe { Box::from_raw(ptr as *mut Box<ClosureProto>) };
-            match i > 0 {
-                true => ListInstanceCallback::End(callback),
-                false => ListInstanceCallback::Error(callback),
-            }
+        // End of list marker
+        i if i > 0 => {
+            (callback)(ListResult::End);
+        },
+        // Error
+        _ => {
+            (callback)(ListResult::Error);
         },
     }
+    unsafe { ManuallyDrop::drop(&mut callback) };
 }

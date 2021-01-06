@@ -201,7 +201,10 @@ use capi::pa_sample_info as SampleInfoInternal;
 use super::{Context, ContextInternal};
 use crate::{def, sample, channelmap, format, direction};
 use crate::time::MicroSeconds;
-use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, get_su_capi_params, get_su_callback, ListInstanceCallback};
+use crate::callbacks::{
+    ListResult, box_closure_get_capi_ptr, callback_for_list_instance, get_su_capi_params,
+    get_su_callback
+};
 use crate::volume::{ChannelVolumes, Volume};
 use crate::{operation::Operation, proplist::Proplist};
 #[cfg(any(doc, feature = "pa_v14"))]
@@ -649,15 +652,7 @@ fn get_sink_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInfoIntern
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&SinkInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = SinkInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, SinkInfo::new_from_raw);
     });
 }
 
@@ -1071,15 +1066,7 @@ fn get_source_info_list_cb_proxy(_: *mut ContextInternal, i: *const SourceInfoIn
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&SourceInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = SourceInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, SourceInfo::new_from_raw);
     });
 }
 
@@ -1302,15 +1289,7 @@ fn mod_info_list_cb_proxy(_: *mut ContextInternal, i: *const ModuleInfoInternal,
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&ModuleInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = ModuleInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, ModuleInfo::new_from_raw);
     });
 }
 
@@ -1426,15 +1405,7 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&ClientInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = ClientInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, ClientInfo::new_from_raw);
     });
 }
 
@@ -1863,15 +1834,7 @@ fn get_card_info_list_cb_proxy(_: *mut ContextInternal, i: *const CardInfoIntern
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&CardInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = CardInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, CardInfo::new_from_raw);
     });
 }
 
@@ -2095,15 +2058,7 @@ fn get_sink_input_info_list_cb_proxy(_: *mut ContextInternal, i: *const SinkInpu
     eol: i32, userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&SinkInputInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = SinkInputInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, SinkInputInfo::new_from_raw);
     });
 }
 
@@ -2327,15 +2282,7 @@ fn get_source_output_info_list_cb_proxy(_: *mut ContextInternal, i: *const Sourc
     eol: i32, userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&SourceOutputInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = SourceOutputInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, SourceOutputInfo::new_from_raw);
     });
 }
 
@@ -2486,14 +2433,6 @@ fn get_sample_info_list_cb_proxy(_: *mut ContextInternal, i: *const SampleInfoIn
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&SampleInfo>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = SampleInfo::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, SampleInfo::new_from_raw);
     });
 }

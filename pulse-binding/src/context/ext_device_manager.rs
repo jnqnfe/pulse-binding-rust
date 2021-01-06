@@ -21,7 +21,7 @@ use capi::pa_ext_device_manager_info as InfoInternal;
 use capi::pa_ext_device_manager_role_priority_info as RolePriorityInfoInternal;
 use super::{ContextInternal, Context};
 use crate::def;
-use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance, ListInstanceCallback};
+use crate::callbacks::{ListResult, box_closure_get_capi_ptr, callback_for_list_instance};
 use crate::operation::Operation;
 
 /// Role priority information.
@@ -160,7 +160,7 @@ impl DeviceManager {
         where F: FnMut(ListResult<&Info>) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&Info>)>(Box::new(callback));
-        let ptr = unsafe {  capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
+        let ptr = unsafe { capi::pa_ext_device_manager_read(self.context, Some(read_list_cb_proxy),
             cb_data) };
         assert!(!ptr.is_null());
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(ListResult<&Info>)>)
@@ -313,14 +313,6 @@ fn read_list_cb_proxy(_: *mut ContextInternal, i: *const InfoInternal, eol: i32,
     userdata: *mut c_void)
 {
     let _ = std::panic::catch_unwind(|| {
-        match callback_for_list_instance::<dyn FnMut(ListResult<&Info>)>(eol, userdata) {
-            ListInstanceCallback::Entry(callback) => {
-                assert!(!i.is_null());
-                let obj = Info::new_from_raw(i);
-                (callback)(ListResult::Item(&obj));
-            },
-            ListInstanceCallback::End(mut callback) => { (callback)(ListResult::End); },
-            ListInstanceCallback::Error(mut callback) => { (callback)(ListResult::Error); },
-        }
+        callback_for_list_instance(i, eol, userdata, Info::new_from_raw);
     });
 }
