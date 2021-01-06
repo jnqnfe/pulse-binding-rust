@@ -158,23 +158,27 @@ pub(crate) fn callback_for_list_instance<Item, ItemRaw, Conv>(i: *const ItemRaw,
     let mut callback = ManuallyDrop::new(unsafe {
         Box::from_raw(userdata as *mut Box<dyn FnMut(ListResult<&Item>)>)
     });
+    // NOTE: The creation of this reference variable is required to fix compiling before 1.46!
+    use std::ops::DerefMut;
+    #[allow(unused_mut)]
+    let mut callback_ref = callback.deref_mut();
 
     match eol {
         // Item instance (NOT end-of-list or error)
         0 => {
             assert!(!i.is_null());
             let item = conv(i); // Convert from raw item pointer to item wrapper
-            (callback)(ListResult::Item(&item));
+            (callback_ref)(ListResult::Item(&item));
             // Deliberately not dropping!
             return;
         },
         // End of list marker
         i if i > 0 => {
-            (callback)(ListResult::End);
+            (callback_ref)(ListResult::End);
         },
         // Error
         _ => {
-            (callback)(ListResult::Error);
+            (callback_ref)(ListResult::Error);
         },
     }
     unsafe { ManuallyDrop::drop(&mut callback) };
