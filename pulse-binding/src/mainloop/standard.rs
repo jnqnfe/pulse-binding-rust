@@ -61,8 +61,8 @@
 //! use std::cell::RefCell;
 //! use std::ops::Deref;
 //! use pulse::mainloop::standard::Mainloop;
-//! use pulse::context::Context;
-//! use pulse::stream::Stream;
+//! use pulse::context::{Context, FlagSet as ContextFlagSet};
+//! use pulse::stream::{Stream, FlagSet as StreamFlagSet};
 //! use pulse::proplist::Proplist;
 //! use pulse::mainloop::standard::IterateResult;
 //! use pulse::def::Retval;
@@ -88,7 +88,7 @@
 //!         &proplist
 //!         ).expect("Failed to create new context")));
 //!
-//!     context.borrow_mut().connect(None, pulse::context::flags::NOFLAGS, None)
+//!     context.borrow_mut().connect(None, ContextFlagSet::NOFLAGS, None)
 //!         .expect("Failed to connect context");
 //!
 //!     // Wait for context to be ready
@@ -119,7 +119,7 @@
 //!         None
 //!         ).expect("Failed to create new stream")));
 //!
-//!     stream.borrow_mut().connect_playback(None, None, pulse::stream::flags::START_CORKED,
+//!     stream.borrow_mut().connect_playback(None, None, StreamFlagSet::START_CORKED,
 //!         None, None).expect("Failed to connect playback");
 //!
 //!     // Wait for stream to be ready

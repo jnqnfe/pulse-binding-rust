@@ -235,8 +235,8 @@
 //! use std::cell::RefCell;
 //! use std::ops::Deref;
 //! use pulse::mainloop::threaded::Mainloop;
-//! use pulse::context::Context;
-//! use pulse::stream::Stream;
+//! use pulse::context::{Context, FlagSet as ContextFlagSet};
+//! use pulse::stream::{Stream, FlagSet as StreamFlagSet};
 //! use pulse::proplist::Proplist;
 //! use pulse::mainloop::api::Mainloop as MainloopTrait; //Needs to be in scope
 //!
@@ -278,7 +278,7 @@
 //!         })));
 //!     }
 //!
-//!     context.borrow_mut().connect(None, pulse::context::flags::NOFLAGS, None)
+//!     context.borrow_mut().connect(None, ContextFlagSet::NOFLAGS, None)
 //!         .expect("Failed to connect context");
 //!
 //!     mainloop.borrow_mut().lock();
@@ -324,7 +324,7 @@
 //!         })));
 //!     }
 //!
-//!     stream.borrow_mut().connect_playback(None, None, pulse::stream::flags::START_CORKED,
+//!     stream.borrow_mut().connect_playback(None, None, StreamFlagSet::START_CORKED,
 //!         None, None).expect("Failed to connect playback");
 //!
 //!     // Wait for stream to be ready
