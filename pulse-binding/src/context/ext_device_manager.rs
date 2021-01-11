@@ -206,7 +206,7 @@ impl DeviceManager {
 
         // Capture array of pointers to the above CString values.
         // We also add a `NULL` pointer entry on the end, as expected by the C function called here.
-        let mut c_dev_ptrs: Vec<*const c_char> = Vec::with_capacity(c_devs.len()+1);
+        let mut c_dev_ptrs: Vec<*const c_char> = Vec::with_capacity(c_devs.len() + 1);
         for c_dev in &c_devs {
             c_dev_ptrs.push(c_dev.as_ptr());
         }
