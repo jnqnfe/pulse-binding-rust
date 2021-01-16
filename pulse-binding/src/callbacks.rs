@@ -23,6 +23,7 @@ use std::mem::ManuallyDrop;
 /// Fetching a list can result in a callback being fired for each list item, and then once more to
 /// signal the end of the list having been reached. This type is used to distinguish such state to a
 /// closure callback.
+#[derive(Debug)]
 pub enum ListResult<T> {
     /// List item
     Item(T),
