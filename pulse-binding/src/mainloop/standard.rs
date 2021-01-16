@@ -143,7 +143,7 @@
 //!         }
 //!     }
 //!
-//!     // Our main loop
+//!     // Our main logic (to output a stream of audio data)
 //! #   let mut count = 0; // For automatic unit tests, we’ll spin a few times
 //!     let drained = Rc::new(atomic::AtomicBool::new(false));
 //!     loop {
