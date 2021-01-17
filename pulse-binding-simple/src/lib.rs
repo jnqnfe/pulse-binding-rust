@@ -53,11 +53,11 @@
 //! #
 //! use psimple::Simple;
 //! use pulse::stream::Direction;
-//! use pulse::sample;
+//! use pulse::sample::{Spec, Format};
 //!
 //! # fn main() {
-//! let spec = sample::Spec {
-//!     format: sample::SAMPLE_S16NE,
+//! let spec = Spec {
+//!     format: Format::S16NE,
 //!     channels: 2,
 //!     rate: 44100,
 //! };

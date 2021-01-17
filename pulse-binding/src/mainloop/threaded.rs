@@ -237,12 +237,13 @@
 //! use pulse::mainloop::threaded::Mainloop;
 //! use pulse::context::{Context, FlagSet as ContextFlagSet};
 //! use pulse::stream::{Stream, FlagSet as StreamFlagSet};
+//! use pulse::sample::{Spec, Format};
 //! use pulse::proplist::Proplist;
 //! use pulse::mainloop::api::Mainloop as MainloopTrait; //Needs to be in scope
 //!
 //! fn main() {
-//!     let spec = pulse::sample::Spec {
-//!         format: pulse::sample::SAMPLE_S16NE,
+//!     let spec = Spec {
+//!         format: Format::S16NE,
 //!         channels: 2,
 //!         rate: 44100,
 //!     };
