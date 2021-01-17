@@ -145,7 +145,7 @@
 //!
 //!     // Our main logic (to output a stream of audio data)
 //! #   let mut count = 0; // For automatic unit tests, we’ll spin a few times
-//!     let drained = Rc::new(atomic::AtomicBool::new(false));
+//!     let drained = Rc::new(RefCell::new(false));
 //!     loop {
 //!         match mainloop.borrow_mut().iterate(false) {
 //!             IterateResult::Quit(_) |
@@ -166,10 +166,10 @@
 //!         let _o = {
 //!             let drain_state_ref = Rc::clone(&drained);
 //!             stream.borrow_mut().drain(Some(Box::new(move |_success: bool| {
-//!                 drain_state_ref.store(true, atomic::Ordering::Relaxed);
+//!                 *drain_state_ref.borrow_mut() = true;
 //!             })))
 //!         };
-//!         while !drained.compare_and_swap(true, false, atomic::Ordering::Relaxed) {
+//!         while *drained.borrow_mut() == false {
 //!             match mainloop.borrow_mut().iterate(false) {
 //!                 IterateResult::Quit(_) |
 //!                 IterateResult::Err(_) => {
@@ -179,6 +179,7 @@
 //!                 IterateResult::Success(_) => {},
 //!             }
 //!         }
+//!         *drained.borrow_mut() = false;
 //!
 //!         // Remember to break out of the loop once done writing all data (or whatever).
 //! #
