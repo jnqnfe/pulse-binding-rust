@@ -1,4 +1,4 @@
-# [unreleased]
+# 1.18.0 (January 30th, 2021)
 
  * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is
    too great a simplification to maintaining documentation to not implement immediately; the only

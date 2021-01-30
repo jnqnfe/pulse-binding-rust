@@ -1,11 +1,15 @@
-# [unreleased]
+# 2.23.0 (January 30th, 2021)
 
  * Implemented `std::error::Error` for `error::{Code, PAErr}`.
+ * Implemented `Debug` for `ListResult`.
  * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is
    too great a simplification to maintaining documentation to not implement immediately; the only
    negative is that links will be broken in locally generated documentation when built with an older
    Rust compiler than version 1.48.
+ * Minor documentation fixes.
  * Re-implemented list-callback handling (internal change only).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.17 to 1.18.
 
 # 2.22.0 (December 22nd, 2020)
 
@@ -19,6 +23,8 @@
    `version::library_version_is_too_old()`.
  * Tweaked version constants.
  * Deprecated `version::check_version()`.
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.16 to 1.17.
 
 # 2.21.0 (December 15th, 2020)
 

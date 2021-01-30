@@ -1,9 +1,14 @@
-# [unreleased]
+# 2.23.0 (January 30th, 2021)
 
  * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is
    too great a simplification to maintaining documentation to not implement immediately; the only
    negative is that links will be broken in locally generated documentation when built with an older
    Rust compiler than version 1.48.
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.20 to 2.23.
+    - `libpulse-sys`        from 1.16 to 1.18.
+
+Note: versions 2.21 and 2.22 skipped, used only for `libpulse-binding` crate changes.
 
 # 2.20.1 (December 15th, 2020)
 
@@ -25,7 +30,7 @@
     - `libpulse-sys`        from 1.15 to 1.16.
     - `libpulse-simple-sys` from 1.15 to 1.16.
 
-Note: versions 2.19 skipped, used only for `libpulse-binding` crate changes.
+Note: version 2.19 skipped, used only for `libpulse-binding` crate changes.
 
 # 2.18.1 (November 25th, 2020)
 
