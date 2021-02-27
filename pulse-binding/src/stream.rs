@@ -1226,6 +1226,8 @@ impl Stream {
     }
 
     /// Gets the number of bytes that may be read using [`peek()`](Self::peek).
+    ///
+    /// Returns `None` on error.
     pub fn readable_size(&self) -> Option<usize> {
         match unsafe { capi::pa_stream_readable_size(self.ptr) } {
             std::usize::MAX => None,
