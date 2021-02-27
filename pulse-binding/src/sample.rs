@@ -77,6 +77,10 @@ pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
 pub const RATE_MAX: u32 = capi::PA_RATE_MAX;
 
 /// Sample format.
+///
+/// Note, native-endian (endian-independent) associated constants are available on this type which
+/// should be preferred over direct use of the endian-specific variants, for improved flexibility
+/// and avoidance of mistakes.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
