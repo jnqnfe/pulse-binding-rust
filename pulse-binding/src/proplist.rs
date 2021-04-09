@@ -310,8 +310,10 @@ impl Proplist {
 
     /// Gets the value for the specified key.
     ///
-    /// For string entries, the value store will be NUL-terminated. The caller should make a copy of
-    /// the data before the property list is accessed again.
+    /// For string entries, the value store will be NUL-terminated.
+    ///
+    /// The caller should make a copy of the data before any subsequent modification or destruction
+    /// of the property list.
     ///
     /// Returns a slice formed from the data pointer and the length of the data.
     /// Returns `None` if key does not exist.
