@@ -1,3 +1,7 @@
+# 2.23.1 (April 9th, 2021)
+
+ * Minor documentation tweaks.
+
 # 2.23.0 (January 30th, 2021)
 
  * Implemented `std::error::Error` for `error::{Code, PAErr}`.
