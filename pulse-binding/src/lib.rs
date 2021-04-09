@@ -76,6 +76,15 @@
 //! The included main loop implementation is also not thread safe. Take care to make sure event
 //! objects are not manipulated when any other code is using the main loop.
 //!
+//! Note that some objects implement the `Sync` trait, despite not truly being thread-safe. The
+//! reason for this is that when the threaded mainloop is used (the most common one), its lock
+//! provides the thread safety, and when such types are used behind that lock, they are then `Sync`
+//! safe. If you use the standard mainloop though, then you would have to add an `Arc` wrapper to
+//! make them safe. Not having `Sync` would force the threaded mainloop case to require unnecessary
+//! and undesirable `Arc` wrappers. This is an unfortunate compromise resulting from the
+//! complication of needing to support multiple mainloop designs, and the threaded mainloop design
+//! being built upon a non-wrapper lock that is not typical of Rust code.
+//!
 //! ## Logging
 //!
 //! You can configure different logging parameters for the PulseAudio client libraries. The
