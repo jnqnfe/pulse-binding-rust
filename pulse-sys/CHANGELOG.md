@@ -1,3 +1,7 @@
+# 1.19.0 (July 28th, 2021)
+
+ * Added PA v15 support (API additions).
+
 # 1.18.0 (January 30th, 2021)
 
  * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is

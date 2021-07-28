@@ -1,3 +1,10 @@
+# 2.24.0 (July 28th, 2021)
+
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.23 to 2.24.
+    - `libpulse-sys`        from 1.18 to 1.19.
+    - `libpulse-simple-sys` from 1.16 to 1.19.
+
 # 2.23.0 (January 30th, 2021)
 
  * Now using intra-doc-linking introduced in Rust 1.48. The MSRV remains unchanged at 1.41; this is

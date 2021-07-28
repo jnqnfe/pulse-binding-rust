@@ -1,3 +1,10 @@
+# 1.19.0 (July 28th, 2021)
+
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.16 to 1.19.
+
+Note: versions 1.17 & 1.18 skipped, used only for main `libpulse-sys` crate changes.
+
 # 1.16.1 (December 15th, 2020)
 
  * Fixed mistake made trying to conditionally enable `#[cfg(doc)]` for docs.rs.

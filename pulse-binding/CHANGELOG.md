@@ -1,3 +1,11 @@
+# 1.19.0 (July 28th, 2021)
+
+ * Added PA v15 support (API additions):
+    - Added `Introspector::send_message_to_object()`.
+    - Added `proplist::properties::{CONTEXT_FORCE_DISABLE_SHM, BLUETOOTH_CODEC}`.
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.18 to 1.19.
+
 # 2.23.1 (April 9th, 2021)
 
  * Minor documentation tweaks.
