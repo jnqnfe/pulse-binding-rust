@@ -26,6 +26,7 @@ default = ["pa_v8"]
 
 # PA version compatibility selection
 # See the overall project `COMPATIBILITY.md` file for explanation.
+pa_v15 = ["pa_v14", "libpulse-sys/pa_v15"]
 pa_v14 = ["pa_v13", "libpulse-sys/pa_v14"]
 pa_v13 = ["pa_v12", "libpulse-sys/pa_v13"]
 pa_v12 = ["pa_v8",  "libpulse-sys/pa_v12"]

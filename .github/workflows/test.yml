@@ -33,7 +33,7 @@ jobs:
             experimental: true
 
     env:
-      #TODO: add pa_v14 once environment supports it
+      #TODO: add pa_v14 and pa_v15 once environment supports it
       PA_BUILD_VERSIONS: "pa_v13 pa_v12 pa_v8 pa_v6 pa_v5 minimum"
       PA_TEST_VERSION: pa_v13
 

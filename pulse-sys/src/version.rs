@@ -70,9 +70,20 @@ pub enum Compatibility {
     V13Plus,
     /// Support for PA version 14+ selected.
     V14Plus,
+    /// Support for PA version 15+ selected.
+    V15Plus,
 }
 
 // Latest
+#[cfg(any(feature = "pa_v15", all(doc, not(feature = "pa_v5"))))]
+mod actual {
+    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V15Plus;
+    pub const TARGET_VERSION_STRING: &str = "15.0.0";
+    pub const TARGET_VERSION: (u8, u8) = (15, 0);
+    pub const PA_PROTOCOL_VERSION: u16 = 35;
+}
+
+// Pre-v15
 #[cfg(any(feature = "pa_v14", all(doc, not(feature = "pa_v5"))))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V14Plus;

@@ -16,7 +16,9 @@ fn main() {
         { "pulse" }
     };
     let min_version = {
-        #[cfg(feature = "pa_v14")]
+        #[cfg(feature = "pa_v15")]
+        { "15.0" }
+        #[cfg(all(feature = "pa_v14", not(feature = "pa_v15")))]
         { "14.0" }
         #[cfg(all(feature = "pa_v13", not(feature = "pa_v14")))]
         { "13.0" }
