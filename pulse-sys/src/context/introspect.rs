@@ -335,6 +335,10 @@ pub struct pa_sample_info {
 
 pub type pa_sample_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_sample_info, eol: i32, userdata: *mut c_void)>;
 
+#[cfg(any(doc, feature = "pa_v15"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+pub type pa_context_string_cb_t = Option<extern "C" fn(c: *mut pa_context, success: i32, response: *const c_char, userdata: *mut c_void)>;
+
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_context_get_sink_info_by_name(c: *mut pa_context, name: *const c_char, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;
@@ -367,6 +371,10 @@ extern "C" {
     pub fn pa_context_get_module_info_list(c: *mut pa_context, cb: pa_module_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_context_load_module(c: *mut pa_context, name: *const c_char, argument: *const c_char, cb: pa_context_index_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_context_unload_module(c: *mut pa_context, idx: u32, cb: pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
+
+    #[cfg(any(doc, feature = "pa_v15"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+    pub fn pa_context_send_message_to_object(c: *mut pa_context, recipient_name: *const c_char, message: *const c_char, message_parameters: *const c_char, cb: pa_context_string_cb_t, userdata: *mut c_void) -> *mut pa_operation;
 
     pub fn pa_context_get_client_info(c: *mut pa_context, idx: u32, cb: pa_client_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_context_get_client_info_list(c: *mut pa_context, cb: pa_client_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;

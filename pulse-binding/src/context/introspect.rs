@@ -172,12 +172,20 @@
 //! Server modules can be remotely loaded and unloaded using [`Introspector::load_module()`] and
 //! [`Introspector::unload_module()`].
 //!
+//! # Messages
+//!
+//! Server objects like sinks, sink inputs or modules can register a message handler to communicate
+//! with clients. A message can be sent to a named message handler using
+//! [`Introspector::send_message_to_object()`].
+//!
 //! # Clients
 //!
 //! The only operation supported on clients is the possibility of kicking them off the server using
 //! [`Introspector::kill_client()`].
 
 use std::os::raw::c_void;
+#[cfg(any(doc, feature = "pa_v15"))]
+use std::os::raw::c_char;
 use std::ffi::{CStr, CString};
 use std::borrow::Cow;
 use std::ptr::null_mut;
@@ -1275,6 +1283,63 @@ fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
         let mut callback = get_su_callback::<dyn FnMut(u32)>(userdata);
         (callback)(index);
+    });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Messages
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+impl Introspector {
+    /// Send a message to an object that registered a message handler.
+    ///
+    /// The callback must accept two params, firstly a boolean indicating success if `true`, and
+    /// secondly, the response string. The response string may possibly not be given if
+    /// unsuccessful.
+    ///
+    /// For more information see the [messaging_api.txt] documentation in the PulseAudio repository.
+    ///
+    /// [messaging_api.txt]: https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/blob/master/doc/messaging_api.txt
+    #[cfg(any(doc, feature = "pa_v15"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+    pub fn send_message_to_object<F>(&mut self, recipient_name: &str, message: &str,
+        message_parameters: &str, callback: F) -> Operation<dyn FnMut(bool, Option<String>)>
+        where F: FnMut(bool, Option<String>) + 'static
+    {
+        // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
+        // as_ptr() giving dangling pointers!
+        let c_recipient_name = CString::new(recipient_name.clone()).unwrap();
+        let c_message = CString::new(message.clone()).unwrap();
+        let c_message_parameters = CString::new(message_parameters.clone()).unwrap();
+
+        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool, Option<String>)>(Box::new(callback));
+        let ptr = unsafe { capi::pa_context_send_message_to_object(self.context,
+            c_recipient_name.as_ptr(), c_message.as_ptr(), c_message_parameters.as_ptr(),
+            Some(send_message_to_object_cb_proxy), cb_data) };
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool, Option<String>)>)
+    }
+}
+
+/// Proxy for send message to object callbacks.
+///
+/// Warning: This is for single-use cases only! It destroys the actual closure callback.
+#[cfg(any(doc, feature = "pa_v15"))]
+extern "C"
+fn send_message_to_object_cb_proxy(_: *mut ContextInternal, success: i32, response: *const c_char,
+    userdata: *mut c_void)
+{
+    let success_actual = match success { 0 => false, _ => true };
+    let _ = std::panic::catch_unwind(|| {
+        let r = match response.is_null() {
+            true => None,
+            false => {
+                let tmp = unsafe { CStr::from_ptr(response) };
+                Some(tmp.to_string_lossy().into_owned())
+            },
+        };
+        // Note, destroys closure callback after use - restoring outer box means it gets dropped
+        let mut callback = get_su_callback::<dyn FnMut(bool, Option<String>)>(userdata);
+        (callback)(success_actual, r);
     });
 }
 

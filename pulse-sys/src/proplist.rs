@@ -291,6 +291,18 @@ pub const PA_PROP_FORMAT_CHANNELS: &str = "format.channels";
 /// For PCM formats: the channel map of the stream as returned by `pa_channel_map_snprint`.
 pub const PA_PROP_FORMAT_CHANNEL_MAP: &str = "format.channel_map";
 
+/// For context: whether to forcefully disable data transfer via POSIX or memfd shared memory.
+/// This property overrides any other client configuration which would otherwise enable SHM
+/// communication channels.
+#[cfg(any(doc, feature = "pa_v15"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+pub const PA_PROP_CONTEXT_FORCE_DISABLE_SHM: &str = "context.force.disable.shm";
+
+/// For a bluez device: the currently selected codec name.
+#[cfg(any(doc, feature = "pa_v15"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+pub const PA_PROP_BLUETOOTH_CODEC: &str = "bluetooth.codec";
+
 /// A property list object. Basically a dictionary with ASCII strings as keys and arbitrary data as
 /// values.
 #[repr(C)] pub struct pa_proplist { _private: [u8; 0] }

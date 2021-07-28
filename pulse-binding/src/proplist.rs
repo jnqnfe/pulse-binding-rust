@@ -97,6 +97,12 @@ pub mod properties {
     pub use capi::PA_PROP_MODULE_VERSION as MODULE_VERSION;
     pub use capi::PA_PROP_FORMAT_RATE as FORMAT_RATE;
     pub use capi::PA_PROP_FORMAT_CHANNELS as FORMAT_CHANNELS;
+    #[cfg(any(doc, feature = "pa_v15"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+    pub use capi::PA_PROP_CONTEXT_FORCE_DISABLE_SHM as CONTEXT_FORCE_DISABLE_SHM;
+    #[cfg(any(doc, feature = "pa_v15"))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
+    pub use capi::PA_PROP_BLUETOOTH_CODEC as BLUETOOTH_CODEC;
 
     /* These need defining here, rather than `pub use`, in order to correctly link to other things
      * in their doc comments */
