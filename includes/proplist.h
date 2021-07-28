@@ -267,6 +267,12 @@ PA_C_DECL_BEGIN
 /** For PCM formats: the channel map of the stream as returned by pa_channel_map_snprint() \since 1.0 */
 #define PA_PROP_FORMAT_CHANNEL_MAP             "format.channel_map"
 
+/** For context: whether to forcefully disable data transfer via POSIX or memfd shared memory. This property overrides any other client configuration which would otherwise enable SHM communication channels. \since 15.0 */
+#define PA_PROP_CONTEXT_FORCE_DISABLE_SHM      "context.force.disable.shm"
+
+/** For a bluez device: the currently selected codec name. \since 15.0 */
+#define PA_PROP_BLUETOOTH_CODEC                "bluetooth.codec"
+
 /** A property list object. Basically a dictionary with ASCII strings
  * as keys and arbitrary data as values. \since 0.9.11 */
 typedef struct pa_proplist pa_proplist;
@@ -316,7 +322,8 @@ const char *pa_proplist_gets(const pa_proplist *p, const char *key);
 /** Store the value for the specified key in \a data. Will store a
  * NUL-terminated string for string entries. The \a data pointer returned will
  * point to an internally allocated buffer. The caller should make a
- * copy of the data before the property list is accessed again.
+ * copy of the data before any subsequent modification or destruction
+ * of the property list.
  * Returns zero on success, negative on error. \since 0.9.11 */
 int pa_proplist_get(const pa_proplist *p, const char *key, const void **data, size_t *nbytes);
 
