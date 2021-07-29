@@ -122,7 +122,7 @@ pub unsafe fn pa_cvolume_mute(a: *mut pa_cvolume, n: u32) -> *mut pa_cvolume {
 }
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_cvolume_equal(a: *const pa_cvolume, b: *const pa_cvolume) -> i32;
     pub fn pa_cvolume_init(a: *mut pa_cvolume) -> *mut pa_cvolume;

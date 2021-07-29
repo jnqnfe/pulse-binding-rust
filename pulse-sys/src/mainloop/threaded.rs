@@ -23,7 +23,7 @@ use crate::mainloop::api::pa_mainloop_api;
 #[repr(C)] pub struct pa_threaded_mainloop { _private: [u8; 0] }
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_threaded_mainloop_new() -> *mut pa_threaded_mainloop;
     pub fn pa_threaded_mainloop_free(m: *mut pa_threaded_mainloop);

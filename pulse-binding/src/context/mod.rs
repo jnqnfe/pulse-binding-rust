@@ -173,10 +173,10 @@ impl From<capi::pa_context_state_t> for State {
 impl State {
     /// Checks if the passed state is one of the connected states (returns `true` if so).
     pub fn is_good(self) -> bool {
-        self == State::Connecting ||
-        self == State::Authorizing ||
-        self == State::SettingName ||
-        self == State::Ready
+        self == State::Connecting
+            || self == State::Authorizing
+            || self == State::SettingName
+            || self == State::Ready
     }
 }
 
@@ -226,8 +226,8 @@ impl Context {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        let ptr = unsafe { capi::pa_context_new(mainloop.inner().get_api().as_ref(),
-            c_name.as_ptr()) };
+        let ptr =
+            unsafe { capi::pa_context_new(mainloop.inner().get_api().as_ref(), c_name.as_ptr()) };
         Self::create(ptr)
     }
 
@@ -363,7 +363,8 @@ impl Context {
         where F: FnMut() + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut()>(Box::new(callback));
-        let ptr = unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
+        let ptr =
+            unsafe { capi::pa_context_drain(self.ptr, Some(notify_cb_proxy_single), cb_data) };
         // NOTE: this function is unique in NEEDING the `Option` wrapper on the return value, since
         // a null pointer may be returned if there is nothing to drain! Do not remove it!
         match ptr.is_null() {
@@ -384,7 +385,8 @@ impl Context {
         where F: FnMut(bool) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
-        let ptr = unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
+        let ptr =
+            unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
@@ -571,8 +573,9 @@ impl Context {
         let to_save = events::timer::EventCb::new(Some(wrapper_cb));
         let (cb_fn, cb_data) = to_save.get_capi_params(events::timer::event_cb_proxy);
 
-        let ptr = unsafe { capi::pa_context_rttime_new(self.ptr, (time.0).0,
-            std::mem::transmute(cb_fn), cb_data) };
+        let ptr = unsafe {
+            capi::pa_context_rttime_new(self.ptr, (time.0).0, std::mem::transmute(cb_fn), cb_data)
+        };
         match ptr.is_null() {
             false => Some(TimeEvent::<T::MI>::from_raw(ptr, mainloop.inner(), to_save)),
             true => None,

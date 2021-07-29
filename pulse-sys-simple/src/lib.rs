@@ -26,8 +26,10 @@
 //! [`libpulse-simple-binding`]: https://docs.rs/libpulse-simple-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 
-#![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
-       html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
+#![doc(
+    html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
+    html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico"
+)]
 
 #![allow(non_camel_case_types, non_snake_case)]
 
@@ -41,7 +43,7 @@ use std::os::raw::{c_char, c_void};
 #[repr(C)] pub struct pa_simple { _private: [u8; 0] }
 
 #[rustfmt::skip]
-#[link(name="pulse-simple")]
+#[link(name = "pulse-simple")]
 extern "C" {
     pub fn pa_simple_new(server: *const c_char, name: *const c_char, dir: pulse::stream::pa_stream_direction_t, dev: *const c_char, stream_name: *const c_char, ss: *const pulse::sample::pa_sample_spec, map: *const pulse::channelmap::pa_channel_map, attr: *const pulse::def::pa_buffer_attr, error: *mut i32) -> *mut pa_simple;
     pub fn pa_simple_free(s: *mut pa_simple);

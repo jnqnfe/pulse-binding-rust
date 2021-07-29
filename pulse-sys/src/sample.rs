@@ -141,7 +141,7 @@ pub const PA_SAMPLE_SPEC_SNPRINT_MAX: usize = 32;
 pub const PA_BYTES_SNPRINT_MAX: usize = 11;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_bytes_per_second(spec: *const pa_sample_spec) -> usize;
     pub fn pa_frame_size(spec: *const pa_sample_spec) -> usize;

@@ -57,7 +57,10 @@ impl<'a> Info<'a> {
                     false => Some(CStr::from_ptr(src.device).to_string_lossy()),
                     true => None,
                 },
-                mute: match src.mute { 0 => false, _ => true },
+                mute: match src.mute {
+                    0 => false,
+                    _ => true,
+                },
             }
         }
     }

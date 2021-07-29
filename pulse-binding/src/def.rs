@@ -441,8 +441,7 @@ impl SinkState {
     /// Checks if sink is playing: running or idle.
     #[inline]
     pub fn is_opened(self) -> bool {
-        self == SinkState::Running ||
-        self == SinkState::Idle
+        self == SinkState::Running || self == SinkState::Idle
     }
 
     /// Checks if sink is running.
@@ -588,8 +587,7 @@ impl SourceState {
     /// Checks if source is recording: running or idle.
     #[inline]
     pub fn is_opened(self) -> bool {
-        self == SourceState::Running ||
-        self == SourceState::Idle
+        self == SourceState::Running || self == SourceState::Idle
     }
 
     /// Checks if source is running.

@@ -298,18 +298,14 @@ impl Mainloop {
         }
         let api_ptr = unsafe { capi::pa_mainloop_get_api(ptr) };
         assert!(!api_ptr.is_null());
-        Some(
-            Self {
-                _inner: Rc::new(
-                    MainloopInner::<MainloopInternal> {
-                        ptr: ptr,
-                        api: unsafe { std::mem::transmute(api_ptr) },
-                        dropfn: MainloopInner::<MainloopInternal>::drop_actual,
-                        supports_rtclock: true,
-                    }
-                ),
-            }
-        )
+        Some(Self {
+            _inner: Rc::new(MainloopInner::<MainloopInternal> {
+                ptr: ptr,
+                api: unsafe { std::mem::transmute(api_ptr) },
+                dropfn: MainloopInner::<MainloopInternal>::drop_actual,
+                supports_rtclock: true,
+            }),
+        })
     }
 
     /// Prepares for a single iteration of the main loop.
@@ -330,11 +326,11 @@ impl Mainloop {
             None => -1,
             // This is just in case we ever changed `MicroSeconds` to hold unsigned values
             #[allow(unused_comparisons)]
-            Some(MicroSeconds(i)) if i < 0 => { unreachable!(); },
+            Some(MicroSeconds(i)) if i < 0 => unreachable!(),
             // Check value is no larger than i32::MAX considering API takes an i32
             Some(MicroSeconds(i)) if i <= std::i32::MAX as u64 => i as i32,
             // If larger, we must error
-            _ => { return Err((ErrCode::TooLarge).into()); },
+            _ => return Err((ErrCode::TooLarge).into()),
         };
         match unsafe { capi::pa_mainloop_prepare((*self._inner).ptr, t) } {
             0 => Ok(()),

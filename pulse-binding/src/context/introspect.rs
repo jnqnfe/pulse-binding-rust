@@ -61,11 +61,10 @@
 //! index and a name associated with it. As such, there are three ways to get access to them:
 //!
 //! * By index: [`Introspector::get_sink_info_by_index()`],
-//!             [`Introspector::get_source_info_by_index()`]
-//! * By name:  [`Introspector::get_sink_info_by_name()`],
-//!             [`Introspector::get_source_info_by_name()`]
-//! * All:      [`Introspector::get_sink_info_list()`],
-//!             [`Introspector::get_source_info_list()`]
+//!   [`Introspector::get_source_info_by_index()`]
+//! * By name: [`Introspector::get_sink_info_by_name()`],
+//!   [`Introspector::get_source_info_by_name()`]
+//! * All: [`Introspector::get_sink_info_list()`], [`Introspector::get_source_info_list()`]
 //!
 //! All three methods use the same callback and will provide a [`SinkInfo`] or [`SourceInfo`]
 //! structure.
@@ -78,10 +77,9 @@
 //! Sink inputs and source outputs only have an index to identify them. As such, there are only two
 //! ways to get information about them:
 //!
-//! * By index: [`Introspector::get_sink_input_info()`],
-//!             [`Introspector::get_source_output_info()`]
-//! * All:      [`Introspector::get_sink_input_info_list()`],
-//!             [`Introspector::get_source_output_info_list()`]
+//! * By index: [`Introspector::get_sink_input_info()`], [`Introspector::get_source_output_info()`]
+//! * All: [`Introspector::get_sink_input_info_list()`],
+//!   [`Introspector::get_source_output_info_list()`]
 //!
 //! The structure returned is the [`SinkInputInfo`] or [`SourceOutputInfo`] structure.
 //!
@@ -91,8 +89,8 @@
 //! the sample cache list:
 //!
 //! * By index: [`Introspector::get_sample_info_by_index()`]
-//! * By name:  [`Introspector::get_sample_info_by_name()`]
-//! * All:      [`Introspector::get_sample_info_list()`]
+//! * By name: [`Introspector::get_sample_info_by_name()`]
+//! * All: [`Introspector::get_sample_info_list()`]
 //!
 //! Note that this only retrieves information about the sample, not the sample data itself.
 //!
@@ -121,16 +119,16 @@
 //! identifying them:
 //!
 //! * By index: [`Introspector::set_sink_volume_by_index()`],
-//!             [`Introspector::set_source_volume_by_index()`]
-//! * By name:  [`Introspector::set_sink_volume_by_name()`],
-//!             [`Introspector::set_source_volume_by_name()`]
+//!   [`Introspector::set_source_volume_by_index()`]
+//! * By name: [`Introspector::set_sink_volume_by_name()`],
+//!   [`Introspector::set_source_volume_by_name()`]
 //!
 //! It is also possible to mute a sink or source:
 //!
 //! * By index: [`Introspector::set_sink_mute_by_index()`],
-//!             [`Introspector::set_source_mute_by_index()`]
-//! * By name:  [`Introspector::set_sink_mute_by_name()`],
-//!             [`Introspector::set_source_mute_by_name()`]
+//!   [`Introspector::set_source_mute_by_index()`]
+//! * By name: [`Introspector::set_sink_mute_by_name()`],
+//!   [`Introspector::set_source_mute_by_name()`]
 //!
 //! # Sink Inputs and Source Outputs
 //!
@@ -424,7 +422,10 @@ impl<'a> SinkInfo<'a> {
                     i => Some(i),
                 },
                 volume: src.volume.into(),
-                mute: match src.mute { 0 => false, _ => true },
+                mute: match src.mute {
+                    0 => false,
+                    _ => true,
+                },
                 monitor_source: src.monitor_source,
                 monitor_source_name: match src.monitor_source_name.is_null() {
                     false => Some(CStr::from_ptr(src.monitor_source_name).to_string_lossy()),
@@ -822,7 +823,10 @@ impl<'a> SourceInfo<'a> {
                     i => Some(i),
                 },
                 volume: src.volume.into(),
-                mute: match src.mute { 0 => false, _ => true },
+                mute: match src.mute {
+                    0 => false,
+                    _ => true,
+                },
                 monitor_of_sink: match src.monitor_of_sink {
                     def::INVALID_INDEX => None,
                     i => Some(i),
@@ -1328,7 +1332,10 @@ extern "C"
 fn send_message_to_object_cb_proxy(_: *mut ContextInternal, success: i32, response: *const c_char,
     userdata: *mut c_void)
 {
-    let success_actual = match success { 0 => false, _ => true };
+    let success_actual = match success {
+        0 => false,
+        _ => true,
+    };
     let _ = std::panic::catch_unwind(|| {
         let r = match response.is_null() {
             true => None,
@@ -1535,7 +1542,10 @@ impl<'a> CardProfileInfo2<'a> {
                 n_sinks: src.n_sinks,
                 n_sources: src.n_sources,
                 priority: src.priority,
-                available: match src.available { 0 => false, _ => true },
+                available: match src.available {
+                    0 => false,
+                    _ => true,
+                },
             }
         }
     }
@@ -1616,7 +1626,8 @@ impl<'a> CardPortInfo<'a> {
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
         #[cfg(any(doc, feature = "pa_v5"))]
         for i in 0..src.n_profiles as isize {
-            let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
+            let indexed_ptr =
+                unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
                 profiles_vec.push(CardProfileInfo2::new_from_raw(indexed_ptr));
             }
@@ -1713,7 +1724,8 @@ impl<'a> CardInfo<'a> {
         assert!(src.n_profiles == 0 || !src.profiles2.is_null());
         #[cfg(any(doc, feature = "pa_v5"))]
         for i in 0..src.n_profiles as isize {
-            let indexed_ptr = unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
+            let indexed_ptr =
+                unsafe { (*src.profiles2.offset(i)) as *mut CardProfileInfo2Internal };
             if !indexed_ptr.is_null() {
                 profiles_vec.push(CardProfileInfo2::new_from_raw(indexed_ptr));
             }
@@ -1953,11 +1965,23 @@ impl<'a> SinkInputInfo<'a> {
                     false => Some(CStr::from_ptr(src.driver).to_string_lossy()),
                     true => None,
                 },
-                mute: match src.mute { 0 => false, _ => true },
+                mute: match src.mute {
+                    0 => false,
+                    _ => true,
+                },
                 proplist: Proplist::from_raw_weak(src.proplist),
-                corked: match src.corked { 0 => false, _ => true },
-                has_volume: match src.has_volume { 0 => false, _ => true },
-                volume_writable: match src.volume_writable { 0 => false, _ => true },
+                corked: match src.corked {
+                    0 => false,
+                    _ => true,
+                },
+                has_volume: match src.has_volume {
+                    0 => false,
+                    _ => true,
+                },
+                volume_writable: match src.volume_writable {
+                    0 => false,
+                    _ => true,
+                },
                 format: format::Info::from_raw_weak(src.format as *mut format::InfoInternal),
             }
         }
@@ -2170,11 +2194,23 @@ impl<'a> SourceOutputInfo<'a> {
                     true => None,
                 },
                 proplist: Proplist::from_raw_weak(src.proplist),
-                corked: match src.corked { 0 => false, _ => true },
+                corked: match src.corked {
+                    0 => false,
+                    _ => true,
+                },
                 volume: src.volume.into(),
-                mute: match src.mute { 0 => false, _ => true },
-                has_volume: match src.has_volume { 0 => false, _ => true },
-                volume_writable: match src.volume_writable { 0 => false, _ => true },
+                mute: match src.mute {
+                    0 => false,
+                    _ => true,
+                },
+                has_volume: match src.has_volume {
+                    0 => false,
+                    _ => true,
+                },
+                volume_writable: match src.volume_writable {
+                    0 => false,
+                    _ => true,
+                },
                 format: format::Info::from_raw_weak(src.format as *mut format::InfoInternal),
             }
         }
@@ -2313,8 +2349,8 @@ impl Introspector {
         where F: FnMut(&StatInfo) + 'static
     {
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(&StatInfo)>(Box::new(callback));
-        let ptr = unsafe { capi::pa_context_stat(self.context, Some(get_stat_info_cb_proxy),
-            cb_data) };
+        let ptr =
+            unsafe { capi::pa_context_stat(self.context, Some(get_stat_info_cb_proxy), cb_data) };
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(&StatInfo)>)
     }
 }
@@ -2380,7 +2416,10 @@ impl<'a> SampleInfo<'a> {
                 channel_map: src.channel_map.into(),
                 duration: MicroSeconds(src.duration),
                 bytes: src.bytes,
-                lazy: match src.lazy { 0 => false, _ => true },
+                lazy: match src.lazy {
+                    0 => false,
+                    _ => true,
+                },
                 filename: match src.filename.is_null() {
                     false => Some(CStr::from_ptr(src.filename).to_string_lossy()),
                     true => None,

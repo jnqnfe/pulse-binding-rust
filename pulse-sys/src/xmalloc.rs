@@ -19,31 +19,31 @@ use std::os::raw::{c_char, c_void};
 #[inline(always)]
 pub unsafe fn pa_xnew(n: usize, k: usize) -> *mut c_void {
     assert!(n < (std::i32::MAX as usize / k));
-    pa_xmalloc(n*k)
+    pa_xmalloc(n * k)
 }
 
 /// Same as [`pa_xnew()`] but sets the memory to zero.
 #[inline(always)]
 pub unsafe fn pa_xnew0(n: usize, k: usize) -> *mut c_void {
     assert!(n < (std::i32::MAX as usize / k));
-    pa_xmalloc0(n*k)
+    pa_xmalloc0(n * k)
 }
 
 /// Same as [`pa_xnew()`] but duplicates the specified data.
 #[inline(always)]
 pub unsafe fn pa_xnewdup(p: *const c_void, n: usize, k: usize) -> *mut c_void {
     assert!(n < (std::i32::MAX as usize / k));
-    pa_xmemdup(p, n*k)
+    pa_xmemdup(p, n * k)
 }
 
 /// Reallocates `n` new structures of the specified type.
 #[inline(always)]
 pub unsafe fn pa_xrenew(p: *mut c_void, n: usize, k: usize) -> *mut c_void {
     assert!(n < (std::i32::MAX as usize / k));
-    pa_xrealloc(p, n*k)
+    pa_xrealloc(p, n * k)
 }
 
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     /// Allocates the specified number of bytes, just like `malloc()` does.
     /// However, in case of OOM, terminate.

@@ -37,7 +37,7 @@ pub type pa_ext_stream_restore_read_cb_t = Option<extern "C" fn(c: *mut pa_conte
 pub type pa_ext_stream_restore_subscribe_cb_t = Option<extern "C" fn(c: *mut pa_context, userdata: *mut c_void)>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_ext_stream_restore_test(c: *mut pa_context, cb: pa_ext_stream_restore_test_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_ext_stream_restore_read(c: *mut pa_context, cb: pa_ext_stream_restore_read_cb_t, userdata: *mut c_void) -> *mut pa_operation;

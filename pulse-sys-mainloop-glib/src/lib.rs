@@ -26,8 +26,10 @@
 //! [`libpulse-glib-binding`]: https://docs.rs/libpulse-glib-binding
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 
-#![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
-       html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
+#![doc(
+    html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
+    html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico"
+)]
 
 #![allow(non_camel_case_types, non_snake_case)]
 
@@ -43,7 +45,7 @@ use pulse::mainloop::api::pa_mainloop_api;
 #[repr(C)] pub struct pa_glib_mainloop { _private: [u8; 0] }
 
 #[rustfmt::skip]
-#[link(name="pulse-mainloop-glib")]
+#[link(name = "pulse-mainloop-glib")]
 extern "C" {
     pub fn pa_glib_mainloop_new(c: *mut GMainContext) -> *mut pa_glib_mainloop;
     pub fn pa_glib_mainloop_free(g: *mut pa_glib_mainloop);

@@ -47,7 +47,8 @@ pub const PA_PROP_MEDIA_ICON: &str = "media.icon";
 pub const PA_PROP_MEDIA_ICON_NAME: &str = "media.icon_name";
 
 /// For streams: logic role of this media.
-/// One of the strings "video", "music", "game", "event", "phone", "animation", "production", "a11y", "test".
+/// One of the strings "video", "music", "game", "event", "phone", "animation", "production",
+/// "a11y", "test".
 pub const PA_PROP_MEDIA_ROLE: &str = "media.role";
 
 /// For streams: the name of a filter that is desired, e.g. "echo-cancel" or "equalizer-sink".
@@ -108,7 +109,8 @@ pub const PA_PROP_WINDOW_ID: &str = "window.id";
 /// image data.
 pub const PA_PROP_WINDOW_ICON: &str = "window.icon";
 
-/// For streams that belong to a window on the screen: an XDG icon name for the window. E.g. "totem".
+/// For streams that belong to a window on the screen: an XDG icon name for the window. E.g.
+/// "totem".
 pub const PA_PROP_WINDOW_ICON_NAME: &str = "window.icon_name";
 
 /// For streams that belong to a window on the screen: absolute horizontal window position on the
@@ -177,7 +179,8 @@ pub const PA_PROP_APPLICATION_ICON_NAME: &str = "application.icon_name";
 /// For clients/streams: application language if applicable, in standard POSIX format. E.g. "de_DE".
 pub const PA_PROP_APPLICATION_LANGUAGE: &str = "application.language";
 
-/// For clients/streams on UNIX: application process PID, an integer formatted as string. E.g. "4711".
+/// For clients/streams on UNIX: application process PID, an integer formatted as string. E.g.
+/// "4711".
 pub const PA_PROP_APPLICATION_PROCESS_ID: &str = "application.process.id";
 
 /// For clients/streams: application process name. E.g. "totem".
@@ -233,7 +236,8 @@ pub const PA_PROP_DEVICE_CLASS: &str = "device.class";
 /// "microphone", "headset", "headphone", "hands-free", "car", "hifi", "computer", "portable".
 pub const PA_PROP_DEVICE_FORM_FACTOR: &str = "device.form_factor";
 
-/// For devices: bus of the device if applicable. One of "isa", "pci", "usb", "firewire", "bluetooth".
+/// For devices: bus of the device if applicable. One of "isa", "pci", "usb", "firewire",
+/// "bluetooth".
 pub const PA_PROP_DEVICE_BUS: &str = "device.bus";
 
 /// For devices: icon for the device. A binary blob containing PNG image data.
@@ -331,7 +335,7 @@ pub const PA_UPDATE_MERGE:   pa_update_mode_t = pa_update_mode_t::Merge;
 pub const PA_UPDATE_REPLACE: pa_update_mode_t = pa_update_mode_t::Replace;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_proplist_new() -> *mut pa_proplist;
     pub fn pa_proplist_free(p: *mut pa_proplist);

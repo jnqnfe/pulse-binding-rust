@@ -322,10 +322,7 @@ impl From<capi::pa_channel_map> for Map {
 
 impl Default for Map {
     fn default() -> Self {
-        Self {
-            channels: 0,
-            map: [Position::Invalid; Self::CHANNELS_MAX as usize],
-        }
+        Self { channels: 0, map: [Position::Invalid; Self::CHANNELS_MAX as usize] }
     }
 }
 

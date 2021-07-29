@@ -732,10 +732,10 @@ impl SubAssign<MicroSeconds> for Duration {
 //    switch to that.
 //  - Although implementing for the set of { `u8`, `u16`, `u32`, `u64 } is very easy with a macro,
 //    and may avoid possible need for `as u32` for non-`u32` variables, it introduces ambiguity such
-//    that the compiler does not know which type the `2` should be in the example use case of
-//     `2 * MicroSeconds::SECOND` and so it goes with `i32`, and since we don't implement the ops
-//    for `i32`, the user thus gets an error, forcing them to write instead
-//    `2u32 * MicroSeconds::SECOND`.
+//    that the compiler does not know which type the `2` should be in the example use case of `2 *
+//    MicroSeconds::SECOND` and so it goes with `i32`, and since we don't implement the ops for
+//    `i32`, the user thus gets an error, forcing them to write instead `2u32 *
+//    MicroSeconds::SECOND`.
 //
 // NOTE 2: Addition and subtraction deliberately not implemented, since allowing arbitrary such
 // operations would allow mistakes to be made that the `MicroSeconds` type exists to prevent. I.e.

@@ -13,7 +13,7 @@
 
 //! Monotonic clock utilities.
 
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_rtclock_now() -> crate::sample::pa_usec_t;
 }

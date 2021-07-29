@@ -44,8 +44,7 @@ pub const PA_STREAM_TERMINATED:  pa_stream_state_t = pa_stream_state_t::Terminat
 /// Checks if the passed state is one of the connected states (returns `true` if so).
 #[inline(always)]
 pub fn pa_stream_is_good(state: pa_stream_state_t) -> bool {
-    state == pa_stream_state_t::Creating ||
-    state == pa_stream_state_t::Ready
+    state == pa_stream_state_t::Creating || state == pa_stream_state_t::Ready
 }
 
 /// Stream direction.
@@ -136,7 +135,7 @@ pub type pa_stream_notify_cb_t = Option<extern "C" fn(p: *mut pa_stream, userdat
 pub type pa_stream_event_cb_t = Option<extern "C" fn(p: *mut pa_stream, name: *const c_char, pl: *mut pa_proplist, userdata: *mut c_void)>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_stream_connect_upload(s: *mut pa_stream, length: usize) -> i32;
     pub fn pa_stream_finish_upload(s: *mut pa_stream) -> i32;

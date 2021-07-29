@@ -726,7 +726,10 @@ impl Stream {
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
         let ptr = unsafe { capi::pa_stream_new(ctx.ptr, c_name.as_ptr(), ss.as_ref(), p_map) };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        match ptr.is_null() {
+            false => Some(Self::from_raw(ptr)),
+            true => None,
+        }
     }
 
     /// Creates a new, unconnected stream with the specified name and sample type, and specify the
@@ -752,7 +755,10 @@ impl Stream {
             capi::pa_stream_new_with_proplist(ctx.ptr, c_name.as_ptr(), ss.as_ref(),
                 p_map, proplist.0.ptr)
         };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        match ptr.is_null() {
+            false => Some(Self::from_raw(ptr)),
+            true => None,
+        }
     }
 
     /// Creates a new, unconnected stream with the specified name, the set of formats this client
@@ -784,7 +790,10 @@ impl Stream {
             capi::pa_stream_new_extended(ctx.ptr, c_name.as_ptr(), info_ptrs.as_ptr(),
                 info_ptrs.len() as u32, proplist.0.ptr)
         };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        match ptr.is_null() {
+            false => Some(Self::from_raw(ptr)),
+            true => None,
+        }
     }
 
     /// Creates a new `Stream` from an existing [`StreamInternal`] pointer.
@@ -1023,16 +1032,13 @@ impl Stream {
         // (-1 as size_t) to signal this.
         let mut nbytes_tmp = nbytes.unwrap_or(std::usize::MAX);
         match unsafe { capi::pa_stream_begin_write(self.ptr, &mut data_ptr, &mut nbytes_tmp) } {
-            0 => {
-                match data_ptr.is_null() {
-                    true => Ok(None),
-                    false => {
-                        let slice = unsafe {
-                            std::slice::from_raw_parts_mut(data_ptr as *mut u8, nbytes_tmp)
-                        };
-                        Ok(Some(slice))
-                    },
-                }
+            0 => match data_ptr.is_null() {
+                true => Ok(None),
+                false => {
+                    let slice =
+                        unsafe { std::slice::from_raw_parts_mut(data_ptr as *mut u8, nbytes_tmp) };
+                    Ok(Some(slice))
+                },
             },
             e => Err(PAErr(e)),
         }
@@ -1186,10 +1192,14 @@ impl Stream {
         match unsafe { capi::pa_stream_peek(self.ptr, &mut data_ptr, &mut nbytes) } {
             0 => {
                 if data_ptr.is_null() {
-                    match nbytes { 0 => Ok(PeekResult::Empty), _ => Ok(PeekResult::Hole(nbytes)) }
+                    match nbytes {
+                        0 => Ok(PeekResult::Empty),
+                        _ => Ok(PeekResult::Hole(nbytes)),
+                    }
                 }
                 else {
-                    let slice = unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) };
+                    let slice =
+                        unsafe { std::slice::from_raw_parts(data_ptr as *const u8, nbytes) };
                     Ok(PeekResult::Data(slice))
                 }
             },
@@ -1532,9 +1542,7 @@ impl Stream {
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
-        let ptr = unsafe {
-            capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_fn, cb_data)
-        };
+        let ptr = unsafe { capi::pa_stream_set_name(self.ptr, c_name.as_ptr(), cb_fn, cb_data) };
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

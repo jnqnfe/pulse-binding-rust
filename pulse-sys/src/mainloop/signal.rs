@@ -26,7 +26,7 @@ pub type pa_signal_cb_t = Option<extern "C" fn(api: *const pa_mainloop_api, e: *
 pub type pa_signal_destroy_cb_t = Option<extern "C" fn(api: *const pa_mainloop_api, e: *mut pa_signal_event, userdata: *mut c_void)>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_signal_init(api: *const pa_mainloop_api) -> i32;
     pub fn pa_signal_done();

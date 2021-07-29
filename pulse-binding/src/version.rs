@@ -96,7 +96,8 @@ impl std::error::Error for Error {}
 impl std::fmt::Display for Error {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        format!("failed to parse PulseAudio system library version string '{}'", &self.ver_str).fmt(f)
+        format!("failed to parse PulseAudio system library version string '{}'", &self.ver_str)
+            .fmt(f)
     }
 }
 
@@ -144,15 +145,15 @@ pub fn get_library_version_numbers() -> Result<(u8, u8, u8), Error> {
 #[inline]
 fn pa_version_str_to_num(ver: &str) -> Result<(u8, u8, u8), ErrorKind> {
     let mut parts = ver.split('.');
-    let major: u8 = parts.next().ok_or(ErrorKind::MissingPart)?
-                         .parse().or(Err(ErrorKind::ParseIntError))?;
-    let minor: u8 = parts.next().ok_or(ErrorKind::MissingPart)?
-                         .parse().or(Err(ErrorKind::ParseIntError))?;
+    let major: u8 =
+        parts.next().ok_or(ErrorKind::MissingPart)?.parse().or(Err(ErrorKind::ParseIntError))?;
+    let minor: u8 =
+        parts.next().ok_or(ErrorKind::MissingPart)?.parse().or(Err(ErrorKind::ParseIntError))?;
     // Note, we want to be very strict about accepting only properly formatted values, as anything
     // otherwise suggests a wierd problem, thus we do parse the micro number even though it will
     // always be zero.
-    let micro: u8 = parts.next().ok_or(ErrorKind::MissingPart)?
-                         .parse().or(Err(ErrorKind::ParseIntError))?;
+    let micro: u8 =
+        parts.next().ok_or(ErrorKind::MissingPart)?.parse().or(Err(ErrorKind::ParseIntError))?;
     match parts.next().is_some() {
         true => Err(ErrorKind::ExtraParts), // Something isn’t right
         false => Ok((major, minor, micro)),
@@ -196,7 +197,8 @@ fn test_ver_str_to_num() {
 
 #[test]
 fn test_getting_pa_version() {
-    let actual_ver_str = unsafe { CStr::from_ptr(capi::pa_get_library_version()).to_string_lossy() };
+    let actual_ver_str =
+        unsafe { CStr::from_ptr(capi::pa_get_library_version()).to_string_lossy() };
     let (major, minor, micro) = get_library_version_numbers().unwrap();
     assert_eq!(format!("{}.{}.{}", major, minor, micro), actual_ver_str);
 }

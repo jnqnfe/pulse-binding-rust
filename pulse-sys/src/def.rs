@@ -109,8 +109,7 @@ pub const PA_SINK_SUSPENDED:     pa_sink_state_t = pa_sink_state_t::Suspended;
 /// Checks if state is playing, i.e. running or idle (returns `true` if so).
 #[inline(always)]
 pub fn pa_sink_is_opened(state: pa_sink_state_t) -> bool {
-    state == pa_sink_state_t::Running ||
-    state == pa_sink_state_t::Idle
+    state == pa_sink_state_t::Running || state == pa_sink_state_t::Idle
 }
 
 /// Checks if state is running (returns `true` if so).
@@ -155,8 +154,7 @@ pub const PA_SOURCE_SUSPENDED:     pa_source_state_t = pa_source_state_t::Suspen
 
 #[inline(always)]
 pub fn pa_source_is_opened(state: pa_source_state_t) -> bool {
-    state == pa_source_state_t::Running ||
-    state == pa_source_state_t::Idle
+    state == pa_source_state_t::Running || state == pa_source_state_t::Idle
 }
 
 #[inline(always)]

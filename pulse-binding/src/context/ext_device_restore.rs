@@ -50,11 +50,7 @@ impl Info {
             }
         }
 
-        Info {
-            dtype: src.dtype,
-            index: src.index,
-            formats: formats_vec,
-        }
+        Info { dtype: src.dtype, index: src.index, formats: formats_vec }
     }
 }
 

@@ -150,8 +150,10 @@
 //! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 //! [code repository]: https://github.com/jnqnfe/pulse-binding-rust
 
-#![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
-       html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
+#![doc(
+    html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
+    html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico"
+)]
 
 #![warn(missing_docs)]
 #![deny(bare_trait_objects)]

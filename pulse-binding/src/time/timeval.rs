@@ -19,10 +19,14 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, S
 use std::time::Duration;
 use super::{UnixTs, MonotonicTs, MicroSeconds, op_err};
 
-#[cfg(not(windows))] pub(crate) type TvSecs = libc::time_t;
-#[cfg(not(windows))] pub(crate) type TvUsecs = libc::suseconds_t;
-#[cfg(windows)] pub(crate) type TvSecs = libc::c_long;
-#[cfg(windows)] pub(crate) type TvUsecs = libc::c_long;
+#[cfg(not(windows))]
+pub(crate) type TvSecs = libc::time_t;
+#[cfg(not(windows))]
+pub(crate) type TvUsecs = libc::suseconds_t;
+#[cfg(windows)]
+pub(crate) type TvSecs = libc::c_long;
+#[cfg(windows)]
+pub(crate) type TvUsecs = libc::c_long;
 
 /// Wrapper for [`libc::timeval`], attaching various methods and trait implementations.
 #[repr(C)]

@@ -115,8 +115,9 @@ impl Context {
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
-        let ptr = unsafe { capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, vol.0,
-            cb_fn, cb_data) };
+        let ptr = unsafe {
+            capi::pa_context_play_sample(self.ptr, c_name.as_ptr(), p_dev, vol.0, cb_fn, cb_data)
+        };
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 

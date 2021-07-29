@@ -27,7 +27,7 @@ use crate::mainloop::api::pa_mainloop_api;
 pub type pa_poll_func = Option<extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32, userdata: *mut c_void) -> i32>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_mainloop_new() -> *mut pa_mainloop;
     pub fn pa_mainloop_free(m: *mut pa_mainloop);

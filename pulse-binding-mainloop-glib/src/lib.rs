@@ -48,8 +48,10 @@
 //! [PulseAudio]: https://en.wikipedia.org/wiki/PulseAudio
 //! [rename]: https://doc.rust-lang.org/1.31.0/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml
 
-#![doc(html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
-       html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico")]
+#![doc(
+    html_logo_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/logo.svg",
+    html_favicon_url = "https://github.com/jnqnfe/pulse-binding-rust/raw/master/favicon.ico"
+)]
 
 #![warn(missing_docs)]
 
@@ -124,18 +126,14 @@ impl Mainloop {
         let api_ptr = unsafe {
             mem::transmute(capi::pa_glib_mainloop_get_api(ptr))
         };
-        Some(
-            Self {
-                _inner: Rc::new(
-                    MainloopInner::<MainloopInternal> {
-                        ptr: unsafe { mem::transmute(ptr) },
-                        api: api_ptr,
-                        dropfn: drop_actual,
-                        supports_rtclock: false,
-                    }
-                ),
-            }
-        )
+        Some(Self {
+            _inner: Rc::new(MainloopInner::<MainloopInternal> {
+                ptr: unsafe { mem::transmute(ptr) },
+                api: api_ptr,
+                dropfn: drop_actual,
+                supports_rtclock: false,
+            }),
+        })
     }
 
     /// Gets the abstract main loop abstraction layer vtable for this main loop.

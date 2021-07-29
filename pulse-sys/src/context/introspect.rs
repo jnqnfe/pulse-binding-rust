@@ -352,7 +352,7 @@ pub type pa_sample_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *cons
 pub type pa_context_string_cb_t = Option<extern "C" fn(c: *mut pa_context, success: i32, response: *const c_char, userdata: *mut c_void)>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_context_get_sink_info_by_name(c: *mut pa_context, name: *const c_char, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_context_get_sink_info_by_index(c: *mut pa_context, idx: u32, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;

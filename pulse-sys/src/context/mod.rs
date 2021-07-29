@@ -64,10 +64,10 @@ pub const PA_CONTEXT_TERMINATED:   pa_context_state_t = pa_context_state_t::Term
 /// Checks if the passed state is one of the connected states (returns `true` if so).
 #[inline(always)]
 pub fn pa_context_is_good(state: pa_context_state_t) -> bool {
-    state == pa_context_state_t::Connecting ||
-    state == pa_context_state_t::Authorizing ||
-    state == pa_context_state_t::SettingName ||
-    state == pa_context_state_t::Ready
+    state == pa_context_state_t::Connecting
+        || state == pa_context_state_t::Authorizing
+        || state == pa_context_state_t::SettingName
+        || state == pa_context_state_t::Ready
 }
 
 pub type pa_context_flags_t = u32;
@@ -92,7 +92,7 @@ pub type pa_context_success_cb_t = Option<extern "C" fn(c: *mut pa_context, succ
 pub type pa_context_event_cb_t = Option<extern "C" fn(c: *mut pa_context, name: *const c_char, p: *mut pa_proplist, userdata: *mut c_void)>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_context_new(mainloop: *const pa_mainloop_api, name: *const c_char) -> *mut pa_context;
     pub fn pa_context_new_with_proplist(mainloop: *const pa_mainloop_api, name: *const c_char, proplist: *const pa_proplist) -> *mut pa_context;

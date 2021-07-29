@@ -443,18 +443,14 @@ impl Mainloop {
         }
         let api_ptr = unsafe { capi::pa_threaded_mainloop_get_api(ptr) };
         assert!(!api_ptr.is_null());
-        Some(
-            Self {
-                _inner: Rc::new(
-                    MainloopInner::<MainloopInternal> {
-                        ptr: ptr,
-                        api: unsafe { std::mem::transmute(api_ptr) },
-                        dropfn: MainloopInner::<MainloopInternal>::drop_actual,
-                        supports_rtclock: true,
-                    }
-                ),
-            }
-        )
+        Some(Self {
+            _inner: Rc::new(MainloopInner::<MainloopInternal> {
+                ptr: ptr,
+                api: unsafe { std::mem::transmute(api_ptr) },
+                dropfn: MainloopInner::<MainloopInternal>::drop_actual,
+                supports_rtclock: true,
+            }),
+        })
     }
 
     /// Starts the event loop thread.

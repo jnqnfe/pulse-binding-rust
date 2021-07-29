@@ -217,7 +217,10 @@ impl Proplist {
     /// Allocates a property list.
     pub fn new() -> Option<Self> {
         let ptr = unsafe { capi::pa_proplist_new() };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        match ptr.is_null() {
+            false => Some(Self::from_raw(ptr)),
+            true => None,
+        }
     }
 
     /// Allocates a new property list and assigns key/value from a human readable string.
@@ -226,7 +229,10 @@ impl Proplist {
         // as_ptr() giving dangling pointers!
         let c_str = CString::new(s.clone()).unwrap();
         let ptr = unsafe { capi::pa_proplist_from_string(c_str.as_ptr()) };
-        match ptr.is_null() { false => Some(Self::from_raw(ptr)), true => None }
+        match ptr.is_null() {
+            false => Some(Self::from_raw(ptr)),
+            true => None,
+        }
     }
 
     /// Creates a new `Proplist` from an existing [`ProplistInternal`] pointer.
@@ -329,8 +335,8 @@ impl Proplist {
         let c_key = CString::new(key.clone()).unwrap();
         let mut data_ptr = null::<c_void>();
         let mut nbytes: usize = 0;
-        if unsafe { capi::pa_proplist_get(self.0.ptr, c_key.as_ptr(), &mut data_ptr,
-            &mut nbytes) } != 0
+        if unsafe { capi::pa_proplist_get(self.0.ptr, c_key.as_ptr(), &mut data_ptr, &mut nbytes) }
+            != 0
         {
             return None;
         }

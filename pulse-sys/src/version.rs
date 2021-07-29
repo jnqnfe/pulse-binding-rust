@@ -183,11 +183,10 @@ pub const fn get_compatibility() -> Compatibility {
 #[inline(always)]
 pub fn pa_check_version(major: u8, minor: u8, _micro: u8) -> bool {
     // Note, defined micro version is always zero as of PA v1.0, thus ignored here
-    (TARGET_VERSION.0  > major) ||
-    (TARGET_VERSION.0 == major && TARGET_VERSION.1 > minor)
+    (TARGET_VERSION.0 > major) || ((TARGET_VERSION.0 == major) && (TARGET_VERSION.1 > minor))
 }
 
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_get_library_version() -> *const c_char;
 }

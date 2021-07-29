@@ -89,7 +89,7 @@ pub const fn pa_subscription_match_flags(m: pa_subscription_mask_t, t: pa_subscr
 pub type pa_context_subscribe_cb_t = Option<extern "C" fn(c: *mut super::pa_context, t: pa_subscription_event_type_t, idx: u32, userdata: *mut c_void)>;
 
 #[rustfmt::skip]
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_context_subscribe(c: *mut super::pa_context, m: pa_subscription_mask_t, cb: super::pa_context_success_cb_t, userdata: *mut c_void) -> *mut pa_operation;
     pub fn pa_context_set_subscribe_callback(c: *mut super::pa_context, cb: pa_context_subscribe_cb_t, userdata: *mut c_void);

@@ -106,7 +106,7 @@ pub const PA_ERR_FORKED:               pa_error_code_t = pa_error_code_t::Forked
 pub const PA_ERR_IO:                   pa_error_code_t = pa_error_code_t::IO;
 pub const PA_ERR_BUSY:                 pa_error_code_t = pa_error_code_t::Busy;
 
-#[link(name="pulse")]
+#[link(name = "pulse")]
 extern "C" {
     pub fn pa_strerror(error: i32) -> *const c_char;
 }

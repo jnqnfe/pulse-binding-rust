@@ -53,6 +53,8 @@ impl FlagSet {
     #[cfg(any(doc, feature = "pa_v6"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v6")))]
     pub fn to_string(self) -> String {
-        unsafe { CStr::from_ptr(capi::pa_direction_to_string(self.bits())).to_string_lossy().into_owned() }
+        unsafe {
+            CStr::from_ptr(capi::pa_direction_to_string(self.bits())).to_string_lossy().into_owned()
+        }
     }
 }
