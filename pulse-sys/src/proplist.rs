@@ -294,12 +294,14 @@ pub const PA_PROP_FORMAT_CHANNEL_MAP: &str = "format.channel_map";
 /// For context: whether to forcefully disable data transfer via POSIX or memfd shared memory.
 /// This property overrides any other client configuration which would otherwise enable SHM
 /// communication channels.
-#[cfg(any(doc, feature = "pa_v15"))]
+//TODO: enable this feature gate once the passing of `--cfg doc` to dependencies is fixed (https://github.com/rust-lang/cargo/issues/8811)
+//#[cfg(any(doc, feature = "pa_v15"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
 pub const PA_PROP_CONTEXT_FORCE_DISABLE_SHM: &str = "context.force.disable.shm";
 
 /// For a bluez device: the currently selected codec name.
-#[cfg(any(doc, feature = "pa_v15"))]
+//TODO: enable this feature gate once the passing of `--cfg doc` to dependencies is fixed (https://github.com/rust-lang/cargo/issues/8811)
+//#[cfg(any(doc, feature = "pa_v15"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
 pub const PA_PROP_BLUETOOTH_CODEC: &str = "bluetooth.codec";
 
