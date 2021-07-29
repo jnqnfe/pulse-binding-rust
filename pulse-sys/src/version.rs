@@ -84,7 +84,7 @@ mod actual {
 }
 
 // Pre-v15
-#[cfg(any(feature = "pa_v14", all(doc, not(feature = "pa_v5"))))]
+#[cfg(all(feature = "pa_v14", not(feature = "pa_v15")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V14Plus;
     pub const TARGET_VERSION_STRING: &str = "14.0.0";
