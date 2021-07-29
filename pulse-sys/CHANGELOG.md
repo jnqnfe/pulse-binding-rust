@@ -1,3 +1,7 @@
+# 1.19.1 (July 29th, 2021)
+
+ * Fixed feature guard mistake in `version` mod causing docs.rs build to fail.
+
 # 1.19.0 (July 28th, 2021)
 
  * Added PA v15 support (API additions).
