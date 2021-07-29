@@ -4,7 +4,7 @@ libpulse-glib-binding
 [<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jnqnfe/pulse-binding-rust/Build%20&%20Test/master?style=for-the-badge" height="24">](https://github.com/jnqnfe/pulse-binding-rust/actions)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/libpulse-glib-binding?style=for-the-badge" height="24">](https://crates.io/crates/libpulse-glib-binding)
 [<img alt="docs.rs" src="https://img.shields.io/crates/v/libpulse-glib-binding?color=5479ab&label=docs.rs&style=for-the-badge" height="24">](https://docs.rs/libpulse-glib-binding)
-[<img alt="min-rust-version" src="https://img.shields.io/static/v1?label=RUST&message=1.41%2B&color=informational&style=for-the-badge" height="24">](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
+[<img alt="min-rust-version" src="https://img.shields.io/static/v1?label=RUST&message=1.53%2B&color=informational&style=for-the-badge" height="24">](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 
 A Rust language binding for the PulseAudio libpulse-mainloop-glib library.
 

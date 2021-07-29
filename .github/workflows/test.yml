@@ -25,14 +25,24 @@ jobs:
         # Use the Ubuntu Focal (20.04) environment, which uses PA v13.99.1
         os: [ubuntu-20.04]
         rustc:
-          - 1.41.0 # MSRV (Minimum supported rust version)
+          - 1.53.0 # Overall MSRV (Minimum supported rust version)
           - stable
           - beta
+        # Allow failure?
         experimental: [false]
+        # For the minimal MSRV test we must skip the glib stuff which has a higher MSRV requirement
+        skip-glib-test: [false]
         include:
+          # Nightly test - must be allowed to fail
           - os: ubuntu-20.04
             rustc: nightly
             experimental: true
+            skip-glib-test: false
+          # Minimal MSRV test - this disables the glib stuff which requires a much newer version
+          - os: ubuntu-20.04
+            rustc: 1.41.0
+            experimental: false
+            skip-glib-test: true
 
     env:
       # Version feature flags to test with `cargo check`
@@ -93,6 +103,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Check building glib binding (cargo check)
+        if: ${{ matrix.skip-glib-test == false }}
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
@@ -119,6 +130,7 @@ jobs:
           cargo test --verbose --features $PA_TEST_VERSION
 
       - name: Test glib binding
+        if: ${{ matrix.skip-glib-test == false }}
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           echo "Testing with version feature flag '${PA_TEST_VERSION}'"
