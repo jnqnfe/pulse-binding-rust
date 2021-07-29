@@ -35,8 +35,11 @@ jobs:
             experimental: true
 
     env:
-      #TODO: add pa_v14 and pa_v15 once environment supports it
-      PA_BUILD_VERSIONS: "pa_v13 pa_v12 pa_v8 pa_v6 pa_v5 minimum"
+      # Version feature flags to test with `cargo check`
+      #
+      # TODO: add pa_v14 and pa_v15 once environment supports it
+      PA_BUILD_VERSIONS: "pa_v13 pa_v12 pa_v8 pa_v6 pa_v5"
+      # Single feature flag to use for `cargo test` steps
       PA_TEST_VERSION: pa_v13
 
     steps:
@@ -66,57 +69,57 @@ jobs:
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
             echo "::group::${PA_VERSION}"
-            echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
-            if [ "$PA_VERSION" != "minimum" ]; then
-              cargo check --verbose --no-default-features --features $PA_VERSION
-            else
-              cargo check --verbose --no-default-features
-            fi
+            echo "Building with version feature flag '${PA_VERSION}'"
+            cargo check --verbose --no-default-features --features $PA_VERSION
             echo "::endgroup::"
           done
+          echo "::group::no-features"
+          echo "Building with no version feature flag and no-default-features"
+          cargo check --verbose --no-default-features
+          echo "::endgroup::"
 
       - name: Check building simple binding (cargo check)
         working-directory: ./pulse-binding-simple
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
             echo "::group::${PA_VERSION}"
-            echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
-            if [ "$PA_VERSION" != "minimum" ]; then
-              cargo check --verbose --no-default-features --features $PA_VERSION
-            else
-              cargo check --verbose --no-default-features
-            fi
+            echo "Building with version feature flag '${PA_VERSION}'"
+            cargo check --verbose --no-default-features --features $PA_VERSION
             echo "::endgroup::"
           done
+          echo "::group::no-features"
+          echo "Building with no version feature flag and no-default-features"
+          cargo check --verbose --no-default-features
+          echo "::endgroup::"
 
       - name: Check building glib binding (cargo check)
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
             echo "::group::${PA_VERSION}"
-            echo "Building for PulseAudio version compatibility '${PA_VERSION}'"
-            if [ "$PA_VERSION" != "minimum" ]; then
-              cargo check --verbose --no-default-features --features $PA_VERSION
-            else
-              cargo check --verbose --no-default-features
-            fi
+            echo "Building with version feature flag '${PA_VERSION}'"
+            cargo check --verbose --no-default-features --features $PA_VERSION
             echo "::endgroup::"
           done
+          echo "::group::no-features"
+          echo "Building with no version feature flag and no-default-features"
+          cargo check --verbose --no-default-features
+          echo "::endgroup::"
 
       - name: Test main binding
         working-directory: ./pulse-binding
         run: |
-          echo "Testing for PulseAudio version compatibility '${PA_TEST_VERSION}'"
+          echo "Testing with version feature flag '${PA_TEST_VERSION}'"
           cargo test --verbose --features $PA_TEST_VERSION
 
       - name: Test simple binding
         working-directory: ./pulse-binding-simple
         run: |
-          echo "Testing for PulseAudio version compatibility '${PA_TEST_VERSION}'"
+          echo "Testing with version feature flag '${PA_TEST_VERSION}'"
           cargo test --verbose --features $PA_TEST_VERSION
 
       - name: Test glib binding
         working-directory: ./pulse-binding-mainloop-glib
         run: |
-          echo "Testing for PulseAudio version compatibility '${PA_TEST_VERSION}'"
+          echo "Testing with version feature flag '${PA_TEST_VERSION}'"
           cargo test --verbose --features $PA_TEST_VERSION
