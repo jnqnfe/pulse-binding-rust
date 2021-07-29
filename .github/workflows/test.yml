@@ -9,6 +9,8 @@ on:
   pull_request:
     branches: [master, next]
     paths: ['**.rs', '**.toml', '**.yml']
+  schedule:
+    - cron: '0 0 1 * *' # Run at the start of the 1st day of every month
 
 jobs:
   # NOTE: I'm leaving this with no descriptive name so it is not too long in the list of jobs.
