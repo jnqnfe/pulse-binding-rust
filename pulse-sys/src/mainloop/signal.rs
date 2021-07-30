@@ -19,10 +19,13 @@ use crate::mainloop::api::pa_mainloop_api;
 /// An opaque UNIX signal event source object.
 #[repr(C)] pub struct pa_signal_event { _private: [u8; 0] }
 
+#[rustfmt::skip]
 pub type pa_signal_cb_t = Option<extern "C" fn(api: *const pa_mainloop_api, e: *mut pa_signal_event, sig: i32, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_signal_destroy_cb_t = Option<extern "C" fn(api: *const pa_mainloop_api, e: *mut pa_signal_event, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_signal_init(api: *const pa_mainloop_api) -> i32;

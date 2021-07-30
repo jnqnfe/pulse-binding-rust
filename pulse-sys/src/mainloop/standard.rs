@@ -23,8 +23,10 @@ use crate::mainloop::api::pa_mainloop_api;
 /// An opaque main loop object.
 #[repr(C)] pub struct pa_mainloop { _private: [u8; 0] }
 
+#[rustfmt::skip]
 pub type pa_poll_func = Option<extern "C" fn(ufds: *mut pollfd, nfds: c_ulong, timeout: i32, userdata: *mut c_void) -> i32>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_mainloop_new() -> *mut pa_mainloop;

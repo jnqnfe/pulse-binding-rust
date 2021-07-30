@@ -63,6 +63,7 @@ pub struct pa_sink_info {
     pub formats: *mut *mut pa_format_info,
 }
 
+#[rustfmt::skip]
 pub type pa_sink_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_sink_info, eol: i32, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -107,6 +108,7 @@ pub struct pa_source_info {
     pub formats: *mut *mut pa_format_info,
 }
 
+#[rustfmt::skip]
 pub type pa_source_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_source_info, eol: i32, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -122,6 +124,7 @@ pub struct pa_server_info {
     pub channel_map: pa_channel_map,
 }
 
+#[rustfmt::skip]
 pub type pa_server_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_server_info, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -135,8 +138,10 @@ pub struct pa_module_info {
     pub proplist: *mut pa_proplist,
 }
 
+#[rustfmt::skip]
 pub type pa_module_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_module_info, eol: i32, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_context_index_cb_t = Option<extern "C" fn(c: *mut pa_context, idx: u32, userdata: *mut c_void)>;
 
 /// Stores information about clients.
@@ -157,6 +162,7 @@ pub struct pa_client_info {
     pub proplist: *mut pa_proplist,
 }
 
+#[rustfmt::skip]
 pub type pa_client_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_client_info, eol: i32, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -248,6 +254,7 @@ pub struct pa_card_info {
     pub active_profile2: *mut pa_card_profile_info2,
 }
 
+#[rustfmt::skip]
 pub type pa_card_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_card_info, eol: i32, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -272,6 +279,7 @@ pub struct pa_sink_input_info {
     pub format: *mut pa_format_info,
 }
 
+#[rustfmt::skip]
 pub type pa_sink_input_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_sink_input_info, eol: i32, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -296,6 +304,7 @@ pub struct pa_source_output_info {
     pub format: *mut pa_format_info,
 }
 
+#[rustfmt::skip]
 pub type pa_source_output_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_source_output_info, eol: i32, userdata: *mut c_void)>;
 
 /// Memory block statistics.
@@ -317,6 +326,7 @@ pub struct pa_stat_info {
     pub scache_size: u32,
 }
 
+#[rustfmt::skip]
 pub type pa_stat_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_stat_info, userdata: *mut c_void)>;
 
 #[repr(C)]
@@ -333,12 +343,15 @@ pub struct pa_sample_info {
     pub proplist: *mut pa_proplist,
 }
 
+#[rustfmt::skip]
 pub type pa_sample_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_sample_info, eol: i32, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[cfg(any(doc, feature = "pa_v15"))]
 #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
 pub type pa_context_string_cb_t = Option<extern "C" fn(c: *mut pa_context, success: i32, response: *const c_char, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_context_get_sink_info_by_name(c: *mut pa_context, name: *const c_char, cb: pa_sink_info_cb_t, userdata: *mut c_void) -> *mut pa_operation;

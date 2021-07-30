@@ -39,8 +39,10 @@ pub const PA_OPERATION_CANCELED:  pa_operation_state_t = pa_operation_state_t::C
 pub const PA_OPERATION_CANCELLED: pa_operation_state_t = pa_operation_state_t::Cancelled;
 
 /// A callback for operation state changes.
+#[rustfmt::skip]
 pub type pa_operation_notify_cb_t = Option<extern "C" fn(o: *mut pa_operation, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_operation_ref(o: *mut pa_operation) -> *mut pa_operation;

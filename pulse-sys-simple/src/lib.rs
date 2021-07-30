@@ -40,6 +40,7 @@ use std::os::raw::{c_char, c_void};
 /// An opaque simple connection object.
 #[repr(C)] pub struct pa_simple { _private: [u8; 0] }
 
+#[rustfmt::skip]
 #[link(name="pulse-simple")]
 extern "C" {
     pub fn pa_simple_new(server: *const c_char, name: *const c_char, dir: pulse::stream::pa_stream_direction_t, dev: *const c_char, stream_name: *const c_char, ss: *const pulse::sample::pa_sample_spec, map: *const pulse::channelmap::pa_channel_map, attr: *const pulse::def::pa_buffer_attr, error: *mut i32) -> *mut pa_simple;

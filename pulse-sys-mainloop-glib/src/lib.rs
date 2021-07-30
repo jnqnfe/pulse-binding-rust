@@ -42,6 +42,7 @@ use pulse::mainloop::api::pa_mainloop_api;
 /// An opaque GLIB main loop object.
 #[repr(C)] pub struct pa_glib_mainloop { _private: [u8; 0] }
 
+#[rustfmt::skip]
 #[link(name="pulse-mainloop-glib")]
 extern "C" {
     pub fn pa_glib_mainloop_new(c: *mut GMainContext) -> *mut pa_glib_mainloop;

@@ -330,6 +330,7 @@ pub const PA_UPDATE_SET:     pa_update_mode_t = pa_update_mode_t::Set;
 pub const PA_UPDATE_MERGE:   pa_update_mode_t = pa_update_mode_t::Merge;
 pub const PA_UPDATE_REPLACE: pa_update_mode_t = pa_update_mode_t::Replace;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_proplist_new() -> *mut pa_proplist;

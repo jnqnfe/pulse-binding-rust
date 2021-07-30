@@ -85,10 +85,13 @@ pub mod flags {
 
 pub type pa_context_notify_cb_t = Option<extern "C" fn(c: *mut pa_context, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_context_success_cb_t = Option<extern "C" fn(c: *mut pa_context, success: i32, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_context_event_cb_t = Option<extern "C" fn(c: *mut pa_context, name: *const c_char, p: *mut pa_proplist, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_context_new(mainloop: *const pa_mainloop_api, name: *const c_char) -> *mut pa_context;

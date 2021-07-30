@@ -111,6 +111,7 @@ impl Default for pa_prop_type_t {
     }
 }
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_encoding_to_string(e: pa_encoding_t) -> *const c_char;

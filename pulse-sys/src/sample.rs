@@ -140,6 +140,7 @@ pub const PA_SAMPLE_SPEC_SNPRINT_MAX: usize = 32;
 /// become part of an ABI.
 pub const PA_BYTES_SNPRINT_MAX: usize = 11;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_bytes_per_second(spec: *const pa_sample_spec) -> usize;

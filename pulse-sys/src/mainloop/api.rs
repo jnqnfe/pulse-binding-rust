@@ -32,21 +32,28 @@ pub mod io_event_flags {
 
 /// An opaque IO event source object.
 #[repr(C)] pub struct pa_io_event { _private: [u8; 0] }
+#[rustfmt::skip]
 pub type pa_io_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_io_event, fd: i32, events: pa_io_event_flags_t, userdata: *mut c_void)>;
+#[rustfmt::skip]
 pub type pa_io_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_io_event, userdata: *mut c_void)>;
 
 /// An opaque timer event source object.
 #[repr(C)] pub struct pa_time_event { _private: [u8; 0] }
+#[rustfmt::skip]
 pub type pa_time_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_time_event, tv: *const timeval, userdata: *mut c_void)>;
+#[rustfmt::skip]
 pub type pa_time_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_time_event, userdata: *mut c_void)>;
 
 /// An opaque deferred event source object.
 ///
 /// Events of this type are triggered once in every main loop iteration.
 #[repr(C)] pub struct pa_defer_event { _private: [u8; 0] }
+#[rustfmt::skip]
 pub type pa_defer_event_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_defer_event, userdata: *mut c_void)>;
+#[rustfmt::skip]
 pub type pa_defer_event_destroy_cb_t = Option<extern "C" fn(a: *const pa_mainloop_api, e: *mut pa_defer_event, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[repr(C)]
 pub struct pa_mainloop_api {
     pub userdata: *mut c_void,
@@ -69,8 +76,10 @@ pub struct pa_mainloop_api {
     pub quit: Option<extern "C" fn(a: *const pa_mainloop_api, retval: i32)>,
 }
 
+#[rustfmt::skip]
 pub type pa_mainloop_api_once_cb = Option<extern "C" fn(m: *const pa_mainloop_api, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_mainloop_api_once(m: *const pa_mainloop_api, callback: pa_mainloop_api_once_cb, userdata: *mut c_void);

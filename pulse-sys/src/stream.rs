@@ -123,14 +123,19 @@ pub const PA_STREAM_EVENT_REQUEST_CORK:   &str = "request-cork";
 pub const PA_STREAM_EVENT_REQUEST_UNCORK: &str = "request-uncork";
 pub const PA_STREAM_EVENT_FORMAT_LOST:    &str = "format-lost";
 
+#[rustfmt::skip]
 pub type pa_stream_success_cb_t = Option<extern "C" fn(s: *mut pa_stream, success: i32, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_stream_request_cb_t = Option<extern "C" fn(p: *mut pa_stream, nbytes: usize, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_stream_notify_cb_t = Option<extern "C" fn(p: *mut pa_stream, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 pub type pa_stream_event_cb_t = Option<extern "C" fn(p: *mut pa_stream, name: *const c_char, pl: *mut pa_proplist, userdata: *mut c_void)>;
 
+#[rustfmt::skip]
 #[link(name="pulse")]
 extern "C" {
     pub fn pa_stream_connect_upload(s: *mut pa_stream, length: usize) -> i32;
