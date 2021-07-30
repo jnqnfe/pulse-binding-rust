@@ -57,10 +57,10 @@ use crate::callbacks::{box_closure_get_capi_ptr, MultiUseCallback};
 pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 
 /// Mask to extract facility value from the event type passed to the user callback.
-#[deprecated(since = "2.20.0", note="use the associated constant on `Facility` instead")]
+#[deprecated(since = "2.20.0", note = "use the associated constant on `Facility` instead")]
 pub const FACILITY_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
 /// Mask to extract operation value from the event type passed to the user callback.
-#[deprecated(since = "2.20.0", note="use the associated constant on `Operation` instead")]
+#[deprecated(since = "2.20.0", note = "use the associated constant on `Operation` instead")]
 pub const OPERATION_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
 
 bitflags! {

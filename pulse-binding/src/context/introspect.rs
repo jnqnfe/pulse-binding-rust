@@ -568,7 +568,7 @@ impl Introspector {
     }
 
     /// Suspends/Resumes a sink.
-    /// 
+    ///
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The optional callback must accept a `bool`, which indicates success.
@@ -712,14 +712,14 @@ impl<'a> SourcePortInfo<'a> {
                     true => None,
                 },
                 description: match src.description.is_null() {
-                    false=> Some(CStr::from_ptr(src.description).to_string_lossy()),
+                    false => Some(CStr::from_ptr(src.description).to_string_lossy()),
                     true => None,
                 },
                 priority: src.priority,
                 available: def::PortAvailable::from_i32(src.available).unwrap(),
                 #[cfg(any(doc, feature = "pa_v14"))]
                 availability_group: match src.availability_group.is_null() {
-                    false=> Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
+                    false => Some(CStr::from_ptr(src.availability_group).to_string_lossy()),
                     true => None,
                 },
                 #[cfg(any(doc, feature = "pa_v14"))]
@@ -1694,7 +1694,7 @@ impl<'a> CardInfo<'a> {
         for i in 0..src.n_ports as isize {
             let indexed_ptr = unsafe { (*src.ports.offset(i)) as *mut CardPortInfoInternal };
             if !indexed_ptr.is_null() {
-                ports_vec.push(CardPortInfo::new_from_raw(indexed_ptr));    
+                ports_vec.push(CardPortInfo::new_from_raw(indexed_ptr));
             }
         }
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);

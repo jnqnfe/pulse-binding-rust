@@ -205,9 +205,7 @@ impl Info {
     /// Returns `None` on failure.
     ///
     /// [`Spec`]: crate::sample::Spec
-    pub fn new_from_sample_spec(ss: &sample::Spec, map: Option<&channelmap::Map>)
-        -> Option<Self>
-    {
+    pub fn new_from_sample_spec(ss: &sample::Spec, map: Option<&channelmap::Map>) -> Option<Self> {
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
         let ptr = unsafe { capi::pa_format_info_from_sample_spec(ss.as_ref(), p_map) };
         match ptr.is_null() {

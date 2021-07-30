@@ -112,8 +112,7 @@
 //! * `PULSE_LOG_META`: If defined, include each message originating file name and path relative to
 //!   the PulseAudio source tree root.
 //! * `PULSE_LOG_LEVEL`: If defined, include a log level prefix with each message. Respectively, the
-//!   prefixes "E", "W", "N", "I", "D" stands for
-//!   Error, Warning, Notice, Info, and Debugging.
+//!   prefixes "E", "W", "N", "I", "D" stands for Error, Warning, Notice, Info, and Debugging.
 //! * `PULSE_LOG_BACKTRACE`: Number of functions to display in the backtrace. If this variable is
 //!   not defined, or has a value of zero, no backtrace is shown.
 //! * `PULSE_LOG_BACKTRACE_SKIP`: Number of backtrace levels to skip, from the function printing the

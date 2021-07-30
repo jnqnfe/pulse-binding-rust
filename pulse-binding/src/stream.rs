@@ -897,8 +897,8 @@ impl Stream {
     /// * `attr`: Buffering attributes, or `None` for default
     /// * `flags`: Additional flags, or `0` for default
     /// * `volume`: Initial volume, or `None` for default
-    /// * `sync_stream`: Synchronize this stream with the specified one, or
-    ///   `None` for a standalone stream.
+    /// * `sync_stream`: Synchronize this stream with the specified one, or `None` for a standalone
+    ///   stream.
     ///
     /// [`Introspector::set_sink_input_volume()`]: crate::context::introspect::Introspector::set_sink_input_volume
     /// [`Introspector::get_sink_info_by_name()`]: crate::context::introspect::Introspector::get_sink_info_by_name
@@ -1710,7 +1710,8 @@ impl Stream {
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
-    /// Updates the property list of the sink input/source output of this stream, adding new entries.
+    /// Updates the property list of the sink input/source output of this stream, adding new
+    /// entries.
     ///
     /// Please note that it is highly recommended to set as many properties initially via
     /// [`new_with_proplist()`] as possible instead a posteriori with this function, since that

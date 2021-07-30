@@ -372,7 +372,7 @@
 //!
 //!         // If done writing data, call `mainloop.borrow_mut().stop()` (with lock released), then
 //!         // break!
-//! # 
+//! #
 //! #       // Hack: Stop test getting stuck in infinite loop!
 //! #       count += 1;
 //! #       if count == 3 {

@@ -180,7 +180,7 @@ pub struct pa_card_profile_info {
 /// in any new release.
 #[repr(C)]
 #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
 pub struct pa_card_profile_info2 {
     /// Name of this profile.
     pub name: *const c_char,

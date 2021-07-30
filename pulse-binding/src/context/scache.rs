@@ -136,7 +136,7 @@ impl Context {
     ///   this merged into it.
     /// * `callback`: Optional success callback. It must accept an `u32` index value wrapper in a
     ///   `Result`. The index is the index of the sink input object. `Err` is given instead on
-    ///    failure.
+    ///   failure.
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn play_sample_with_proplist(&mut self, name: &str, dev: Option<&str>,
