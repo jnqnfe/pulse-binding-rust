@@ -96,9 +96,11 @@ impl Timeval {
 
         *self = v.into();
 
-        match rtclock {
-            true => { self.0.tv_usec |= Self::RTCLOCK_BIT; },
-            false => { self.wallclock_from_rtclock(); },
+        if rtclock {
+            self.0.tv_usec |= Self::RTCLOCK_BIT;
+        }
+        else {
+            self.wallclock_from_rtclock();
         }
         self
     }
