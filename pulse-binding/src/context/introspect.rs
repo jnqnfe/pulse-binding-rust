@@ -306,7 +306,7 @@ pub struct SinkPortInfo<'a> {
 impl<'a> SinkPortInfo<'a> {
     fn new_from_raw(p: *const SinkPortInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             SinkPortInfo {
                 name: match src.name.is_null() {
@@ -387,7 +387,7 @@ pub struct SinkInfo<'a> {
 impl<'a> SinkInfo<'a> {
     fn new_from_raw(p: *const SinkInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
 
         let mut port_vec = Vec::with_capacity(src.n_ports as usize);
         assert!(src.n_ports == 0 || !src.ports.is_null());
@@ -704,7 +704,7 @@ pub struct SourcePortInfo<'a> {
 impl<'a> SourcePortInfo<'a> {
     fn new_from_raw(p: *const SourcePortInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             SourcePortInfo {
                 name: match src.name.is_null() {
@@ -785,7 +785,7 @@ pub struct SourceInfo<'a> {
 impl<'a> SourceInfo<'a> {
     fn new_from_raw(p: *const SourceInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
 
         let mut port_vec = Vec::with_capacity(src.n_ports as usize);
         assert!(src.n_ports == 0 || !src.ports.is_null());
@@ -1089,7 +1089,7 @@ pub struct ServerInfo<'a> {
 impl<'a> ServerInfo<'a> {
     fn new_from_raw(p: *const ServerInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             ServerInfo {
                 user_name: match src.user_name.is_null() {
@@ -1179,7 +1179,7 @@ pub struct ModuleInfo<'a> {
 impl<'a> ModuleInfo<'a> {
     fn new_from_raw(p: *const ModuleInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             ModuleInfo {
                 index: src.index,
@@ -1368,7 +1368,7 @@ pub struct ClientInfo<'a> {
 impl<'a> ClientInfo<'a> {
     fn new_from_raw(p: *const ClientInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             ClientInfo {
                 index: src.index,
@@ -1498,7 +1498,7 @@ pub struct CardProfileInfo2<'a> {
 impl<'a> CardProfileInfo<'a> {
     fn new_from_raw(p: *const CardProfileInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             CardProfileInfo {
                 name: match src.name.is_null() {
@@ -1521,7 +1521,7 @@ impl<'a> CardProfileInfo<'a> {
 impl<'a> CardProfileInfo2<'a> {
     fn new_from_raw(p: *const CardProfileInfo2Internal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             CardProfileInfo2 {
                 name: match src.name.is_null() {
@@ -1598,7 +1598,7 @@ pub struct CardPortInfo<'a> {
 impl<'a> CardPortInfo<'a> {
     fn new_from_raw(p: *const CardPortInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
 
         let mut profiles_vec = Vec::with_capacity(src.n_profiles as usize);
 
@@ -1687,7 +1687,7 @@ pub struct CardInfo<'a> {
 impl<'a> CardInfo<'a> {
     fn new_from_raw(p: *const CardInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
 
         let mut ports_vec = Vec::with_capacity(src.n_ports as usize);
         assert!(src.n_ports == 0 || !src.ports.is_null());
@@ -1923,7 +1923,7 @@ pub struct SinkInputInfo<'a> {
 impl<'a> SinkInputInfo<'a> {
     fn new_from_raw(p: *const SinkInputInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             SinkInputInfo {
                 index: src.index,
@@ -2140,7 +2140,7 @@ pub struct SourceOutputInfo<'a> {
 impl<'a> SourceOutputInfo<'a> {
     fn new_from_raw(p: *const SourceOutputInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             SourceOutputInfo {
                 index: src.index,
@@ -2328,7 +2328,7 @@ fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata:
         assert!(!i.is_null());
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
         let mut callback = get_su_callback::<dyn FnMut(&StatInfo)>(userdata);
-        (callback)(unsafe { i.as_ref().unwrap() });
+        (callback)(unsafe { &*i });
     });
 }
 
@@ -2367,7 +2367,7 @@ pub struct SampleInfo<'a> {
 impl<'a> SampleInfo<'a> {
     fn new_from_raw(p: *const SampleInfoInternal) -> Self {
         assert!(!p.is_null());
-        let src = unsafe { p.as_ref().unwrap() };
+        let src = unsafe { &*p };
         unsafe {
             SampleInfo {
                 index: src.index,
