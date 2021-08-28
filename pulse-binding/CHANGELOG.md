@@ -1,4 +1,4 @@
-# 1.19.0 (July 28th, 2021)
+# 2.24.0 (July 28th, 2021)
 
  * Added PA v15 support (API additions):
     - Added `Introspector::send_message_to_object()`.
