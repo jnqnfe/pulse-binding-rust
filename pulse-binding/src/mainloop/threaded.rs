@@ -415,7 +415,7 @@ pub struct Mainloop {
 impl MainloopTrait for Mainloop {
     type MI = MainloopInner<MainloopInternal>;
 
-    #[inline]
+    #[inline(always)]
     fn inner(&self) -> Rc<MainloopInner<MainloopInternal>> {
         Rc::clone(&self._inner)
     }
@@ -424,6 +424,7 @@ impl MainloopTrait for Mainloop {
 impl MainloopSignals for Mainloop {}
 
 impl MainloopInner<MainloopInternal> {
+    #[inline(always)]
     fn drop_actual(&mut self) {
         unsafe { capi::pa_threaded_mainloop_free(self.ptr) };
     }

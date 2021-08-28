@@ -94,6 +94,7 @@ pub struct Mainloop {
 impl MainloopTrait for Mainloop {
     type MI = MainloopInner<MainloopInternal>;
 
+    #[inline(always)]
     fn inner(&self) -> Rc<MainloopInner<MainloopInternal>> {
         Rc::clone(&self._inner)
     }
@@ -102,6 +103,7 @@ impl MainloopTrait for Mainloop {
 impl MainloopSignals for Mainloop {}
 
 /// Drop function for MainloopInner<MainloopInternal>.
+#[inline(always)]
 fn drop_actual(self_: &mut MainloopInner<MainloopInternal>) {
     unsafe { capi::pa_glib_mainloop_free(mem::transmute(self_.ptr)) };
 }

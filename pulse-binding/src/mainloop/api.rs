@@ -94,16 +94,19 @@ impl<T> MainloopInnerType for MainloopInner<T>
     type I = T;
 
     /// Gets opaque main loop object pointer.
+    #[inline(always)]
     fn get_ptr(&self) -> *mut T {
         self.ptr
     }
 
     /// Gets main loop API object pointer.
+    #[inline(always)]
     fn get_api(&self) -> &MainloopApi {
         assert!(!self.api.is_null());
         unsafe { &*self.api }
     }
 
+    #[inline(always)]
     fn supports_rtclock(&self) -> bool {
         self.supports_rtclock
     }
