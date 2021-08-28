@@ -1,3 +1,8 @@
+# 2.24.1 (August 29th, 2021)
+
+ * Minor formatting tweaks.
+ * Bumped MSRV from 1.41 to 1.46 due to bitflags v1.3 now requiring 1.46.
+
 # 2.24.0 (July 28th, 2021)
 
  * Updated required dependencies:

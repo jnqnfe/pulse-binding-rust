@@ -1,3 +1,12 @@
+# 2.25.0 (August 29th, 2021)
+
+ * Made the attributes of `MainloopInner` private. Methods `new()` and `get_api_ptr()` were added to
+   support this, while `get_ptr()` was marked `unsafe`.
+ * Converted `channelmap::Position::to_mask()` to `const fn`.
+ * Bumped MSRV from 1.41 to 1.46 due to bitflags v1.3 now requiring 1.46.
+ * Minor tweaks not worth documenting.
+ * Fixed wrong version for previous changelog entry.
+
 # 2.24.0 (July 28th, 2021)
 
  * Added PA v15 support (API additions):

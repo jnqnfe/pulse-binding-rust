@@ -1,3 +1,8 @@
+# 1.19.1 (August 29th, 2021)
+
+ * Minor formatting tweaks.
+ * Bumped MSRV from 1.41 to 1.46.
+
 # 1.19.0 (July 28th, 2021)
 
  * Updated required dependencies:

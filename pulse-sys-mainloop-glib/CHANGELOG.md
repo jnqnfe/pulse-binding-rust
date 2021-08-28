@@ -1,3 +1,7 @@
+# 1.19.1 (August 29th, 2021)
+
+ * Minor formatting tweaks.
+
 # 1.19.0 (July 28th, 2021)
 
  * Updated required dependencies:

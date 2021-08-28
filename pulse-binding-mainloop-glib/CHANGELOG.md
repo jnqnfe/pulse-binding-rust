@@ -1,3 +1,10 @@
+# 2.25.0 (August 29th, 2021)
+
+ * Minor tweaks to work with the changes in verson 2.25.0 of the main binding crate.
+ * Minor formatting tweaks.
+ * Updated required dependencies:
+    - `libpulse-binding`           from 2.24 to 2.25.
+
 # 2.24.0 (July 28th, 2021)
 
  * Updated required dependencies:

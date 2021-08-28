@@ -1,3 +1,9 @@
+# 1.19.2 (August 29th, 2021)
+
+ * Minor formatting tweaks.
+ * Bumped MSRV from 1.41 to 1.46.
+ * Marked `pa_check_version` and `pa_clamp_volume` as `const fn`.
+
 # 1.19.1 (July 29th, 2021)
 
  * Fixed feature guard mistake in `version` mod causing docs.rs build to fail.
