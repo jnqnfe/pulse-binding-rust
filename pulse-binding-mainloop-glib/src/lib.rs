@@ -65,7 +65,7 @@ use std::ptr::null_mut;
 use glib_sys::GMainContext;
 use glib::{MainContext, translate::ToGlibPtr};
 use std::mem;
-use pulse::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi};
+use pulse::mainloop::api::{MainloopInternalType, MainloopInner, MainloopInnerType, MainloopApi};
 use pulse::mainloop::signal::MainloopSignals;
 use pulse::mainloop::api::Mainloop as MainloopTrait;
 
@@ -105,7 +105,7 @@ impl MainloopSignals for Mainloop {}
 /// Drop function for MainloopInner<MainloopInternal>.
 #[inline(always)]
 fn drop_actual(self_: &mut MainloopInner<MainloopInternal>) {
-    unsafe { capi::pa_glib_mainloop_free(mem::transmute(self_.ptr)) };
+    unsafe { capi::pa_glib_mainloop_free(mem::transmute(self_.get_ptr())) };
 }
 
 impl Mainloop {
@@ -126,14 +126,10 @@ impl Mainloop {
         let api_ptr = unsafe {
             mem::transmute(capi::pa_glib_mainloop_get_api(ptr))
         };
-        Some(Self {
-            _inner: Rc::new(MainloopInner::<MainloopInternal> {
-                ptr: unsafe { mem::transmute(ptr) },
-                api: api_ptr,
-                dropfn: drop_actual,
-                supports_rtclock: false,
-            }),
-        })
+        let ml_inner = unsafe {
+            MainloopInner::<MainloopInternal>::new(mem::transmute(ptr), api_ptr, drop_actual, false)
+        };
+        Some(Self { _inner: Rc::new(ml_inner) })
     }
 
     /// Gets the abstract main loop abstraction layer vtable for this main loop.
@@ -145,7 +141,7 @@ impl Mainloop {
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
     pub fn get_api<'a>(&self) -> &'a MainloopApi {
-        let ptr = (*self._inner).api;
+        let ptr = unsafe { (*self._inner).get_api_ptr() };
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
     }

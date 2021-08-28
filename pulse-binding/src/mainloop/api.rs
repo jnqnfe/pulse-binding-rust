@@ -36,8 +36,20 @@ pub trait MainloopInnerType {
     /// Internal mainloop type.
     type I: MainloopInternalType;
 
+    /// Create a new instance
+    #[inline(always)]
+    unsafe fn new(ptr: *mut Self::I, api: *const MainloopApi,
+        dropfn: fn(&mut MainloopInner<Self::I>), supports_rtclock: bool)
+        -> MainloopInner::<Self::I>
+    {
+        MainloopInner::<Self::I> { ptr, api, dropfn, supports_rtclock }
+    }
+
     /// Return opaque main loop object pointer.
-    fn get_ptr(&self) -> *mut Self::I;
+    unsafe fn get_ptr(&self) -> *mut Self::I;
+
+    /// Return raw API object pointer.
+    unsafe fn get_api_ptr(&self) -> *const MainloopApi;
 
     /// Return main loop API object pointer.
     fn get_api(&self) -> &MainloopApi;
@@ -60,18 +72,18 @@ pub struct MainloopInner<T>
     where T: MainloopInternalType
 {
     /// An opaque main loop object.
-    pub ptr: *mut T,
+    ptr: *mut T,
 
     /// The abstract main loop API vtable for the GLIB main loop object. No need to free this API as
     /// it is owned by the loop and is destroyed when the loop is freed.
-    pub api: *const MainloopApi,
+    api: *const MainloopApi,
 
     /// All implementations must provide a drop method, to be called from an actual drop call, which
     /// should free the mainloop object.
-    pub dropfn: fn(&mut MainloopInner<T>),
+    dropfn: fn(&mut MainloopInner<T>),
 
     /// Whether or not the implementation supports monotonic based time events. (`true` if so).
-    pub supports_rtclock: bool,
+    supports_rtclock: bool,
 }
 
 impl<T> Drop for MainloopInner<T>
@@ -95,8 +107,14 @@ impl<T> MainloopInnerType for MainloopInner<T>
 
     /// Gets opaque main loop object pointer.
     #[inline(always)]
-    fn get_ptr(&self) -> *mut T {
+    unsafe fn get_ptr(&self) -> *mut T {
         self.ptr
+    }
+
+    /// Gets raw API object pointer.
+    #[inline(always)]
+    unsafe fn get_api_ptr(&self) -> *const MainloopApi {
+        self.api
     }
 
     /// Gets main loop API object pointer.

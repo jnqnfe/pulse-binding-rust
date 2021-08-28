@@ -393,7 +393,8 @@ use std::rc::Rc;
 use std::ffi::CString;
 use crate::def;
 use crate::error::PAErr;
-use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi, Mainloop as MainloopTrait};
+use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopInnerType, MainloopApi,
+                           Mainloop as MainloopTrait};
 use crate::mainloop::signal::MainloopSignals;
 
 pub use capi::pa_threaded_mainloop as MainloopInternal;
@@ -426,7 +427,7 @@ impl MainloopSignals for Mainloop {}
 impl MainloopInner<MainloopInternal> {
     #[inline(always)]
     fn drop_actual(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_free(self.ptr) };
+        unsafe { capi::pa_threaded_mainloop_free(self.get_ptr()) };
     }
 }
 
@@ -441,19 +442,16 @@ impl Mainloop {
         }
         let api_ptr = unsafe { capi::pa_threaded_mainloop_get_api(ptr) };
         assert!(!api_ptr.is_null());
-        Some(Self {
-            _inner: Rc::new(MainloopInner::<MainloopInternal> {
-                ptr: ptr,
-                api: unsafe { std::mem::transmute(api_ptr) },
-                dropfn: MainloopInner::<MainloopInternal>::drop_actual,
-                supports_rtclock: true,
-            }),
-        })
+        let ml_inner = unsafe {
+            MainloopInner::<MainloopInternal>::new(ptr, std::mem::transmute(api_ptr),
+                MainloopInner::<MainloopInternal>::drop_actual, true)
+        };
+        Some(Self { _inner: Rc::new(ml_inner) })
     }
 
     /// Starts the event loop thread.
     pub fn start(&mut self) -> Result<(), PAErr> {
-        match unsafe { capi::pa_threaded_mainloop_start((*self._inner).ptr) } {
+        match unsafe { capi::pa_threaded_mainloop_start((*self._inner).get_ptr()) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
@@ -464,7 +462,7 @@ impl Mainloop {
     /// Make sure to unlock the mainloop object before calling this function.
     #[inline]
     pub fn stop(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_stop((*self._inner).ptr); }
+        unsafe { capi::pa_threaded_mainloop_stop((*self._inner).get_ptr()); }
     }
 
     /// Locks the event loop object, effectively blocking the event loop thread from processing
@@ -476,13 +474,13 @@ impl Mainloop {
     #[inline]
     pub fn lock(&mut self) {
         assert!(!self.in_thread(), "lock() can not be called from within the event loop thread!");
-        unsafe { capi::pa_threaded_mainloop_lock((*self._inner).ptr); }
+        unsafe { capi::pa_threaded_mainloop_lock((*self._inner).get_ptr()); }
     }
 
     /// Unlocks the event loop object, inverse of [`lock()`](Self::lock).
     #[inline]
     pub fn unlock(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).ptr); }
+        unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).get_ptr()); }
     }
 
     /// Waits for an event to be signalled by the event loop thread.
@@ -498,7 +496,7 @@ impl Mainloop {
     /// [`signal()`]: Self::signal
     #[inline]
     pub fn wait(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_wait((*self._inner).ptr); }
+        unsafe { capi::pa_threaded_mainloop_wait((*self._inner).get_ptr()); }
     }
 
     /// Signals all threads waiting for a signalling event in [`wait()`].
@@ -510,7 +508,9 @@ impl Mainloop {
     /// [`accept()`]: Self::accept
     #[inline]
     pub fn signal(&mut self, wait_for_accept: bool) {
-        unsafe { capi::pa_threaded_mainloop_signal((*self._inner).ptr, wait_for_accept as i32); }
+        unsafe {
+            capi::pa_threaded_mainloop_signal((*self._inner).get_ptr(), wait_for_accept as i32);
+        }
     }
 
     /// Accepts a signal from the event thread issued with [`signal()`].
@@ -521,14 +521,14 @@ impl Mainloop {
     /// [`signal()`]: Self::signal
     #[inline]
     pub fn accept(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_accept((*self._inner).ptr); }
+        unsafe { capi::pa_threaded_mainloop_accept((*self._inner).get_ptr()); }
     }
 
     /// Gets the return value as specified with the main loop’s `quit` routine (used internally by
     /// threaded mainloop).
     #[inline]
     pub fn get_retval(&self) -> def::Retval {
-        def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).ptr) })
+        def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).get_ptr()) })
     }
 
     /// Gets the main loop abstraction layer vtable for this main loop.
@@ -542,7 +542,7 @@ impl Mainloop {
     /// that need it.
     #[inline]
     pub fn get_api<'a>(&self) -> &'a MainloopApi {
-        let ptr = (*self._inner).api;
+        let ptr = unsafe { (*self._inner).get_api_ptr() };
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
     }
@@ -550,7 +550,7 @@ impl Mainloop {
     /// Checks whether or not we are in the event loop thread (returns `true` if so).
     #[inline]
     pub fn in_thread(&self) -> bool {
-        unsafe { capi::pa_threaded_mainloop_in_thread((*self._inner).ptr) != 0 }
+        unsafe { capi::pa_threaded_mainloop_in_thread((*self._inner).get_ptr()) != 0 }
     }
 
     /// Sets the name of the thread.
@@ -560,6 +560,6 @@ impl Mainloop {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        unsafe { capi::pa_threaded_mainloop_set_name((*self._inner).ptr, c_name.as_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_set_name((*self._inner).get_ptr(), c_name.as_ptr()); }
     }
 }
