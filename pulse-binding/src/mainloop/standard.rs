@@ -199,7 +199,6 @@
 
 use std::os::raw::{c_ulong, c_void};
 use std::rc::Rc;
-use std::ptr::null_mut;
 #[cfg(not(windows))]
 use libc::pollfd;
 #[cfg(windows)]
@@ -284,8 +283,6 @@ impl MainloopSignals for Mainloop {}
 impl MainloopInner<MainloopInternal> {
     fn drop_actual(&mut self) {
         unsafe { capi::pa_mainloop_free(self.ptr) };
-        self.ptr = null_mut::<MainloopInternal>();
-        self.api = null_mut::<MainloopApi>();
     }
 }
 

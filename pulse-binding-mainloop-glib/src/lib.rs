@@ -61,7 +61,7 @@ extern crate libpulse_binding as pulse;
 extern crate libpulse_mainloop_glib_sys as capi;
 
 use std::rc::Rc;
-use std::ptr::{null, null_mut};
+use std::ptr::null_mut;
 use glib_sys::GMainContext;
 use glib::{MainContext, translate::ToGlibPtr};
 use std::mem;
@@ -104,8 +104,6 @@ impl MainloopSignals for Mainloop {}
 /// Drop function for MainloopInner<MainloopInternal>.
 fn drop_actual(self_: &mut MainloopInner<MainloopInternal>) {
     unsafe { capi::pa_glib_mainloop_free(mem::transmute(self_.ptr)) };
-    self_.ptr = null_mut::<MainloopInternal>();
-    self_.api = null::<MainloopApi>();
 }
 
 impl Mainloop {

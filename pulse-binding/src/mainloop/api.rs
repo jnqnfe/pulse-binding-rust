@@ -66,7 +66,8 @@ pub struct MainloopInner<T>
     /// it is owned by the loop and is destroyed when the loop is freed.
     pub api: *const MainloopApi,
 
-    /// All implementations must provide a drop method, to be called from an actual drop call.
+    /// All implementations must provide a drop method, to be called from an actual drop call, which
+    /// should free the mainloop object.
     pub dropfn: fn(&mut MainloopInner<T>),
 
     /// Whether or not the implementation supports monotonic based time events. (`true` if so).
@@ -78,6 +79,8 @@ impl<T> Drop for MainloopInner<T>
 {
     fn drop(&mut self) {
         (self.dropfn)(self);
+        self.ptr = std::ptr::null_mut::<<MainloopInner<T> as MainloopInnerType>::I>();
+        self.api = std::ptr::null::<MainloopApi>();
     }
 }
 

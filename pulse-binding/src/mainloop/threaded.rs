@@ -391,7 +391,6 @@
 use std::rc::Rc;
 #[cfg(any(doc, feature = "pa_v5"))]
 use std::ffi::CString;
-use std::ptr::null_mut;
 use crate::def;
 use crate::error::PAErr;
 use crate::mainloop::api::{MainloopInternalType, MainloopInner, MainloopApi, Mainloop as MainloopTrait};
@@ -427,8 +426,6 @@ impl MainloopSignals for Mainloop {}
 impl MainloopInner<MainloopInternal> {
     fn drop_actual(&mut self) {
         unsafe { capi::pa_threaded_mainloop_free(self.ptr) };
-        self.ptr = null_mut::<MainloopInternal>();
-        self.api = null_mut::<MainloopApi>();
     }
 }
 
