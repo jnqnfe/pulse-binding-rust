@@ -181,7 +181,7 @@ pub const fn get_compatibility() -> Compatibility {
 /// library at runtime. This is not very useful!
 #[deprecated(since = "1.17.0")]
 #[inline(always)]
-pub fn pa_check_version(major: u8, minor: u8, _micro: u8) -> bool {
+pub const fn pa_check_version(major: u8, minor: u8, _micro: u8) -> bool {
     // Note, defined micro version is always zero as of PA v1.0, thus ignored here
     (TARGET_VERSION.0 > major) || ((TARGET_VERSION.0 == major) && (TARGET_VERSION.1 > minor))
 }

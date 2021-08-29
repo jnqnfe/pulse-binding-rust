@@ -99,7 +99,7 @@ pub const fn pa_volume_is_valid(v: pa_volume_t) -> bool {
     v <= PA_VOLUME_MAX
 }
 
-pub fn pa_clamp_volume(v: pa_volume_t) -> pa_volume_t {
+pub const fn pa_clamp_volume(v: pa_volume_t) -> pa_volume_t {
     if v < PA_VOLUME_MUTED {
         return PA_VOLUME_MUTED;
     }
