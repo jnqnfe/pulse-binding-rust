@@ -40,7 +40,7 @@ jobs:
             skip-glib-test: false
           # Minimal MSRV test - this disables the glib stuff which requires a much newer version
           - os: ubuntu-20.04
-            rustc: 1.41.0
+            rustc: 1.46.0
             experimental: false
             skip-glib-test: true
 
