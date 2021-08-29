@@ -335,11 +335,11 @@ impl PartialEq for Map {
 
 impl Position {
     /// Makes a bit mask from a channel position.
-    pub fn to_mask(self) -> PositionMask {
-        if self == Position::Invalid {
-            return 0;
+    pub const fn to_mask(self) -> PositionMask {
+        match self {
+            Position::Invalid => 0,
+            _ => (1 as PositionMask) << (self as PositionMask),
         }
-        (1 as PositionMask) << (self as PositionMask)
     }
 
     /// Gets a text label for the specified channel position.
