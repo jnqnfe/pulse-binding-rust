@@ -29,7 +29,7 @@ pub(crate) type TvSecs = libc::c_long;
 pub(crate) type TvUsecs = libc::c_long;
 
 /// Wrapper for [`libc::timeval`], attaching various methods and trait implementations.
-#[repr(C)]
+#[repr(transparent)]
 #[derive(Copy, Clone)]
 pub struct Timeval(pub libc::timeval); // Warning, this must remain directly transmutable with the inner libc::timeval
 
