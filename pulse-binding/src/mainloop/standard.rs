@@ -328,7 +328,7 @@ impl Mainloop {
             // If larger, we must error
             _ => return Err((ErrCode::TooLarge).into()),
         };
-        match unsafe { capi::pa_mainloop_prepare((*self._inner).get_ptr(), t) } {
+        match unsafe { capi::pa_mainloop_prepare(self._inner.get_ptr(), t) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
@@ -336,7 +336,7 @@ impl Mainloop {
 
     /// Executes the previously prepared poll.
     pub fn poll(&mut self) -> Result<u32, PAErr> {
-        match unsafe { capi::pa_mainloop_poll((*self._inner).get_ptr()) } {
+        match unsafe { capi::pa_mainloop_poll(self._inner.get_ptr()) } {
             e if e >= 0 => Ok(e as u32),
             e => Err(PAErr(e)),
         }
@@ -346,7 +346,7 @@ impl Mainloop {
     ///
     /// On success returns the number of source dispatched.
     pub fn dispatch(&mut self) -> Result<u32, PAErr> {
-        match unsafe { capi::pa_mainloop_dispatch((*self._inner).get_ptr()) } {
+        match unsafe { capi::pa_mainloop_dispatch(self._inner.get_ptr()) } {
             e if e >= 0 => Ok(e as u32),
             e => Err(PAErr(e)),
         }
@@ -355,7 +355,7 @@ impl Mainloop {
     /// Gets the return value as specified with the main loop’s [`quit()`](Self::quit) routine.
     #[inline]
     pub fn get_retval(&self) -> def::Retval {
-        def::Retval(unsafe { capi::pa_mainloop_get_retval((*self._inner).get_ptr()) })
+        def::Retval(unsafe { capi::pa_mainloop_get_retval(self._inner.get_ptr()) })
     }
 
     /// Runs a single iteration of the main loop.
@@ -377,7 +377,7 @@ impl Mainloop {
     pub fn iterate(&mut self, block: bool) -> IterateResult {
         let mut retval: i32 = 0;
         match unsafe {
-            capi::pa_mainloop_iterate((*self._inner).get_ptr(), block as i32, &mut retval)
+            capi::pa_mainloop_iterate(self._inner.get_ptr(), block as i32, &mut retval)
         } {
             r if r >= 0 => IterateResult::Success(r as u32),
             -2 => IterateResult::Quit(def::Retval(retval)),
@@ -392,7 +392,7 @@ impl Mainloop {
     /// tuple of the error value and quit’s return value.
     pub fn run(&mut self) -> Result<def::Retval, (PAErr, def::Retval)> {
         let mut retval: i32 = 0;
-        match unsafe { capi::pa_mainloop_run((*self._inner).get_ptr(), &mut retval) } {
+        match unsafe { capi::pa_mainloop_run(self._inner.get_ptr(), &mut retval) } {
             r if r >= 0 => Ok(def::Retval(retval)),
             r => Err((PAErr(r), def::Retval(retval))),
         }
@@ -408,7 +408,7 @@ impl Mainloop {
     /// that need it.
     #[inline]
     pub fn get_api<'a>(&self) -> &'a MainloopApi {
-        let ptr = unsafe { (*self._inner).get_api_ptr() };
+        let ptr = unsafe { self._inner.get_api_ptr() };
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
     }
@@ -416,20 +416,20 @@ impl Mainloop {
     /// Shuts down the main loop with the specified return value.
     #[inline]
     pub fn quit(&mut self, retval: def::Retval) {
-        unsafe { capi::pa_mainloop_quit((*self._inner).get_ptr(), retval.0); }
+        unsafe { capi::pa_mainloop_quit(self._inner.get_ptr(), retval.0); }
     }
 
     /// Interrupts a running poll (for threaded systems).
     #[inline]
     pub fn wakeup(&mut self) {
-        unsafe { capi::pa_mainloop_wakeup((*self._inner).get_ptr()); }
+        unsafe { capi::pa_mainloop_wakeup(self._inner.get_ptr()); }
     }
 
     /// Changes the poll() implementation.
     #[inline]
     pub fn set_poll_func(&mut self, poll_cb: (PollFn, *mut c_void)) {
         unsafe {
-            capi::pa_mainloop_set_poll_func((*self._inner).get_ptr(), Some(poll_cb.0), poll_cb.1);
+            capi::pa_mainloop_set_poll_func(self._inner.get_ptr(), Some(poll_cb.0), poll_cb.1);
         }
     }
 }

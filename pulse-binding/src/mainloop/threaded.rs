@@ -451,7 +451,7 @@ impl Mainloop {
 
     /// Starts the event loop thread.
     pub fn start(&mut self) -> Result<(), PAErr> {
-        match unsafe { capi::pa_threaded_mainloop_start((*self._inner).get_ptr()) } {
+        match unsafe { capi::pa_threaded_mainloop_start(self._inner.get_ptr()) } {
             0 => Ok(()),
             e => Err(PAErr(e)),
         }
@@ -462,7 +462,7 @@ impl Mainloop {
     /// Make sure to unlock the mainloop object before calling this function.
     #[inline]
     pub fn stop(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_stop((*self._inner).get_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_stop(self._inner.get_ptr()); }
     }
 
     /// Locks the event loop object, effectively blocking the event loop thread from processing
@@ -474,13 +474,13 @@ impl Mainloop {
     #[inline]
     pub fn lock(&mut self) {
         assert!(!self.in_thread(), "lock() can not be called from within the event loop thread!");
-        unsafe { capi::pa_threaded_mainloop_lock((*self._inner).get_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_lock(self._inner.get_ptr()); }
     }
 
     /// Unlocks the event loop object, inverse of [`lock()`](Self::lock).
     #[inline]
     pub fn unlock(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_unlock((*self._inner).get_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_unlock(self._inner.get_ptr()); }
     }
 
     /// Waits for an event to be signalled by the event loop thread.
@@ -496,7 +496,7 @@ impl Mainloop {
     /// [`signal()`]: Self::signal
     #[inline]
     pub fn wait(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_wait((*self._inner).get_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_wait(self._inner.get_ptr()); }
     }
 
     /// Signals all threads waiting for a signalling event in [`wait()`].
@@ -509,7 +509,7 @@ impl Mainloop {
     #[inline]
     pub fn signal(&mut self, wait_for_accept: bool) {
         unsafe {
-            capi::pa_threaded_mainloop_signal((*self._inner).get_ptr(), wait_for_accept as i32);
+            capi::pa_threaded_mainloop_signal(self._inner.get_ptr(), wait_for_accept as i32);
         }
     }
 
@@ -521,14 +521,14 @@ impl Mainloop {
     /// [`signal()`]: Self::signal
     #[inline]
     pub fn accept(&mut self) {
-        unsafe { capi::pa_threaded_mainloop_accept((*self._inner).get_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_accept(self._inner.get_ptr()); }
     }
 
     /// Gets the return value as specified with the main loop’s `quit` routine (used internally by
     /// threaded mainloop).
     #[inline]
     pub fn get_retval(&self) -> def::Retval {
-        def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval((*self._inner).get_ptr()) })
+        def::Retval(unsafe { capi::pa_threaded_mainloop_get_retval(self._inner.get_ptr()) })
     }
 
     /// Gets the main loop abstraction layer vtable for this main loop.
@@ -542,7 +542,7 @@ impl Mainloop {
     /// that need it.
     #[inline]
     pub fn get_api<'a>(&self) -> &'a MainloopApi {
-        let ptr = unsafe { (*self._inner).get_api_ptr() };
+        let ptr = unsafe { self._inner.get_api_ptr() };
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
     }
@@ -550,7 +550,7 @@ impl Mainloop {
     /// Checks whether or not we are in the event loop thread (returns `true` if so).
     #[inline]
     pub fn in_thread(&self) -> bool {
-        unsafe { capi::pa_threaded_mainloop_in_thread((*self._inner).get_ptr()) != 0 }
+        unsafe { capi::pa_threaded_mainloop_in_thread(self._inner.get_ptr()) != 0 }
     }
 
     /// Sets the name of the thread.
@@ -560,6 +560,6 @@ impl Mainloop {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
-        unsafe { capi::pa_threaded_mainloop_set_name((*self._inner).get_ptr(), c_name.as_ptr()); }
+        unsafe { capi::pa_threaded_mainloop_set_name(self._inner.get_ptr(), c_name.as_ptr()); }
     }
 }
