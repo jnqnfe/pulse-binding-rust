@@ -1,5 +1,6 @@
 # [unreleased]
 
+ * Time: Added missing `#[repr(transparent)]` marker to `MicroSeconds`.
  * Time: Made use of `#[track_caller]` such that panics from overflows and such in math operation
    implementations will point to the caller as the source of the problem.
 

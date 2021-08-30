@@ -21,6 +21,7 @@ use super::op_err;
 /// Microseconds. Represents a span of time like [`std::time::Duration`].
 ///
 /// This is an unsigned 64-bit type, and thus represents absolute values only.
+#[repr(transparent)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MicroSeconds(pub u64);
 
