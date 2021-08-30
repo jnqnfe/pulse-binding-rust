@@ -141,7 +141,7 @@ impl Mainloop {
     /// upon Mainloop creation, stored internally, and automatically obtained from it by functions
     /// that need it.
     pub fn get_api<'a>(&self) -> &'a MainloopApi {
-        let ptr = unsafe { self._inner.get_api_ptr() };
+        let ptr = self._inner.get_api_ptr();
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
     }

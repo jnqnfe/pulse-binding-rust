@@ -48,12 +48,12 @@ pub trait MainloopInnerType {
     /// Return opaque main loop object pointer.
     ///
     /// **Warning**: The pointer is only valid for the lifetime of this object.
-    unsafe fn get_ptr(&self) -> *mut Self::I;
+    fn get_ptr(&self) -> *mut Self::I;
 
     /// Return raw API object pointer.
     ///
     /// **Warning**: The pointer is only valid for the lifetime of this object.
-    unsafe fn get_api_ptr(&self) -> *const MainloopApi;
+    fn get_api_ptr(&self) -> *const MainloopApi;
 
     /// Return main loop API object pointer.
     fn get_api(&self) -> &MainloopApi;
@@ -113,7 +113,7 @@ impl<T> MainloopInnerType for MainloopInner<T>
     ///
     /// **Warning**: The pointer is only valid for the lifetime of this object.
     #[inline(always)]
-    unsafe fn get_ptr(&self) -> *mut T {
+    fn get_ptr(&self) -> *mut T {
         self.ptr
     }
 
@@ -121,7 +121,7 @@ impl<T> MainloopInnerType for MainloopInner<T>
     ///
     /// **Warning**: The pointer is only valid for the lifetime of this object.
     #[inline(always)]
-    unsafe fn get_api_ptr(&self) -> *const MainloopApi {
+    fn get_api_ptr(&self) -> *const MainloopApi {
         self.api
     }
 

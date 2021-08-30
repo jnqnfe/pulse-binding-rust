@@ -408,7 +408,7 @@ impl Mainloop {
     /// that need it.
     #[inline]
     pub fn get_api<'a>(&self) -> &'a MainloopApi {
-        let ptr = unsafe { self._inner.get_api_ptr() };
+        let ptr = self._inner.get_api_ptr();
         assert_eq!(false, ptr.is_null());
         unsafe { &*ptr }
     }
