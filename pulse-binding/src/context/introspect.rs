@@ -261,7 +261,7 @@ impl Drop for Introspector {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SinkPortInfo<'a> {
     /// Name of this port.
     pub name: Option<Cow<'a, str>>,
@@ -333,7 +333,7 @@ impl<'a> SinkPortInfo<'a> {
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SinkInfo<'a> {
     /// Name of the sink.
     pub name: Option<Cow<'a, str>>,
