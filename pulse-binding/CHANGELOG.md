@@ -11,7 +11,8 @@
  * Made the attributes of `MainloopInner` private. Methods `new()` and `get_api_ptr()` were added to
    support this, while `get_ptr()` was marked `unsafe`.
  * Converted `channelmap::Position::to_mask()` to `const fn`.
- * Bumped MSRV from 1.41 to 1.46 due to bitflags v1.3 now requiring 1.46.
+ * Bumped MSRV from 1.41 to 1.46 to better reflect practical requirement since bitflags v1.3 now
+   requires 1.46 and I expect it likely that most projects will promptly be upgrading it.
  * Minor tweaks not worth documenting.
  * Fixed wrong version for previous changelog entry.
 
