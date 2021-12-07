@@ -26,6 +26,7 @@ fn main() {
     config.cargo_metadata(false);
     let fallback = match config.probe(lib_name) {
         // We assume all failure here (being a non-version specific check) indicates no *.pc file
+        Err(pkg_config::Error::ProbeFailure { .. }) |
         Err(pkg_config::Error::Failure { .. }) => {
             println!("cargo:warning=Pkg-config seems to not know about PulseAudio (dev package not installed?), \
                        trying generic fallback...");

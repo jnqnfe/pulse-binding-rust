@@ -17,7 +17,7 @@ build = "build.rs"
 libpulse-sys = { path = "../pulse-sys", version = "1.19", default-features = false }
 
 [build-dependencies]
-pkg-config = "0.3"
+pkg-config = "0.3.23"
 
 [features]
 default = ["pa_v8"]
