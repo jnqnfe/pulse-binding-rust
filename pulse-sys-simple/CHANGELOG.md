@@ -1,3 +1,8 @@
+# 1.19.2 (December 7th, 2021)
+
+ * Fixed handling of pkg-config failure handling due to change in `pkg-config` crate. Thanks to
+   @fredszaq on github for the initial patch.
+
 # 1.19.1 (August 29th, 2021)
 
  * Minor formatting tweaks.

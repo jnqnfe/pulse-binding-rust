@@ -1,7 +1,7 @@
 [package]
 edition = "2018"
 name = "libpulse-sys"
-version = "1.19.2"
+version = "1.19.3"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
