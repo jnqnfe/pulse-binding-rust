@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.26.0 (January 13th, 2022)
 
  * Changed the type of the `timestamp` member of `def::TimingInfo` from `Timeval` to `UnixTs` since
    it is actually a system time not a generic duration.

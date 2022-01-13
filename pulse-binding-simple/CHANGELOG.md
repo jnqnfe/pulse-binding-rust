@@ -1,4 +1,4 @@
-# [unreleased]
+# 2.25.0 (January 13th, 2022)
 
  * Changed the return type of `Simple::get_latency()` to pass error codes to the caller on error.
  * Tweaked the implementation of `Simple::get_latency()` such that in the hypothetical situation (it

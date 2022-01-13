@@ -1,3 +1,7 @@
+# 2.25.1 (January 13th, 2022)
+
+ * Minor tweaks not worth documenting.
+
 # 2.25.0 (August 29th, 2021)
 
  * Minor tweaks to work with the changes in verson 2.25.0 of the main binding crate.
