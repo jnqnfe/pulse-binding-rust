@@ -35,8 +35,8 @@
 //! make use of. Furthermore, the somewhat complex underlying C API imposes certain limitations upon
 //! just how safe and simple an interface this binding can reasonably offer. One particularly
 //! notable example is the threaded mainloop locking mechanism, which uses a perfectly legitimate
-//! design, but one that happens to conflict with what is typically used in Rust code; it does fit
-//! perfectly with the Rust borrow checking mechanism and thus you cannot rely upon the borrow
+//! design, but one that happens to conflict with what is typically used in Rust code; it does not
+//! fit perfectly with the Rust borrow checking mechanism and thus you cannot rely upon the borrow
 //! checker to prevent unsafe use as much as is typical.
 //! </p>
 //! </div>
