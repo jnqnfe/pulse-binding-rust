@@ -19,7 +19,6 @@ mod monotonic;
 mod timeval;
 mod unix;
 
-use std::convert::TryFrom;
 use std::time::Duration;
 
 pub use self::microseconds::*;

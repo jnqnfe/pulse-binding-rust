@@ -13,7 +13,6 @@
 
 //! Error management.
 
-use std::convert::TryFrom;
 use std::ffi::CStr;
 use num_traits::FromPrimitive as FromPrimitiveTrait;
 use num_derive::{FromPrimitive, ToPrimitive};

@@ -14,7 +14,6 @@
 //! Timeval.
 
 use std::cmp::Ordering;
-use std::convert::TryFrom;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
 use super::{UnixTs, MonotonicTs, MicroSeconds, op_err};

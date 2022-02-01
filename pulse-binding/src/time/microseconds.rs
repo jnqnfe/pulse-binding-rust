@@ -13,7 +13,6 @@
 
 //! MicroSeconds.
 
-use std::convert::TryFrom;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign};
 use std::time::Duration;
 use super::op_err;
