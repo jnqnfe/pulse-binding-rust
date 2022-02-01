@@ -7,3 +7,4 @@ members = [
     "pulse-sys-simple",
     "pulse-sys-mainloop-glib",
 ]
+resolver = "2"
