@@ -25,7 +25,7 @@ jobs:
         # Use the Ubuntu Focal (20.04) environment, which uses PA v13.99.1
         os: [ubuntu-20.04]
         rustc:
-          - 1.53.0 # Overall MSRV (Minimum supported rust version)
+          - 1.56.0 # Overall MSRV (Minimum supported rust version)
           - stable
           - beta
         # Allow failure?
