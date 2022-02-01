@@ -156,7 +156,6 @@
 )]
 
 #![warn(missing_docs)]
-#![deny(bare_trait_objects)]
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
