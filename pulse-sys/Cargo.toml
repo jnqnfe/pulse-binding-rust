@@ -1,5 +1,5 @@
 [package]
-edition = "2018"
+edition = "2021"
 name = "libpulse-sys"
 version = "1.19.3"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
@@ -12,7 +12,7 @@ repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
 links = "pulse"
 build = "build.rs"
-rust-version = "1.46"
+rust-version = "1.56"
 
 [dependencies]
 libc = "0.2"

@@ -1,5 +1,5 @@
 [package]
-edition = "2018"
+edition = "2021"
 name = "libpulse-mainloop-glib-sys"
 version = "1.19.2"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]

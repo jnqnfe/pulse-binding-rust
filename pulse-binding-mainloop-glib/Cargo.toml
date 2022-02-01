@@ -1,5 +1,5 @@
 [package]
-edition = "2018"
+edition = "2021"
 name = "libpulse-glib-binding"
 version = "2.25.1"
 authors = ["Lyndon Brown <jnqnfe@gmail.com>"]
