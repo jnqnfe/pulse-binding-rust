@@ -12,6 +12,7 @@ repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
 links = "pulse-simple"
 build = "build.rs"
+rust-version = "1.46"
 
 [dependencies]
 libpulse-sys = { path = "../pulse-sys", version = "1.19", default-features = false }

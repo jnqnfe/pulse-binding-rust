@@ -10,6 +10,7 @@ keywords = ["binding", "pulseaudio", "glib", "audio"]
 homepage = "https://github.com/jnqnfe/pulse-binding-rust"
 repository = "https://github.com/jnqnfe/pulse-binding-rust"
 exclude = ["README.md"]
+rust-version = "1.56"
 
 [dependencies]
 libpulse-binding           = { path = "../pulse-binding",           version = "2.25", default-features = false }
