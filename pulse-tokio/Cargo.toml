@@ -1,0 +1,18 @@
+[package]
+edition = "2021"
+name = "libpulse-tokio"
+version = "0.1.0"
+authors = ["Daniel De Graaf <code@danieldg.net>"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+description = "Tokio bindings for the PulseAudio libpulse library."
+keywords = ["binding", "pulseaudio", "audio", "tokio"]
+repository = "https://github.com/danieldg/pulse-binding-rust"
+exclude = ["README.md"]
+rust-version = "1.56"
+
+[dependencies]
+libpulse-binding = { path = "../pulse-binding", version = "2.26", default-features = false }
+libc = "0.2"
+tokio = { version = "1", features = ['net', 'time'] }
+futures-lite = { version = "1" }
