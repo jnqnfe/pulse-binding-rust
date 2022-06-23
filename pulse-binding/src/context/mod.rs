@@ -381,13 +381,13 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn exit_daemon<F>(&mut self, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr =
             unsafe { capi::pa_context_exit_daemon(self.ptr, Some(success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the name of the default sink.
@@ -395,17 +395,17 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn set_default_sink<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the name of the default source.
@@ -413,17 +413,17 @@ impl Context {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn set_default_source<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Checks if this is a connection to a local daemon.
@@ -441,17 +441,17 @@ impl Context {
     /// Sets a different application name for context on the server.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn set_name<F>(&mut self, name: &str, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Gets the server name this context is connected to.
@@ -488,20 +488,20 @@ impl Context {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn proplist_update<F>(&mut self, mode: proplist::UpdateMode, pl: &Proplist, callback: F)
-        -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+        -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_update(self.ptr, mode, pl.0.ptr,
             Some(success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Updates the property list of the client, remove entries.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn proplist_remove<F>(&mut self, keys: &[&str], callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -518,10 +518,10 @@ impl Context {
         }
         c_key_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_proplist_remove(self.ptr, c_key_ptrs.as_ptr(),
             Some(success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Gets the client index this context is identified in the server with.
@@ -646,7 +646,7 @@ fn success_cb_proxy(_: *mut ContextInternal, success: i32, userdata: *mut c_void
     let _ = std::panic::catch_unwind(|| {
         assert!(!userdata.is_null());
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnMut(bool)>) };
+        let callback = unsafe { Box::from_raw(userdata as *mut Box<dyn FnOnce(bool)>) };
         (callback)(success_actual);
     });
 }
