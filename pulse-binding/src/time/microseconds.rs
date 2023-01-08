@@ -257,7 +257,7 @@ impl MicroSeconds {
     /// ```rust
     /// # use libpulse_binding::time::MicroSeconds;
     /// assert_eq!(MicroSeconds::from_secs_f32(0.5), MicroSeconds(500_000));
-    /// assert_eq!(MicroSeconds::from_secs_f32(2.3), MicroSeconds(2_300_000));
+    /// assert_eq!(MicroSeconds::from_secs_f32(2.3), MicroSeconds(2_299_999));
     /// ```
     ///
     /// These should panic.
@@ -510,8 +510,8 @@ impl MicroSeconds {
     /// let micros = MicroSeconds(2_700_000_000);
     ///
     /// // Note the rounding errors that are clear here.
-    /// assert_eq!(micros.mul_f32(3.14), MicroSeconds(8_478_000_152));
-    /// assert_eq!(micros.mul_f32(3.14e5), MicroSeconds(847_800_018_512_379));
+    /// assert_eq!(micros.mul_f32(3.14), MicroSeconds(8_478_000_000));
+    /// assert_eq!(micros.mul_f32(3.14e5), MicroSeconds(847_800_000_000_000));
     /// ```
     ///
     /// These should panic.
@@ -596,7 +596,7 @@ impl MicroSeconds {
     /// # use libpulse_binding::time::{MicroSeconds, MICROS_PER_SEC};
     /// let micros = MicroSeconds(2_700_000_000);
     ///
-    /// assert_eq!(micros.div_f32(3.14), MicroSeconds(859_872_559));
+    /// assert_eq!(micros.div_f32(3.14), MicroSeconds(859_872_558));
     /// assert_eq!(micros.div_f32(3.14e5), MicroSeconds(8_598));
     /// ```
     ///

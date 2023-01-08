@@ -1,3 +1,9 @@
+# [unreleased]
+
+ * Tweaked some doc-tests to work with rust v1.63+ (at the expense of not working with older
+   versions). This relates to float-point calculation changes in `Duration::try_from_secs_f32/64`
+   made in rust stdlib version 1.60 and further tweaked in 1.63. See [this issue][issue48].
+
 # 2.26.0 (January 13th, 2022)
 
  * Changed the type of the `timestamp` member of `def::TimingInfo` from `Timeval` to `UnixTs` since
@@ -660,3 +666,4 @@ Note, version number 1.0.4 skipped (it was used for non-crate project changes).
 [`bitflags`]: https://docs.rs/bitflags
 [issue11]: https://github.com/jnqnfe/pulse-binding-rust/issues/11
 [issue26]: https://github.com/jnqnfe/pulse-binding-rust/issues/26
+[issue48]: https://github.com/jnqnfe/pulse-binding-rust/issues/48
