@@ -30,6 +30,8 @@ jobs:
           - beta
         # Allow failure?
         experimental: [false]
+        # Skip running unit tests?
+        skip-unit-tests: [false]
         # Skip compiling the glib-related crate? (Used when it has higher MSRV than us)
         skip-glib-crate: [false]
         include:
@@ -37,11 +39,13 @@ jobs:
           - os: ubuntu-20.04
             rustc: nightly
             experimental: true
+            skip-unit-tests: false
             skip-glib-crate: false
           # Minimal MSRV test - this disables the glib stuff which requires a much newer version
           - os: ubuntu-20.04
             rustc: 1.56.0
             experimental: false
+            skip-unit-tests: true
             skip-glib-crate: true
 
     env:
@@ -120,19 +124,21 @@ jobs:
           echo "::endgroup::"
 
       - name: Test main binding
+        if: ${{ matrix.skip-unit-tests == false }}
         working-directory: ./pulse-binding
         run: |
           echo "Testing with version feature flag '${PA_TEST_VERSION}'"
           cargo test --verbose --features $PA_TEST_VERSION
 
       - name: Test simple binding
+        if: ${{ matrix.skip-unit-tests == false }}
         working-directory: ./pulse-binding-simple
         run: |
           echo "Testing with version feature flag '${PA_TEST_VERSION}'"
           cargo test --verbose --features $PA_TEST_VERSION
 
       - name: Test glib binding
-        if: ${{ matrix.skip-glib-crate == false }}
+        if: ${{ matrix.skip-unit-tests == false && matrix.skip-glib-crate == false }}
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           echo "Testing with version feature flag '${PA_TEST_VERSION}'"
