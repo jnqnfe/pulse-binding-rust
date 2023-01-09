@@ -30,19 +30,19 @@ jobs:
           - beta
         # Allow failure?
         experimental: [false]
-        # For the minimal MSRV test we must skip the glib stuff which has a higher MSRV requirement
-        skip-glib-test: [false]
+        # Skip compiling the glib-related crate? (Used when it has higher MSRV than us)
+        skip-glib-crate: [false]
         include:
           # Nightly test - must be allowed to fail
           - os: ubuntu-20.04
             rustc: nightly
             experimental: true
-            skip-glib-test: false
+            skip-glib-crate: false
           # Minimal MSRV test - this disables the glib stuff which requires a much newer version
           - os: ubuntu-20.04
             rustc: 1.56.0
             experimental: false
-            skip-glib-test: true
+            skip-glib-crate: true
 
     env:
       # Version feature flags to test with `cargo check`
@@ -105,7 +105,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Check building glib binding (cargo check)
-        if: ${{ matrix.skip-glib-test == false }}
+        if: ${{ matrix.skip-glib-crate == false }}
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           for PA_VERSION in $PA_BUILD_VERSIONS; do
@@ -132,7 +132,7 @@ jobs:
           cargo test --verbose --features $PA_TEST_VERSION
 
       - name: Test glib binding
-        if: ${{ matrix.skip-glib-test == false }}
+        if: ${{ matrix.skip-glib-crate == false }}
         working-directory: ./pulse-binding-mainloop-glib
         run: |
           echo "Testing with version feature flag '${PA_TEST_VERSION}'"
