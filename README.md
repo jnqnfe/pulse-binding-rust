@@ -1,7 +1,7 @@
 Overview
 ========
 
-[<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jnqnfe/pulse-binding-rust/Build%20&%20Test/master?style=for-the-badge" height="24">](https://github.com/jnqnfe/pulse-binding-rust/actions)
+[<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jnqnfe/pulse-binding-rust/test.yml?branch=master&style=for-the-badge" height="24">](https://github.com/jnqnfe/pulse-binding-rust/actions)
 <img alt="license" src="https://img.shields.io/crates/l/libpulse-binding.svg?style=for-the-badge" height="24">
 
 This repository contains *sys* (FFI) and *binding* libraries (crates) for connecting to PulseAudio
