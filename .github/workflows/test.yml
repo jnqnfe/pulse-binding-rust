@@ -23,7 +23,7 @@ jobs:
         # Use the Ubuntu Focal (20.04) environment, which uses PA v13.99.1
         os: [ubuntu-20.04]
         rustc:
-          - 1.56.0 # Overall MSRV (Minimum supported rust version)
+          - 1.63.0 # Overall MSRV (Minimum supported rust version), including glib's requirement
           - stable
           - beta
         # Allow failure?
@@ -39,7 +39,7 @@ jobs:
             experimental: true
             skip-unit-tests: false
             skip-glib-crate: false
-          # Minimal MSRV test - this disables the glib stuff which requires a much newer version
+          # Minimal MSRV test - Our actual MSRV, excluding glib crate (often needs newer version)
           - os: ubuntu-20.04
             rustc: 1.56.0
             experimental: false
