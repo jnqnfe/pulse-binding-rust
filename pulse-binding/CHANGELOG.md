@@ -1,3 +1,7 @@
+# 2.27.1 (January 9th, 2023)
+
+ * Fixed broken build status badge in readme.
+
 # 2.27.0 (January 9th, 2023)
 
  * Bumped Rust edition to 2021.
