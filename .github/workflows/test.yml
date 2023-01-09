@@ -70,7 +70,9 @@ jobs:
           sudo apt-get install pulseaudio libpulse-mainloop-glib0 libpulse-dev
 
       - name: Start PulseAudio
-        run: pulseaudio -D --start
+        run: |
+          systemctl --user start pulseaudio
+          systemctl --user status pulseaudio
 
       - name: Check toolchain versions
         run: |
