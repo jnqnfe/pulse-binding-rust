@@ -1,5 +1,3 @@
-# NOTE: this name is used in the badge links in use in the readme files.
-# Don't break them by changing it!
 name: Build & Test
 
 on:
