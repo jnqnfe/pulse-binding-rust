@@ -1,3 +1,9 @@
+# 1.20.0 (January 9th, 2023)
+
+ * Bumped Rust edition to 2021.
+ * Bumped MSRV from 1.46 to 1.56.
+ * Added `rust-version` (MSRV) attribute to `cargo.toml` file.
+
 # 1.19.3 (December 7th, 2021)
 
  * Fixed handling of pkg-config failure handling due to change in `pkg-config` crate. Thanks to

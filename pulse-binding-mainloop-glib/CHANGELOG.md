@@ -1,3 +1,13 @@
+# 2.27.0 (January 9th, 2023)
+
+ * Bumped Rust edition to 2021.
+ * Added `rust-version` (MSRV) attribute to `cargo.toml` file.
+ * Updated required dependencies:
+    - `libpulse-binding`           from 2.24 to 2.27.
+    - `libpulse-mainloop-glib-sys` from 1.19 to 1.20.
+
+Note: version 2.26 skipped to catch up with main `libpulse-binding` version.
+
 # 2.25.1 (January 13th, 2022)
 
  * Minor tweaks not worth documenting.

@@ -1,3 +1,15 @@
+# 2.27.0 (January 9th, 2023)
+
+ * Bumped Rust edition to 2021.
+ * Bumped MSRV from 1.46 to 1.56.
+ * Added `rust-version` (MSRV) attribute to `cargo.toml` file.
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.24 to 2.27.
+    - `libpulse-sys`        from 1.19 to 1.20.
+    - `libpulse-simple-sys` from 1.19 to 1.20.
+
+Note: version 2.26 skipped to catch up with main `libpulse-binding` version.
+
 # 2.25.0 (January 13th, 2022)
 
  * Changed the return type of `Simple::get_latency()` to pass error codes to the caller on error.

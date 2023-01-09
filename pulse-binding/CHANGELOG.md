@@ -1,8 +1,13 @@
-# [unreleased]
+# 2.27.0 (January 9th, 2023)
 
+ * Bumped Rust edition to 2021.
+ * Bumped MSRV from 1.46 to 1.56.
+ * Added `rust-version` (MSRV) attribute to `cargo.toml` file.
  * Tweaked some doc-tests to work with rust v1.63+ (at the expense of not working with older
    versions). This relates to float-point calculation changes in `Duration::try_from_secs_f32/64`
    made in rust stdlib version 1.60 and further tweaked in 1.63. See [this issue][issue48].
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.19 to 1.20.
 
 # 2.26.0 (January 13th, 2022)
 
