@@ -22,7 +22,7 @@
 //! the PA client library, with changes made in newer versions being guarded with Cargo feature
 //! flags.
 //!
-//! Note that the minimum supported version of PA is v4.0.
+//! Note that the minimum supported version of PA is v5.0.
 //!
 //! # Dynamic constants
 //!
@@ -56,8 +56,6 @@ use std::os::raw::c_char;
 /// Note that PA v4 is the oldest supported.
 #[non_exhaustive]
 pub enum Compatibility {
-    /// Support for PA versions 4+ selected.
-    V4Plus,
     /// Support for PA version 5+ selected.
     V5Plus,
     /// Support for PA version 6+ selected.
@@ -75,7 +73,7 @@ pub enum Compatibility {
 }
 
 // Latest
-#[cfg(any(feature = "pa_v15", all(doc, not(feature = "pa_v5"))))]
+#[cfg(any(feature = "pa_v15", all(doc, not(feature = "pa_v6"))))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V15Plus;
     pub const TARGET_VERSION_STRING: &str = "15.0.0";
@@ -129,21 +127,12 @@ mod actual {
 }
 
 // Pre-v6
-#[cfg(all(feature = "pa_v5", not(feature = "pa_v6")))]
+#[cfg(all(not(doc), not(feature = "pa_v6")))]
 mod actual {
     pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V5Plus;
     pub const TARGET_VERSION_STRING: &str = "5.0.0";
     pub const TARGET_VERSION: (u8, u8) = (5, 0);
     pub const PA_PROTOCOL_VERSION: u16 = 29;
-}
-
-// Pre-v5
-#[cfg(all(not(doc), not(feature = "pa_v5")))]
-mod actual {
-    pub const COMPATIBILITY: super::Compatibility = super::Compatibility::V4Plus;
-    pub const TARGET_VERSION_STRING: &str = "4.0.0";
-    pub const TARGET_VERSION: (u8, u8) = (4, 0);
-    pub const PA_PROTOCOL_VERSION: u16 = 28;
 }
 
 /// Version string of targetted version.

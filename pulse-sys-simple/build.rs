@@ -15,7 +15,7 @@ fn main() {
         #[cfg(not(any(target_os = "linux", target_os = "macos", windows)))]
         { "pulse-simple" }
     };
-    let min_version = "4.0";
+    let min_version = "5.0";
 
     let mut config = pkg_config::Config::new();
 

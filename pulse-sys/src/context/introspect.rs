@@ -165,8 +165,10 @@ pub struct pa_client_info {
 #[rustfmt::skip]
 pub type pa_client_info_cb_t = Option<extern "C" fn(c: *mut pa_context, i: *const pa_client_info, eol: i32, userdata: *mut c_void)>;
 
+/// Stores information about a specific profile of a card.
+///
+/// Please note that this structure is obsolete, replaced by [`pa_card_profile_info2`] in PA v5.
 #[repr(C)]
-#[cfg_attr(feature = "pa_v5", deprecated)]
 pub struct pa_card_profile_info {
     /// Name of this profile.
     pub name: *const c_char,
@@ -185,8 +187,6 @@ pub struct pa_card_profile_info {
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
 /// in any new release.
 #[repr(C)]
-#[cfg(any(doc, feature = "pa_v5"))]
-#[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
 pub struct pa_card_profile_info2 {
     /// Name of this profile.
     pub name: *const c_char,
@@ -214,13 +214,10 @@ pub struct pa_card_port_info {
     pub available: i32,
     pub direction: i32,
     pub n_profiles: u32,
-    #[cfg_attr(feature = "pa_v5", deprecated)]
-    #[cfg_attr(feature = "pa_v5", allow(deprecated))]
+    #[deprecated]
     pub profiles: *mut *mut pa_card_profile_info,
     pub proplist: *mut pa_proplist,
     pub latency_offset: i64,
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub profiles2: *mut *mut pa_card_profile_info2,
     #[cfg(any(doc, feature = "pa_v14"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v14")))]
@@ -237,20 +234,14 @@ pub struct pa_card_info {
     pub owner_module: u32,
     pub driver: *const c_char,
     pub n_profiles: u32,
-    #[cfg_attr(feature = "pa_v5", deprecated)]
-    #[cfg_attr(feature = "pa_v5", allow(deprecated))]
+    #[deprecated]
     pub profiles: *mut pa_card_profile_info,
-    #[cfg_attr(feature = "pa_v5", deprecated)]
-    #[cfg_attr(feature = "pa_v5", allow(deprecated))]
+    #[deprecated]
     pub active_profile: *mut pa_card_profile_info,
     pub proplist: *mut pa_proplist,
     pub n_ports: u32,
     pub ports: *mut *mut pa_card_port_info,
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub profiles2: *mut *mut pa_card_profile_info2,
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub active_profile2: *mut pa_card_profile_info2,
 }
 

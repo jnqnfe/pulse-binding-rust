@@ -389,7 +389,6 @@
 //! ```
 
 use std::rc::Rc;
-#[cfg(any(doc, feature = "pa_v5"))]
 use std::ffi::CString;
 use crate::def;
 use crate::error::PAErr;
@@ -554,8 +553,6 @@ impl Mainloop {
     }
 
     /// Sets the name of the thread.
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn set_name(&mut self, name: &str) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!

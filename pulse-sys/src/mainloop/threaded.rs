@@ -13,7 +13,6 @@
 
 //! A variation of the standard main loop implementation, using a background thread.
 
-#[cfg(any(doc, feature = "pa_v5"))]
 use std::os::raw::c_char;
 #[cfg(any(doc, feature = "pa_v13"))]
 use std::os::raw::c_void;
@@ -37,8 +36,6 @@ extern "C" {
     pub fn pa_threaded_mainloop_get_retval(m: *const pa_threaded_mainloop) -> i32;
     pub fn pa_threaded_mainloop_get_api(m: *const pa_threaded_mainloop) -> *const pa_mainloop_api;
     pub fn pa_threaded_mainloop_in_thread(m: *mut pa_threaded_mainloop) -> i32;
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn pa_threaded_mainloop_set_name(m: *mut pa_threaded_mainloop, name: *const c_char);
     #[cfg(any(doc, feature = "pa_v13"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v13")))]

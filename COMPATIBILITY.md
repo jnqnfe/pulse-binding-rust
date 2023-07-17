@@ -34,7 +34,7 @@ however is a different and more complicated matter.
 ## Controlling Compatibility
 
 The Rust crates provided by this project each have a set of Cargo feature flags relating to
-PulseAudio versions. The supported versions of PA range from version 4.0 onwards.
+PulseAudio versions. The supported versions of PA range from version 5.0 onwards.
 
 The first thing to understand is that such feature flags are provided only when a version of PA
 includes changes to its API/ABI that require one, not for every PA version ever released. Hence
@@ -101,20 +101,19 @@ flags. This change in operation is hard coded. They do **not** (because it is no
 what version it is at runtime, they just work on the assumption that the program will never be run
 with an older PA version. Thus, if this is ever not the case, things can go very wrong.
 
-As an example, and in fact the primary area of concern, PA versions 5.0 and 14.0 both added new
-members to the end of some of the introspection structs. If you enable the feature flags for these
-versions (or newer), this adapts the crates to PA version 5.0+ or 14.0+ mode respectively. You will
-thus see that these new members are available in the corresponding structs offered by the crates,
-both in the raw FFI structs and also the ones returned by the introspection functions that translate
-those into the more “Rust-ified” ones. The operation of the “translation” functions will have been
-adjusted to include translation of those additional struct members. The danger here is that if your
-program is run on a system with an older version of PA, then the structs it’s C API provides will
-not match up correctly to the FFI struct description, lacking those extra members. The translation
-function will not know this however and will read and process the extra memory after the end of the
-actual structs the C API provided, assuming that memory to hold valid data. What then happens is
-undefined behaviour. Possibly a crash, possibly not, possibly an opportunity that could be seized
-upon as a security vulnerability, especially considering that some of these members involve
-pointers.
+As an example, and in fact the primary area of concern, PA version 14.0 added new members to the end
+of some of the introspection structs. If you enable the feature flags for this version (or newer),
+this adapts the crates to PA version 14.0+ mode. You will thus see that these new members are
+available in the corresponding structs offered by the crates, both in the raw FFI structs and also
+the ones returned by the introspection functions that translate those into the more “Rust-ified”
+ones. The operation of the “translation” functions will have been adjusted to include translation of
+those additional struct members. The danger here is that if your program is run on a system with an
+older version of PA, then the structs it’s C API provides will not match up correctly to the FFI
+struct description, lacking those extra members. The translation function will not know this however
+and will read and process the extra memory after the end of the actual structs the C API provided,
+assuming that memory to hold valid data. What then happens is undefined behaviour. Possibly a crash,
+possibly not, possibly an opportunity that could be seized upon as a security vulnerability,
+especially considering that some of these members involve pointers.
 
 Ideally a mechanism should be in place to properly prevent programs from loading at all unless the
 version of PA is new enough. Unfortunately, as I understand it, the system library versioning scheme
@@ -126,9 +125,6 @@ these crates, and needs further work/investigation.
 
 Currently it is left to program authors to somehow not let their programs be used on older versions
 of PA than they were compiled for, and/or to make careful choices as to the use of version features.
-(PA version 5.0 is pretty old, so it is unlikely that programs built for 5.0+ will get run on 4.0;
-and PA version 14.0 is very new, so unlikely that programs will select the version 14.0 feature flag
-for quite a while. So hopefully this should not be a practical problem).
 
 Some helper functions are provided in the `version` mod of the main binding crate to assist in
 checking at runtime the version of the available PA system library by processing the version string
@@ -166,7 +162,7 @@ Reducing the level to PA version 6.0+ (requires disabling the current default of
 libpulse-binding = { version = "2.0", default-features = false, features = "pa_v6" }
 ```
 
-Reducing the level to the absolute minimum supported (currently PA v4.0+):
+Reducing the level to the absolute minimum supported (currently PA v5.0+):
 
 ```toml
 libpulse-binding = { version = "2.0", default-features = false }

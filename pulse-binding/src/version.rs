@@ -22,7 +22,7 @@
 //! versions of the PA client system library, with feature flags adapting the crate to changes made
 //! in the API of newer PA versions.
 //!
-//! Note that the minimum supported version of PA is v4.0.
+//! Note that the minimum supported version of PA is v5.0.
 //!
 //! # Runtime checking
 //!

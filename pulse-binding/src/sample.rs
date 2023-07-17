@@ -316,24 +316,18 @@ impl Spec {
     ///
     /// Or in other words that the client library running on the end user system accepts it.
     #[inline]
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn format_is_valid(&self) -> bool {
         unsafe { capi::pa_sample_format_valid(self.format as u32) != 0 }
     }
 
     /// Checks only if the rate is within the supported range.
     #[inline]
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn rate_is_valid(&self) -> bool {
         unsafe { capi::pa_sample_rate_valid(self.rate) != 0 }
     }
 
     /// Checks only if the channel count is within the supported range.
     #[inline]
-    #[cfg(any(doc, feature = "pa_v5"))]
-    #[cfg_attr(docsrs, doc(cfg(feature = "pa_v5")))]
     pub fn channels_are_valid(&self) -> bool {
         unsafe { capi::pa_channels_valid(self.channels) != 0 }
     }
