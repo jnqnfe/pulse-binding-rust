@@ -107,7 +107,7 @@ versions (or newer), this adapts the crates to PA version 5.0+ or 14.0+ mode res
 thus see that these new members are available in the corresponding structs offered by the crates,
 both in the raw FFI structs and also the ones returned by the introspection functions that translate
 those into the more “Rust-ified” ones. The operation of the “translation” functions will have been
-adjusted to include translation of those additional sruct members. The danger here is that if your
+adjusted to include translation of those additional struct members. The danger here is that if your
 program is run on a system with an older version of PA, then the structs it’s C API provides will
 not match up correctly to the FFI struct description, lacking those extra members. The translation
 function will not know this however and will read and process the extra memory after the end of the
