@@ -72,7 +72,7 @@ pub type pa_stream_flags_t = u32;
 pub use self::flags::*;
 
 /// Some special flags for stream connections.
-pub mod flags {
+mod flags {
     use super::pa_stream_flags_t;
 
     pub const PA_STREAM_NOFLAGS:                   pa_stream_flags_t = 0;

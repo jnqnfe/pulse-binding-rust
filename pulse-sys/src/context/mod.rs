@@ -75,7 +75,7 @@ pub type pa_context_flags_t = u32;
 pub use self::flags::*;
 
 /// Some special flags for contexts.
-pub mod flags {
+mod flags {
     use super::pa_context_flags_t;
 
     pub const PA_CONTEXT_NOFLAGS:     pa_context_flags_t = 0x0;
