@@ -156,7 +156,7 @@ impl StreamRestore {
         // as_ptr() giving dangling pointers!
         let mut c_streams: Vec<CString> = Vec::with_capacity(streams.len());
         for stream in streams {
-            c_streams.push(CString::new(stream.clone()).unwrap());
+            c_streams.push(CString::new(*stream).unwrap());
         }
 
         // Capture array of pointers to the above CString values.

@@ -1,5 +1,6 @@
 # unreleased]
 
+ * Fixed 'double-reference clone' warnings.
  * Dropped PA v4 support.
 
 # 2.27.1 (January 9th, 2023)

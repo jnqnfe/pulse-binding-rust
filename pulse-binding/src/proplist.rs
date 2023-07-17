@@ -372,7 +372,7 @@ impl Proplist {
         // as_ptr() giving dangling pointers!
         let mut c_keys: Vec<CString> = Vec::with_capacity(keys.len());
         for k in keys {
-            c_keys.push(CString::new(k.clone()).unwrap());
+            c_keys.push(CString::new(*k).unwrap());
         }
 
         // Capture array of pointers to the above CString values.

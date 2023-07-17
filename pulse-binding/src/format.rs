@@ -526,7 +526,7 @@ impl Info {
         let c_key = CString::new(key.clone()).unwrap();
         let mut c_values: Vec<CString> = Vec::with_capacity(values.len());
         for v in values {
-            c_values.push(CString::new(v.clone()).unwrap());
+            c_values.push(CString::new(*v).unwrap());
         }
 
         // Capture array of pointers to the above CString values

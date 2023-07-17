@@ -507,7 +507,7 @@ impl Context {
         // as_ptr() giving dangling pointers!
         let mut c_keys: Vec<CString> = Vec::with_capacity(keys.len());
         for key in keys {
-            c_keys.push(CString::new(key.clone()).unwrap());
+            c_keys.push(CString::new(*key).unwrap());
         }
 
         // Capture array of pointers to the above CString values.

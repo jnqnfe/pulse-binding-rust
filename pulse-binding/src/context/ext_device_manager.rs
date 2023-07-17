@@ -198,7 +198,7 @@ impl DeviceManager {
         // as_ptr() giving dangling pointers!
         let mut c_devs: Vec<CString> = Vec::with_capacity(devices.len());
         for device in devices {
-            c_devs.push(CString::new(device.clone()).unwrap());
+            c_devs.push(CString::new(*device).unwrap());
         }
 
         // Capture array of pointers to the above CString values.
@@ -246,7 +246,7 @@ impl DeviceManager {
         let c_role = CString::new(role.clone()).unwrap();
         let mut c_devs: Vec<CString> = Vec::with_capacity(devices.len());
         for device in devices {
-            c_devs.push(CString::new(device.clone()).unwrap());
+            c_devs.push(CString::new(*device).unwrap());
         }
 
         // Capture array of pointers to the above CString values.
