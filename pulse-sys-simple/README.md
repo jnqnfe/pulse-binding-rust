@@ -51,12 +51,10 @@ overall project `COMPATIBILITY.md` file for further details.
 
 ## License
 
-Licensed under either of
+Licensed under either of the following, at your option:
 
  * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
  * [MIT license](http://opensource.org/licenses/MIT)
-
-at your option.
 
 ### Contribution
 
