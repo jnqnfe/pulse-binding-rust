@@ -58,11 +58,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ matrix.rustc }}
-          override: true
+        run: |
+          rustup toolchain install ${{ matrix.rustc }} --profile minimal --no-self-update
+          rustup default ${{ matrix.rustc }}
+          echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
+          echo RUST_BACKTRACE=1 >> $GITHUB_ENV
+          rustc -V
+          cargo -V
 
       - name: Install PulseAudio and `libpulse-dev`
         run: |
@@ -73,11 +75,6 @@ jobs:
         run: |
           systemctl --user start pulseaudio
           systemctl --user status pulseaudio
-
-      - name: Check toolchain versions
-        run: |
-          cargo -V
-          rustc -V
 
       - name: Check building main binding (cargo check)
         working-directory: ./pulse-binding
