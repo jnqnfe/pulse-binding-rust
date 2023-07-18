@@ -1,3 +1,7 @@
+# 2.28.1 (July 18th, 2023)
+
+ * Fixed cross-crate version requirement.
+
 # 2.28.0 (July 18th, 2023)
 
  * Fixed 'double-reference clone' warnings.

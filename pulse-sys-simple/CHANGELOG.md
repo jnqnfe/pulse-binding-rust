@@ -1,3 +1,7 @@
+# 1.21.1 (July 18th, 2023)
+
+ * Fixed cross-crate version requirement.
+
 # 1.21.0 (July 18th, 2023)
 
  * Fixed docs.rs build failure.
