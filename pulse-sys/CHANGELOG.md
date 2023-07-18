@@ -1,4 +1,4 @@
-# unreleased]
+# 1.21.0 (July 18th, 2023)
 
  * Fixed warning from clashing namespace exports.
  * Fixed docs.rs build failure.

@@ -1,4 +1,4 @@
-# unreleased]
+# 2.28.0 (July 18th, 2023)
 
  * Fixed docs.rs build failure.
  * Dropped PA v4 support.

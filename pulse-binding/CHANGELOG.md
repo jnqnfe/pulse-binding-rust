@@ -1,4 +1,4 @@
-# unreleased]
+# 2.28.0 (July 18th, 2023)
 
  * Fixed 'double-reference clone' warnings.
  * Fixed docs.rs build failure.
