@@ -40,5 +40,4 @@ pa_v6  = []
 [package.metadata.docs.rs]
 all-features = false
 no-default-features = true
-rustc-args = ["--cfg", "doc"]
 rustdoc-args = ["--cfg", "docsrs"]

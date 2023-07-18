@@ -1,6 +1,7 @@
 # unreleased]
 
  * Fixed 'double-reference clone' warnings.
+ * Fixed docs.rs build failure.
  * Dropped PA v4 support.
 
 # 2.27.1 (January 9th, 2023)

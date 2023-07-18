@@ -1,6 +1,7 @@
 # unreleased]
 
  * Fixed warning from clashing namespace exports.
+ * Fixed docs.rs build failure.
  * Dropped PA v4 support.
 
 # 1.20.1 (January 9th, 2023)

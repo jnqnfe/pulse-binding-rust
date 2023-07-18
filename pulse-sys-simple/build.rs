@@ -1,6 +1,6 @@
 fn main() {
     // Skip pkg-config check if just generating documentation.
-    if cfg!(doc) {
+    if std::env::var_os("DOCS_RS").is_some() {
         return;
     }
 
