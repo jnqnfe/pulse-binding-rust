@@ -49,7 +49,7 @@ jobs:
     env:
       # Version feature flags to test with `cargo check`
       #
-      PA_BUILD_VERSIONS: "pa_v15 pa_v14 pa_v13 pa_v12 pa_v8 pa_v6 pa_v5"
+      PA_BUILD_VERSIONS: "pa_v15 pa_v14 pa_v13 pa_v12 pa_v8 pa_v6"
       # Single feature flag to use for `cargo test` steps
       PA_TEST_VERSION: pa_v15
 
