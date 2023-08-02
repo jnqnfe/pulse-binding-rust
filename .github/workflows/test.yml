@@ -23,7 +23,7 @@ jobs:
         # Use the Ubuntu Focal (20.04) environment, which uses PA v13.99.1
         os: [ubuntu-22.04]
         rustc:
-          - 1.64.0 # Overall MSRV (Minimum supported rust version), including glib's requirement
+          - 1.70.0 # Overall MSRV (Minimum supported rust version), including glib's requirement
           - stable
           - beta
         # Allow failure?
