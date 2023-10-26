@@ -32,8 +32,8 @@
 //! with the desired data.
 //!
 //! Some objects can have multiple instances on the server. When requesting all of these at once,
-//! the callback will be called multiple times, each time with an [`ListResult`] variant. It will be
-//! called once for each item in turn, using the `Item` variant, and then once more time with the
+//! the callback will be called multiple times, each time with a [`ListResult`] variant. It will be
+//! called once for each item in turn, using the `Item` variant, and then one more time with the
 //! `End` variant to signal that the end of the list has been reached. If an error occurs, then
 //! the `Error` variant will be given.
 //!
