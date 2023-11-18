@@ -16,7 +16,7 @@ use libpulse_binding::mainloop::events::io::IoEventInternal;
 use libpulse_binding::mainloop::events::timer::TimeEventInternal;
 use std::cell::{Cell, UnsafeCell};
 use std::fmt;
-use std::future::Future;
+use std::future::{Future,poll_fn};
 use std::os::raw::c_void;
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::pin::Pin;
@@ -390,7 +390,7 @@ impl TokioMain {
     /// callback.  You will need to call run on another task to actually use the context.
     pub async fn wait_for_ready(&mut self, ctx: &Context) -> Result<context::State, Retval> {
         loop {
-            match futures_lite::future::poll_fn(|ctx| self.tick(ctx)).await {
+            match poll_fn(|ctx| self.tick(ctx)).await {
                 Some(rv) => return Err(rv),
                 None => {}
             }
@@ -407,7 +407,7 @@ impl TokioMain {
     /// Run the mainloop until a quit is requested through the pulse API
     pub async fn run(&mut self) -> Retval {
         loop {
-            match futures_lite::future::poll_fn(|ctx| self.tick(ctx)).await {
+            match poll_fn(|ctx| self.tick(ctx)).await {
                 Some(rv) => return rv,
                 None => (),
             }
