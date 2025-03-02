@@ -20,8 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Use the Ubuntu Focal (20.04) environment, which uses PA v13.99.1
-        os: [ubuntu-22.04]
+        os: [ubuntu-latest]
         rustc:
           - 1.70.0 # Overall MSRV (Minimum supported rust version), including glib's requirement
           - stable
@@ -34,13 +33,13 @@ jobs:
         skip-glib-crate: [false]
         include:
           # Nightly test - must be allowed to fail
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             rustc: nightly
             experimental: true
             skip-unit-tests: false
             skip-glib-crate: false
           # Minimal MSRV test - Our actual MSRV, excluding glib crate (often needs newer version)
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             rustc: 1.56.0
             experimental: false
             skip-unit-tests: true
