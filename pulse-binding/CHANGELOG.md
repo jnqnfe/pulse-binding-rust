@@ -1,3 +1,7 @@
+# 2.28.3 (March 2nd, 2025)
+
+ * Clarify in documenation that mainloop and context objects must both live for the entire duration.
+
 # 2.28.2 (November 27th, 2024)
 
  * Fixed crash when audio device has null device but non-null name, thanks to @AdriaanPrinsloo on
