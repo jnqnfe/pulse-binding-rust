@@ -130,6 +130,13 @@
 //!
 //! See sub-modules for further information.
 //!
+//! Note that establishing a connection with PulseAudio involves creation of [context](mod@context)
+//! and [mainloop](mod@mainloop) objects and both of these must live for the entire duration that
+//! your program wishes to communicate with PulseAudio. The context object represents the actual
+//! communicaiton channel with PA. The mainloop object is used for controlled processing of messages
+//! sent to your client program from PA and execution of your callbacks. This detail can be ignored
+//! if you use the 'simple' binding interface.
+//!
 //! <div style="border-left:#bda000aa 5px solid; padding:0.5em 1em; margin:1em 0 0.6em 0; background-color:#aaa2">
 //! <h3 style="color:#bfa800; margin-top:0.2em">
 //! <span aria-hidden="true">
