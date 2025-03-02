@@ -40,7 +40,7 @@ jobs:
             skip-glib-crate: false
           # Minimal MSRV test - Our actual MSRV, excluding glib crate (often needs newer version)
           - os: ubuntu-latest
-            rustc: 1.56.0
+            rustc: 1.63.0
             experimental: false
             skip-unit-tests: true
             skip-glib-crate: true
