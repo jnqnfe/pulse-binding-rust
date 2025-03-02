@@ -464,7 +464,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SinkInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sink_info_by_name(self.context, c_name.as_ptr(),
@@ -522,7 +522,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -556,7 +556,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -575,7 +575,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(sink_name.clone()).unwrap();
+        let c_name = CString::new(sink_name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -610,7 +610,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_port = CString::new(port.clone()).unwrap();
+        let c_port = CString::new(port).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -629,8 +629,8 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
-        let c_port = CString::new(port.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
+        let c_port = CString::new(port).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -868,7 +868,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SourceInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_source_info_by_name(self.context, c_name.as_ptr(),
@@ -927,7 +927,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -961,7 +961,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -980,7 +980,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -1015,7 +1015,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_port = CString::new(port.clone()).unwrap();
+        let c_port = CString::new(port).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -1034,8 +1034,8 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
-        let c_port = CString::new(port.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
+        let c_port = CString::new(port).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -1239,8 +1239,8 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
-        let c_arg = CString::new(argument.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
+        let c_arg = CString::new(argument).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_load_module(self.context, c_name.as_ptr(),
@@ -1696,7 +1696,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&CardInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_card_info_by_name(self.context, c_name.as_ptr(),
@@ -1726,7 +1726,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_profile = CString::new(profile.clone()).unwrap();
+        let c_profile = CString::new(profile).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -1745,8 +1745,8 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
-        let c_profile = CString::new(profile.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
+        let c_profile = CString::new(profile).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -1765,8 +1765,8 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(card_name.clone()).unwrap();
-        let c_port = CString::new(port_name.clone()).unwrap();
+        let c_name = CString::new(card_name).unwrap();
+        let c_port = CString::new(port_name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -1936,7 +1936,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(sink_name.clone()).unwrap();
+        let c_name = CString::new(sink_name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -2165,7 +2165,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(source_name.clone()).unwrap();
+        let c_name = CString::new(source_name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
@@ -2349,7 +2349,7 @@ impl Introspector {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(ListResult<&SampleInfo>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_sample_info_by_name(self.context, c_name.as_ptr(),

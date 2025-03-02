@@ -434,7 +434,7 @@ impl Format {
     pub fn parse(format: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_format = CString::new(format.clone()).unwrap();
+        let c_format = CString::new(format).unwrap();
         unsafe { capi::pa_parse_sample_format(c_format.as_ptr()).into() }
     }
 

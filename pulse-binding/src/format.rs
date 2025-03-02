@@ -161,7 +161,7 @@ impl Encoding {
     pub fn from_string(encoding: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_enc = CString::new(encoding.clone()).unwrap();
+        let c_enc = CString::new(encoding).unwrap();
         unsafe { capi::pa_encoding_from_string(c_enc.as_ptr()).into() }
     }
 }
@@ -185,7 +185,7 @@ impl Info {
     pub fn new_from_string(s: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_str = CString::new(s.clone()).unwrap();
+        let c_str = CString::new(s).unwrap();
         let ptr = unsafe { capi::pa_format_info_from_string(c_str.as_ptr()) };
         match ptr.is_null() {
             false => Some(Self::from_raw(ptr as *mut InfoInternal)),
@@ -314,7 +314,7 @@ impl Info {
     pub fn get_prop_type(&self, key: &str) -> PropType {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         unsafe { capi::pa_format_info_get_prop_type(self.ptr as *const capi::pa_format_info,
             c_key.as_ptr()) }
     }
@@ -324,7 +324,7 @@ impl Info {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let mut i: i32 = 0;
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         match unsafe { capi::pa_format_info_get_prop_int(self.ptr as *const capi::pa_format_info,
             c_key.as_ptr(), &mut i) }
         {
@@ -339,7 +339,7 @@ impl Info {
         // as_ptr() giving dangling pointers!
         let mut min: i32 = 0;
         let mut max: i32 = 0;
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         match unsafe { capi::pa_format_info_get_prop_int_range(
             self.ptr as *const capi::pa_format_info, c_key.as_ptr(), &mut min, &mut max) }
         {
@@ -354,7 +354,7 @@ impl Info {
     pub fn get_prop_int_array(&self, key: &str) -> Option<Vec<i32>> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         let mut count: i32 = 0;
         let mut p_ints = null_mut::<i32>();
         let result = unsafe { capi::pa_format_info_get_prop_int_array(
@@ -377,7 +377,7 @@ impl Info {
     pub fn get_prop_string(&self, key: &str) -> Option<String> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         let mut p_str = null_mut::<c_char>();
         let result = unsafe { capi::pa_format_info_get_prop_string(
             self.ptr as *const capi::pa_format_info, c_key.as_ptr(), &mut p_str) };
@@ -395,7 +395,7 @@ impl Info {
     pub fn get_prop_string_array(&self, key: &str) -> Option<Vec<String>> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         let mut count: i32 = 0;
         let mut pp_str = null_mut::<*mut c_char>();
         let result = unsafe { capi::pa_format_info_get_prop_string_array(
@@ -486,7 +486,7 @@ impl Info {
     pub fn set_prop_int(&mut self, key: &str, value: i32) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         unsafe { capi::pa_format_info_set_prop_int(self.ptr as *mut capi::pa_format_info,
             c_key.as_ptr(), value); }
     }
@@ -495,7 +495,7 @@ impl Info {
     pub fn set_prop_int_array(&mut self, key: &str, values: &[i32]) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         unsafe { capi::pa_format_info_set_prop_int_array(self.ptr as *mut capi::pa_format_info,
             c_key.as_ptr(), values.as_ptr(), values.len() as i32); }
     }
@@ -504,7 +504,7 @@ impl Info {
     pub fn set_prop_int_range(&mut self, key: &str, min: i32, max: i32) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         unsafe { capi::pa_format_info_set_prop_int_range(self.ptr as *mut capi::pa_format_info,
             c_key.as_ptr(), min, max); }
     }
@@ -513,8 +513,8 @@ impl Info {
     pub fn set_prop_string(&mut self, key: &str, value: &str) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
-        let c_value = CString::new(value.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
+        let c_value = CString::new(value).unwrap();
         unsafe { capi::pa_format_info_set_prop_string(self.ptr as *mut capi::pa_format_info,
             c_key.as_ptr(), c_value.as_ptr()); }
     }
@@ -523,7 +523,7 @@ impl Info {
     pub fn set_prop_string_array(&mut self, key: &str, values: &[&str]) {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_key = CString::new(key.clone()).unwrap();
+        let c_key = CString::new(key).unwrap();
         let mut c_values: Vec<CString> = Vec::with_capacity(values.len());
         for v in values {
             c_values.push(CString::new(*v).unwrap());

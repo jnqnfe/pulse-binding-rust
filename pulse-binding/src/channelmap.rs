@@ -365,7 +365,7 @@ impl Position {
     pub fn from_string(s: &str) -> Self {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_str = CString::new(s.clone()).unwrap();
+        let c_str = CString::new(s).unwrap();
         unsafe { capi::pa_channel_position_from_string(c_str.as_ptr()).into() }
     }
 }
@@ -381,7 +381,7 @@ impl Map {
     pub fn new_from_string(s: &str) -> Result<Self, ()> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_str = CString::new(s.clone()).unwrap();
+        let c_str = CString::new(s).unwrap();
         let mut map: Self = Self::default();
         unsafe {
             if capi::pa_channel_map_parse((&mut map).as_mut(), c_str.as_ptr()).is_null() {

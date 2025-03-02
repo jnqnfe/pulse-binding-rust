@@ -225,7 +225,7 @@ impl Context {
     pub fn new(mainloop: &impl Mainloop, name: &str) -> Option<Self> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
         let ptr =
             unsafe { capi::pa_context_new(mainloop.inner().get_api().as_ref(), c_name.as_ptr()) };
         Self::create(ptr)
@@ -244,7 +244,7 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
         let ptr = unsafe { capi::pa_context_new_with_proplist(mainloop.inner().get_api().as_ref(),
             c_name.as_ptr(), proplist.0.ptr) };
         Self::create(ptr)
@@ -328,7 +328,7 @@ impl Context {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_server = match server {
-            Some(server) => CString::new(server.clone()).unwrap(),
+            Some(server) => CString::new(server).unwrap(),
             None => CString::new("").unwrap(),
         };
 
@@ -400,7 +400,7 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_sink(self.ptr, c_name.as_ptr(),
@@ -418,7 +418,7 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_default_source(self.ptr, c_name.as_ptr(),
@@ -446,7 +446,7 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_set_name(self.ptr, c_name.as_ptr(),
@@ -618,7 +618,7 @@ impl Context {
     pub fn load_cookie_from_file(&mut self, cookie_file_path: &str) -> Result<(), PAErr> {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_path = CString::new(cookie_file_path.clone()).unwrap();
+        let c_path = CString::new(cookie_file_path).unwrap();
         match unsafe { capi::pa_context_load_cookie_from_file(self.ptr, c_path.as_ptr()) } {
             0 => Ok(()),
             e => Err(PAErr(e)),

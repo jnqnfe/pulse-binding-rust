@@ -23,7 +23,7 @@ use std::ffi::{CStr, CString};
 pub fn utf8_to_locale(s: &str) -> Option<String> {
     // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
     // as_ptr() giving dangling pointers!
-    let c_str = CString::new(s.clone()).unwrap();
+    let c_str = CString::new(s).unwrap();
     let tmp_ptr: *const c_char = unsafe { capi::pa_utf8_to_locale(c_str.as_ptr()) };
     if tmp_ptr.is_null() {
         return None;

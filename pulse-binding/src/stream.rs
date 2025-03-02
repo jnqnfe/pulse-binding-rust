@@ -721,7 +721,7 @@ impl Stream {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
@@ -747,7 +747,7 @@ impl Stream {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let p_map = map.map_or(null::<capi::pa_channel_map>(), |m| m.as_ref());
 
@@ -778,7 +778,7 @@ impl Stream {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         // Create array of format::InfoInternal pointers from provided array of `Info` pointers.
         let mut info_ptrs: Vec<*const capi::pa_format_info> = Vec::with_capacity(formats.len());
@@ -918,7 +918,7 @@ impl Stream {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_dev = match dev {
-            Some(dev) => CString::new(dev.clone()).unwrap(),
+            Some(dev) => CString::new(dev).unwrap(),
             None => CString::new("").unwrap(),
         };
 
@@ -949,7 +949,7 @@ impl Stream {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_dev = match dev {
-            Some(dev) => CString::new(dev.clone()).unwrap(),
+            Some(dev) => CString::new(dev).unwrap(),
             None => CString::new("").unwrap(),
         };
 
@@ -1538,7 +1538,7 @@ impl Stream {
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);

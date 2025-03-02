@@ -77,7 +77,7 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
 
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_remove_sample(self.ptr, c_name.as_ptr(),
@@ -104,9 +104,9 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
         let c_dev = match dev {
-            Some(dev) => CString::new(dev.clone()).unwrap(),
+            Some(dev) => CString::new(dev).unwrap(),
             None => CString::new("").unwrap(),
         };
 
@@ -147,9 +147,9 @@ impl Context {
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
-        let c_name = CString::new(name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
         let c_dev = match dev {
-            Some(dev) => CString::new(dev.clone()).unwrap(),
+            Some(dev) => CString::new(dev).unwrap(),
             None => CString::new("").unwrap(),
         };
 

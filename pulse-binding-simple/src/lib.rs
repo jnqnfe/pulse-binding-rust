@@ -153,11 +153,11 @@ impl Simple {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_server = match server {
-            Some(server) => CString::new(server.clone()).unwrap(),
+            Some(server) => CString::new(server).unwrap(),
             None => CString::new("").unwrap(),
         };
         let c_dev = match dev {
-            Some(dev) => CString::new(dev.clone()).unwrap(),
+            Some(dev) => CString::new(dev).unwrap(),
             None => CString::new("").unwrap(),
         };
 
@@ -165,8 +165,8 @@ impl Simple {
         let p_attr = attr.map_or(null::<pcapi::pa_buffer_attr>(), |a| a.as_ref());
         let p_server = server.map_or(null::<c_char>(), |_| c_server.as_ptr() as *const c_char);
         let p_dev = dev.map_or(null::<c_char>(), |_| c_dev.as_ptr() as *const c_char);
-        let c_name = CString::new(name.clone()).unwrap();
-        let c_stream_name = CString::new(stream_name.clone()).unwrap();
+        let c_name = CString::new(name).unwrap();
+        let c_stream_name = CString::new(stream_name).unwrap();
 
         let mut error: i32 = 0;
         let ptr = unsafe {
