@@ -20,7 +20,7 @@ use num_derive::{FromPrimitive, ToPrimitive};
 pub const PA_CHANNELS_MAX: u8 = 32;
 
 /// Maximum allowed sample rate.
-pub const PA_RATE_MAX: u32 = 48000 * 8;
+pub const PA_RATE_MAX: u32 = 48000 * 16;
 
 /// Sample format.
 #[repr(C)]
