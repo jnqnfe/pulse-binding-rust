@@ -299,6 +299,7 @@ impl AsRef<capi::pa_spawn_api> for SpawnApi {
 
 bitflags! {
     /// Set of sink flags.
+    #[derive(Debug)]
     #[repr(transparent)]
     pub struct SinkFlagSet: u32 {
         /// Flag to pass when no specific options are needed.
@@ -453,6 +454,7 @@ impl SinkState {
 
 bitflags! {
     /// Set of source flags.
+    #[derive(Debug)]
     #[repr(transparent)]
     pub struct SourceFlagSet: u32 {
         /// Flag to pass when no specific options are needed.

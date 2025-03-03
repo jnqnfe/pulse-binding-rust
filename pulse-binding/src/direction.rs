@@ -19,6 +19,7 @@ use bitflags::bitflags;
 
 bitflags! {
     /// Flag set.
+    #[derive(Debug)]
     #[repr(transparent)]
     pub struct FlagSet: i32 {
         /// Output flag.
