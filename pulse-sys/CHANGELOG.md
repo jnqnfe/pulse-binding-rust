@@ -1,3 +1,11 @@
+# 1.22.0 (March 3rd, 2025)
+
+ * Bumped MSRV from 1.56 to 1.63 per libc dependency.
+ * Fixed warnings by bumping `num-derive` dependency.
+ * Updated with PA version 17 changes (just an increase to max. sample rate).
+ * Updated required dependencies:
+    - `num-derive` from 0.3 to 0.4.
+
 # 1.21.0 (July 18th, 2023)
 
  * Fixed warning from clashing namespace exports.

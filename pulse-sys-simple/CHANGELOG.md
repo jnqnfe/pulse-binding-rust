@@ -1,3 +1,9 @@
+# 1.22.0 (March 3rd, 2025)
+
+ * Bumped MSRV from 1.56 to 1.63 per dependencies.
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.21 to 1.22.
+
 # 1.21.1 (July 18th, 2023)
 
  * Fixed cross-crate version requirement.

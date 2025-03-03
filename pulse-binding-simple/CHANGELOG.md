@@ -1,3 +1,12 @@
+# 2.29.0 (March 3rd, 2025)
+
+ * Bumped MSRV from 1.56 to 1.63 per dependencies.
+ * Fixed warnings by removing explicit calls to `clone()` that have become unnecessary.
+ * Updated required dependencies:
+    - `libpulse-binding`    from 2.28 to 2.29.
+    - `libpulse-sys`        from 1.21 to 1.22.
+    - `libpulse-simple-sys` from 1.21 to 1.22.
+
 # 2.28.1 (July 18th, 2023)
 
  * Fixed cross-crate version requirements.

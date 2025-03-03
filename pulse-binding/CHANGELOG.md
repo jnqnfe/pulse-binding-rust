@@ -1,3 +1,16 @@
+# 2.29.0 (March 3rd, 2025)
+
+ * Bumped MSRV from 1.56 to 1.63 per libc dependency.
+ * Fixed warnings by removing explicit calls to `clone()` that have become unnecessary.
+ * Fixed warnings by bumping `num-derive` dependency.
+ * Bumped `bitflags` dependency to version 2.x (required adding `Debug` to a few flagsets).
+ * Dropped various constants that were deprecated back in versions 2.20 and 2.21 (December 2020).
+ * Updated with PA version 17 changes (just an increase to max. sample rate).
+ * Updated required dependencies:
+    - `libpulse-sys` from 1.21 to 1.22.
+    - `num-derive` from 0.3 to 0.4.
+    - `bitflags` from 1.2 to 2.x.
+
 # 2.28.3 (March 2nd, 2025)
 
  * Clarify in documenation that mainloop and context objects must both live for the entire duration.
