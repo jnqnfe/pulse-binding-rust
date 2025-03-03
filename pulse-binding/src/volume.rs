@@ -65,26 +65,6 @@ use std::ptr::null;
 use crate::sample;
 use crate::channelmap::{Map, Position, PositionMask, POSITION_MASK_ALL};
 
-/// A “normal” volume level.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Volume` instead")]
-pub const VOLUME_NORM:    Volume = Volume(capi::PA_VOLUME_NORM);
-/// A muted volume level.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Volume` instead")]
-pub const VOLUME_MUTED:   Volume = Volume(capi::PA_VOLUME_MUTED);
-/// A maximum volume level.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Volume` instead")]
-pub const VOLUME_MAX:     Volume = Volume(capi::PA_VOLUME_MAX);
-/// An invalid volume level.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Volume` instead")]
-pub const VOLUME_INVALID: Volume = Volume(capi::PA_VOLUME_INVALID);
-
-/// Minus Infinity.
-///
-/// This floor value is used / can be used, when using converting between integer software volume
-/// and decibel (dB, floating point) software volume.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `VolumeDB` instead")]
-pub const DECIBEL_MINUS_INFINITY: VolumeDB = VolumeDB(capi::PA_DECIBEL_MININFTY);
-
 /// Software volume expressed as an integer.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Volume(pub capi::pa_volume_t);

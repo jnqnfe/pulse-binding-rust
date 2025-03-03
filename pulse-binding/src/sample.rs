@@ -68,14 +68,6 @@ use std::borrow::Cow;
 use num_derive::{FromPrimitive, ToPrimitive};
 use crate::time::MicroSeconds;
 
-/// Maximum number of allowed channels.
-#[deprecated(since = "2.20.0", note = "use associated constants on structs instead")]
-pub const CHANNELS_MAX: u8 = capi::PA_CHANNELS_MAX;
-
-/// Maximum allowed sample rate.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Spec` instead")]
-pub const RATE_MAX: u32 = capi::PA_RATE_MAX;
-
 /// Sample format.
 ///
 /// Note, native-endian (endian-independent) associated constants are available on this type which

@@ -56,13 +56,6 @@ use crate::callbacks::{box_closure_get_capi_ptr, MultiUseCallback};
 
 pub use capi::context::subscribe::pa_subscription_event_type_t as EventType;
 
-/// Mask to extract facility value from the event type passed to the user callback.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Facility` instead")]
-pub const FACILITY_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_FACILITY_MASK;
-/// Mask to extract operation value from the event type passed to the user callback.
-#[deprecated(since = "2.20.0", note = "use the associated constant on `Operation` instead")]
-pub const OPERATION_MASK: u32 = capi::PA_SUBSCRIPTION_EVENT_TYPE_MASK;
-
 bitflags! {
     /// A set of facility masks, to be passed to [`Context::subscribe()`].
     ///
@@ -92,35 +85,6 @@ bitflags! {
         /// All facilities.
         const ALL = capi::PA_SUBSCRIPTION_MASK_ALL;
     }
-}
-
-/// A set of masks used for expressing which facilities you are interested in when subscribing.
-#[deprecated(since = "2.20.0", note = "Use the associated constants on `InterestMaskSet`.")]
-pub mod subscription_masks {
-    use super::InterestMaskSet;
-
-    /// No facility (null selection; zero).
-    pub const NULL:          InterestMaskSet = InterestMaskSet::NULL;
-    /// Sink facility.
-    pub const SINK:          InterestMaskSet = InterestMaskSet::SINK;
-    /// Source facility.
-    pub const SOURCE:        InterestMaskSet = InterestMaskSet::SOURCE;
-    /// Sink input facility.
-    pub const SINK_INPUT:    InterestMaskSet = InterestMaskSet::SINK_INPUT;
-    /// Source output facility.
-    pub const SOURCE_OUTPUT: InterestMaskSet = InterestMaskSet::SOURCE_OUTPUT;
-    /// Module facility.
-    pub const MODULE:        InterestMaskSet = InterestMaskSet::MODULE;
-    /// Client facility.
-    pub const CLIENT:        InterestMaskSet = InterestMaskSet::CLIENT;
-    /// Sample cache facility.
-    pub const SAMPLE_CACHE:  InterestMaskSet = InterestMaskSet::SAMPLE_CACHE;
-    /// Server facility.
-    pub const SERVER:        InterestMaskSet = InterestMaskSet::SERVER;
-    /// Card facility.
-    pub const MASK_CARD:     InterestMaskSet = InterestMaskSet::CARD;
-    /// All facilities.
-    pub const ALL:           InterestMaskSet = InterestMaskSet::ALL;
 }
 
 /// Facility component of an event.

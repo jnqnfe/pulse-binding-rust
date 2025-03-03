@@ -194,23 +194,6 @@ bitflags! {
     }
 }
 
-/// Some special flags for contexts.
-#[deprecated(since = "2.21.0", note = "Use the associated constants on `FlagSet`.")]
-pub mod flags {
-    use super::FlagSet;
-
-    /// No flags set.
-    pub const NOFLAGS:     FlagSet = FlagSet::NOFLAGS;
-    /// Disable autospawning of the PulseAudio daemon if required.
-    pub const NOAUTOSPAWN: FlagSet = FlagSet::NOAUTOSPAWN;
-    /// Don’t fail if the daemon is not available when [`Context::connect()`] is called, instead
-    /// enter [`State::Connecting`] state and wait for the daemon to appear.
-    ///
-    /// [`Context::connect()`]: super::Context::connect
-    /// [`State::Connecting`]: super::State::Connecting
-    pub const NOFAIL:      FlagSet = FlagSet::NOFAIL;
-}
-
 impl Context {
     /// Instantiates a new connection context with an abstract mainloop API and an application name.
     ///

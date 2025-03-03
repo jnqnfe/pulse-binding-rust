@@ -344,52 +344,6 @@ bitflags! {
     }
 }
 
-/// Special sink flags.
-#[deprecated(since = "2.20.0", note = "Use the associated constants on `SinkFlagSet`.")]
-pub mod sink_flags {
-    use super::SinkFlagSet;
-
-    /// Flag to pass when no specific options are needed.
-    pub const NOFLAGS: SinkFlagSet = SinkFlagSet::NOFLAGS;
-
-    /// Supports hardware volume control. This is a dynamic flag and may change at runtime after the
-    /// sink has initialized.
-    pub const HW_VOLUME_CTRL: SinkFlagSet = SinkFlagSet::HW_VOLUME_CTRL;
-
-    /// Supports latency querying.
-    pub const LATENCY: SinkFlagSet = SinkFlagSet::LATENCY;
-
-    /// Is a hardware sink of some kind, in contrast to “virtual”/software sinks.
-    pub const HARDWARE: SinkFlagSet = SinkFlagSet::HARDWARE;
-
-    /// Is a networked sink of some kind.
-    pub const NETWORK: SinkFlagSet = SinkFlagSet::NETWORK;
-
-    /// Supports hardware mute control. This is a dynamic flag and may change at runtime after the
-    /// sink has initialized.
-    pub const HW_MUTE_CTRL: SinkFlagSet = SinkFlagSet::HW_MUTE_CTRL;
-
-    /// Volume can be translated to dB with the `From` based conversions between [`Volume`],
-    /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at runtime
-    /// after the sink has initialized.
-    ///
-    /// [`Volume`]: crate::volume::Volume
-    /// [`VolumeDB`]: crate::volume::VolumeDB
-    /// [`VolumeLinear`]: crate::volume::VolumeLinear
-    pub const DECIBEL_VOLUME: SinkFlagSet = SinkFlagSet::DECIBEL_VOLUME;
-
-    /// This sink is in flat volume mode, i.e. always the maximum of the volume  of all connected
-    /// inputs.
-    pub const FLAT_VOLUME: SinkFlagSet = SinkFlagSet::FLAT_VOLUME;
-
-    /// The latency can be adjusted dynamically depending on the needs of the connected streams.
-    pub const DYNAMIC_LATENCY: SinkFlagSet = SinkFlagSet::DYNAMIC_LATENCY;
-
-    /// The sink allows setting what formats are supported by the connected hardware. The actual
-    /// functionality to do this might be provided by an extension.
-    pub const SET_FORMATS: SinkFlagSet = SinkFlagSet::SET_FORMATS;
-}
-
 /// Sink state.
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -493,48 +447,6 @@ bitflags! {
         /// connected outputs.
         const FLAT_VOLUME = capi::PA_SOURCE_FLAT_VOLUME;
     }
-}
-
-/// Special source flags.
-#[deprecated(since = "2.20.0", note = "Use the associated constants on `SourceFlagSet`.")]
-pub mod source_flags {
-    use super::SourceFlagSet;
-
-    /// Flag to pass when no specific options are needed.
-    pub const NOFLAGS: SourceFlagSet = SourceFlagSet::NOFLAGS;
-
-    /// Supports hardware volume control. This is a dynamic flag and may change at runtime after the
-    /// source has initialized.
-    pub const HW_VOLUME_CTRL: SourceFlagSet = SourceFlagSet::HW_VOLUME_CTRL;
-
-    /// Supports latency querying.
-    pub const LATENCY: SourceFlagSet = SourceFlagSet::LATENCY;
-
-    /// Is a hardware source of some kind, in contrast to “virtual”/software source.
-    pub const HARDWARE: SourceFlagSet = SourceFlagSet::HARDWARE;
-
-    /// Is a networked source of some kind.
-    pub const NETWORK: SourceFlagSet = SourceFlagSet::NETWORK;
-
-    /// Supports hardware mute control. This is a dynamic flag and may change at runtime after the
-    /// source has initialized.
-    pub const HW_MUTE_CTRL: SourceFlagSet = SourceFlagSet::HW_MUTE_CTRL;
-
-    /// Volume can be translated to dB with the `From` based conversions between [`Volume`],
-    /// [`VolumeLinear`] and [`VolumeDB`] types. This is a dynamic flag and may change at runtime
-    /// after the source has initialized.
-    ///
-    /// [`Volume`]: crate::volume::Volume
-    /// [`VolumeDB`]: crate::volume::VolumeDB
-    /// [`VolumeLinear`]: crate::volume::VolumeLinear
-    pub const DECIBEL_VOLUME: SourceFlagSet = SourceFlagSet::DECIBEL_VOLUME;
-
-    /// The latency can be adjusted dynamically depending on the needs of the connected streams.
-    pub const DYNAMIC_LATENCY: SourceFlagSet = SourceFlagSet::DYNAMIC_LATENCY;
-
-    /// This source is in flat volume mode, i.e. always the maximum of the volume of all connected
-    /// outputs.
-    pub const FLAT_VOLUME: SourceFlagSet = SourceFlagSet::FLAT_VOLUME;
 }
 
 /// Source state.

@@ -29,17 +29,6 @@ bitflags! {
     }
 }
 
-/// Available flags for [`FlagSet`].
-#[deprecated(since = "2.20.0", note = "Use the associated constants on `FlagSet`.")]
-pub mod flags {
-    use super::FlagSet;
-
-    /// Output flag.
-    pub const OUTPUT: FlagSet = FlagSet::OUTPUT;
-    /// Input flag.
-    pub const INPUT:  FlagSet = FlagSet::INPUT;
-}
-
 impl FlagSet {
     /// Checks whether direction is valid (either input, output or bidirectional).
     #[inline]

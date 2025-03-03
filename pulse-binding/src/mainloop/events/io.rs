@@ -38,23 +38,6 @@ bitflags! {
     }
 }
 
-/// Flags for [`FlagSet`].
-#[deprecated(since = "2.20.0", note = "Use the associated constants on `FlagSet`.")]
-pub mod flags {
-    use super::FlagSet;
-
-    /// No event.
-    pub const NULL:   FlagSet = FlagSet::NULL;
-    /// Input event.
-    pub const INPUT:  FlagSet = FlagSet::INPUT;
-    /// Output event.
-    pub const OUTPUT: FlagSet = FlagSet::OUTPUT;
-    /// Hangup event.
-    pub const HANGUP: FlagSet = FlagSet::HANGUP;
-    /// Error event.
-    pub const ERROR:  FlagSet = FlagSet::ERROR;
-}
-
 /// An IO event source
 pub struct IoEvent<T>
     where T: MainloopInnerType
