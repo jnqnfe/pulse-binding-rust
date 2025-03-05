@@ -306,7 +306,7 @@ pub trait Mainloop {
     /// rules regarding how to safely create defer events. In particular, if you’re using
     /// [`mainloop::threaded`](mod@crate::mainloop::threaded), you must lock the mainloop before
     /// calling this function.
-    fn once_event(&mut self, callback: Box<dyn FnMut() + 'static>) {
+    fn once_event(&mut self, callback: Box<dyn FnOnce() + 'static>) {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _)>, _) =
             get_su_capi_params::<_, _>(Some(callback), once_cb_proxy);
 
@@ -426,7 +426,7 @@ extern "C"
 fn once_cb_proxy(_: *const ApiInternal, userdata: *mut c_void) {
     let _ = std::panic::catch_unwind(|| {
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = get_su_callback::<dyn FnMut()>(userdata);
+        let callback = get_su_callback::<dyn FnOnce()>(userdata);
         (callback)();
     });
 }
