@@ -463,6 +463,27 @@ impl<'a> SinkInfo<'a> {
             }
         }
     }
+
+    /// Creates owned data from borrowed data
+    pub fn to_owned(&self) -> SinkInfo<'static> {
+        SinkInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            monitor_source_name: self
+                .monitor_source_name
+                .clone()
+                .map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(),
+            ports: self.ports.iter().map(SinkPortInfo::to_owned).collect(),
+            active_port: self
+                .active_port
+                .as_ref()
+                .map(|spi| Box::new(spi.as_ref().to_owned())),
+            formats: self.formats.clone(),
+            ..*self
+        }
+    }
 }
 
 impl Introspector {
