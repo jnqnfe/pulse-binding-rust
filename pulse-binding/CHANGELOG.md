@@ -1,3 +1,9 @@
+# <unreleased>
+
+ * Added `to_owned()` methods to a bunch of objects like `SinkInfo` (as requested back in 2021 in
+   issue 44). Thanks to @t4ccer on github for prompting this and providing an initial partial
+   implementation.
+
 # 2.29.0 (March 3rd, 2025)
 
  * Bumped MSRV from 1.56 to 1.63 per libc dependency.
