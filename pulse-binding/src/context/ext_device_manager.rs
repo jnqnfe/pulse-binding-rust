@@ -47,6 +47,14 @@ impl<'a> RolePriorityInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> RolePriorityInfo<'static> {
+        RolePriorityInfo {
+            role: self.role.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about one device in the device database that is maintained by
@@ -100,6 +108,17 @@ impl<'a> Info<'a> {
                 },
                 role_priorities: rp_vec,
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> Info<'static> {
+        Info {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            icon: self.icon.clone().map(|o| Cow::Owned(o.into_owned())),
+            role_priorities: self.role_priorities.iter().map(RolePriorityInfo::to_owned).collect(),
+            ..*self
         }
     }
 }

@@ -64,6 +64,15 @@ impl<'a> Info<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> Info<'static> {
+        Info {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            device: self.device.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// A wrapper object providing stream restore routines to a context.

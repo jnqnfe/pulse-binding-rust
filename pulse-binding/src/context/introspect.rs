@@ -324,6 +324,17 @@ impl<'a> SinkPortInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SinkPortInfo<'static> {
+        SinkPortInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            #[cfg(any(doc, feature = "pa_v14"))]
+            availability_group: self.availability_group.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about sinks.
@@ -450,6 +461,21 @@ impl<'a> SinkInfo<'a> {
                 },
                 formats: formats_vec,
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SinkInfo<'static> {
+        SinkInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            monitor_source_name: self.monitor_source_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            ports: self.ports.iter().map(SinkPortInfo::to_owned).collect(),
+            active_port: self.active_port.as_ref().map(|ap| Box::new(ap.as_ref().to_owned())),
+            formats: self.formats.clone(), //Our implementation makes an owned copy!
+            ..*self
         }
     }
 }
@@ -725,6 +751,17 @@ impl<'a> SourcePortInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SourcePortInfo<'static> {
+        SourcePortInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            #[cfg(any(doc, feature = "pa_v14"))]
+            availability_group: self.availability_group.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about sources.
@@ -854,6 +891,21 @@ impl<'a> SourceInfo<'a> {
                 },
                 formats: formats_vec,
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SourceInfo<'static> {
+        SourceInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            monitor_of_sink_name: self.monitor_of_sink_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            ports: self.ports.iter().map(SourcePortInfo::to_owned).collect(),
+            active_port: self.active_port.as_ref().map(|ap| Box::new(ap.as_ref().to_owned())),
+            formats: self.formats.clone(), //Our implementation makes an owned copy!
+            ..*self
         }
     }
 }
@@ -1123,6 +1175,19 @@ impl<'a> ServerInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> ServerInfo<'static> {
+        ServerInfo {
+            user_name: self.user_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            host_name: self.host_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            server_version: self.server_version.clone().map(|o| Cow::Owned(o.into_owned())),
+            server_name: self.server_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            default_sink_name: self.default_sink_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            default_source_name: self.default_source_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 impl Introspector {
@@ -1198,6 +1263,16 @@ impl<'a> ModuleInfo<'a> {
                 },
                 proplist: Proplist::from_raw_weak(src.proplist),
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> ModuleInfo<'static> {
+        ModuleInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            argument: self.argument.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            ..*self
         }
     }
 }
@@ -1392,6 +1467,16 @@ impl<'a> ClientInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> ClientInfo<'static> {
+        ClientInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            ..*self
+        }
+    }
 }
 
 impl Introspector {
@@ -1503,6 +1588,15 @@ impl<'a> CardProfileInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> CardProfileInfo<'static> {
+        CardProfileInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about a specific port of a card.
@@ -1596,6 +1690,19 @@ impl<'a> CardPortInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> CardPortInfo<'static> {
+        CardPortInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            profiles: self.profiles.iter().map(CardProfileInfo::to_owned).collect(),
+            #[cfg(any(doc, feature = "pa_v14"))]
+            availability_group: self.availability_group.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about cards.
@@ -1669,6 +1776,19 @@ impl<'a> CardInfo<'a> {
                     false => Some(Box::new(CardProfileInfo::new_from_raw(src.active_profile2))),
                 },
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> CardInfo<'static> {
+        CardInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            ports: self.ports.iter().map(CardPortInfo::to_owned).collect(),
+            profiles: self.profiles.iter().map(CardProfileInfo::to_owned).collect(),
+            active_profile: self.active_profile.as_ref().map(|ap| Box::new(ap.as_ref().to_owned())),
+            ..*self
         }
     }
 }
@@ -1893,6 +2013,18 @@ impl<'a> SinkInputInfo<'a> {
                 },
                 format: format::Info::from_raw_weak(src.format as *mut format::InfoInternal),
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SinkInputInfo<'static> {
+        SinkInputInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            resample_method: self.resample_method.clone().map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            format: self.format.clone(), //Our implementation makes an owned copy!
+            ..*self
         }
     }
 }
@@ -2124,6 +2256,18 @@ impl<'a> SourceOutputInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SourceOutputInfo<'static> {
+        SourceOutputInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            resample_method: self.resample_method.clone().map(|o| Cow::Owned(o.into_owned())),
+            driver: self.driver.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            format: self.format.clone(), //Our implementation makes an owned copy!
+            ..*self
+        }
+    }
 }
 
 impl Introspector {
@@ -2335,6 +2479,16 @@ impl<'a> SampleInfo<'a> {
                 },
                 proplist: Proplist::from_raw_weak(src.proplist),
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SampleInfo<'static> {
+        SampleInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            filename: self.filename.clone().map(|o| Cow::Owned(o.into_owned())),
+            proplist: self.proplist.clone(), //Our implementation makes an owned copy!
+            ..*self
         }
     }
 }
