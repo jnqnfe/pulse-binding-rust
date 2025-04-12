@@ -333,6 +333,7 @@ impl State {
 
 bitflags! {
     /// Flag set.
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[repr(transparent)]
     pub struct FlagSet: u32 {
         /// Flag to pass when no specific options are needed.

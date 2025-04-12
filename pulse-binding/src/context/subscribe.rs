@@ -60,6 +60,7 @@ bitflags! {
     /// A set of facility masks, to be passed to [`Context::subscribe()`].
     ///
     /// Note that you can convert a [`Facility`] to a mask with [`Facility::to_interest_mask()`].
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[repr(transparent)]
     pub struct InterestMaskSet: u32 {
         /// No facility (null selection; zero).

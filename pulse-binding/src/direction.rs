@@ -19,7 +19,7 @@ use bitflags::bitflags;
 
 bitflags! {
     /// Flag set.
-    #[derive(Debug)]
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[repr(transparent)]
     pub struct FlagSet: i32 {
         /// Output flag.
