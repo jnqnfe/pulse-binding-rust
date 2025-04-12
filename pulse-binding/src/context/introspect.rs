@@ -324,6 +324,17 @@ impl<'a> SinkPortInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SinkPortInfo<'static> {
+        SinkPortInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            #[cfg(any(doc, feature = "pa_v14"))]
+            availability_group: self.availability_group.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about sinks.
@@ -725,6 +736,17 @@ impl<'a> SourcePortInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> SourcePortInfo<'static> {
+        SourcePortInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            #[cfg(any(doc, feature = "pa_v14"))]
+            availability_group: self.availability_group.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 /// Stores information about sources.
@@ -1123,6 +1145,19 @@ impl<'a> ServerInfo<'a> {
             }
         }
     }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> ServerInfo<'static> {
+        ServerInfo {
+            user_name: self.user_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            host_name: self.host_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            server_version: self.server_version.clone().map(|o| Cow::Owned(o.into_owned())),
+            server_name: self.server_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            default_sink_name: self.default_sink_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            default_source_name: self.default_source_name.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
+        }
+    }
 }
 
 impl Introspector {
@@ -1501,6 +1536,15 @@ impl<'a> CardProfileInfo<'a> {
                     _ => true,
                 },
             }
+        }
+    }
+
+    /// Creates a copy with owned data.
+    pub fn to_owned(&self) -> CardProfileInfo<'static> {
+        CardProfileInfo {
+            name: self.name.clone().map(|o| Cow::Owned(o.into_owned())),
+            description: self.description.clone().map(|o| Cow::Owned(o.into_owned())),
+            ..*self
         }
     }
 }
