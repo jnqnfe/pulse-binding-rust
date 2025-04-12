@@ -594,8 +594,9 @@ impl Drop for Info {
 }
 
 impl Clone for Info {
-    /// Returns a new `Info` struct and representing the same format. If this is called on a ‘weak’
-    /// instance, a non-weak object is returned.
+    /// Returns a new `Info` struct and representing the same format.
+    ///
+    /// If this is called on a ‘weak’ instance, a non-weak object is returned.
     fn clone(&self) -> Self {
         let ptr = unsafe { capi::pa_format_info_copy(self.ptr as *const capi::pa_format_info) };
         assert_eq!(false, ptr.is_null());
