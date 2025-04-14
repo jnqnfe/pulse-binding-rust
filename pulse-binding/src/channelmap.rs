@@ -52,13 +52,14 @@ pub const POSITION_MASK_ALL: PositionMask = 0xffffffffffffffffu64;
 /// Note, certain aliases, specifically `Left`, `Right`, `Center` and `Subwoofer`, available in the
 /// equivalent C enum are not provided here, since Rust does not allow aliases.
 #[repr(C)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 pub enum Position {
     /* NOTE: This enum’s variants and variant values **must** remain identical to the `sys` crate
        (C API) equivalent */
 
     /// Invalid.
+    #[default]
     Invalid = -1,
 
     /// Mono.
@@ -178,13 +179,6 @@ pub enum Position {
     TopRearRight,
     /// Microsoft and Apple call this ‘Top Back Center’.
     TopRearCenter,
-}
-
-impl Default for Position {
-    #[inline(always)]
-    fn default() -> Self {
-        Position::Invalid
-    }
 }
 
 /// Check is equal to `sys` equivalent

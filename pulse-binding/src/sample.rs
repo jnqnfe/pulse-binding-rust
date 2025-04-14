@@ -74,7 +74,7 @@ use crate::time::MicroSeconds;
 /// should be preferred over direct use of the endian-specific variants, for improved flexibility
 /// and avoidance of mistakes.
 #[repr(C)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum Format {
@@ -108,6 +108,7 @@ pub enum Format {
     S24_32be,
 
     /// An invalid value.
+    #[default]
     Invalid = -1,
 }
 
@@ -145,13 +146,6 @@ impl From<capi::pa_sample_format_t> for Format {
     #[inline]
     fn from(f: capi::pa_sample_format_t) -> Self {
         unsafe { std::mem::transmute(f) }
-    }
-}
-
-impl Default for Format {
-    #[inline(always)]
-    fn default() -> Self {
-        Format::Invalid
     }
 }
 
