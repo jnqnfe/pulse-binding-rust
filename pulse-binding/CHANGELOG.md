@@ -3,6 +3,8 @@
  * Added `to_owned()` methods to a bunch of objects like `SinkInfo` (as requested back in 2021 in
    issue 44). Thanks to @t4ccer on github for prompting this and providing an initial partial
    implementation.
+ * Dropped additional long-deprecated constants, missed in the previous version.
+ * Dropped long-deprecated `check_version()` function.
 
 # 2.29.0 (March 3rd, 2025)
 

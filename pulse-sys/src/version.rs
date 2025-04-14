@@ -165,16 +165,6 @@ pub const fn get_compatibility() -> Compatibility {
     actual::COMPATIBILITY
 }
 
-/// Just compares given version with that defined in `TARGET_VERSION` and returns `true` if the
-/// `TARGET_VERSION` version is greater. This does **not** involve talking to the PulseAudio client
-/// library at runtime. This is not very useful!
-#[deprecated(since = "1.17.0")]
-#[inline(always)]
-pub const fn pa_check_version(major: u8, minor: u8, _micro: u8) -> bool {
-    // Note, defined micro version is always zero as of PA v1.0, thus ignored here
-    (TARGET_VERSION.0 > major) || ((TARGET_VERSION.0 == major) && (TARGET_VERSION.1 > minor))
-}
-
 #[link(name = "pulse")]
 extern "C" {
     pub fn pa_get_library_version() -> *const c_char;

@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Dropped long-deprecated `pa_check_version()` function.
+
 # 1.22.0 (March 3rd, 2025)
 
  * Bumped MSRV from 1.56 to 1.63 per libc dependency.
