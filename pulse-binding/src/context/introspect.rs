@@ -1537,10 +1537,6 @@ fn get_client_info_list_cb_proxy(_: *mut ContextInternal, i: *const ClientInfoIn
 // Card info
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// Backwards compatable alias
-#[deprecated(since = "2.28.0", note = "Use the name CardProfileInfo instead")]
-pub type CardProfileInfo2<'a> = CardProfileInfo<'a>;
-
 /// Stores information about a specific profile of a card.
 ///
 /// Please note that this structure can be extended as part of evolutionary API updates at any time
