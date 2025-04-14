@@ -166,16 +166,6 @@ pub fn get_library_version() -> &'static CStr {
     unsafe { CStr::from_ptr(capi::pa_get_library_version()) }
 }
 
-/// Just compares given version with that defined in `TARGET_VERSION` and returns `true` if the
-/// `TARGET_VERSION` version is greater. This does **not** involve talking to the PulseAudio client
-/// library at runtime. This is not very useful!
-#[deprecated(since = "2.22.0")]
-#[inline(always)]
-pub fn check_version(major: u8, minor: u8, micro: u8) -> bool {
-    #[allow(deprecated)]
-    capi::pa_check_version(major, minor, micro)
-}
-
 #[test]
 fn test_ver_str_to_num() {
     assert_eq!(pa_version_str_to_num(""),         Err(ErrorKind::ParseIntError));
