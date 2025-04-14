@@ -5,6 +5,7 @@
    implementation.
  * Dropped additional long-deprecated constants, missed in the previous version.
  * Dropped long-deprecated `check_version()` function.
+ * Dropped deprecated `CardProfileInfo2` introspection alias.
 
 # 2.29.0 (March 3rd, 2025)
 
