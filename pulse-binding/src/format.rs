@@ -32,7 +32,7 @@ pub use capi::pa_prop_type_t as PropType;
 /// Represents the type of encoding used in a stream or accepted by a sink.
 #[repr(C)]
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
 #[derive(FromPrimitive, ToPrimitive)]
 #[allow(non_camel_case_types)]
 pub enum Encoding {
@@ -62,6 +62,7 @@ pub enum Encoding {
     DTSHD_IEC61937,
 
     /// Represents an invalid encoding.
+    #[default]
     Invalid = -1,
 }
 
@@ -97,13 +98,6 @@ impl From<capi::pa_encoding_t> for Encoding {
     #[inline]
     fn from(e: capi::pa_encoding_t) -> Self {
         unsafe { std::mem::transmute(e) }
-    }
-}
-
-impl Default for Encoding {
-    #[inline(always)]
-    fn default() -> Self {
-        Encoding::Invalid
     }
 }
 
