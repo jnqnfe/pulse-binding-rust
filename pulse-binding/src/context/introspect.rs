@@ -1409,13 +1409,9 @@ fn send_message_to_object_cb_proxy(_: *mut ContextInternal, success: i32, respon
         _ => true,
     };
     let _ = std::panic::catch_unwind(|| {
-        let r = match response.is_null() {
-            true => None,
-            false => {
-                let tmp = unsafe { CStr::from_ptr(response) };
-                Some(tmp.to_string_lossy().into_owned())
-            },
-        };
+        let r = response.is_null().then(|| {
+            unsafe { CStr::from_ptr(response) }.to_string_lossy().into_owned()
+        });
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
         let mut callback = get_su_callback::<dyn FnMut(bool, Option<String>)>(userdata);
         (callback)(success_actual, r);
