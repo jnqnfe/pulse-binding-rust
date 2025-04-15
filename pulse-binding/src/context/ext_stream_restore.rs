@@ -41,7 +41,7 @@ pub struct Info<'a> {
     pub mute: bool,
 }
 
-impl<'a> Info<'a> {
+impl Info<'_> {
     fn new_from_raw(p: *const InfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { p.as_ref().unwrap() };

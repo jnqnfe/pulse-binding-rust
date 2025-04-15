@@ -170,7 +170,7 @@ pub struct Iterator<'a> {
     phantom: PhantomData<&'a ProplistInner>,
 }
 
-impl<'a> Iterator<'a> {
+impl Iterator<'_> {
     fn new(pl: *mut ProplistInternal) -> Self {
         Self {
             pl_ref: ProplistInner { ptr: pl, weak: true },
@@ -180,7 +180,7 @@ impl<'a> Iterator<'a> {
     }
 }
 
-impl<'a> std::iter::Iterator for Iterator<'a> {
+impl std::iter::Iterator for Iterator<'_> {
     type Item = String;
     fn next(&mut self) -> Option<Self::Item> {
         let state_actual = &mut self.state as *mut *mut c_void;
