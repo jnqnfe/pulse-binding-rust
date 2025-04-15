@@ -33,7 +33,7 @@ pub struct RolePriorityInfo<'a> {
     pub priority: u32,
 }
 
-impl<'a> RolePriorityInfo<'a> {
+impl RolePriorityInfo<'_> {
     fn new_from_raw(p: *const RolePriorityInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { p.as_ref().unwrap() };
@@ -74,7 +74,7 @@ pub struct Info<'a> {
     pub role_priorities: Vec<RolePriorityInfo<'a>>,
 }
 
-impl<'a> Info<'a> {
+impl Info<'_> {
     fn new_from_raw(p: *const InfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { p.as_ref().unwrap() };

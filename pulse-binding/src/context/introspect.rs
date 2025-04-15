@@ -298,7 +298,7 @@ pub struct SinkPortInfo<'a> {
     pub r#type: DevicePortType,
 }
 
-impl<'a> SinkPortInfo<'a> {
+impl SinkPortInfo<'_> {
     fn new_from_raw(p: *const SinkPortInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -390,7 +390,7 @@ pub struct SinkInfo<'a> {
     pub formats: Vec<format::Info>,
 }
 
-impl<'a> SinkInfo<'a> {
+impl SinkInfo<'_> {
     fn new_from_raw(p: *const SinkInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -725,7 +725,7 @@ pub struct SourcePortInfo<'a> {
     pub r#type: DevicePortType,
 }
 
-impl<'a> SourcePortInfo<'a> {
+impl SourcePortInfo<'_> {
     fn new_from_raw(p: *const SourcePortInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -817,7 +817,7 @@ pub struct SourceInfo<'a> {
     pub formats: Vec<format::Info>,
 }
 
-impl<'a> SourceInfo<'a> {
+impl SourceInfo<'_> {
     fn new_from_raw(p: *const SourceInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1139,7 +1139,7 @@ pub struct ServerInfo<'a> {
     pub channel_map: channelmap::Map,
 }
 
-impl<'a> ServerInfo<'a> {
+impl ServerInfo<'_> {
     fn new_from_raw(p: *const ServerInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1242,7 +1242,7 @@ pub struct ModuleInfo<'a> {
     pub proplist: Proplist,
 }
 
-impl<'a> ModuleInfo<'a> {
+impl ModuleInfo<'_> {
     fn new_from_raw(p: *const ModuleInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1444,7 +1444,7 @@ pub struct ClientInfo<'a> {
     pub proplist: Proplist,
 }
 
-impl<'a> ClientInfo<'a> {
+impl ClientInfo<'_> {
     fn new_from_raw(p: *const ClientInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1560,7 +1560,7 @@ pub struct CardProfileInfo<'a> {
     pub available: bool,
 }
 
-impl<'a> CardProfileInfo<'a> {
+impl CardProfileInfo<'_> {
     fn new_from_raw(p: *const CardProfileInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1644,7 +1644,7 @@ pub struct CardPortInfo<'a> {
     pub r#type: DevicePortType,
 }
 
-impl<'a> CardPortInfo<'a> {
+impl CardPortInfo<'_> {
     fn new_from_raw(p: *const CardPortInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1725,7 +1725,7 @@ pub struct CardInfo<'a> {
     pub active_profile: Option<Box<CardProfileInfo<'a>>>,
 }
 
-impl<'a> CardInfo<'a> {
+impl CardInfo<'_> {
     fn new_from_raw(p: *const CardInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -1957,7 +1957,7 @@ pub struct SinkInputInfo<'a> {
     pub format: format::Info,
 }
 
-impl<'a> SinkInputInfo<'a> {
+impl SinkInputInfo<'_> {
     fn new_from_raw(p: *const SinkInputInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -2198,7 +2198,7 @@ pub struct SourceOutputInfo<'a> {
     pub format: format::Info,
 }
 
-impl<'a> SourceOutputInfo<'a> {
+impl SourceOutputInfo<'_> {
     fn new_from_raw(p: *const SourceOutputInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
@@ -2449,7 +2449,7 @@ pub struct SampleInfo<'a> {
     pub proplist: Proplist,
 }
 
-impl<'a> SampleInfo<'a> {
+impl SampleInfo<'_> {
     fn new_from_raw(p: *const SampleInfoInternal) -> Self {
         assert!(!p.is_null());
         let src = unsafe { &*p };
