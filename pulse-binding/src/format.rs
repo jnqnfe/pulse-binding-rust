@@ -105,7 +105,7 @@ impl From<capi::pa_encoding_t> for Encoding {
 pub struct Info {
     /// The actual C object.
     pub(crate) ptr: *mut InfoInternal,
-    /// Wrapped property list pointer.
+    /// A nicely wrapped copy of it’s property list pointer, for convenience.
     properties: Proplist,
     /// Used to avoid freeing the internal object when used as a weak wrapper in callbacks.
     weak: bool,
