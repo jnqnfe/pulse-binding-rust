@@ -211,8 +211,8 @@ impl Info {
     /// Creates a new `Info` from an existing [`InfoInternal`] pointer.
     pub(crate) fn from_raw(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        // Note, yes, this should be using `from_raw_weak()`, the ‘free’ function for a format info
-        // object free’s its own proplist!
+        // Note, yes, this should be weak; the ‘free’ function for a format info object free’s its
+        // own proplist!
         unsafe { Self { ptr: ptr, properties: Proplist::from_raw_weak((*ptr).list), weak: false } }
     }
 
