@@ -224,6 +224,15 @@ impl Info {
         unsafe { Self { ptr: ptr, properties: Proplist::from_raw_weak((*ptr).list), weak: true } }
     }
 
+    /// Returns a new `Info` struct representing the same format.
+    ///
+    /// If this is called on a ‘weak’ instance, a non-weak object is returned.
+    #[inline]
+    pub(crate) fn to_owned(&self) -> Self {
+        let ptr = unsafe { capi::pa_format_info_copy(self.ptr as *const capi::pa_format_info) };
+        Self::from_raw(ptr as *mut InfoInternal)
+    }
+
     /// Checks whether the `Info` structure is valid.
     #[inline]
     pub fn is_valid(&self) -> bool {
@@ -592,8 +601,6 @@ impl Clone for Info {
     ///
     /// If this is called on a ‘weak’ instance, a non-weak object is returned.
     fn clone(&self) -> Self {
-        let ptr = unsafe { capi::pa_format_info_copy(self.ptr as *const capi::pa_format_info) };
-        assert_eq!(false, ptr.is_null());
-        Self::from_raw(ptr as *mut InfoInternal)
+        self.to_owned()
     }
 }

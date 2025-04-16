@@ -251,6 +251,14 @@ impl Proplist {
         Proplist(ProplistInner { ptr: ptr, weak: true })
     }
 
+    /// Allocates a new property list and copies over every single entry from the specified list.
+    ///
+    /// If this is called on a ‘weak’ instance, a non-weak object is returned.
+    #[inline]
+    pub(crate) fn to_owned(&self) -> Self {
+        Self::from_raw(unsafe { capi::pa_proplist_copy(self.0.ptr) })
+    }
+
     /// Checks if the key is valid.
     pub fn key_is_valid(key: &str) -> bool {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
@@ -499,7 +507,7 @@ impl Clone for Proplist {
     /// If this is called on a ‘weak’ instance, a non-weak object is returned.
     #[inline]
     fn clone(&self) -> Self {
-        Self::from_raw(unsafe { capi::pa_proplist_copy(self.0.ptr) })
+        self.to_owned()
     }
 }
 

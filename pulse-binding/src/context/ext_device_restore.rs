@@ -56,7 +56,7 @@ impl Info {
     /// Creates a copy with owned data.
     pub fn to_owned(&self) -> Self {
         Info {
-            formats: self.formats.clone(), //Our implementation makes an owned copy!
+            formats: self.formats.iter().map(format::Info::to_owned).collect(),
             ..*self
         }
     }
