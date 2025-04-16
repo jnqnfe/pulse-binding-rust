@@ -1264,34 +1264,37 @@ impl Stream {
 
     /// Pauses playback of this stream temporarily.
     ///
-    /// Available on both playback and recording streams.
+    /// This simply calls [`set_corked_state()`] with a value of `true`.
     ///
-    /// The pause operation is executed as quickly as possible. If a cork is very quickly followed
-    /// by an uncork, this might not actually have any effect on the stream that is output. You can
-    /// use [`is_corked()`] to find out whether the stream is currently paused or not. Normally a
-    /// stream will be created in uncorked state. If you pass [`FlagSet::START_CORKED`] as a flag
-    /// when connecting the stream, it will be created in corked state.
-    ///
-    /// The optional callback must accept a `bool`, which indicates success.
-    ///
-    /// Panics if the underlying C function returns a null pointer.
-    ///
-    /// [`is_corked()`]: Self::is_corked
+    /// [`set_corked_state()`]: Self::set_corked_state
+    #[inline(always)]
     pub fn cork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
-        let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
-            get_su_capi_params::<_, _>(callback, success_cb_proxy);
-        let ptr = unsafe { capi::pa_stream_cork(self.ptr, true as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        self.set_corked_state(true, callback)
     }
 
     /// Resumes playback of this stream.
     ///
+    /// This simply calls [`set_corked_state()`] with a value of `false`.
+    ///
+    /// [`set_corked_state()`]: Self::set_corked_state
+    #[inline(always)]
+    pub fn uncork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
+        -> Operation<dyn FnMut(bool)>
+    {
+        self.set_corked_state(false, callback)
+    }
+
+    /// Pauses or resumes playback of this stream.
+    ///
     /// Available on both playback and recording streams.
     ///
-    /// The un-pause operation is executed as quickly as possible. If an uncork is very quickly
-    /// followed by a cork, this might not actually have any effect on the stream that is output.
+    /// Set state to `true` to cork (pause) the stream. Set state to `false` to uncork (resume) the
+    /// stream. Alternatively [`cork()`] and [`uncork()`] helper functions can be used.
+    ///
+    /// The operation is executed as quickly as possible. If a cork is very quickly followed by an
+    /// uncork, or vice versa, this might not actually have any effect on the stream that is output.
     /// You can use [`is_corked()`] to find out whether the stream is currently paused or not.
     /// Normally a stream will be created in uncorked state. If you pass [`FlagSet::START_CORKED`]
     /// as a flag when connecting the stream, it will be created in corked state.
@@ -1301,12 +1304,14 @@ impl Stream {
     /// Panics if the underlying C function returns a null pointer.
     ///
     /// [`is_corked()`]: Self::is_corked
-    pub fn uncork(&mut self, callback: Option<Box<dyn FnMut(bool) + 'static>>)
+    /// [`cork()`]: Self::cork
+    /// [`uncork()`]: Self::uncork
+    pub fn set_corked_state(&mut self, state: bool, callback: Option<Box<dyn FnMut(bool) + 'static>>)
         -> Operation<dyn FnMut(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, success_cb_proxy);
-        let ptr = unsafe { capi::pa_stream_cork(self.ptr, false as i32, cb_fn, cb_data) };
+        let ptr = unsafe { capi::pa_stream_cork(self.ptr, state as i32, cb_fn, cb_data) };
         Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
     }
 
