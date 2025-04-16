@@ -213,7 +213,8 @@ impl Info {
         assert_eq!(false, ptr.is_null());
         // Note, yes, this should be weak; the ‘free’ function for a format info object free’s its
         // own proplist!
-        unsafe { Self { ptr: ptr, properties: Proplist::from_raw_weak((*ptr).list), weak: false } }
+        let pl = Proplist::from_raw_weak(unsafe { (*ptr).list });
+        Self { ptr: ptr, properties: pl, weak: false }
     }
 
     /// Creates a new `Info` from an existing [`InfoInternal`] pointer.
@@ -221,7 +222,8 @@ impl Info {
     /// This is the ‘weak’ version, which avoids destroying the internal object when dropped.
     pub(crate) fn from_raw_weak(ptr: *mut InfoInternal) -> Self {
         assert_eq!(false, ptr.is_null());
-        unsafe { Self { ptr: ptr, properties: Proplist::from_raw_weak((*ptr).list), weak: true } }
+        let pl = Proplist::from_raw_weak(unsafe { (*ptr).list });
+        Self { ptr: ptr, properties: pl, weak: true }
     }
 
     /// Returns a new `Info` struct representing the same format.
