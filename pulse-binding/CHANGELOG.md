@@ -8,6 +8,9 @@
  * Dropped deprecated `CardProfileInfo2` introspection alias.
  * Added `set_corked_state()` method to `Stream` providing an alternative to using `cork()` and
    `uncork()`.
+ * Added length checks to the `set_prop_int_array()` and `set_prop_string_array()` methods of
+   `format::Info`. Now should you happen to pass in an array with a length larger than can fit
+   within the `len` parameter of the C function, it will panic.
 
 # 2.29.0 (March 3rd, 2025)
 

@@ -497,7 +497,10 @@ impl Info {
     }
 
     /// Sets a property with a list of integer values.
+    ///
+    /// Panics if length of array is larger than `i32::MAX`.
     pub fn set_prop_int_array(&mut self, key: &str, values: &[i32]) {
+        assert!(values.len() <= i32::MAX as usize);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key).unwrap();
@@ -525,7 +528,10 @@ impl Info {
     }
 
     /// Sets a property with a list of string values.
+    ///
+    /// Panics if length of array is larger than `i32::MAX`.
     pub fn set_prop_string_array(&mut self, key: &str, values: &[&str]) {
+        assert!(values.len() <= i32::MAX as usize);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_key = CString::new(key).unwrap();
