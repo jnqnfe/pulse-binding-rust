@@ -577,9 +577,11 @@ impl Info {
     /// Note for PCM: If the channel count is left unspecified in the `Info` object, then the server
     /// will select the stream channel count. In that case the stream channel count will most likely
     /// match the device channel count, meaning that up/downmixing will be avoided.
+    ///
+    /// Panics if `channels` is larger than can be submitted to the C function.
     #[inline]
     pub fn set_channels(&mut self, channels: u32) {
-        debug_assert!(channels <= std::i32::MAX as u32);
+        assert!(channels <= std::i32::MAX as u32);
         unsafe { capi::pa_format_info_set_channels(self.ptr as *mut capi::pa_format_info,
             channels as i32) }
     }
