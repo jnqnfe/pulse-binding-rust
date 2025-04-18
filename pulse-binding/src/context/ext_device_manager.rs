@@ -189,20 +189,20 @@ impl DeviceManager {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn set_device_description<F>(&mut self, device: &str, description: &str, callback: F)
-        -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+        -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a
         // variable, leading to as_ptr() giving dangling pointers!
         let c_dev = CString::new(device).unwrap();
         let c_desc = CString::new(description).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_set_device_description(self.context, c_dev.as_ptr(),
                 c_desc.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Deletes entries from the device database.
@@ -210,8 +210,8 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn delete<F>(&mut self, devices: &[&str], callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -228,10 +228,10 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_delete(self.context, c_dev_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Enables the role-based device-priority routing mode.
@@ -240,15 +240,15 @@ impl DeviceManager {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn enable_role_device_priority_routing<F>(&mut self, enable: bool, callback: F)
-        -> Operation<dyn FnMut(bool)>
+        -> Operation<dyn FnOnce(bool)>
         where F: FnMut(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_enable_role_device_priority_routing(self.context,
                 enable as i32, Some(super::success_cb_proxy), cb_data)
         };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Reorders the position of a given device in the priority list to give preference to it.
@@ -257,8 +257,8 @@ impl DeviceManager {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn reorder_devices_for_role<F>(&mut self, role: &str, devices: &[&str], callback: F)
-        -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+        -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -276,12 +276,12 @@ impl DeviceManager {
         }
         c_dev_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_manager_reorder_devices_for_role(self.context, c_role.as_ptr(),
                 c_dev_ptrs.as_ptr(), Some(super::success_cb_proxy), cb_data)
         };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Subscribes to changes in the device database.
@@ -289,13 +289,13 @@ impl DeviceManager {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_manager_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the subscription callback that is called when [`subscribe()`](Self::subscribe) was

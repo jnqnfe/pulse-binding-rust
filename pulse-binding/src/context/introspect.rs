@@ -529,13 +529,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_volume_by_index(&mut self, index: u32, volume: &ChannelVolumes,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_index(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the volume of a sink device specified by its name.
@@ -544,7 +544,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_volume_by_name(&mut self, name: &str, volume: &ChannelVolumes,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -554,7 +554,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_volume_by_name(self.context, c_name.as_ptr(),
             volume.as_ref(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the mute switch of a sink device specified by its index.
@@ -563,13 +563,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_mute_by_index(&mut self, index: u32, mute: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_index(self.context, index, mute as i32,
             cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the mute switch of a sink device specified by its name.
@@ -578,7 +578,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_mute_by_name(&mut self, name: &str, mute: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -588,7 +588,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Suspends/Resumes a sink.
@@ -597,7 +597,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_sink_by_name(&mut self, sink_name: &str, suspend: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -607,7 +607,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Suspends/Resumes a sink.
@@ -617,13 +617,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_sink_by_index(&mut self, index: u32, suspend: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_sink_by_index(self.context, index,
             suspend as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Changes the profile of a sink.
@@ -632,7 +632,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_port_by_index(&mut self, index: u32, port: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -642,7 +642,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_port_by_index(self.context, index,
             c_port.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Changes the profile of a sink.
@@ -651,7 +651,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_port_by_name(&mut self, name: &str, port: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -662,7 +662,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -960,13 +960,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_volume_by_index(&mut self, index: u32, volume: &ChannelVolumes,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_index(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the volume of a source device specified by its name.
@@ -975,7 +975,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_volume_by_name(&mut self, name: &str, volume: &ChannelVolumes,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -985,7 +985,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_volume_by_name(self.context,
             c_name.as_ptr(), volume.as_ref(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the mute switch of a source device specified by its index.
@@ -994,13 +994,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_mute_by_index(&mut self, index: u32, mute: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_index(self.context, index,
             mute as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the mute switch of a source device specified by its name.
@@ -1009,7 +1009,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_mute_by_name(&mut self, name: &str, mute: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1019,7 +1019,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_mute_by_name(self.context, c_name.as_ptr(),
             mute as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Suspends/Resumes a source.
@@ -1028,7 +1028,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_source_by_name(&mut self, name: &str, suspend: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1038,7 +1038,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_source_by_name(self.context, c_name.as_ptr(),
             suspend as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Suspends/Resumes a source.
@@ -1048,13 +1048,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn suspend_source_by_index(&mut self, index: u32, suspend: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_suspend_source_by_index(self.context, index,
             suspend as i32, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Changes the profile of a source.
@@ -1063,7 +1063,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_port_by_index(&mut self, index: u32, port: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1073,7 +1073,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_port_by_index(self.context, index,
             c_port.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Changes the profile of a source.
@@ -1082,7 +1082,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_port_by_name(&mut self, name: &str, port: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1093,7 +1093,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_port_by_name(self.context, c_name.as_ptr(),
             c_port.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -1194,13 +1194,13 @@ impl Introspector {
     /// Gets some information about the server.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn get_server_info<F>(&self, callback: F) -> Operation<dyn FnMut(&ServerInfo)>
-        where F: FnMut(&ServerInfo) + 'static
+    pub fn get_server_info<F>(&self, callback: F) -> Operation<dyn FnOnce(&ServerInfo)>
+        where F: FnOnce(&ServerInfo) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(&ServerInfo)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(&ServerInfo)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_get_server_info(self.context,
             Some(get_server_info_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(&ServerInfo)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(&ServerInfo)>)
     }
 }
 
@@ -1215,7 +1215,7 @@ fn get_server_info_cb_proxy(_: *mut ContextInternal, i: *const ServerInfoInterna
         let obj = ServerInfo::new_from_raw(i);
 
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = get_su_callback::<dyn FnMut(&ServerInfo)>(userdata);
+        let callback = get_su_callback::<dyn FnOnce(&ServerInfo)>(userdata);
         (callback)(&obj);
     });
 }
@@ -1309,18 +1309,18 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state. The callback is provided with the
     /// index.
     pub fn load_module<F>(&mut self, name: &str, argument: &str, callback: F)
-        -> Operation<dyn FnMut(u32)>
-        where F: FnMut(u32) + 'static
+        -> Operation<dyn FnOnce(u32)>
+        where F: FnOnce(u32) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name).unwrap();
         let c_arg = CString::new(argument).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(u32)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(u32)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_load_module(self.context, c_name.as_ptr(),
             c_arg.as_ptr(), Some(context_index_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(u32)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(u32)>)
     }
 
     /// Unloads a module.
@@ -1328,13 +1328,13 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn unload_module<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn unload_module<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_unload_module(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -1357,7 +1357,7 @@ extern "C"
 fn context_index_cb_proxy(_: *mut ContextInternal, index: u32, userdata: *mut c_void) {
     let _ = std::panic::catch_unwind(|| {
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = get_su_callback::<dyn FnMut(u32)>(userdata);
+        let callback = get_su_callback::<dyn FnOnce(u32)>(userdata);
         (callback)(index);
     });
 }
@@ -1379,8 +1379,8 @@ impl Introspector {
     #[cfg(any(doc, feature = "pa_v15"))]
     #[cfg_attr(docsrs, doc(cfg(feature = "pa_v15")))]
     pub fn send_message_to_object<F>(&mut self, recipient_name: &str, message: &str,
-        message_parameters: &str, callback: F) -> Operation<dyn FnMut(bool, Option<String>)>
-        where F: FnMut(bool, Option<String>) + 'static
+        message_parameters: &str, callback: F) -> Operation<dyn FnOnce(bool, Option<String>)>
+        where F: FnOnce(bool, Option<String>) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1388,11 +1388,11 @@ impl Introspector {
         let c_message = CString::new(message.clone()).unwrap();
         let c_message_parameters = CString::new(message_parameters.clone()).unwrap();
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool, Option<String>)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool, Option<String>)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_send_message_to_object(self.context,
             c_recipient_name.as_ptr(), c_message.as_ptr(), c_message_parameters.as_ptr(),
             Some(send_message_to_object_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool, Option<String>)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool, Option<String>)>)
     }
 }
 
@@ -1417,7 +1417,7 @@ fn send_message_to_object_cb_proxy(_: *mut ContextInternal, success: i32, respon
             },
         };
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = get_su_callback::<dyn FnMut(bool, Option<String>)>(userdata);
+        let callback = get_su_callback::<dyn FnOnce(bool, Option<String>)>(userdata);
         (callback)(success_actual, r);
     });
 }
@@ -1511,13 +1511,13 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn kill_client<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn kill_client<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_kill_client(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -1838,7 +1838,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_card_profile_by_index(&mut self, index: u32, profile: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1848,7 +1848,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_card_profile_by_index(self.context, index,
             c_profile.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Changes the profile of a card.
@@ -1857,7 +1857,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_card_profile_by_name(&mut self, name: &str, profile: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1868,7 +1868,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_card_profile_by_name(self.context, c_name.as_ptr(),
             c_profile.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the latency offset of a port.
@@ -1877,7 +1877,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_port_latency_offset(&mut self, card_name: &str, port_name: &str, offset: i64,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -1888,7 +1888,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_port_latency_offset(self.context, c_name.as_ptr(),
             c_port.as_ptr(), offset, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -2060,7 +2060,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_sink_input_by_name(&mut self, index: u32, sink_name: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -2070,7 +2070,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_name(self.context, index,
             c_name.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Moves the specified sink input to a different sink.
@@ -2079,13 +2079,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_sink_input_by_index(&mut self, index: u32, sink_index: u32,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_sink_input_by_index(self.context, index,
             sink_index, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the volume of a sink input stream.
@@ -2094,13 +2094,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_input_volume(&mut self, index: u32, volume: &ChannelVolumes,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_volume(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the mute switch of a sink input stream.
@@ -2109,13 +2109,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_sink_input_mute(&mut self, index: u32, mute: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_sink_input_mute(self.context, index, mute as i32,
             cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Kills a sink input.
@@ -2123,13 +2123,13 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn kill_sink_input<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn kill_sink_input<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_kill_sink_input(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -2301,7 +2301,7 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_source_output_by_name(&mut self, index: u32, source_name: &str,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -2311,7 +2311,7 @@ impl Introspector {
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_source_output_by_name(self.context, index,
             c_name.as_ptr(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Moves the specified source output to a different source.
@@ -2320,13 +2320,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn move_source_output_by_index(&mut self, index: u32, source_index: u32,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_move_source_output_by_index(self.context, index,
             source_index, cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the volume of a source output stream.
@@ -2335,13 +2335,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_output_volume(&mut self, index: u32, volume: &ChannelVolumes,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_volume(self.context, index,
             volume.as_ref(), cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the mute switch of a source output stream.
@@ -2350,13 +2350,13 @@ impl Introspector {
     ///
     /// The optional callback must accept a `bool`, which indicates success.
     pub fn set_source_output_mute(&mut self, index: u32, mute: bool,
-        callback: Option<Box<dyn FnMut(bool) + 'static>>) -> Operation<dyn FnMut(bool)>
+        callback: Option<Box<dyn FnOnce(bool) + 'static>>) -> Operation<dyn FnOnce(bool)>
     {
         let (cb_fn, cb_data): (Option<extern "C" fn(_, _, _)>, _) =
             get_su_capi_params::<_, _>(callback, super::success_cb_proxy);
         let ptr = unsafe { capi::pa_context_set_source_output_mute(self.context, index, mute as i32,
             cb_fn, cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Kills a source output.
@@ -2364,13 +2364,13 @@ impl Introspector {
     /// Panics on error, i.e. invalid arguments or state.
     ///
     /// The callback must accept a `bool`, which indicates success.
-    pub fn kill_source_output<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn kill_source_output<F>(&mut self, index: u32, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_kill_source_output(self.context, index,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 
@@ -2394,13 +2394,13 @@ impl Introspector {
     /// Gets daemon memory block statistics.
     ///
     /// Panics on error, i.e. invalid arguments or state.
-    pub fn stat<F>(&self, callback: F) -> Operation<dyn FnMut(&StatInfo)>
-        where F: FnMut(&StatInfo) + 'static
+    pub fn stat<F>(&self, callback: F) -> Operation<dyn FnOnce(&StatInfo)>
+        where F: FnOnce(&StatInfo) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(&StatInfo)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(&StatInfo)>(Box::new(callback));
         let ptr =
             unsafe { capi::pa_context_stat(self.context, Some(get_stat_info_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(&StatInfo)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(&StatInfo)>)
     }
 }
 
@@ -2412,7 +2412,7 @@ fn get_stat_info_cb_proxy(_: *mut ContextInternal, i: *const StatInfo, userdata:
     let _ = std::panic::catch_unwind(|| {
         assert!(!i.is_null());
         // Note, destroys closure callback after use - restoring outer box means it gets dropped
-        let mut callback = get_su_callback::<dyn FnMut(&StatInfo)>(userdata);
+        let callback = get_su_callback::<dyn FnOnce(&StatInfo)>(userdata);
         (callback)(unsafe { &*i });
     });
 }

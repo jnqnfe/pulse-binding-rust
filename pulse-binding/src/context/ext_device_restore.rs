@@ -120,13 +120,13 @@ impl DeviceRestore {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_device_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the subscription callback that is called when [`subscribe()`](Self::subscribe) was
@@ -176,8 +176,8 @@ impl DeviceRestore {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn save_formats<F>(&mut self, type_: def::Device, index: u32,
-        formats: &mut [&mut format::Info], callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+        formats: &mut [&mut format::Info], callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Capture array of pointers to the above `format::InfoInternal` objects
         let mut format_ptrs: Vec<*mut capi::pa_format_info> = Vec::with_capacity(formats.len());
@@ -185,13 +185,13 @@ impl DeviceRestore {
             format_ptrs.push(unsafe { mem::transmute(&format.ptr) });
         }
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_device_restore_save_formats(self.context, type_, index,
                 format_ptrs.len() as u8, format_ptrs.as_ptr(), Some(super::success_cb_proxy),
                 cb_data)
         };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 }
 

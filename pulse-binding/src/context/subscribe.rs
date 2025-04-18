@@ -184,13 +184,13 @@ impl Context {
     ///
     /// [`set_subscribe_callback()`]: Self::set_subscribe_callback
     pub fn subscribe<F>(&mut self, mask: InterestMaskSet, callback: F)
-        -> operation::Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+        -> operation::Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_context_subscribe(self.ptr, mask.bits(),
             Some(super::success_cb_proxy), cb_data) };
-        operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        operation::Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the context specific call back function that is called whenever a subscribed-to event

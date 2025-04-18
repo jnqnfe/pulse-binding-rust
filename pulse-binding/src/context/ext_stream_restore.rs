@@ -141,16 +141,16 @@ impl StreamRestore {
     ///
     /// Panics if the underlying C function returns a null pointer.
     pub fn write<F>(&mut self, mode: proplist::UpdateMode, data: &[&Info],
-        apply_immediately: bool, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+        apply_immediately: bool, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_stream_restore_write(self.context, mode, mem::transmute(data.as_ptr()),
                 data.len() as u32, apply_immediately as i32, Some(super::success_cb_proxy),
                 cb_data)
         };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Deletes entries from the stream database.
@@ -158,8 +158,8 @@ impl StreamRestore {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn delete<F>(&mut self, streams: &[&str], callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn delete<F>(&mut self, streams: &[&str], callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
@@ -176,10 +176,10 @@ impl StreamRestore {
         }
         c_stream_ptrs.push(null());
 
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_delete(self.context, c_stream_ptrs.as_ptr(),
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Subscribes to changes in the stream database.
@@ -187,13 +187,13 @@ impl StreamRestore {
     /// The callback must accept a `bool`, which indicates success.
     ///
     /// Panics if the underlying C function returns a null pointer.
-    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnMut(bool)>
-        where F: FnMut(bool) + 'static
+    pub fn subscribe<F>(&mut self, enable: bool, callback: F) -> Operation<dyn FnOnce(bool)>
+        where F: FnOnce(bool) + 'static
     {
-        let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
+        let cb_data = box_closure_get_capi_ptr::<dyn FnOnce(bool)>(Box::new(callback));
         let ptr = unsafe { capi::pa_ext_stream_restore_subscribe(self.context, enable as i32,
             Some(super::success_cb_proxy), cb_data) };
-        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnMut(bool)>)
+        Operation::from_raw(ptr, cb_data as *mut Box<dyn FnOnce(bool)>)
     }
 
     /// Sets the subscription callback that is called when [`subscribe()`](Self::subscribe) was
