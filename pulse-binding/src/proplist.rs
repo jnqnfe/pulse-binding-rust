@@ -514,11 +514,10 @@ impl Clone for Proplist {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+/*
     /// Test that you cannot create a use-after-free situation by destroying a `Proplist` before an
     /// associated `Iterator` (we avoid `Rc`/`Arc`).
     #[test]
-    #[cfg(compile_fail)]
     fn proplist_iter_lifetime() {
         let iter = {
             let my_props = Proplist::new().unwrap();
@@ -530,7 +529,7 @@ mod tests {
             println!("key: {}", key);
         }
     }
-
+*/
     /// Test that you can however return an iterator if you convert the `Proplist` into one
     #[test]
     fn proplist_iter_lifetime_conv() {
