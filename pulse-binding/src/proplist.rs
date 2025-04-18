@@ -198,9 +198,10 @@ impl IntoIterator for Proplist {
     type IntoIter = Iterator<'static>;
 
     fn into_iter(mut self) -> Self::IntoIter {
+        assert_eq!(false, self.0.weak);
         let mut iter = Iterator::new(self.0.ptr);
-        // Move responsibility for destruction, if it has it (is not weak itself)
-        iter.pl_ref.weak = self.0.weak;
+        // Move responsibility for destruction
+        iter.pl_ref.weak = false;
         self.0.weak = true;
         iter
     }
