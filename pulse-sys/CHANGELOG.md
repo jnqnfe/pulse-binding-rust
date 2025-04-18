@@ -1,4 +1,4 @@
-# <unreleased>
+# 1.23.0 (April 19th, 2025)
 
  * Dropped long-deprecated `pa_check_version()` function.
 
