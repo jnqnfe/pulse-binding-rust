@@ -1,4 +1,4 @@
-# <unreleased>
+# 2.30.1 (April 19th, 2025)
 
  * Added a length check to the stream `new_extended()` method (missed in previous version).
  * Added a length check to the stream restore `write()` method (missed in previous version).
