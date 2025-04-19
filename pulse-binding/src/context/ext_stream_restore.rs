@@ -139,11 +139,13 @@ impl StreamRestore {
     ///
     /// The callback must accept a `bool`, which indicates success.
     ///
-    /// Panics if the underlying C function returns a null pointer.
+    /// Panics if the underlying C function returns a null pointer, or if the length of the array is
+    /// too long to be communicated to the C function.
     pub fn write<F>(&mut self, mode: proplist::UpdateMode, data: &[&Info],
         apply_immediately: bool, callback: F) -> Operation<dyn FnMut(bool)>
         where F: FnMut(bool) + 'static
     {
+        assert!(data.len() <= u32::MAX as usize);
         let cb_data = box_closure_get_capi_ptr::<dyn FnMut(bool)>(Box::new(callback));
         let ptr = unsafe {
             capi::pa_ext_stream_restore_write(self.context, mode, mem::transmute(data.as_ptr()),

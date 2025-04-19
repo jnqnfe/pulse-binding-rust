@@ -1,3 +1,7 @@
+# <unreleased>
+
+ * Added a length check to the stream restore `write()` method (missed in previous version).
+
 # 2.30.0 (April 19th, 2025)
 
  * Added `to_owned()` methods to a bunch of introspection objects (as requested back in 2021 in
