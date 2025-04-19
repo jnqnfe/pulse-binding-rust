@@ -603,6 +603,8 @@ impl Stream {
     /// While connecting, the server will select the most appropriate format which the client must
     /// then provide.
     ///
+    /// Will panic if the `formats` array is longer than can be communicated to the C function.
+    ///
     /// # Params
     ///
     /// * `ctx`: The context to create this stream in
@@ -612,6 +614,7 @@ impl Stream {
     pub fn new_extended(ctx: &mut Context, name: &str, formats: &[&format::Info],
         proplist: &mut Proplist) -> Option<Self>
     {
+        assert!(formats.len() <= u32::MAX as usize);
         // Warning: New CStrings will be immediately freed if not bound to a variable, leading to
         // as_ptr() giving dangling pointers!
         let c_name = CString::new(name).unwrap();
